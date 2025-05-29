@@ -1,4 +1,4 @@
-import { SITE_DESCRIPTION_LONG, SITE_NAME } from "@/constants/site";
+import { SITE_DESCRIPTION_LONG, SITE_DESCRIPTION_SHORT, SITE_NAME } from "@/constants/site";
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_JP } from "next/font/google";
 import type { ReactNode } from "react";
@@ -13,7 +13,7 @@ const ibmPlexSansJP = IBM_Plex_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  title: SITE_NAME,
+  title: `${SITE_NAME} | ${SITE_DESCRIPTION_SHORT}`,
   description: SITE_DESCRIPTION_LONG,
 };
 
