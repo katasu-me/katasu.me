@@ -2,8 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import BudouX from ".";
 
 const meta: Meta<typeof BudouX> = {
-  title: "Common/BudouX",
+  title: "Components/BudouX",
   component: BudouX,
+  tags: ["autodocs"],
 };
 
 export default meta;

@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
-@theme inline {
+@theme {
+  --color-warm-black: rgba(72 48 48 / 1);
+  --color-warm-white: rgba(254 251 251 / 1);
+
+  --ease-magnetic: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body {
   font-family: var(--font-ibm-plex-sans-jp), sans-serif;
+  color: var(--color-warm-black);
+  background-color: var(--color-warm-white);
 }
