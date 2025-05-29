@@ -14,7 +14,7 @@
   "formatter": {
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineWidth": 80,
+    "lineWidth": 120,
     "lineEnding": "lf"
   },
   "linter": {
@@ -26,6 +26,16 @@
           "level": "warn",
           "fix": "safe",
           "options": {}
+        }
+      },
+      "correctness": {
+        "noUnusedVariables": {
+          "level": "error",
+          "fix": "none"
+        },
+        "noUnusedImports": {
+          "level": "error",
+          "fix": "safe"
         }
       },
       "a11y": {
