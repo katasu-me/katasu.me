@@ -6,6 +6,7 @@ node_modules/
 
 .env*
 wrangler.jsonc
+wrangler.toml
 
 *storybook.log
 storybook-static
