@@ -16,7 +16,7 @@ export default function Home() {
             インターネットのかたすみにある、 <br />
             ぽつんと画像をおいておける場所。
           </h1>
-          <Button className={styles.ctaButton}>はじめる</Button>
+          <Button className={styles.ctaButton}>がんばって開発中です</Button>
         </div>
       </section>
 
