@@ -1,12 +1,51 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+
+# OpenNext
+/.open-next
+
+# production
+/build
+
+# misc
 .DS_Store
+*.pem
 
-node_modules/
-.next/
-.wrangler/
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-.env*
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# wrangler files
+.wrangler
+.dev.vars
 wrangler.jsonc
 wrangler.toml
 
+# certificates
+certificates
+
+# storybook
 *storybook.log
-storybook-static
+/storybook-static
+
+# playwright
+/__snapshots__
+/test-results
+/playwright-report
