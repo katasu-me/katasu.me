@@ -27,15 +27,6 @@
   color: var(--color-warm-black);
 }
 
-.navLink {
-  transition: all 150ms ease;
-  text-decoration: underline;
-  letter-spacing: 0.04em;
-
-  &:hover {
-    opacity: 0.6;
-  }
-}
 
 .copyright {
   font-size: 12px;

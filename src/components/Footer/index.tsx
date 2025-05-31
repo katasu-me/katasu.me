@@ -1,3 +1,4 @@
+import Link from "../Link";
 import DevelopedBy from "./DevelopedBy";
 import styles from "./index.module.css";
 
@@ -9,15 +10,9 @@ export default function Footer() {
           <DevelopedBy />
 
           <nav className={styles.nav}>
-            <a href="/news" className={styles.navLink}>
-              お知らせ
-            </a>
-            <a href="/terms" className={styles.navLink}>
-              利用規約
-            </a>
-            <a href="/privacy" className={styles.navLink}>
-              プライバシーポリシー
-            </a>
+            <Link href="/news">お知らせ</Link>
+            <Link href="/terms">利用規約</Link>
+            <Link href="/privacy">プライバシーポリシー</Link>
           </nav>
 
           <p className={styles.copyright}>© katasu.me</p>
