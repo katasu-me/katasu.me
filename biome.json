@@ -36,7 +36,8 @@
         "noUnusedImports": {
           "level": "error",
           "fix": "safe"
-        }
+        },
+        "noUnknownMediaFeatureName": "off"
       },
       "a11y": {
         "useButtonType": "off",
@@ -47,6 +48,21 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineWidth": 120,
+      "quoteStyle": "double"
+    },
+    "linter": {
+      "enabled": true
+    },
+    "parser": {
+      "cssModules": true
     }
   }
 }

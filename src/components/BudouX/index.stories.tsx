@@ -18,11 +18,11 @@ export const All: Story = {
     return (
       <>
         <p>w-32</p>
-        <div className="w-32 border border-red-500 bg-white">
+        <div style={{ width: "8rem", border: "1px solid #ef4444", backgroundColor: "white" }}>
           <BudouX {...args} />
         </div>
-        <p className="mt-4">w-64</p>
-        <div className="w-64 border border-red-500 bg-white">
+        <p style={{ marginTop: "1rem" }}>w-64</p>
+        <div style={{ width: "16rem", border: "1px solid #ef4444", backgroundColor: "white" }}>
           <BudouX {...args} />
         </div>
       </>

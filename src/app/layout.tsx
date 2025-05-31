@@ -1,9 +1,9 @@
 import { SITE_DESCRIPTION_LONG, SITE_DESCRIPTION_SHORT, SITE_NAME } from "@/constants/site";
+import clsx from "clsx";
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_JP } from "next/font/google";
 import type { ReactNode } from "react";
-import { twMerge } from "tailwind-merge";
-import "./globals.css";
+import "../styles/globals.css";
 
 const ibmPlexSansJP = IBM_Plex_Sans_JP({
   variable: "--font-ibm-plex-sans-jp",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="ja">
-      <body className={twMerge(ibmPlexSansJP.variable, "antialiased")}>{children}</body>
+      <body className={clsx(ibmPlexSansJP.variable, "antialiased")}>{children}</body>
     </html>
   );
 }
