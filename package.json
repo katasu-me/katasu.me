@@ -37,6 +37,7 @@
     "lefthook": "^1.11.13",
     "postcss": "^8.5.4",
     "postcss-custom-media": "^11.0.6",
+    "postcss-pxtorem": "^6.1.0",
     "storybook": "^9.0.0",
     "storybook-addon-pseudo-states": "^9.0.0",
     "typescript": "^5",

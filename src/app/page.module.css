@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - 1rem);
+  height: calc(100vh - 16px);
 }
 
 .heroContent {
@@ -13,41 +13,41 @@
 }
 
 .logo {
-  width: 12rem;
+  width: 192px;
 
   @media (--sm) {
-    width: 16rem;
+    width: 256px;
   }
 }
 
 .title {
-  margin-top: 4rem;
+  margin-top: 64px;
   text-align: center;
-  font-size: 1.125rem;
-  line-height: 1.75rem;
+  font-size: 18px;
+  line-height: 28px;
   letter-spacing: 0.1em;
   font-weight: 400;
 
   @media (--sm) {
-    margin-top: 5rem;
-    font-size: 1.5rem;
-    line-height: 2.2rem;
+    margin-top: 80px;
+    font-size: 24px;
+    line-height: 35.2px;
     letter-spacing: 0.2em;
   }
 }
 
 .ctaButton {
-  margin-top: 2rem;
+  margin-top: 32px;
 
   @media (--sm) {
-    margin-top: 2.5rem;
+    margin-top: 40px;
   }
 }
 
 .contentSection {
   max-width: var(--max-content-width);
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 32px;
   text-align: center;
 }
 
@@ -57,7 +57,7 @@
   line-height: 1.6;
 
   p {
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
 
     &:first-child {
       margin-top: 0;
@@ -66,7 +66,7 @@
 }
 
 .imageContainer {
-  margin: 8rem 0;
+  margin: 128px 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -77,10 +77,10 @@
 }
 
 .imageCard {
-  width: 16rem;
-  height: 10rem;
+  width: 256px;
+  height: 160px;
   background: linear-gradient(to bottom right, #dbeafe, #c7d2fe, #fbcfe8);
-  border-radius: 0.5rem;
+  border-radius: 8px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   transform: rotate(3deg);
 }
@@ -89,7 +89,7 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(to bottom right, #fed7aa, #fef3c7);
-  border-radius: 0.5rem;
+  border-radius: 8px;
   transform: rotate(-6deg);
   z-index: -1;
 }
