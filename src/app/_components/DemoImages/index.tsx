@@ -38,7 +38,7 @@ const DemoImageData: DemoImage[] = [
         opacity: 1,
       },
       transition: {
-        duration: 0.6,
+        duration: 0.8,
         delay: 0.6,
         ease: "backOut",
       },
@@ -60,7 +60,7 @@ const DemoImageData: DemoImage[] = [
         opacity: 1,
       },
       transition: {
-        duration: 0.6,
+        duration: 0.8,
         delay: 0.3,
       },
     },
@@ -80,7 +80,7 @@ const DemoImageData: DemoImage[] = [
         y: 12,
       },
       transition: {
-        duration: 0.6,
+        duration: 0.8,
         delay: 0,
       },
     },
