@@ -3,8 +3,8 @@ import Button from "@/components/Button";
 import Footer from "@/components/Footer";
 
 import BudouX from "@/components/BudouX";
-import DemoImages from "@/components/DemoImages";
 import { SITE_NAME } from "@/constants/site";
+import DemoImages from "./_components/DemoImages";
 import styles from "./page.module.css";
 
 export default function Home() {
