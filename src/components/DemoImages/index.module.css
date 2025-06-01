@@ -1,0 +1,14 @@
+.imageContainer {
+  position: relative;
+  width: 256px;
+  height: 160px;
+
+  img {
+    position: absolute;
+    width: 256px;
+    border: 4px solid #fff;
+    top: 0;
+    left: 0;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  }
+}

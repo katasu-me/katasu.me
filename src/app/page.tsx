@@ -3,6 +3,7 @@ import Button from "@/components/Button";
 import Footer from "@/components/Footer";
 
 import BudouX from "@/components/BudouX";
+import DemoImages from "@/components/DemoImages";
 import { SITE_NAME } from "@/constants/site";
 import styles from "./page.module.css";
 
@@ -39,14 +40,7 @@ export default function Home() {
             <BudouX>そんなかたすみの空間をめざしています。</BudouX>
           </p>
         </div>
-
-        <div className={styles.imageContainer}>
-          <div className={styles.imageWrapper}>
-            <div className={styles.imageCard}>
-              <div className={styles.imageCardBg} />
-            </div>
-          </div>
-        </div>
+        <DemoImages className={styles.imageContainer} />
       </section>
 
       <Footer />
