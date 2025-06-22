@@ -1,0 +1,63 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## プロジェクト概要
+
+katasu.me は「インターネットのかたすみにある、ぽつんと画像をおいておける場所」をコンセプトとした画像共有Webアプリケーションです。Next.js 15 と Cloudflare Workers を使用して構築されています。
+
+## 開発コマンド
+
+### 基本コマンド
+- `bun dev` - 開発サーバーの起動（Turbopack使用）
+- `bun build` - 本番ビルド
+- `bun preview` - Cloudflare環境でのプレビュー（ビルド後に実行）
+- `bun check` - Biomeによるコード検査と自動修正（lint + format）
+
+### コード品質管理
+- `bun lint` - Biomeによるリント（自動修正付き）
+- `bun format` - Biomeによるフォーマット
+
+### Storybook
+- `bun storybook` - Storybookの起動（ポート6006）
+- `bun build-storybook` - Storybookの本番ビルド
+
+### Cloudflare関連
+- `bun build:worker` - OpenNext.js Cloudflareビルド
+- `bun cf-typegen` - Cloudflare環境の型定義生成
+
+## アーキテクチャ
+
+### 技術スタック
+- **フレームワーク**: Next.js 15.3.2（App Router）
+- **React**: v19
+- **デプロイ環境**: Cloudflare Workers（@opennextjs/cloudflare）
+- **スタイリング**: CSS Modules
+- **UIライブラリ**: Radix UI、Motion（アニメーション）
+- **日本語処理**: BudouX（自然な改行位置計算）
+- **パッケージマネージャー**: Bun
+
+### ディレクトリ構成
+- `src/app/` - Next.js App Routerのページとレイアウト
+- `src/components/` - 再利用可能なUIコンポーネント（各コンポーネントに`.stories.tsx`ファイル付き）
+- `src/assets/` - 画像、SVGなどの静的リソース
+- `src/constants/` - 定数定義（サイト情報、作者情報など）
+- `src/styles/` - グローバルスタイルとCSS変数
+
+### コード規約
+- **フォーマッター/リンター**: Biome（ESLint/Prettierの代替）
+  - インデント: スペース2文字
+  - 行幅: 120文字
+  - クォート: ダブルクォート
+  - 改行: LF
+- **Git hooks**: Lefthook
+  - pre-commit: Biomeによる自動修正
+  - pre-push: Biomeによるチェック
+- **TypeScript**: Strict mode有効
+- **パスエイリアス**: `@/*` → `./src/*`
+
+### 開発時の注意点
+- SVGファイルはReactコンポーネントとして自動的にインポート可能（@svgr/webpack設定済み）
+- CSS ModulesとPostCSSが有効（px→rem自動変換、カスタムメディアクエリ対応）
+- Cloudflare環境の型定義は`cloudflare-env.d.ts`に生成される
+- Storybookを使用してコンポーネントの開発・テストを行う
