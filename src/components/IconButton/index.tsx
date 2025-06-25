@@ -1,3 +1,4 @@
+import IconDots from "@/assets/icons/dots.svg";
 import IconFlag from "@/assets/icons/flag.svg";
 import IconSearch from "@/assets/icons/search.svg";
 import IconSettings from "@/assets/icons/settings.svg";
@@ -17,6 +18,10 @@ const ICONS = {
     Icon: IconFlag,
     title: "通報",
   },
+  dots: {
+    Icon: IconDots,
+    title: "その他",
+  },
 } as const;
 
 type Props = {
@@ -29,7 +34,7 @@ export default function IconButton({ iconName, className }: Props) {
 
   return (
     <button className={clsx(styles.button, className)} title={icon.title}>
-      <icon.Icon size={undefined} />
+      <icon.Icon />
     </button>
   );
 }

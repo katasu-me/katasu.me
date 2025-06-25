@@ -13,6 +13,7 @@ export default function UserPage() {
 
         <div className={styles.iconButtons}>
           <IconButton iconName="search" />
+          <IconButton iconName="dots" />
         </div>
       </header>
 
