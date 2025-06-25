@@ -35,7 +35,22 @@ const nextConfig: NextConfig = {
       test: /\.svg$/i,
       use: ["@svgr/webpack"],
     });
+
+    // canvasモジュールの警告を回避
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      canvas: false,
+    };
+
     return config;
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+      },
+    ],
   },
 };
 

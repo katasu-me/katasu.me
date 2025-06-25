@@ -45,9 +45,7 @@
 }
 
 .contentSection {
-  max-width: var(--max-content-width);
   margin: 0 auto;
-  padding: 0 32px;
   text-align: center;
 }
 

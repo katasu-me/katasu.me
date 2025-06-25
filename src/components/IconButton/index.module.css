@@ -1,0 +1,14 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}

@@ -1,0 +1,22 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 96px 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.iconButtons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.dropArea {
+  height: 72px;
+}

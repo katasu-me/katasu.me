@@ -1,0 +1,26 @@
+.dropArea {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--color-warm-black-50);
+  border-radius: 12px;
+  background-color: var(--color-warm-white);
+  transition: filter 0.2s ease;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  letter-spacing: 8%;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
