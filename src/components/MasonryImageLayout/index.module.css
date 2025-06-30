@@ -1,0 +1,25 @@
+.container {
+  columns: 1;
+  column-gap: 1rem;
+  width: 100%;
+
+  @media (min-width: 640px) {
+    columns: 2;
+  }
+
+  @media (min-width: 768px) {
+    columns: 3;
+  }
+
+  @media (min-width: 1024px) {
+    columns: 4;
+  }
+}
+
+.imageItem {
+  width: 100%;
+  height: auto;
+  display: inline-block;
+  margin-bottom: 1rem;
+  break-inside: avoid;
+}

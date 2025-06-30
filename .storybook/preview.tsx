@@ -1,6 +1,7 @@
 import type { Preview } from "@storybook/nextjs";
 import { IBM_Plex_Sans_JP } from "next/font/google";
 import "../src/styles/globals.css";
+import "../src/styles/media-queries.css";
 
 const ibmPlexSansJP = IBM_Plex_Sans_JP({
   variable: "--font-ibm-plex-sans-jp",
