@@ -27,8 +27,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@csstools/postcss-global-data": "^3.0.0",
+    "@biomejs/biome": "2.0.0",
     "@storybook/addon-docs": "^9.0.0",
     "@storybook/addon-links": "^9.0.0",
     "@storybook/addon-onboarding": "^9.0.0",
@@ -48,6 +47,10 @@
     "wrangler": "^4.17.0"
   },
   "imports": {
-    "#*": ["./*", "./*.ts", "./*.tsx"]
+    "#*": [
+      "./*",
+      "./*.ts",
+      "./*.tsx"
+    ]
   }
 }
