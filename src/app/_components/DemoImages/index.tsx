@@ -1,15 +1,11 @@
 "use client";
 
-import clsx from "clsx";
+import type { MotionProps, TargetAndTransition, Transition } from "motion/react";
 import { motion } from "motion/react";
-
+import { twMerge } from "tailwind-merge";
 import ImageDemo1 from "@/assets/images/top/demo_1.webp";
 import ImageDemo2 from "@/assets/images/top/demo_2.webp";
 import ImageDemo3 from "@/assets/images/top/demo_3.webp";
-
-import styles from "./index.module.css";
-
-import type { MotionProps, TargetAndTransition, Transition } from "motion/react";
 
 type DemoImage = {
   src: string;
@@ -38,7 +34,7 @@ const DemoImageData: DemoImage[] = [
         opacity: 1,
       },
       transition: {
-        duration: 0.6,
+        duration: 0.8,
         delay: 0.6,
         ease: "backOut",
       },
@@ -60,7 +56,7 @@ const DemoImageData: DemoImage[] = [
         opacity: 1,
       },
       transition: {
-        duration: 0.6,
+        duration: 0.8,
         delay: 0.3,
       },
     },
@@ -80,7 +76,7 @@ const DemoImageData: DemoImage[] = [
         y: 12,
       },
       transition: {
-        duration: 0.6,
+        duration: 0.8,
         delay: 0,
       },
     },
@@ -93,7 +89,7 @@ type Props = {
 
 export default function DemoImages({ className }: Props) {
   return (
-    <div className={clsx(styles.imageContainer, className)}>
+    <div className={twMerge("relative h-[160px] w-64", className)}>
       {DemoImageData.slice()
         .reverse()
         .map((image) => {
@@ -102,6 +98,7 @@ export default function DemoImages({ className }: Props) {
               key={image.src}
               src={image.src}
               alt={image.alt}
+              className="absolute top-0 left-0 w-64 border-4 border-white shadow-[0_0_8px_rgba(0,0,0,0.1)]"
               initial={image.animation.initial}
               whileInView={image.animation.whileInView}
               viewport={{ once: true }}

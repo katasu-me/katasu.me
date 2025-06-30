@@ -1,6 +1,4 @@
-import { Parser, jaModel } from "budoux";
-
-import styles from "./index.module.css";
+import { jaModel, Parser } from "budoux";
 
 type Props = {
   children: string;
@@ -13,7 +11,7 @@ export default function BudouX({ children }: Props) {
   const parser = new Parser(jaModel);
 
   const result = parser.parse(children).map((word, i) => (
-    <span className={styles.chunk} key={`${i}-${word}`}>
+    <span className="inline-block" key={`${i}-${word}`}>
       {word}
     </span>
   ));

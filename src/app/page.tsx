@@ -1,28 +1,26 @@
 import LogoImage from "@/assets/logo.svg";
+import BudouX from "@/components/BudouX";
 import Button from "@/components/Button";
 import Footer from "@/components/Footer";
-
-import BudouX from "@/components/BudouX";
-import DemoImages from "@/components/DemoImages";
 import { SITE_NAME } from "@/constants/site";
-import styles from "./page.module.css";
+import DemoImages from "./_components/DemoImages";
 
 export default function Home() {
   return (
     <main>
-      <section className={styles.heroSection}>
-        <div className={styles.heroContent}>
-          <LogoImage className={styles.logo} />
-          <h1 className={styles.title}>
+      <section className="flex h-[calc(100vh-16px)] items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
+          <LogoImage className="w-48 sm:w-64" />
+          <h1 className="mt-16 text-center font-normal text-lg leading-7 tracking-[0.1em] sm:mt-20 sm:text-2xl sm:leading-9 sm:tracking-[0.2em]">
             インターネットのかたすみにある、 <br />
             ぽつんと画像をおいておける場所。
           </h1>
-          <Button className={styles.ctaButton}>がんばって開発中です</Button>
+          <Button className="mt-8 sm:mt-10">がんばって開発中です</Button>
         </div>
       </section>
 
-      <section className={styles.contentSection}>
-        <div className={styles.contentText}>
+      <section className="mx-auto text-center">
+        <div className="text-gray-700 leading-[1.6] tracking-[0.04em] [&_p:first-child]:mt-0 [&_p]:mb-6">
           <p>
             <BudouX>{`${SITE_NAME}はインターネットのかたすみにある、画像をおいておける場所です。`}</BudouX>
           </p>
@@ -40,7 +38,7 @@ export default function Home() {
             <BudouX>そんなかたすみの空間をめざしています。</BudouX>
           </p>
         </div>
-        <DemoImages className={styles.imageContainer} />
+        <DemoImages className="mx-auto my-32" />
       </section>
 
       <Footer />
