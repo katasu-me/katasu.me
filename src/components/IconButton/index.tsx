@@ -1,9 +1,8 @@
+import { twMerge } from "tailwind-merge";
 import IconDots from "@/assets/icons/dots.svg";
 import IconFlag from "@/assets/icons/flag.svg";
 import IconSearch from "@/assets/icons/search.svg";
 import IconSettings from "@/assets/icons/settings.svg";
-import clsx from "clsx";
-import styles from "./index.module.css";
 
 const ICONS = {
   search: {
@@ -33,8 +32,14 @@ export default function IconButton({ iconName, className }: Props) {
   const icon = ICONS[iconName];
 
   return (
-    <button className={clsx(styles.button, className)} title={icon.title}>
-      <icon.Icon />
+    <button
+      className={twMerge(
+        "flex items-center justify-center rounded-full bg-warm-white p-2 transition-filter duration-200 ease-in-out hover:brightness-90",
+        className,
+      )}
+      title={icon.title}
+    >
+      <icon.Icon className="h-6 w-6" />
     </button>
   );
 }

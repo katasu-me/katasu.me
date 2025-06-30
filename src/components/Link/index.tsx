@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import styles from "./index.module.css";
 
 interface LinkProps {
   href: string;
@@ -8,7 +7,7 @@ interface LinkProps {
 
 export default function Link({ href, children }: LinkProps) {
   return (
-    <a href={href} className={styles.link}>
+    <a href={href} className="tracking-wide underline transition-all duration-150 ease-in-out hover:opacity-60">
       {children}
     </a>
   );

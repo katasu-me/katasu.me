@@ -1,7 +1,6 @@
-import clsx from "clsx";
 import Image from "next/image";
 import type { PropsWithChildren } from "react";
-import styles from "./index.module.css";
+import { twMerge } from "tailwind-merge";
 
 type UserIconProps = PropsWithChildren<{
   src: string;
@@ -16,11 +15,11 @@ type UserIconProps = PropsWithChildren<{
  */
 export default function UserIcon({ src, alt, className, children }: UserIconProps) {
   return (
-    <div className={clsx(styles.userIcon, className)}>
-      <div className={styles.icon}>
+    <div className={twMerge("flex items-center gap-3 tracking-wider", className)}>
+      <div className="relative inline-block h-8 w-8 overflow-hidden rounded-full border border-warm-black-50">
         <Image src={src} alt={alt} fill />
       </div>
-      <span className={styles.name}>{children}</span>
+      <span className="text-sm">{children}</span>
     </div>
   );
 }

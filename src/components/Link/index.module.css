@@ -1,9 +1,0 @@
-.link {
-  transition: all 150ms ease;
-  text-decoration: underline;
-  letter-spacing: 0.04em;
-
-  &:hover {
-    opacity: 0.6;
-  }
-}

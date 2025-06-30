@@ -1,5 +1,4 @@
 import FrameImage from "../FrameImage";
-import styles from "./index.module.css";
 
 export interface ImageData {
   id: string;
@@ -16,7 +15,7 @@ interface MasonryImageLayoutProps {
 
 export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) {
   return (
-    <div className={styles.container}>
+    <div className="w-full columns-1 gap-x-[1rem] sm:columns-2 md:columns-3 lg:columns-4">
       {images.map((image) => (
         <FrameImage
           key={image.id}
@@ -25,7 +24,7 @@ export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) 
           width={image.width}
           height={image.height}
           title={image.title}
-          className={styles.imageItem}
+          className="mb-[1rem] inline-block h-auto w-full break-inside-avoid"
         />
       ))}
     </div>
