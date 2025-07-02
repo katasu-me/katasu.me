@@ -32,7 +32,7 @@ katasu.me は「インターネットのかたすみにある、ぽつんと画�
 - **フレームワーク**: Next.js 15.3.2（App Router）
 - **React**: v19
 - **デプロイ環境**: Cloudflare Workers（@opennextjs/cloudflare）
-- **スタイリング**: CSS Modules
+- **スタイリング**: Tailwind CSS v4
 - **UIライブラリ**: Radix UI、Motion（アニメーション）
 - **日本語処理**: BudouX（自然な改行位置計算）
 - **パッケージマネージャー**: Bun
