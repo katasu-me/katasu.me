@@ -10,7 +10,7 @@ interface FrameImageProps extends Omit<ComponentProps<typeof Image>, "width" | "
 export default function FrameImage({ className, width, height, ...props }: FrameImageProps) {
   return (
     <div
-      className={twMerge("relative w-full overflow-hidden border-4 border-white bg-warm-black-25 shadow-md", className)}
+      className={twMerge("relative w-full overflow-hidden border-5 border-white bg-warm-black-25 shadow-md", className)}
       style={{ aspectRatio: `${width} / ${height}` }}
     >
       {props.title && (
