@@ -14,10 +14,6 @@ const meta = {
       options: ["search", "settings", "flag"],
       description: "表示するアイコンの種類",
     },
-    className: {
-      control: "text",
-      description: "追加のCSSクラス",
-    },
   },
 } satisfies Meta<typeof IconButton>;
 
