@@ -24,7 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <body
         className={twMerge(
           ibmPlexSansJP.variable,
-          "mx-auto max-w-3xl bg-warm-white font-ibm-plex-sans-jp text-warm-black",
+          "mx-auto max-w-4xl bg-warm-white px-6 font-ibm-plex-sans-jp text-warm-black ",
         )}
       >
         {children}

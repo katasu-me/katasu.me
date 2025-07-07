@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const nextConfig: NextConfig = {
   async headers() {
     return [
@@ -45,12 +47,18 @@ const nextConfig: NextConfig = {
     return config;
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "avatars.githubusercontent.com",
-      },
-    ],
+    remotePatterns: isDev
+      ? [
+          {
+            protocol: "https",
+            hostname: "avatars.githubusercontent.com",
+          },
+          {
+            protocol: "https",
+            hostname: "placehold.jp",
+          },
+        ]
+      : [],
   },
 };
 
@@ -58,4 +66,5 @@ export default nextConfig;
 
 // added by create cloudflare to enable calling `getCloudflareContext()` in `next dev`
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
 initOpenNextCloudflareForDev();
