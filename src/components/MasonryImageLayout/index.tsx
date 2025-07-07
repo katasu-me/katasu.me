@@ -69,9 +69,9 @@ export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) 
   }, [images, columns]);
 
   return (
-    <div ref={containerRef} className="flex w-full gap-4">
+    <div ref={containerRef} className="flex w-full gap-6">
       {imageColumns.map((column, colIndex) => (
-        <div key={colIndex.toString()} className="flex flex-1 flex-col gap-4">
+        <div key={colIndex.toString()} className="flex flex-1 flex-col gap-6">
           {column.map((image) => (
             <FrameImage
               key={image.id}

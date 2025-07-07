@@ -94,6 +94,7 @@ export default function DemoImages({ className }: Props) {
         .reverse()
         .map((image) => {
           return (
+            // biome-ignore lint/performance/noImgElement: <explanation>
             <motion.img
               key={image.src}
               src={image.src}

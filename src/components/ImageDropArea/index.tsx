@@ -10,7 +10,7 @@ export default function ImageDropArea({ title, className }: Props) {
   return (
     <div
       className={twMerge(
-        "flex items-center justify-center rounded-xl border border-warm-black-50 border-dashed bg-warm-white transition-filter duration-200 ease-in-out hover:brightness-90",
+        "flex items-center justify-center rounded-xl border border-warm-black-50 border-dashed bg-warm-white transition-filter duration-400 ease-magnetic hover:brightness-90",
         className,
       )}
     >
