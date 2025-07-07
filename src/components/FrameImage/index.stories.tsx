@@ -30,10 +30,6 @@ const meta = {
       control: "text",
       description: "追加のCSSクラス",
     },
-    title: {
-      control: "text",
-      description: "画像のタイトル",
-    },
   },
   args: {
     src: dummyImageDataUrl,
@@ -78,11 +74,5 @@ export const Large: Story = {
     alt: "大きい画像",
     width: 500,
     height: 300,
-  },
-};
-
-export const WithTitle: Story = {
-  args: {
-    title: "画像のタイトル",
   },
 };

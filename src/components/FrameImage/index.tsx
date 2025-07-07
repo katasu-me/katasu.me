@@ -13,11 +13,6 @@ export default function FrameImage({ className, width, height, ...props }: Frame
       className={twMerge("relative w-full overflow-hidden border-5 border-white bg-warm-black-25 shadow-md", className)}
       style={{ aspectRatio: `${width} / ${height}` }}
     >
-      {props.title && (
-        <div className="-right-1 -bottom-1 absolute z-1 w-fit rounded-tl-xl bg-white px-2 py-1 text-xs">
-          {props.title}
-        </div>
-      )}
       <Image className="object-cover" fill {...props} />
     </div>
   );
