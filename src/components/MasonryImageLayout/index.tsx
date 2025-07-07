@@ -15,7 +15,7 @@ interface MasonryImageLayoutProps {
 
 export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) {
   return (
-    <div className="w-full columns-1 gap-x-[1rem] sm:columns-2 md:columns-3 ">
+    <div className="w-full columns-1 gap-4 sm:columns-2 md:columns-3">
       {images.map((image) => (
         <FrameImage
           key={image.id}
@@ -24,7 +24,7 @@ export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) 
           width={image.width}
           height={image.height}
           title={image.title}
-          className="mb-[1rem] inline-block h-auto w-full break-inside-avoid"
+          className="mb-2 inline-block h-auto w-full break-inside-avoid"
         />
       ))}
     </div>
