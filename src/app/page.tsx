@@ -7,7 +7,7 @@ import DemoImages from "./_components/DemoImages";
 
 export default function Home() {
   return (
-    <main>
+    <>
       <section className="flex h-[calc(100vh-16px)] items-center justify-center">
         <div className="flex flex-col items-center justify-center">
           <LogoImage className="w-48 sm:w-64" />
@@ -42,6 +42,6 @@ export default function Home() {
       </section>
 
       <Footer />
-    </main>
+    </>
   );
 }

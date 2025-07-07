@@ -5,7 +5,7 @@ import UserIcon from "@/components/UserIcon";
 
 export default function UserPage() {
   return (
-    <main className="flex flex-col gap-12 py-12 md:py-24">
+    <div className="flex flex-col gap-12 py-12 md:py-24">
       <header className="flex items-center justify-between">
         <UserIcon src="https://avatars.githubusercontent.com/u/44780846?v=4" alt="ユーザーアイコン">
           arrow2nd
@@ -62,6 +62,6 @@ export default function UserPage() {
           },
         ]}
       />
-    </main>
+    </div>
   );
 }
