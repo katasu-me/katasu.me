@@ -14,7 +14,7 @@ export default function FrameImage({ className, width, height, ...props }: Frame
       style={{ aspectRatio: `${width} / ${height}` }}
     >
       {props.title && (
-        <div className="absolute right-[-1px] bottom-[-1px] z-[1] w-fit rounded-tl-xl bg-white px-2 py-1 text-xs">
+        <div className="-right-1 -bottom-1 absolute z-1 w-fit rounded-tl-xl bg-white px-2 py-1 text-xs">
           {props.title}
         </div>
       )}

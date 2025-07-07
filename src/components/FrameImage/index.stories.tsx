@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import FrameImage from "./index";
 
-const dummyImageDataUrl =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
+const dummyImageDataUrl = "https://placehold.jp/300x400.png";
 
 const meta = {
   title: "Components/FrameImage",
@@ -41,6 +40,7 @@ const meta = {
     alt: "サンプル画像",
     width: 300,
     height: 200,
+    className: "w-64",
   },
 } satisfies Meta<typeof FrameImage>;
 
