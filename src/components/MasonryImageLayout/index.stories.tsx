@@ -258,6 +258,7 @@ export const MixedAspectRatios: Story = {
         width: 300,
         height: 300,
         title: "スクエア",
+        href: "https://example.com",
       },
       {
         id: "tall1",
@@ -266,6 +267,7 @@ export const MixedAspectRatios: Story = {
         width: 200,
         height: 600,
         title: "縦長バナー",
+        href: "https://example.com",
       },
       {
         id: "wide1",
@@ -274,6 +276,7 @@ export const MixedAspectRatios: Story = {
         width: 600,
         height: 150,
         title: "ワイドバナー",
+        href: "https://example.com",
       },
       {
         id: "portrait1",
@@ -281,6 +284,7 @@ export const MixedAspectRatios: Story = {
         alt: "ポートレート",
         width: 320,
         height: 480,
+        href: "https://example.com",
       },
       {
         id: "landscape1",
@@ -288,6 +292,7 @@ export const MixedAspectRatios: Story = {
         alt: "ランドスケープ",
         width: 480,
         height: 320,
+        href: "https://example.com",
       },
       {
         id: "square2",
@@ -296,6 +301,7 @@ export const MixedAspectRatios: Story = {
         width: 250,
         height: 250,
         title: "小スクエア",
+        href: "https://example.com",
       },
     ],
   },
