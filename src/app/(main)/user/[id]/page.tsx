@@ -27,6 +27,7 @@ export default function UserPage() {
             alt: "ポートレート写真",
             width: 300,
             height: 400,
+            href: "/test/images/1",
             title: "縦長の写真",
           },
           {
@@ -35,6 +36,7 @@ export default function UserPage() {
             alt: "風景写真",
             width: 400,
             height: 300,
+            href: "/test/images/2",
             title: "横長の風景",
           },
           {
@@ -43,6 +45,7 @@ export default function UserPage() {
             alt: "スクエア写真",
             width: 300,
             height: 300,
+            href: "/test/images/3",
             title: "正方形",
           },
           {
@@ -51,6 +54,7 @@ export default function UserPage() {
             alt: "縦長ポートレート",
             width: 280,
             height: 500,
+            href: "/test/images/4",
           },
           {
             id: "5",
@@ -59,6 +63,7 @@ export default function UserPage() {
             width: 250,
             height: 350,
             title: "小さめの縦長",
+            href: "/test/images/5",
           },
         ]}
       />
