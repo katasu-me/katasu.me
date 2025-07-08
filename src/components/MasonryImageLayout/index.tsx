@@ -80,6 +80,7 @@ export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) 
               width={image.width}
               height={image.height}
               title={image.title}
+              href={`/images/${image.id}`}
               className="h-auto w-full"
             />
           ))}
