@@ -34,7 +34,7 @@ export default function IconButton({ iconName, className }: Props) {
   return (
     <button
       className={twMerge(
-        "flex items-center justify-center rounded-full bg-warm-white p-2 transition-all duration-200 ease-magnetic hover:scale-105 hover:brightness-90 active:scale-95",
+        "flex items-center justify-center rounded-full bg-warm-white p-2 transition-all duration-400 ease-magnetic hover:scale-105 hover:brightness-90 active:scale-95",
         className,
       )}
       title={icon.title}

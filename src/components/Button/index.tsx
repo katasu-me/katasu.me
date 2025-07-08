@@ -13,7 +13,7 @@ type ButtonProps = {
  */
 export default function Button({ asChild, className, children, ...props }: ButtonProps) {
   const buttonClassName = twMerge(
-    "rounded-xl border border-warm-black bg-warm-white text-sm text-warm-black px-8 py-3 min-w-48 transition-all duration-300 ease-magnetic cursor-pointer hover:bg-warm-black hover:text-warm-white hover:scale-105 hover:shadow-lg active:bg-warm-black active:text-warm-white active:scale-95",
+    "rounded-xl border border-warm-black bg-warm-white text-sm text-warm-black px-8 py-3 min-w-48 transition-all duration-400 ease-magnetic cursor-pointer hover:bg-warm-black hover:text-warm-white hover:scale-105 hover:shadow-lg active:bg-warm-black active:text-warm-white active:scale-95",
     className,
   );
 

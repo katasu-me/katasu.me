@@ -26,9 +26,9 @@ const meta = {
       control: "number",
       description: "画像の高さ",
     },
-    className: {
+    href: {
       control: "text",
-      description: "追加のCSSクラス",
+      description: "画像をクリックしたときのリンク先",
     },
   },
   args: {
@@ -74,5 +74,14 @@ export const Large: Story = {
     alt: "大きい画像",
     width: 500,
     height: 300,
+  },
+};
+
+export const WithLink: Story = {
+  args: {
+    alt: "リンク付きの画像",
+    href: "https://example.com",
+    width: 300,
+    height: 200,
   },
 };
