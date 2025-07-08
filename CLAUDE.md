@@ -56,6 +56,13 @@ katasu.me は「インターネットのかたすみにある、ぽつんと画�
 - **TypeScript**: Strict mode有効
 - **パスエイリアス**: `@/*` → `./src/*`
 
+### アニメーション
+
+- 再生速度は `duration-400` で統一します
+- イージングは `ease-magnetic` を指定します
+- ホバー時に要素の明るさを変える場合、`hover:brightness-90` とします。必ず暗くなるようにし、opacityを下げたりして明るくすることは許可しません
+- 色、明るさなどが変化する場合は適切な transition を設定します
+
 ### 開発時の注意点
 - SVGファイルはReactコンポーネントとして自動的にインポート可能（@svgr/webpack設定済み）
 - CSS ModulesとPostCSSが有効（px→rem自動変換、カスタムメディアクエリ対応）
