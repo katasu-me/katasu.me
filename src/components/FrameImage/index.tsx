@@ -23,7 +23,7 @@ export default function FrameImage({ className, width, height, href, ...props }:
   return (
     <div className={frameClassname} style={frameStyle}>
       {href && (
-        <Link className="focus:outline-none" href={href} target="_blank" rel="noopener">
+        <Link className="focus:outline-none" href={href}>
           {props.alt}
           <span className="absolute inset-0 z-1" />
         </Link>
