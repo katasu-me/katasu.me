@@ -32,6 +32,7 @@ const sampleImages: ImageData[] = [
     alt: "ポートレート写真",
     width: 300,
     height: 400,
+    href: "https://example.com",
     title: "縦長の写真",
   },
   {
@@ -40,6 +41,7 @@ const sampleImages: ImageData[] = [
     alt: "風景写真",
     width: 400,
     height: 300,
+    href: "https://example.com",
     title: "横長の風景",
   },
   {
@@ -48,6 +50,7 @@ const sampleImages: ImageData[] = [
     alt: "スクエア写真",
     width: 300,
     height: 300,
+    href: "https://example.com",
     title: "正方形",
   },
   {
@@ -56,6 +59,7 @@ const sampleImages: ImageData[] = [
     alt: "縦長ポートレート",
     width: 280,
     height: 500,
+    href: "https://example.com",
   },
   {
     id: "5",
@@ -63,6 +67,7 @@ const sampleImages: ImageData[] = [
     alt: "小さなポートレート",
     width: 250,
     height: 350,
+    href: "https://example.com",
     title: "小さめの縦長",
   },
   {
@@ -71,6 +76,7 @@ const sampleImages: ImageData[] = [
     alt: "パノラマ写真",
     width: 450,
     height: 250,
+    href: "https://example.com",
   },
   {
     id: "7",
@@ -78,6 +84,7 @@ const sampleImages: ImageData[] = [
     alt: "スマホ写真",
     width: 320,
     height: 480,
+    href: "https://example.com",
     title: "スマホサイズ",
   },
   {
@@ -86,6 +93,7 @@ const sampleImages: ImageData[] = [
     alt: "アートワーク",
     width: 350,
     height: 350,
+    href: "https://example.com",
   },
   {
     id: "9",
@@ -93,6 +101,7 @@ const sampleImages: ImageData[] = [
     alt: "ワイド写真",
     width: 500,
     height: 300,
+    href: "https://example.com",
     title: "ワイドフォーマット",
   },
   {
@@ -101,6 +110,7 @@ const sampleImages: ImageData[] = [
     alt: "バナー画像",
     width: 200,
     height: 600,
+    href: "https://example.com",
     title: "縦長バナー",
   },
   {
@@ -109,6 +119,7 @@ const sampleImages: ImageData[] = [
     alt: "風景写真2",
     width: 380,
     height: 280,
+    href: "https://example.com",
   },
   {
     id: "12",
@@ -116,6 +127,7 @@ const sampleImages: ImageData[] = [
     alt: "パノラマ風景",
     width: 600,
     height: 200,
+    href: "https://example.com",
     title: "超ワイド",
   },
 ];
@@ -135,6 +147,7 @@ export const PortraitGallery: Story = {
         alt: "ポートレート1",
         width: 300,
         height: 400,
+        href: "https://example.com",
         title: "モデル写真",
       },
       {
@@ -143,6 +156,7 @@ export const PortraitGallery: Story = {
         alt: "ポートレート2",
         width: 250,
         height: 350,
+        href: "https://example.com",
         title: "プロフィール",
       },
       {
@@ -151,6 +165,7 @@ export const PortraitGallery: Story = {
         alt: "ポートレート3",
         width: 320,
         height: 480,
+        href: "https://example.com",
         title: "縦長撮影",
       },
       {
@@ -159,6 +174,7 @@ export const PortraitGallery: Story = {
         alt: "ポートレート4",
         width: 280,
         height: 420,
+        href: "https://example.com",
       },
       {
         id: "portrait5",
@@ -167,6 +183,7 @@ export const PortraitGallery: Story = {
         width: 300,
         height: 450,
         title: "アート写真",
+        href: "https://example.com",
       },
       {
         id: "portrait6",
@@ -174,6 +191,7 @@ export const PortraitGallery: Story = {
         alt: "ポートレート6",
         width: 260,
         height: 390,
+        href: "https://example.com",
       },
     ],
   },
@@ -189,6 +207,7 @@ export const LandscapeGallery: Story = {
         width: 500,
         height: 300,
         title: "山の風景",
+        href: "https://example.com",
       },
       {
         id: "landscape2",
@@ -197,6 +216,7 @@ export const LandscapeGallery: Story = {
         width: 600,
         height: 200,
         title: "パノラマビュー",
+        href: "https://example.com",
       },
       {
         id: "landscape3",
@@ -205,6 +225,7 @@ export const LandscapeGallery: Story = {
         width: 450,
         height: 250,
         title: "海の景色",
+        href: "https://example.com",
       },
       {
         id: "landscape4",
@@ -212,6 +233,7 @@ export const LandscapeGallery: Story = {
         alt: "風景4",
         width: 520,
         height: 280,
+        href: "https://example.com",
       },
       {
         id: "landscape5",
@@ -220,6 +242,7 @@ export const LandscapeGallery: Story = {
         width: 480,
         height: 300,
         title: "都市の夜景",
+        href: "https://example.com",
       },
     ],
   },
