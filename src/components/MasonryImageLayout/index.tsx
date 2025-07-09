@@ -1,12 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { twMerge } from "tailwind-merge";
 import FrameImage from "../FrameImage";
 
-const DEFAULT_COLUMNS = 3;
+const DEFAULT_COLUMNS = 2;
 
-const BREAKPOINTS_SM = 640;
-const BREAKPOINTS_MD = 768;
+/** 画面幅とカラム数のマッピング */
+const COLUMNS = new Map([
+  [640, 2], // sm
+  [768, 3], // md
+  [1024, 4], // lg
+]);
 
 export interface ImageData {
   id: string;
@@ -25,23 +30,28 @@ interface MasonryImageLayoutProps {
 export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [columns, setColumns] = useState(DEFAULT_COLUMNS);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const updateColumns = (entries: ResizeObserverEntry[]) => {
-      const entry = entries[0];
+      const entry = entries.at(0);
       if (!entry) {
         return;
       }
 
+      // カラム数をコンポーネントの幅に応じて設定
       const width = entry.contentRect.width;
 
-      // カラム数をコンポーネントの幅に応じて設定
-      if (width < BREAKPOINTS_SM) {
-        setColumns(1);
-      } else if (width < BREAKPOINTS_MD) {
-        setColumns(2);
-      } else {
-        setColumns(3);
+      for (const [breakpoint, colCount] of COLUMNS.entries()) {
+        if (width <= breakpoint) {
+          setColumns(colCount);
+          break;
+        }
+      }
+
+      // CLS軽減のため、初回のカラム数設定が完了したらフェードイン
+      if (!isReady) {
+        setIsReady(true);
       }
     };
 
@@ -54,7 +64,7 @@ export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) 
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [isReady]);
 
   const imageColumns = useMemo(() => {
     const cols: ImageData[][] = Array.from({ length: columns }, () => []);
@@ -70,9 +80,15 @@ export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) 
   }, [images, columns]);
 
   return (
-    <div ref={containerRef} className="flex w-full gap-6">
+    <div
+      ref={containerRef}
+      className={twMerge(
+        "flex w-full gap-3 transition-opacity duration-400 ease-magnetic",
+        isReady ? "opacity-100" : "opacity-0",
+      )}
+    >
       {imageColumns.map((column, colIndex) => (
-        <div key={colIndex.toString()} className="flex flex-1 flex-col gap-6">
+        <div key={colIndex.toString()} className="flex flex-1 flex-col gap-3">
           {column.map((image) => (
             <FrameImage key={image.id} className="h-auto w-full" {...image} />
           ))}
