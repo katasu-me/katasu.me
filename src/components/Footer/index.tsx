@@ -3,7 +3,7 @@ import DevelopedBy from "./DevelopedBy";
 
 export default function Footer() {
   return (
-    <footer className="mx-auto border-warm-black-25 border-t p-32">
+    <footer className="mx-auto border-warm-black-25 border-t px-0 py-32 md:px-32">
       <div className="mx-auto max-w-xl">
         <div className="flex flex-col items-center justify-center gap-12">
           <DevelopedBy />
