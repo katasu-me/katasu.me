@@ -1,9 +1,19 @@
 import IconButton from "@/components/IconButton";
-import ImageDropArea from "@/components/ImageDropArea";
 import MasonryImageLayout from "@/components/MasonryImageLayout";
+import TagLinks from "@/components/TagLinks";
 import UserIcon from "@/components/UserIcon";
 
-export default function UserPage() {
+type PageProps = {
+  searchParams: Promise<{
+    search?: string;
+  }>;
+};
+
+export default async function UserPage({ searchParams }: PageProps) {
+  const { search } = await searchParams;
+
+  console.log("UserPage searchParams:", search);
+
   return (
     <div className="flex flex-col gap-12 py-12 md:py-24">
       <header className="flex items-center justify-between">
@@ -17,7 +27,25 @@ export default function UserPage() {
         </div>
       </header>
 
-      <ImageDropArea className="h-18" title="新しい画像を投稿する" />
+      <TagLinks
+        tags={[
+          {
+            name: "風景",
+            href: "/test/tag/%E9%A2%A8%E6%99%AF",
+            image: "https://placehold.jp/300x200.png",
+          },
+          {
+            name: "ポートレート",
+            href: "/test/tag/%E3%83%9D%E3%83%BC%E3%83%88%E3%83%AC%E3%83%BC%E3%83%88",
+            image: "https://placehold.jp/200x300.png",
+          },
+          {
+            name: "動物",
+            href: "/test/tag/%E5%8B%95%E7%89%A9",
+            image: "https://placehold.jp/250x250.png",
+          },
+        ]}
+      />
 
       <MasonryImageLayout
         images={[
