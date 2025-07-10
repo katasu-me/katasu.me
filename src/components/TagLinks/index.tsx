@@ -18,8 +18,8 @@ export default function TagLinks({ tags, className }: TagLinksProps) {
   return (
     <div>
       <div className={twMerge("flex flex-wrap gap-2", className)}>
-        <div className="flex h-16 w-24 items-center justify-center gap-1 rounded-md border border-warm-black p-2 text-center">
-          <IconTag className="h-4 w-4 text-warm-black" />
+        <div className="flex h-16 w-24 items-center justify-center gap-1 rounded-md bg-warm-black p-2 text-center text-warm-white">
+          <IconTag className="h-4 w-4" />
           <p className="text-sm">タグ</p>
         </div>
         {tags.map((tag) => (
