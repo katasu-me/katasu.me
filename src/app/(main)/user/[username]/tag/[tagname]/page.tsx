@@ -18,9 +18,7 @@ export default async function ImagesPage({ params }: PageProps) {
     <div className="flex flex-col gap-6 py-12 md:py-24">
       <header className="flex items-center justify-between">
         <Link href="#">
-          <UserIcon src="https://avatars.githubusercontent.com/u/44780846?v=4" alt="ユーザーアイコン">
-            arrow2nd
-          </UserIcon>
+          <UserIcon name="arrow2nd" src="https://avatars.githubusercontent.com/u/44780846?v=4" alt="ユーザーアイコン" />
         </Link>
       </header>
 
