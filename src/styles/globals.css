@@ -2,8 +2,8 @@
 
 @theme {
   --color-warm-black: rgba(72, 48, 48, 1);
-  --color-warm-black-25: rgba(72, 48, 48, 0.25);
-  --color-warm-black-50: rgba(72, 48, 48, 0.5);
+  --color-warm-black-25: rgb(223, 215, 215);
+  --color-warm-black-50: rgb(163, 150, 150);
   --color-warm-white: rgba(254, 251, 251, 1);
   --color-peach-foam: rgba(245, 231, 228, 1);
 
