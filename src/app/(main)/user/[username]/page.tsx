@@ -1,7 +1,7 @@
+import DraggableImages from "@/components/DraggableImages";
 import IconButton from "@/components/IconButton";
 import LayoutToggle from "@/components/LayoutToggle";
 import MasonryImageLayout from "@/components/MasonryImageLayout";
-import PhotosStack from "@/components/PhotosStack";
 import TagLinks from "@/components/TagLinks";
 import UserIcon from "@/components/UserIcon";
 
@@ -86,7 +86,7 @@ export default async function UserPage({ searchParams }: PageProps) {
             },
           ]}
         />
-        {view === "random" ? <PhotosStack items={images} /> : <MasonryImageLayout images={images} />}
+        {view === "random" ? <DraggableImages items={images} /> : <MasonryImageLayout images={images} />}
       </div>
 
       <LayoutToggle

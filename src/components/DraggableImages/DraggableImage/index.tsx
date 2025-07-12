@@ -3,9 +3,10 @@ import { type RefObject, useState } from "react";
 import type { FrameImageProps } from "@/components/FrameImage";
 import FrameImage from "@/components/FrameImage";
 
-type DraggablePhotoProps = {
+type Props = {
   item: FrameImageProps;
   initialPosition: { x: number; y: number; rotation: number };
+  containerRef: RefObject<HTMLDivElement | null>;
   maxZIndex: RefObject<number>;
   delay: number;
 };
@@ -13,7 +14,7 @@ type DraggablePhotoProps = {
 const HOROZONTAL_MAX_WIDTH = 400;
 const VERTICAL_MAX_WIDTH = 250;
 
-export default function DraggablePhoto({ item, initialPosition, maxZIndex, delay }: DraggablePhotoProps) {
+export default function DraggableImage({ item, initialPosition, containerRef, maxZIndex, delay }: Props) {
   const [zIndex, setZIndex] = useState(2);
   const x = useMotionValue(initialPosition.x);
   const y = useMotionValue(initialPosition.y);
@@ -33,11 +34,11 @@ export default function DraggablePhoto({ item, initialPosition, maxZIndex, delay
       className="absolute touch-none select-none hover:cursor-grab active:cursor-grabbing"
       style={{ x, y, zIndex }}
       initial={{
-        x: 500,
+        x: 0,
         y: 500,
         opacity: 0,
         scale: 1.5,
-        filter: "blur(8px)",
+        filter: "blur(16px)",
       }}
       animate={{
         x: initialPosition.x,
@@ -54,11 +55,7 @@ export default function DraggablePhoto({ item, initialPosition, maxZIndex, delay
         damping: 100,
       }}
       drag
-      dragElastic={0.5}
-      dragTransition={{
-        bounceStiffness: 300,
-        bounceDamping: 30,
-      }}
+      dragConstraints={containerRef}
       onDragStart={() => {
         // ドラッグした要素を最前面に
         const nextZIndex = maxZIndex.current + 1;

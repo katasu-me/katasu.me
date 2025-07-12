@@ -3,15 +3,26 @@
 import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import type { FrameImageProps } from "../FrameImage";
-import DraggablePhoto from "./DraggableImage";
+import DraggableImage from "./DraggableImage";
 
 type Props = {
   items: FrameImageProps[];
   className?: string;
 };
 
-const getRandomPosition = () => {
-  // ビューポートの中心からの相対位置として計算
+type Position = {
+  x: number;
+  y: number;
+  rotation: number;
+};
+
+const DEFAULT_POSITION: Position = {
+  x: 0,
+  y: 0,
+  rotation: 0,
+};
+
+const getRandomPosition = (): Position => {
   const margin = 200; // 画像の半分程度のマージン
   const maxX = (window.innerWidth - margin * 2) / 2;
   const maxY = (window.innerHeight - margin * 2) / 2;
@@ -23,8 +34,8 @@ const getRandomPosition = () => {
   };
 };
 
-export default function PhotosStack({ items, className }: Props) {
-  const [positions] = useState(() => items.map(() => getRandomPosition()));
+export default function DraggableImages({ items, className }: Props) {
+  const [positions, setPositions] = useState<Position[]>([]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const maxZIndex = useRef(2);
@@ -34,19 +45,22 @@ export default function PhotosStack({ items, className }: Props) {
     document.addEventListener("gesturestart", preventDefault);
     document.addEventListener("gesturechange", preventDefault);
 
+    setPositions(items.map(() => getRandomPosition()));
+
     return () => {
       document.removeEventListener("gesturestart", preventDefault);
       document.removeEventListener("gesturechange", preventDefault);
     };
-  }, []);
+  }, [items.map]);
 
   return (
     <div ref={containerRef} className={twMerge("relative flex h-screen w-full items-center justify-center", className)}>
       {items.map((item, i) => (
-        <DraggablePhoto
+        <DraggableImage
           key={i.toString()}
           item={item}
-          initialPosition={positions[i]}
+          initialPosition={positions.at(i) ?? DEFAULT_POSITION}
+          containerRef={containerRef}
           maxZIndex={maxZIndex}
           delay={i * 0.05}
         />
