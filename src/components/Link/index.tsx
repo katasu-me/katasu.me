@@ -1,14 +1,18 @@
-import type { ReactNode } from "react";
+import Link, { type LinkProps } from "next/link";
+import type { PropsWithChildren } from "react";
+import { twMerge } from "tailwind-merge";
 
-interface LinkProps {
-  href: string;
-  children: ReactNode;
-}
+type Props = {
+  className?: string;
+} & PropsWithChildren<LinkProps>;
 
-export default function Link({ href, children }: LinkProps) {
+export default function TextLink({ className, children, ...props }: Props) {
   return (
-    <a href={href} className="tracking-wide underline transition-all duration-400 ease-in-out hover:opacity-60">
+    <Link
+      {...props}
+      className={twMerge("tracking-wide underline transition-all duration-400 ease-in-out hover:opacity-60", className)}
+    >
       {children}
-    </a>
+    </Link>
   );
 }
