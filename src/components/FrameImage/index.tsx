@@ -6,16 +6,12 @@ import { type ComponentProps, useRef, useState } from "react";
 import { useClickAway } from "react-use";
 import { twMerge } from "tailwind-merge";
 
-interface FrameImageProps extends Omit<ComponentProps<typeof Image>, "width" | "height"> {
+export type FrameImageProps = {
   width: number;
   height: number;
   href?: string;
   enableViewButton?: boolean;
-  maxSize?: {
-    width: number;
-    height: number;
-  };
-}
+} & Omit<ComponentProps<typeof Image>, "width" | "height">;
 
 export default function FrameImage({
   className,
@@ -23,7 +19,6 @@ export default function FrameImage({
   height,
   href,
   enableViewButton = false,
-  maxSize,
   ...props
 }: FrameImageProps) {
   const [showButton, setShowButton] = useState(false);
@@ -46,25 +41,6 @@ export default function FrameImage({
     }
   };
 
-  // サイズを制限しつつアスペクト比を維持
-  const aspectRatio = width / height;
-  let displayWidth = width;
-  let displayHeight = height;
-
-  if (maxSize) {
-    // 最大幅を超える場合
-    if (displayWidth > maxSize.width) {
-      displayWidth = maxSize.width;
-      displayHeight = displayWidth / aspectRatio;
-    }
-
-    // 最大高さを超える場合
-    if (displayHeight > maxSize.height) {
-      displayHeight = maxSize.height;
-      displayWidth = displayHeight * aspectRatio;
-    }
-  }
-
   const divProps = enableViewButton
     ? {
         onClick: handleClick,
@@ -84,13 +60,7 @@ export default function FrameImage({
         enableViewButton && "hover:cursor-grab active:cursor-grabbing",
         className,
       )}
-      style={{
-        ...(maxSize && {
-          maxWidth: maxSize.width,
-          maxHeight: maxSize.height,
-        }),
-        aspectRatio: `${width} / ${height}`,
-      }}
+      style={{ aspectRatio: `${width} / ${height}` }}
       {...divProps}
     >
       {href && !enableViewButton && (
