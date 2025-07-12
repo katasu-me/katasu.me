@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import TagLink from "./TagLink";
+import TagLink from ".";
 
 const meta = {
   title: "Components/TagLinks/TagLink",
