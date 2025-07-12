@@ -17,8 +17,8 @@ type Story = StoryObj<typeof UserIcon>;
 
 export const Default: Story = {
   args: {
+    name: "arrow2nd",
     src: "https://avatars.githubusercontent.com/u/44780846?v=4",
     alt: "ユーザー",
-    children: "arrow2nd",
   },
 };
