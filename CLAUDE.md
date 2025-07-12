@@ -36,9 +36,12 @@ katasu.me は「インターネットのかたすみにある、ぽつんと画�
 - **UIライブラリ**: Radix UI、Motion（アニメーション）
 - **日本語処理**: BudouX（自然な改行位置計算）
 - **パッケージマネージャー**: Bun
+- **テスト**: bun test
+    - リファレンス: https://bun.sh/docs/cli/test.md
 
 ### ディレクトリ構成
 - `src/app/` - Next.js App Routerのページとレイアウト
+    - ページ固有のコンポーネントは同一階層に /_components を作成しそこに置きます
 - `src/components/` - 再利用可能なUIコンポーネント（各コンポーネントに`.stories.tsx`ファイル付き）
 - `src/assets/` - 画像、SVGなどの静的リソース
 - `src/constants/` - 定数定義（サイト情報、作者情報など）
