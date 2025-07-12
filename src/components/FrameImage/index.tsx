@@ -10,7 +10,7 @@ export type FrameImageProps = {
   width: number;
   height: number;
   href?: string;
-  enableViewButton?: boolean;
+  requireConfirmation?: boolean;
 } & Omit<ComponentProps<typeof Image>, "width" | "height">;
 
 export default function FrameImage({
@@ -18,30 +18,30 @@ export default function FrameImage({
   width,
   height,
   href,
-  enableViewButton = false,
+  requireConfirmation = false,
   ...props
 }: FrameImageProps) {
-  const [showButton, setShowButton] = useState(false);
-  const linkRef = useRef<HTMLDivElement>(null);
+  const [isOpenOverlay, setIsOpenOverlay] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
-  useClickAway(linkRef, () => {
-    setShowButton(false);
+  useClickAway(overlayRef, () => {
+    setIsOpenOverlay(false);
   });
 
   const handleClick = () => {
-    if (enableViewButton && href) {
-      setShowButton(true);
+    if (requireConfirmation && href) {
+      setIsOpenOverlay(true);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.key === "Enter" || e.key === " ") && enableViewButton && href) {
+    if ((e.key === "Enter" || e.key === " ") && requireConfirmation && href) {
       e.preventDefault();
-      setShowButton(true);
+      setIsOpenOverlay(true);
     }
   };
 
-  const divProps = enableViewButton
+  const interactiveProps = requireConfirmation
     ? {
         onClick: handleClick,
         onKeyDown: handleKeyDown,
@@ -50,18 +50,18 @@ export default function FrameImage({
       }
     : {};
 
-  const isFullLink = href && !enableViewButton;
-  const isShowLinkText = href && enableViewButton && showButton;
+  const isFullLink = href && !requireConfirmation;
+  const showOverlay = href && requireConfirmation && isOpenOverlay;
 
   return (
     <div
       className={twMerge(
         "group relative overflow-hidden border-5 border-white bg-warm-black-25 shadow-md transition-transform duration-400 ease-magnetic hover:scale-[101%] active:scale-[99%]",
-        enableViewButton && "hover:cursor-grab active:cursor-grabbing",
+        requireConfirmation && "hover:cursor-grab active:cursor-grabbing",
         className,
       )}
       style={{ aspectRatio: `${width} / ${height}` }}
-      {...divProps}
+      {...interactiveProps}
     >
       {isFullLink && (
         <Link className="focus:outline-none" href={href}>
@@ -69,13 +69,13 @@ export default function FrameImage({
           <span className={"absolute inset-0 z-1"} />
         </Link>
       )}
-      {isShowLinkText && (
+      {showOverlay && (
         <div
           className={twMerge(
             "absolute inset-0 z-1 flex items-center justify-center",
-            href && enableViewButton && showButton && "backdrop-blur-xs",
+            href && requireConfirmation && isOpenOverlay && "backdrop-blur-xs",
           )}
-          ref={linkRef}
+          ref={overlayRef}
         >
           <Link className="w-full py-6 text-center text-warm-white" href={href}>
             この写真を見る

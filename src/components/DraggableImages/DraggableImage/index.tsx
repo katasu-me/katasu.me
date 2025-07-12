@@ -78,7 +78,7 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
           width={item.width}
           height={item.height}
           href={item.href}
-          enableViewButton
+          requireConfirmation
         />
       </motion.div>
     </motion.div>
