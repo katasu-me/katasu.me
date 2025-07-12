@@ -86,7 +86,7 @@ export default async function UserPage({ searchParams }: PageProps) {
             },
           ]}
         />
-        {view === "masonry" ? <MasonryImageLayout images={images} /> : <PhotosStack items={images} />}
+        {view === "random" ? <PhotosStack items={images} /> : <MasonryImageLayout images={images} />}
       </div>
 
       <LayoutToggle
