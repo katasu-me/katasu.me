@@ -63,7 +63,6 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
         maxZIndex.current = nextZIndex;
         setZIndex(nextZIndex);
       }}
-      whileHover={{ scale: 1.05 }}
     >
       <motion.div
         style={{

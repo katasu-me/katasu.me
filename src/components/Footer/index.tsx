@@ -1,4 +1,4 @@
-import Link from "../Link";
+import TextLink from "../Link";
 import DevelopedBy from "./DevelopedBy";
 
 export default function Footer() {
@@ -9,9 +9,9 @@ export default function Footer() {
           <DevelopedBy />
 
           <nav className="flex flex-col items-center gap-2 text-sm text-warm-black">
-            <Link href="/news">お知らせ</Link>
-            <Link href="/terms">利用規約</Link>
-            <Link href="/privacy">プライバシーポリシー</Link>
+            <TextLink href="/news">お知らせ</TextLink>
+            <TextLink href="/terms">利用規約</TextLink>
+            <TextLink href="/privacy">プライバシーポリシー</TextLink>
           </nav>
 
           <p className="text-xs">© katasu.me</p>
