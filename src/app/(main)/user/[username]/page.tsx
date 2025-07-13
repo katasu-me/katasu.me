@@ -1,13 +1,13 @@
-import type { ComponentProps } from "react";
 import IconButton from "@/components/IconButton";
 import ImagesUI from "@/components/ImagesUI";
 import TagLinks from "@/components/TagLinks";
 import UserIcon from "@/components/UserIcon";
+import type { ImageLayoutType } from "@/types/layout";
 
 type PageProps = {
   searchParams: Promise<{
     search?: string;
-    view?: ComponentProps<typeof ImagesUI>["view"];
+    view?: ImageLayoutType;
   }>;
 };
 
@@ -71,17 +71,17 @@ export default async function UserPage({ searchParams }: PageProps) {
           tags={[
             {
               name: "風景",
-              href: "/test/tag/%E9%A2%A8%E6%99%AF",
+              href: "/user/arrow2nd/tag/%E9%A2%A8%E6%99%AF",
               image: "/dummy/a.avif",
             },
             {
               name: "ポートレート",
-              href: "/test/tag/%E3%83%9D%E3%83%BC%E3%83%88%E3%83%AC%E3%83%BC%E3%83%88",
+              href: "/user/arrow2nd/tag/%E3%83%9D%E3%83%BC%E3%83%88%E3%83%AC%E3%83%BC%E3%83%88",
               image: "/dummy/b.avif",
             },
             {
               name: "空間",
-              href: "/test/tag/%E5%8B%95%E7%89%A9",
+              href: "/user/arrow2nd/tag/%E5%8B%95%E7%89%A9",
               image: "/dummy/c.avif",
             },
           ]}
