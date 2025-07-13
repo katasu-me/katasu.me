@@ -12,8 +12,8 @@ type Props = {
 };
 
 export default function LayoutToggle({ value, masonryHref, randomHref, className }: Props) {
-  const selectedClassname = "bg-warm-black text-warm-white shadow-sm";
-  const unselectedClassname = "text-warm-black-50 hover:text-warm-black";
+  const selectedClassname = "interactive-base bg-warm-black text-warm-white shadow-sm";
+  const unselectedClassname = "interactive-scale-brightness text-warm-black-50 hover:text-warm-black";
 
   return (
     <div
@@ -24,7 +24,7 @@ export default function LayoutToggle({ value, masonryHref, randomHref, className
       <Link
         href={masonryHref}
         className={twMerge(
-          "interactive-base flex items-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
+          " flex items-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
           value === "masonry" ? selectedClassname : unselectedClassname,
         )}
         role="tab"
@@ -36,7 +36,7 @@ export default function LayoutToggle({ value, masonryHref, randomHref, className
       <Link
         href={randomHref}
         className={twMerge(
-          "interactive-base flex items-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
+          "flex items-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
           value === "random" ? selectedClassname : unselectedClassname,
         )}
         role="tab"
