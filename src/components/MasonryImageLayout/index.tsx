@@ -25,9 +25,10 @@ export type ImageData = {
 
 type MasonryImageLayoutProps = {
   images: ImageData[];
+  className?: string;
 };
 
-export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) {
+export default function MasonryImageLayout({ images, className }: MasonryImageLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [columns, setColumns] = useState(DEFAULT_COLUMNS);
   const [isReady, setIsReady] = useState(false);
@@ -83,8 +84,9 @@ export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) 
     <div
       ref={containerRef}
       className={twMerge(
-        "page-default-px flex w-full gap-3 transition-opacity duration-400 ease-magnetic",
+        "flex w-full gap-3 transition-opacity duration-400 ease-magnetic",
         isReady ? "opacity-100" : "opacity-0",
+        className,
       )}
     >
       {imageColumns.map((column, colIndex) => (

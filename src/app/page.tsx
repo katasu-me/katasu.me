@@ -7,7 +7,7 @@ import DemoImages from "./_components/DemoImages";
 
 export default function Home() {
   return (
-    <div className="page-default-px">
+    <div className="col-start-2">
       <section className="flex h-[calc(100vh-16px)] items-center justify-center">
         <div className="flex flex-col items-center justify-center">
           <LogoImage className="w-48 sm:w-64" />

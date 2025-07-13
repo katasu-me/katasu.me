@@ -10,12 +10,12 @@ export default function ImageDropArea({ title, className }: Props) {
   return (
     <div
       className={twMerge(
-        "flex items-center justify-center rounded-xl border border-warm-black-50 border-dashed bg-warm-white transition-filter duration-400 ease-magnetic hover:brightness-90",
+        "flex items-center justify-center rounded-xl border border-warm-black-50 border-dashed bg-warm-white py-6 transition-filter duration-400 ease-magnetic hover:brightness-90",
         className,
       )}
     >
       <div className="flex items-center gap-2 text-sm tracking-wider">
-        <IconPhotoPlus className="h-5 w-5" />
+        <IconPhotoPlus className="h-4 w-4" />
         <p>{title}</p>
       </div>
     </div>

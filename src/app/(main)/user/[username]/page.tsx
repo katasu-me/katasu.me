@@ -2,6 +2,7 @@ import IconReload from "@/assets/icons/reload.svg";
 import Button from "@/components/Button";
 import DraggableImages from "@/components/DraggableImages";
 import IconButton from "@/components/IconButton";
+import ImageDropArea from "@/components/ImageDropArea";
 import LayoutToggle from "@/components/LayoutToggle";
 import MasonryImageLayout from "@/components/MasonryImageLayout";
 import TagLinks from "@/components/TagLinks";
@@ -58,8 +59,8 @@ export default async function UserPage({ searchParams }: PageProps) {
   ];
 
   return (
-    <div className="flex flex-col gap-12 py-16">
-      <header className="page-default-px flex items-center justify-between">
+    <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
+      <header className="col-start-2 flex items-center justify-between">
         <UserIcon name="arrow2nd" src="https://avatars.githubusercontent.com/u/44780846?v=4" alt="ユーザーアイコン" />
 
         <div className="flex items-center gap-2">
@@ -68,9 +69,9 @@ export default async function UserPage({ searchParams }: PageProps) {
         </div>
       </header>
 
-      <div className="space-y-8">
+      <div className="col-span-full grid grid-cols-subgrid gap-y-8">
         <TagLinks
-          className="page-default-px"
+          className="col-start-2"
           tags={[
             {
               name: "風景",
@@ -89,16 +90,19 @@ export default async function UserPage({ searchParams }: PageProps) {
             },
           ]}
         />
+        <div className="col-start-2">
+          <ImageDropArea title="あたらしい画像を置く" />
+        </div>
         {view === "random" ? (
           <>
-            <DraggableImages items={images} />
-            <Button className="mx-auto flex items-center gap-2">
+            <DraggableImages className="col-span-full" items={images} />
+            <Button className="col-start-2 mx-auto flex items-center gap-2">
               <IconReload className="h-4 w-4" />
               画像をいれかえる
             </Button>
           </>
         ) : (
-          <MasonryImageLayout images={images} />
+          <MasonryImageLayout className="col-start-2" images={images} />
         )}
       </div>
 
