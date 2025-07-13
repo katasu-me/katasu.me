@@ -40,7 +40,15 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
   return (
     <motion.div
       className="absolute touch-none select-none hover:cursor-grab active:cursor-grabbing"
-      style={{ x, y, zIndex }}
+      style={{
+        x,
+        y,
+        zIndex,
+        width: item.width > item.height ? HOROZONTAL_MAX_WIDTH : VERTICAL_MAX_WIDTH,
+        rotateY,
+        rotateZ,
+        scale,
+      }}
       initial={{
         x: 0,
         y: 500,
@@ -67,23 +75,14 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
       onClick={updateZIndex}
       onDragStart={updateZIndex}
     >
-      <motion.div
-        style={{
-          width: item.width > item.height ? HOROZONTAL_MAX_WIDTH : VERTICAL_MAX_WIDTH,
-          rotateY,
-          rotateZ,
-          scale,
-        }}
-      >
-        <FrameImage
-          src={item.src}
-          alt={item.alt}
-          width={item.width}
-          height={item.height}
-          href={item.href}
-          requireConfirmation
-        />
-      </motion.div>
+      <FrameImage
+        src={item.src}
+        alt={item.alt}
+        width={item.width}
+        height={item.height}
+        href={item.href}
+        requireConfirmation
+      />
     </motion.div>
   );
 }
