@@ -6,7 +6,7 @@ import { type ComponentProps, useRef, useState } from "react";
 import { useClickAway } from "react-use";
 import { twMerge } from "tailwind-merge";
 
-export type FrameImageProps = {
+type FrameImageProps = {
   width: number;
   height: number;
   href?: string;

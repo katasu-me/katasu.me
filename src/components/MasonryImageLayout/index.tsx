@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import FrameImage, { type FrameImageProps } from "../FrameImage";
+import FrameImage from "../FrameImage";
 
 const DEFAULT_COLUMNS = 2;
 
@@ -14,7 +14,7 @@ const COLUMNS = new Map([
 ]);
 
 type MasonryImageLayoutProps = {
-  images: Omit<FrameImageProps, "requireConfirmation">[];
+  images: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
   className?: string;
 };
 
@@ -58,7 +58,7 @@ export default function MasonryImageLayout({ images, className }: MasonryImageLa
   }, [isReady]);
 
   const imageColumns = useMemo(() => {
-    const cols: FrameImageProps[][] = Array.from({ length: columns }, () => []);
+    const cols: ComponentProps<typeof FrameImage>[][] = Array.from({ length: columns }, () => []);
     const colHeights = new Array(columns).fill(0);
 
     for (const image of images) {

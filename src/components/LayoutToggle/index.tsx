@@ -2,8 +2,7 @@ import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import ShuffleIcon from "@/assets/icons/arrows-shuffle.svg";
 import MasonryIcon from "@/assets/icons/masonry.svg";
-
-export type LayoutType = "masonry" | "random";
+import type { LayoutType } from "@/types/layout";
 
 type Props = {
   value: LayoutType;

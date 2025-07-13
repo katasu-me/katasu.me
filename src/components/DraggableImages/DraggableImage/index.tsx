@@ -1,10 +1,9 @@
 import { motion, useMotionValue, useTransform } from "motion/react";
-import { type RefObject, useState } from "react";
-import type { FrameImageProps } from "@/components/FrameImage";
+import { type ComponentProps, type RefObject, useState } from "react";
 import FrameImage from "@/components/FrameImage";
 
 type Props = {
-  item: FrameImageProps;
+  item: ComponentProps<typeof FrameImage>;
   initialPosition: { x: number; y: number; rotation: number };
   containerRef: RefObject<HTMLDivElement | null>;
   maxZIndex: RefObject<number>;

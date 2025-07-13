@@ -1,14 +1,15 @@
+import type { ComponentProps } from "react";
 import IconReload from "@/assets/icons/reload.svg";
 import Button from "../Button";
 import DraggableImages from "../DraggableImages";
-import type { FrameImageProps } from "../FrameImage";
+import type FrameImage from "../FrameImage";
 import ImageDropArea from "../ImageDropArea";
 import LayoutToggle from "../LayoutToggle";
 import MasonryImageLayout from "../MasonryImageLayout";
 
 type Props = {
   view: "masonry" | "random";
-  images: FrameImageProps[];
+  images: ComponentProps<typeof FrameImage>[];
 };
 
 export default function ImagesUI({ view, images }: Props) {

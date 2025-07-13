@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import type { FrameImageProps } from "../FrameImage";
+import type FrameImage from "../FrameImage";
 import DraggableImage from "./DraggableImage";
 
 type Props = {
-  items: FrameImageProps[];
+  items: ComponentProps<typeof FrameImage>[];
   className?: string;
 };
 

@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import MasonryImageLayout, { type ImageData } from "./index";
+import type { ComponentProps } from "react";
+import type FrameImage from "@/components/FrameImage";
+import MasonryImageLayout from "./index";
 
 const meta = {
   title: "Components/MasonryImageLayout",
@@ -25,7 +27,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const sampleImages: ImageData[] = [
+const sampleImages: ComponentProps<typeof FrameImage>[] = [
   {
     id: "1",
     src: "https://placehold.jp/300x400.png",
