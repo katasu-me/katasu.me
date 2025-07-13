@@ -10,7 +10,7 @@ export default function TextLink({ className, children, ...props }: Props) {
   return (
     <Link
       {...props}
-      className={twMerge("tracking-wide underline transition-all duration-400 ease-in-out hover:opacity-60", className)}
+      className={twMerge("tracking-wide transition-all duration-400 ease-magnetic hover:underline", className)}
     >
       {children}
     </Link>
