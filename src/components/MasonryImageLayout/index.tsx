@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import FrameImage from "../FrameImage";
+import FrameImage, { type FrameImageProps } from "../FrameImage";
 
 const DEFAULT_COLUMNS = 2;
 
@@ -13,18 +13,8 @@ const COLUMNS = new Map([
   [1024, 4], // lg
 ]);
 
-export type ImageData = {
-  id: string;
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-  href: string;
-  title?: string;
-};
-
 type MasonryImageLayoutProps = {
-  images: ImageData[];
+  images: Omit<FrameImageProps, "requireConfirmation">[];
   className?: string;
 };
 
@@ -68,7 +58,7 @@ export default function MasonryImageLayout({ images, className }: MasonryImageLa
   }, [isReady]);
 
   const imageColumns = useMemo(() => {
-    const cols: ImageData[][] = Array.from({ length: columns }, () => []);
+    const cols: FrameImageProps[][] = Array.from({ length: columns }, () => []);
     const colHeights = new Array(columns).fill(0);
 
     for (const image of images) {

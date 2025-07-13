@@ -1,17 +1,13 @@
-import IconReload from "@/assets/icons/reload.svg";
-import Button from "@/components/Button";
-import DraggableImages from "@/components/DraggableImages";
+import type { ComponentProps } from "react";
 import IconButton from "@/components/IconButton";
-import ImageDropArea from "@/components/ImageDropArea";
-import LayoutToggle from "@/components/LayoutToggle";
-import MasonryImageLayout from "@/components/MasonryImageLayout";
+import ImagesUI from "@/components/ImagesUI";
 import TagLinks from "@/components/TagLinks";
 import UserIcon from "@/components/UserIcon";
 
 type PageProps = {
   searchParams: Promise<{
     search?: string;
-    view?: "masonry" | "random";
+    view?: ComponentProps<typeof ImagesUI>["view"];
   }>;
 };
 
@@ -90,28 +86,9 @@ export default async function UserPage({ searchParams }: PageProps) {
             },
           ]}
         />
-        <div className="col-start-2">
-          <ImageDropArea title="あたらしい画像をおく" />
-        </div>
-        {view === "random" ? (
-          <>
-            <DraggableImages className="col-span-full" items={images} />
-            <Button className="col-start-2 mx-auto flex items-center gap-2">
-              <IconReload className="h-4 w-4" />
-              画像をいれかえる
-            </Button>
-          </>
-        ) : (
-          <MasonryImageLayout className="col-start-2" images={images} />
-        )}
-      </div>
 
-      <LayoutToggle
-        className="fixed right-6 bottom-6 z-50"
-        value={view || "masonry"}
-        masonryHref="?view=masonry"
-        randomHref="?view=random"
-      />
+        <ImagesUI view={view || "masonry"} images={images} />
+      </div>
     </div>
   );
 }
