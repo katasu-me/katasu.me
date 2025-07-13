@@ -83,7 +83,7 @@ export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) 
     <div
       ref={containerRef}
       className={twMerge(
-        "flex w-full gap-3 transition-opacity duration-400 ease-magnetic",
+        "page-default-px flex w-full gap-3 transition-opacity duration-400 ease-magnetic",
         isReady ? "opacity-100" : "opacity-0",
       )}
     >
