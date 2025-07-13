@@ -87,7 +87,17 @@ export default async function UserPage({ searchParams }: PageProps) {
             },
           ]}
         />
-        {view === "random" ? <DraggableImages items={images} /> : <MasonryImageLayout images={images} />}
+        {view === "random" ? (
+          <>
+            <DraggableImages items={images} />
+            <Button className="mx-auto flex items-center gap-2">
+              <IconReload className="h-4 w-4" />
+              画像をいれかえる
+            </Button>
+          </>
+        ) : (
+          <MasonryImageLayout images={images} />
+        )}
       </div>
 
       <LayoutToggle
