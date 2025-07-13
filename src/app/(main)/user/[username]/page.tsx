@@ -1,3 +1,5 @@
+import IconReload from "@/assets/icons/reload.svg";
+import Button from "@/components/Button";
 import DraggableImages from "@/components/DraggableImages";
 import IconButton from "@/components/IconButton";
 import LayoutToggle from "@/components/LayoutToggle";
@@ -21,16 +23,16 @@ export default async function UserPage({ searchParams }: PageProps) {
     {
       id: "1",
       src: "/dummy/a.avif",
-      alt: "写真",
+      alt: "画像",
       width: 2624,
       height: 3936,
       href: "/test/images/1",
-      title: "縦長の写真",
+      title: "縦長の画像",
     },
     {
       id: "2",
       src: "/dummy/b.avif",
-      alt: "写真",
+      alt: "画像",
       width: 2560,
       height: 1440,
       href: "/test/images/2",
@@ -39,7 +41,7 @@ export default async function UserPage({ searchParams }: PageProps) {
     {
       id: "3",
       src: "/dummy/c.avif",
-      alt: "写真",
+      alt: "画像",
       width: 1440,
       height: 2560,
       href: "/test/images/3",
@@ -48,7 +50,7 @@ export default async function UserPage({ searchParams }: PageProps) {
     {
       id: "4",
       src: "/dummy/d.avif",
-      alt: "写真",
+      alt: "画像",
       width: 2560,
       height: 1440,
       href: "/test/images/4",

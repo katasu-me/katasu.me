@@ -20,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     tags: [
-      { name: "写真", href: "/user/arrow2nd/tag/写真", image: "https://placehold.jp/960x64.png" },
+      { name: "画像", href: "/user/arrow2nd/tag/画像", image: "https://placehold.jp/960x64.png" },
       { name: "イラスト", href: "/user/arrow2nd/tag/イラスト", image: "https://placehold.jp/96x64.png" },
       { name: "風景", href: "/user/arrow2nd/tag/風景", image: "https://placehold.jp/96x64.png" },
     ],
@@ -29,14 +29,14 @@ export const Default: Story = {
 
 export const SingleTag: Story = {
   args: {
-    tags: [{ name: "写真", href: "/user/arrow2nd/tag/写真", image: "https://placehold.jp/96x64.png" }],
+    tags: [{ name: "画像", href: "/user/arrow2nd/tag/画像", image: "https://placehold.jp/96x64.png" }],
   },
 };
 
 export const ManyTags: Story = {
   args: {
     tags: [
-      { name: "写真", href: "/user/arrow2nd/tag/写真", image: "https://placehold.jp/96x64.png" },
+      { name: "画像", href: "/user/arrow2nd/tag/画像", image: "https://placehold.jp/96x64.png" },
       { name: "イラスト", href: "/user/arrow2nd/tag/イラスト", image: "https://placehold.jp/96x64.png" },
       { name: "風景", href: "/user/arrow2nd/tag/風景", image: "https://placehold.jp/96x64.png" },
       { name: "ポートレート", href: "/user/arrow2nd/tag/ポートレート", image: "https://placehold.jp/96x64.png" },

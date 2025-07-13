@@ -29,16 +29,16 @@ const sampleImages: ImageData[] = [
   {
     id: "1",
     src: "https://placehold.jp/300x400.png",
-    alt: "ポートレート写真",
+    alt: "ポートレート画像",
     width: 300,
     height: 400,
     href: "https://example.com",
-    title: "縦長の写真",
+    title: "縦長の画像",
   },
   {
     id: "2",
     src: "https://placehold.jp/400x300.png",
-    alt: "風景写真",
+    alt: "風景画像",
     width: 400,
     height: 300,
     href: "https://example.com",
@@ -47,7 +47,7 @@ const sampleImages: ImageData[] = [
   {
     id: "3",
     src: "https://placehold.jp/300x300.png",
-    alt: "スクエア写真",
+    alt: "スクエア画像",
     width: 300,
     height: 300,
     href: "https://example.com",
@@ -73,7 +73,7 @@ const sampleImages: ImageData[] = [
   {
     id: "6",
     src: "https://placehold.jp/450x250.png",
-    alt: "パノラマ写真",
+    alt: "パノラマ画像",
     width: 450,
     height: 250,
     href: "https://example.com",
@@ -81,7 +81,7 @@ const sampleImages: ImageData[] = [
   {
     id: "7",
     src: "https://placehold.jp/320x480.png",
-    alt: "スマホ写真",
+    alt: "スマホ画像",
     width: 320,
     height: 480,
     href: "https://example.com",
@@ -98,7 +98,7 @@ const sampleImages: ImageData[] = [
   {
     id: "9",
     src: "https://placehold.jp/500x300.png",
-    alt: "ワイド写真",
+    alt: "ワイド画像",
     width: 500,
     height: 300,
     href: "https://example.com",
@@ -116,7 +116,7 @@ const sampleImages: ImageData[] = [
   {
     id: "11",
     src: "https://placehold.jp/380x280.png",
-    alt: "風景写真2",
+    alt: "風景画像2",
     width: 380,
     height: 280,
     href: "https://example.com",
@@ -148,7 +148,7 @@ export const PortraitGallery: Story = {
         width: 300,
         height: 400,
         href: "https://example.com",
-        title: "モデル写真",
+        title: "モデル画像",
       },
       {
         id: "portrait2",
@@ -182,7 +182,7 @@ export const PortraitGallery: Story = {
         alt: "ポートレート5",
         width: 300,
         height: 450,
-        title: "アート写真",
+        title: "アート画像",
         href: "https://example.com",
       },
       {

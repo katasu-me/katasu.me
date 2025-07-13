@@ -29,16 +29,16 @@ export default async function ImagesPage({ params }: PageProps) {
           {
             id: "1",
             src: "https://placehold.jp/300x400.png",
-            alt: "ポートレート写真",
+            alt: "ポートレート画像",
             width: 300,
             height: 400,
             href: "/test/images/1",
-            title: "縦長の写真",
+            title: "縦長の画像",
           },
           {
             id: "2",
             src: "https://placehold.jp/400x300.png",
-            alt: "風景写真",
+            alt: "風景画像",
             width: 400,
             height: 300,
             href: "/test/images/2",
@@ -47,7 +47,7 @@ export default async function ImagesPage({ params }: PageProps) {
           {
             id: "3",
             src: "https://placehold.jp/300x300.png",
-            alt: "スクエア写真",
+            alt: "スクエア画像",
             width: 300,
             height: 300,
             href: "/test/images/3",
