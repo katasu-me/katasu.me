@@ -66,7 +66,7 @@ export default function FrameImage({
       {isFullLink && (
         <Link className="focus:outline-none" href={href}>
           {props.alt}
-          <span className={"absolute inset-0 z-1"} />
+          <span className="absolute inset-0 z-1" />
         </Link>
       )}
       {showOverlay && (
