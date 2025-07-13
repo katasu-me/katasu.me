@@ -29,6 +29,14 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
     return initialPosition.rotation + deltaX * 0.02 + deltaY * 0.01;
   });
 
+  const updateZIndex = () => {
+    // 要素を最前面に
+    const nextZIndex = maxZIndex.current + 1;
+
+    maxZIndex.current = nextZIndex;
+    setZIndex(nextZIndex);
+  };
+
   return (
     <motion.div
       className="absolute touch-none select-none hover:cursor-grab active:cursor-grabbing"
@@ -56,13 +64,8 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
       }}
       drag
       dragConstraints={containerRef}
-      onDragStart={() => {
-        // ドラッグした要素を最前面に
-        const nextZIndex = maxZIndex.current + 1;
-
-        maxZIndex.current = nextZIndex;
-        setZIndex(nextZIndex);
-      }}
+      onClick={updateZIndex}
+      onDragStart={updateZIndex}
     >
       <motion.div
         style={{
