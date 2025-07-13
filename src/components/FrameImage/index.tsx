@@ -73,7 +73,7 @@ export default function FrameImage({
         <div
           className={twMerge(
             "absolute inset-0 z-1 flex items-center justify-center",
-            href && requireConfirmation && isOpenOverlay && "backdrop-blur-xs",
+            href && requireConfirmation && isOpenOverlay && "backdrop-blur-sm",
           )}
           ref={overlayRef}
         >

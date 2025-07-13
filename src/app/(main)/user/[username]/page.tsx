@@ -57,7 +57,7 @@ export default async function UserPage({ searchParams }: PageProps) {
 
   return (
     <div className="flex flex-col gap-12 py-16">
-      <header className="flex items-center justify-between">
+      <header className="page-default-px flex items-center justify-between">
         <UserIcon name="arrow2nd" src="https://avatars.githubusercontent.com/u/44780846?v=4" alt="ユーザーアイコン" />
 
         <div className="flex items-center gap-2">
@@ -68,6 +68,7 @@ export default async function UserPage({ searchParams }: PageProps) {
 
       <div className="space-y-8">
         <TagLinks
+          className="page-default-px"
           tags={[
             {
               name: "風景",

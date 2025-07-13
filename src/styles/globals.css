@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@layer utilities {
+  .page-default-px {
+    @apply px-6 sm:px-8 xl:px-0;
+  }
+}
+
 @theme {
   --color-warm-black: rgba(72, 48, 48, 1);
   --color-warm-black-25: rgb(223, 215, 215);

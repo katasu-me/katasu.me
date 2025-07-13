@@ -1,10 +1,12 @@
+import type { ComponentProps } from "react";
+import { twMerge } from "tailwind-merge";
 import TextLink from "../Link";
 import DevelopedBy from "./DevelopedBy";
 
-export default function Footer() {
+export default function Footer({ className, ...props }: ComponentProps<"footer">) {
   return (
-    <footer className="mx-auto border-warm-black-25 border-t px-0 py-32 md:px-32">
-      <div className="mx-auto max-w-xl">
+    <footer className={twMerge("mx-auto ", className)} {...props}>
+      <div className="mx-auto border-warm-black-25 border-t py-32">
         <div className="flex flex-col items-center justify-center gap-12">
           <DevelopedBy />
 

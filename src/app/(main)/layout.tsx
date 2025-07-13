@@ -4,7 +4,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       {children}
-      <Footer />
+      <Footer className="page-default-px" />
     </>
   );
 }

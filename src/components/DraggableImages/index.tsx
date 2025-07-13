@@ -54,7 +54,10 @@ export default function DraggableImages({ items, className }: Props) {
   }, [items.map]);
 
   return (
-    <div ref={containerRef} className={twMerge("relative flex h-screen w-full items-center justify-center", className)}>
+    <div
+      ref={containerRef}
+      className={twMerge("relative flex h-screen w-full items-center justify-center overflow-x-clip", className)}
+    >
       {items.map((item, i) => (
         <DraggableImage
           key={i.toString()}
