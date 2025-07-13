@@ -13,7 +13,7 @@ const COLUMNS = new Map([
   [1024, 4], // lg
 ]);
 
-export interface ImageData {
+export type ImageData = {
   id: string;
   src: string;
   alt: string;
@@ -21,11 +21,11 @@ export interface ImageData {
   height: number;
   href: string;
   title?: string;
-}
+};
 
-interface MasonryImageLayoutProps {
+type MasonryImageLayoutProps = {
   images: ImageData[];
-}
+};
 
 export default function MasonryImageLayout({ images }: MasonryImageLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null);
