@@ -91,7 +91,7 @@ export default async function UserPage({ searchParams }: PageProps) {
           ]}
         />
         <div className="col-start-2">
-          <ImageDropArea title="あたらしい画像を置く" />
+          <ImageDropArea title="あたらしい画像をおく" />
         </div>
         {view === "random" ? (
           <>
