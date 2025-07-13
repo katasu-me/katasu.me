@@ -77,7 +77,7 @@ export default function FrameImage({
           )}
           ref={overlayRef}
         >
-          <Link className="w-full py-6 text-center text-warm-white" href={href}>
+          <Link className="w-2/3 py-6 text-center text-warm-white" href={href}>
             この画像をみる
           </Link>
         </div>
