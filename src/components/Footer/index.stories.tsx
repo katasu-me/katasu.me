@@ -15,3 +15,9 @@ export default meta;
 type Story = StoryObj<typeof Footer>;
 
 export const Default: Story = {};
+
+export const WithDevelopedBy: Story = {
+  args: {
+    logoType: "developed-by",
+  },
+};

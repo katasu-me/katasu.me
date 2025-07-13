@@ -2,10 +2,10 @@ import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import ShuffleIcon from "@/assets/icons/arrows-shuffle.svg";
 import MasonryIcon from "@/assets/icons/masonry.svg";
-import type { LayoutType } from "@/types/layout";
+import type { ImageLayoutType } from "@/types/layout";
 
 type Props = {
-  value: LayoutType;
+  value: ImageLayoutType;
   masonryHref: string;
   randomHref: string;
   className?: string;
@@ -24,7 +24,7 @@ export default function LayoutToggle({ value, masonryHref, randomHref, className
       <Link
         href={masonryHref}
         className={twMerge(
-          "flex items-center gap-2 rounded-md px-4 py-2 font-medium text-sm transition-all duration-400 ease-magnetic",
+          "interactive-base flex items-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
           value === "masonry" ? selectedClassname : unselectedClassname,
         )}
         role="tab"
@@ -36,7 +36,7 @@ export default function LayoutToggle({ value, masonryHref, randomHref, className
       <Link
         href={randomHref}
         className={twMerge(
-          "flex items-center gap-2 rounded-md px-4 py-2 font-medium text-sm transition-all duration-400 ease-magnetic",
+          "interactive-base flex items-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
           value === "random" ? selectedClassname : unselectedClassname,
         )}
         role="tab"

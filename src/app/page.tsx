@@ -41,7 +41,7 @@ export default function Home() {
         <DemoImages className="mx-auto my-32" />
       </section>
 
-      <Footer />
+      <Footer logoType="developed-by" />
     </div>
   );
 }
