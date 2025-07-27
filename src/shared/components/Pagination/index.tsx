@@ -6,7 +6,7 @@ import ChevronRight from "@/assets/icons/chevron-right.svg";
 import CircleFilled from "@/assets/icons/circle-filled.svg";
 import CircleOutline from "@/assets/icons/circle-outline.svg";
 import Dots from "@/assets/icons/dots.svg";
-import IconButton from "@/components/IconButton";
+import IconButton from "@/shared/components/IconButton";
 
 type PaginationProps = {
   currentPage: number;

@@ -1,9 +1,9 @@
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
-import IconButton from "@/components/IconButton";
-import ImagesUI from "@/components/ImagesUI";
-import TagLinks from "@/components/TagLinks";
-import UserIcon from "@/components/UserIcon";
+import ImagesUI from "@/features/gallery/components/ImagesUI";
+import TagLinks from "@/features/navigation/components/TagLinks";
+import UserIcon from "@/features/user/components/UserIcon";
+import IconButton from "@/shared/components/IconButton";
 import type { ImageLayoutType } from "@/types/layout";
 
 type PageProps = {

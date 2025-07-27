@@ -1,7 +1,7 @@
 import Image from "next/image";
 import ImageNeko from "@/assets/images/neko.png";
 
-import { AUTHOR_NAME, AUTHOR_X_URL } from "@/constants/author";
+import { AUTHOR_NAME, AUTHOR_X_URL } from "@/shared/constants/author";
 
 export default function DevelopedBy() {
   return (

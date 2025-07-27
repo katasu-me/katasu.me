@@ -1,9 +1,9 @@
 import Link from "next/link";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
-import IconButton from "@/components/IconButton";
-import ImagesUI from "@/components/ImagesUI";
-import UserIcon from "@/components/UserIcon";
+import ImagesUI from "@/features/gallery/components/ImagesUI";
+import UserIcon from "@/features/user/components/UserIcon";
+import IconButton from "@/shared/components/IconButton";
 import type { ImageLayoutType } from "@/types/layout";
 
 type PageProps = {

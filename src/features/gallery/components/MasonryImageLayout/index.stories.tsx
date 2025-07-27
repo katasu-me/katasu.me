@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
-import type FrameImage from "@/components/FrameImage";
+import type FrameImage from "@/features/gallery/components/FrameImage";
 import MasonryImageLayout from "./index";
 
 const meta = {

@@ -1,6 +1,6 @@
 import { motion, useMotionValue, useTransform } from "motion/react";
 import { type ComponentProps, type RefObject, useState } from "react";
-import FrameImage from "@/components/FrameImage";
+import FrameImage from "@/features/gallery/components/FrameImage";
 
 type Props = {
   item: ComponentProps<typeof FrameImage>;

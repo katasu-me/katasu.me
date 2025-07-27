@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans_JP } from "next/font/google";
 import type { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
-import { SITE_DESCRIPTION_LONG, SITE_DESCRIPTION_SHORT, SITE_NAME } from "@/constants/site";
+import { SITE_DESCRIPTION_LONG, SITE_DESCRIPTION_SHORT, SITE_NAME } from "@/shared/constants/site";
 
 import "../styles/globals.css";
 

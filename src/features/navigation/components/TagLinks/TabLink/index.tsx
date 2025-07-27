@@ -1,7 +1,7 @@
 import type { StaticImageData } from "next/image";
 import Image from "next/image";
 import Link from "next/link";
-import BudouX from "@/components/BudouX";
+import BudouX from "@/shared/components/BudouX";
 
 type TagLinkProps = {
   name: string;
