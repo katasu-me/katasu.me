@@ -1,9 +1,9 @@
 import LogoImage from "@/assets/logo.svg";
+import DemoImages from "@/features/landing/components/DemoImages";
 import Footer from "@/features/layout/components/Footer";
 import BudouX from "@/shared/components/BudouX";
 import Button from "@/shared/components/Button";
 import { SITE_NAME } from "@/shared/constants/site";
-import DemoImages from "./_components/DemoImages";
 
 export default function Home() {
   return (
