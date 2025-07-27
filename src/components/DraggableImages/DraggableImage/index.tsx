@@ -52,7 +52,7 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
         x: 0,
         y: 500,
         opacity: 0,
-        scale: 1.5,
+        scale: 0.85,
         filter: "blur(16px)",
       }}
       animate={{
