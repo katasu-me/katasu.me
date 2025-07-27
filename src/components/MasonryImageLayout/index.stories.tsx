@@ -314,3 +314,30 @@ export const FewImages: Story = {
     images: sampleImages.slice(0, 4),
   },
 };
+
+export const WithPagination: Story = {
+  args: {
+    images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
+    showPagination: true,
+    currentPage: 1,
+    itemsPerPage: 12,
+  },
+};
+
+export const PaginationSecondPage: Story = {
+  args: {
+    images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
+    showPagination: true,
+    currentPage: 2,
+    itemsPerPage: 12,
+  },
+};
+
+export const PaginationLastPage: Story = {
+  args: {
+    images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
+    showPagination: true,
+    currentPage: 3,
+    itemsPerPage: 12,
+  },
+};

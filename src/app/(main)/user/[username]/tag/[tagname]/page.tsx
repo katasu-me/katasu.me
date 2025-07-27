@@ -1,4 +1,6 @@
 import Link from "next/link";
+import IconDots from "@/assets/icons/dots.svg";
+import IconSearch from "@/assets/icons/search.svg";
 import IconButton from "@/components/IconButton";
 import ImagesUI from "@/components/ImagesUI";
 import UserIcon from "@/components/UserIcon";
@@ -66,8 +68,12 @@ export default async function ImagesPage({ params, searchParams }: PageProps) {
         </Link>
 
         <div className="flex items-center gap-2">
-          <IconButton iconName="search" />
-          <IconButton iconName="dots" />
+          <IconButton title="検索">
+            <IconSearch className="h-6 w-6" />
+          </IconButton>
+          <IconButton title="その他">
+            <IconDots className="h-6 w-6" />
+          </IconButton>
         </div>
       </header>
 

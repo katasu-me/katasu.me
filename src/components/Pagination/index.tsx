@@ -6,6 +6,7 @@ import ChevronRight from "@/assets/icons/chevron-right.svg";
 import CircleFilled from "@/assets/icons/circle-filled.svg";
 import CircleOutline from "@/assets/icons/circle-outline.svg";
 import Dots from "@/assets/icons/dots.svg";
+import IconButton from "@/components/IconButton";
 
 type PaginationProps = {
   currentPage: number;
@@ -85,19 +86,15 @@ export default function Pagination({
       {...props}
     >
       {!isFirstPage && (
-        <Link
-          href={createPageUrl(currentPage - 1)}
-          aria-label="前のページへ"
-          className="text-gray-600 transition-all duration-400 ease-magnetic hover:brightness-90"
-        >
+        <IconButton as="link" href={createPageUrl(currentPage - 1)} title="前のページへ">
           <ChevronLeft className="h-5 w-5" />
-        </Link>
+        </IconButton>
       )}
 
       <div className="flex items-center gap-1">
         {dots.map((dot, index) => {
           if (dot === -1) {
-            return <Dots key={`ellipsis-${index.toString()}`} className="h-4 w-4 text-gray-400" aria-hidden="true" />;
+            return <Dots key={`ellipsis-${index.toString()}`} className="h-4 w-4 text-warm-black" aria-hidden="true" />;
           }
 
           const isCurrent = dot === currentPage;
@@ -117,13 +114,9 @@ export default function Pagination({
       </div>
 
       {!isLastPage && (
-        <Link
-          href={createPageUrl(currentPage + 1)}
-          aria-label="次のページへ"
-          className="text-gray-600 transition-all duration-400 ease-magnetic hover:brightness-90"
-        >
+        <IconButton as="link" href={createPageUrl(currentPage + 1)} title="次のページへ">
           <ChevronRight className="h-5 w-5" />
-        </Link>
+        </IconButton>
       )}
     </nav>
   );
