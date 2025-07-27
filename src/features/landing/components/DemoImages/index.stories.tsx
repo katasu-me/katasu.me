@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import DemoImages from "./index";
 
 const meta = {
-  title: "app/DemoImages",
+  title: "Landing/DemoImages",
   component: DemoImages,
   parameters: {
     layout: "centered",

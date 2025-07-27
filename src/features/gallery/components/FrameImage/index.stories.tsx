@@ -4,7 +4,7 @@ import FrameImage from "./index";
 const dummyImageDataUrl = "https://placehold.jp/300x400.png";
 
 const meta = {
-  title: "Components/FrameImage",
+  title: "Gallery/FrameImage",
   component: FrameImage,
   parameters: {
     layout: "centered",

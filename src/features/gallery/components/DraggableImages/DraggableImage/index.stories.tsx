@@ -3,7 +3,7 @@ import { useRef } from "react";
 import DraggableImage from "./";
 
 const meta = {
-  title: "Components/DraggableImages/DraggableImage",
+  title: "Gallery/DraggableImages/DraggableImage",
   component: DraggableImage,
   parameters: {
     layout: "fullscreen",

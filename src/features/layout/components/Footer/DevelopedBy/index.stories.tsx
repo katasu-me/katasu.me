@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import DevelopedBy from "./";
 
 const meta = {
-  title: "Components/Footer/DevelopedBy",
+  title: "Layout/Footer/DevelopedBy",
   component: DevelopedBy,
   parameters: {
     layout: "padded",

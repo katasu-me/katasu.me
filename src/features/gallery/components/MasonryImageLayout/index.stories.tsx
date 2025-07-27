@@ -4,7 +4,7 @@ import type FrameImage from "@/features/gallery/components/FrameImage";
 import MasonryImageLayout from "./index";
 
 const meta = {
-  title: "Components/MasonryImageLayout",
+  title: "Gallery/MasonryImageLayout",
   tags: ["autodocs"],
   component: MasonryImageLayout,
   parameters: {

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import TagLink from ".";
 
 const meta = {
-  title: "Components/TagLinks/TagLink",
+  title: "Navigation/TagLinks/TagLink",
   component: TagLink,
   parameters: {
     layout: "centered",

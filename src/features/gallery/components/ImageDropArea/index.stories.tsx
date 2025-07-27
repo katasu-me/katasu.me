@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import ImageDropArea from "./";
 
 const meta = {
-  title: "Components/ImageDropArea",
+  title: "Gallery/ImageDropArea",
   component: ImageDropArea,
   parameters: {
     layout: "padded",

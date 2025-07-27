@@ -7,7 +7,7 @@ import IconSettings from "@/assets/icons/settings.svg";
 import IconButton from "./";
 
 const meta = {
-  title: "Components/IconButton",
+  title: "Shared/IconButton",
   component: IconButton,
   parameters: {
     layout: "padded",

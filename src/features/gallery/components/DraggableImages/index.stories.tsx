@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import DraggableImages from "./";
 
 const meta = {
-  title: "Components/DraggableImages",
+  title: "Gallery/DraggableImages",
   component: DraggableImages,
   parameters: {
     layout: "fullscreen",

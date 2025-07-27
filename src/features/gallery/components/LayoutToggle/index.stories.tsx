@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import LayoutToggle from "./index";
 
 const meta = {
-  title: "Components/LayoutToggle",
+  title: "Gallery/LayoutToggle",
   component: LayoutToggle,
   parameters: {
     layout: "centered",
