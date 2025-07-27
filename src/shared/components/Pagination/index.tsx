@@ -107,8 +107,8 @@ export default function Pagination({
               aria-current={isCurrent ? "page" : undefined}
               className="interactive-scale-brightness group text-warm-black transition-all duration-400 ease-magnetic hover:brightness-90"
             >
-              <CircleOutline className={twMerge("h-2 w-2", isCurrent ? "hidden" : "group-hover:hidden")} />
-              <CircleFilled className={twMerge("h-2 w-2", isCurrent && "hidden group-hover:block")} />
+              <CircleOutline className={twMerge("h-2 w-2", isCurrent && "hidden")} />
+              <CircleFilled className={twMerge("h-2 w-2", !isCurrent && "hidden")} />
             </Link>
           );
         })}
