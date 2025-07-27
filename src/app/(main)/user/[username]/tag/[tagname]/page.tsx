@@ -17,7 +17,7 @@ type PageProps = {
 };
 
 export default async function ImagesPage({ params, searchParams }: PageProps) {
-  const { tagname } = await params;
+  const { username, tagname } = await params;
   const tagNameStr = decodeURIComponent(tagname);
 
   const { view } = await searchParams;
@@ -80,7 +80,12 @@ export default async function ImagesPage({ params, searchParams }: PageProps) {
       <h1 className="col-start-2 text-4xl">{`#${tagNameStr}`}</h1>
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-        <ImagesUI view={view || "masonry"} images={images} />
+        <ImagesUI
+          view={view || "masonry"}
+          images={images}
+          pathname={`/user/${username}/tag/${tagname}`}
+          searchParams={await searchParams}
+        />
       </div>
     </div>
   );

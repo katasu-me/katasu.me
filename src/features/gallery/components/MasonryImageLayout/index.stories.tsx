@@ -137,11 +137,15 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
 export const Default: Story = {
   args: {
     images: sampleImages,
+    pathname: "/test",
+    searchParams: {},
   },
 };
 
 export const PortraitGallery: Story = {
   args: {
+    pathname: "/test",
+    searchParams: {},
     images: [
       {
         id: "portrait1",
@@ -201,6 +205,8 @@ export const PortraitGallery: Story = {
 
 export const LandscapeGallery: Story = {
   args: {
+    pathname: "/test",
+    searchParams: {},
     images: [
       {
         id: "landscape1",
@@ -252,6 +258,8 @@ export const LandscapeGallery: Story = {
 
 export const MixedAspectRatios: Story = {
   args: {
+    pathname: "/test",
+    searchParams: {},
     images: [
       {
         id: "square1",
@@ -312,32 +320,37 @@ export const MixedAspectRatios: Story = {
 export const FewImages: Story = {
   args: {
     images: sampleImages.slice(0, 4),
+    pathname: "/test",
+    searchParams: {},
   },
 };
 
 export const WithPagination: Story = {
   args: {
     images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
-    showPagination: true,
     currentPage: 1,
     itemsPerPage: 12,
+    pathname: "/test",
+    searchParams: {},
   },
 };
 
 export const PaginationSecondPage: Story = {
   args: {
     images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
-    showPagination: true,
     currentPage: 2,
     itemsPerPage: 12,
+    pathname: "/test",
+    searchParams: {},
   },
 };
 
 export const PaginationLastPage: Story = {
   args: {
     images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
-    showPagination: true,
     currentPage: 3,
     itemsPerPage: 12,
+    pathname: "/test",
+    searchParams: {},
   },
 };

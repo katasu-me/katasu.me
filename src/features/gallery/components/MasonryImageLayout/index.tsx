@@ -18,7 +18,8 @@ type MasonryImageLayoutProps = {
   images: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
   currentPage?: number;
   itemsPerPage?: number;
-  showPagination?: boolean;
+  pathname: string;
+  searchParams: URLSearchParams | Record<string, string>;
   className?: string;
 };
 
@@ -26,7 +27,8 @@ export default function MasonryImageLayout({
   images,
   currentPage = 1,
   itemsPerPage = 20,
-  showPagination = false,
+  pathname,
+  searchParams,
   className,
 }: MasonryImageLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -68,20 +70,14 @@ export default function MasonryImageLayout({
   }, [isReady]);
 
   const paginatedImages = useMemo(() => {
-    if (!showPagination) {
-      return images;
-    }
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return images.slice(startIndex, endIndex);
-  }, [images, currentPage, itemsPerPage, showPagination]);
+  }, [images, currentPage, itemsPerPage]);
 
   const totalPages = useMemo(() => {
-    if (!showPagination) {
-      return 1;
-    }
     return Math.ceil(images.length / itemsPerPage);
-  }, [images.length, itemsPerPage, showPagination]);
+  }, [images.length, itemsPerPage]);
 
   const imageColumns = useMemo(() => {
     const cols: ComponentProps<typeof FrameImage>[][] = Array.from({ length: columns }, () => []);
@@ -113,14 +109,12 @@ export default function MasonryImageLayout({
           </div>
         ))}
       </div>
-      {showPagination && totalPages > 1 && (
+      {totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          pathname={typeof window !== "undefined" ? window.location.pathname : "/"}
-          searchParams={
-            typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams()
-          }
+          pathname={pathname}
+          searchParams={searchParams}
           className="mt-4"
         />
       )}

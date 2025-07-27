@@ -7,13 +7,17 @@ import UserIcon from "@/features/user/components/UserIcon";
 import IconButton from "@/shared/components/IconButton";
 
 type PageProps = {
+  params: Promise<{
+    username: string;
+  }>;
   searchParams: Promise<{
     search?: string;
     view?: ImageLayoutType;
   }>;
 };
 
-export default async function UserPage({ searchParams }: PageProps) {
+export default async function UserPage({ params, searchParams }: PageProps) {
+  const { username } = await params;
   const { search, view } = await searchParams;
 
   console.log("UserPage searchParams:", search);
@@ -93,7 +97,12 @@ export default async function UserPage({ searchParams }: PageProps) {
           ]}
         />
 
-        <ImagesUI view={view || "masonry"} images={images} />
+        <ImagesUI
+          view={view || "masonry"}
+          images={images}
+          pathname={`/user/${username}`}
+          searchParams={await searchParams}
+        />
       </div>
     </div>
   );
