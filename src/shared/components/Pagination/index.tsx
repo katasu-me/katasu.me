@@ -82,7 +82,7 @@ export default function Pagination({
   return (
     <nav
       aria-label="ページネーション"
-      className={twMerge("flex items-center justify-center gap-2", className)}
+      className={twMerge("flex items-center justify-center gap-4", className)}
       {...props}
     >
       {!isFirstPage && (
@@ -91,10 +91,10 @@ export default function Pagination({
         </IconButton>
       )}
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         {dots.map((dot, index) => {
           if (dot === -1) {
-            return <Dots key={`ellipsis-${index.toString()}`} className="h-4 w-4 text-warm-black" aria-hidden="true" />;
+            return <Dots key={`ellipsis-${index.toString()}`} className="h-3 w-3 text-warm-black" aria-hidden="true" />;
           }
 
           const isCurrent = dot === currentPage;
@@ -105,9 +105,10 @@ export default function Pagination({
               href={createPageUrl(dot)}
               aria-label={`ページ${dot}へ`}
               aria-current={isCurrent ? "page" : undefined}
-              className="text-gray-600 transition-all duration-400 ease-magnetic hover:brightness-90"
+              className="interactive-scale-brightness group text-warm-black transition-all duration-400 ease-magnetic hover:brightness-90"
             >
-              {isCurrent ? <CircleFilled className="h-3 w-3" /> : <CircleOutline className="h-3 w-3" />}
+              <CircleOutline className={twMerge("h-2 w-2", isCurrent ? "hidden" : "group-hover:hidden")} />
+              <CircleFilled className={twMerge("h-2 w-2", isCurrent && "hidden group-hover:block")} />
             </Link>
           );
         })}
