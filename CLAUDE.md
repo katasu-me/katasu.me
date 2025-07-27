@@ -40,12 +40,22 @@ katasu.me は「インターネットのかたすみにある、ぽつんと画�
     - リファレンス: https://bun.sh/docs/cli/test.md
 
 ### ディレクトリ構成
+
+featuresベースの構成を採用し、機能単位でコンポーネントを整理しています。
+
 - `src/app/` - Next.js App Routerのページとレイアウト
-    - ページ固有のコンポーネントは同一階層に /_components を作成しそこに置きます
-- `src/components/` - 再利用可能なUIコンポーネント（各コンポーネントに`.stories.tsx`ファイル付き）
+- `src/shared/` - プロジェクト全体で共有されるコード
+- `src/features/` - 機能別に整理されたコンポーネント
 - `src/assets/` - 画像、SVGなどの静的リソース
-- `src/constants/` - 定数定義（サイト情報、作者情報など）
 - `src/styles/` - グローバルスタイルとCSS変数
+
+**shared/ と features/ 配下の構成**
+必要に応じて以下のディレクトリを含むことができます：
+- `components/` - コンポーネント（shared: 汎用UI、features: 機能専用）
+- `constants/` - 定数定義
+- `types/` - 型定義
+
+各コンポーネントには対応する`.stories.tsx`ファイルが付属し、Storybookで動作確認できます。
 
 ### コード規約
 - **フォーマッター/リンター**: Biome（ESLint/Prettierの代替）
