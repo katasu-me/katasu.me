@@ -3,6 +3,7 @@
 import { type ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import FrameImage from "../FrameImage";
+import Pagination from "../Pagination";
 
 const DEFAULT_COLUMNS = 2;
 
@@ -15,10 +16,19 @@ const COLUMNS = new Map([
 
 type MasonryImageLayoutProps = {
   images: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
+  currentPage?: number;
+  itemsPerPage?: number;
+  showPagination?: boolean;
   className?: string;
 };
 
-export default function MasonryImageLayout({ images, className }: MasonryImageLayoutProps) {
+export default function MasonryImageLayout({
+  images,
+  currentPage = 1,
+  itemsPerPage = 20,
+  showPagination = false,
+  className,
+}: MasonryImageLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [columns, setColumns] = useState(DEFAULT_COLUMNS);
   const [isReady, setIsReady] = useState(false);
@@ -57,35 +67,55 @@ export default function MasonryImageLayout({ images, className }: MasonryImageLa
     };
   }, [isReady]);
 
+  const paginatedImages = useMemo(() => {
+    if (!showPagination) {
+      return images;
+    }
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return images.slice(startIndex, endIndex);
+  }, [images, currentPage, itemsPerPage, showPagination]);
+
+  const totalPages = useMemo(() => {
+    if (!showPagination) {
+      return 1;
+    }
+    return Math.ceil(images.length / itemsPerPage);
+  }, [images.length, itemsPerPage, showPagination]);
+
   const imageColumns = useMemo(() => {
     const cols: ComponentProps<typeof FrameImage>[][] = Array.from({ length: columns }, () => []);
     const colHeights = new Array(columns).fill(0);
 
-    for (const image of images) {
+    for (const image of paginatedImages) {
       const shortestCol = colHeights.indexOf(Math.min(...colHeights));
       cols[shortestCol].push(image);
       colHeights[shortestCol] += image.height / image.width;
     }
 
     return cols;
-  }, [images, columns]);
+  }, [paginatedImages, columns]);
 
   return (
-    <div
-      ref={containerRef}
-      className={twMerge(
-        "flex w-full gap-3 transition-opacity duration-400 ease-magnetic",
-        isReady ? "opacity-100" : "opacity-0",
-        className,
+    <div className={twMerge("flex flex-col gap-6", className)}>
+      <div
+        ref={containerRef}
+        className={twMerge(
+          "flex w-full gap-3 transition-opacity duration-400 ease-magnetic",
+          isReady ? "opacity-100" : "opacity-0",
+        )}
+      >
+        {imageColumns.map((column, colIndex) => (
+          <div key={colIndex.toString()} className="flex flex-1 flex-col gap-3">
+            {column.map((image) => (
+              <FrameImage key={image.id} className="h-auto w-full" {...image} />
+            ))}
+          </div>
+        ))}
+      </div>
+      {showPagination && totalPages > 1 && (
+        <Pagination currentPage={currentPage} totalPages={totalPages} className="mt-4" />
       )}
-    >
-      {imageColumns.map((column, colIndex) => (
-        <div key={colIndex.toString()} className="flex flex-1 flex-col gap-3">
-          {column.map((image) => (
-            <FrameImage key={image.id} className="h-auto w-full" {...image} />
-          ))}
-        </div>
-      ))}
     </div>
   );
 }
