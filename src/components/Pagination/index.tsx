@@ -1,23 +1,31 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
 import type { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
+import ChevronLeft from "@/assets/icons/chevron-left.svg";
+import ChevronRight from "@/assets/icons/chevron-right.svg";
+import CircleFilled from "@/assets/icons/circle-filled.svg";
+import CircleOutline from "@/assets/icons/circle-outline.svg";
+import Dots from "@/assets/icons/dots.svg";
 
 type PaginationProps = {
   currentPage: number;
   totalPages: number;
+  pathname: string;
+  searchParams: URLSearchParams | Record<string, string>;
   className?: string;
 } & Omit<ComponentProps<"nav">, "children">;
 
 const MAX_DOTS = 7;
 const EDGE_DOTS = 2;
 
-export default function Pagination({ currentPage, totalPages, className, ...props }: PaginationProps) {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
+export default function Pagination({
+  currentPage,
+  totalPages,
+  pathname,
+  searchParams,
+  className,
+  ...props
+}: PaginationProps) {
   const createPageUrl = (page: number) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", page.toString());
@@ -27,38 +35,48 @@ export default function Pagination({ currentPage, totalPages, className, ...prop
   const renderDots = () => {
     const dots = [];
 
+    // ページ数が少ない場合は全て表示
     if (totalPages <= MAX_DOTS) {
       for (let i = 1; i <= totalPages; i++) {
         dots.push(i);
       }
-    } else {
-      if (currentPage <= EDGE_DOTS + 2) {
-        for (let i = 1; i <= EDGE_DOTS + 2; i++) {
-          dots.push(i);
-        }
-        dots.push(-1);
-        dots.push(totalPages);
-      } else if (currentPage >= totalPages - (EDGE_DOTS + 1)) {
-        dots.push(1);
-        dots.push(-1);
-        for (let i = totalPages - (EDGE_DOTS + 1); i <= totalPages; i++) {
-          dots.push(i);
-        }
-      } else {
-        dots.push(1);
-        dots.push(-1);
-        dots.push(currentPage - 1);
-        dots.push(currentPage);
-        dots.push(currentPage + 1);
-        dots.push(-1);
-        dots.push(totalPages);
-      }
+      return dots;
     }
 
+    // 現在のページが先頭寄りの場合
+    if (currentPage <= EDGE_DOTS + 2) {
+      for (let i = 1; i <= EDGE_DOTS + 2; i++) {
+        dots.push(i);
+      }
+      dots.push(-1);
+      dots.push(totalPages);
+      return dots;
+    }
+
+    // 現在のページが末尾寄りの場合
+    if (currentPage >= totalPages - (EDGE_DOTS + 1)) {
+      dots.push(1);
+      dots.push(-1);
+      for (let i = totalPages - (EDGE_DOTS + 1); i <= totalPages; i++) {
+        dots.push(i);
+      }
+      return dots;
+    }
+
+    // 現在のページが中央の場合
+    dots.push(1);
+    dots.push(-1);
+    dots.push(currentPage - 1);
+    dots.push(currentPage);
+    dots.push(currentPage + 1);
+    dots.push(-1);
+    dots.push(totalPages);
     return dots;
   };
 
   const dots = renderDots();
+  const isFirstPage = currentPage === 1;
+  const isLastPage = currentPage === totalPages;
 
   return (
     <nav
@@ -66,14 +84,20 @@ export default function Pagination({ currentPage, totalPages, className, ...prop
       className={twMerge("flex items-center justify-center gap-2", className)}
       {...props}
     >
-      <div className="flex items-center gap-2">
+      {!isFirstPage && (
+        <Link
+          href={createPageUrl(currentPage - 1)}
+          aria-label="前のページへ"
+          className="text-gray-600 transition-all duration-400 ease-magnetic hover:brightness-90"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </Link>
+      )}
+
+      <div className="flex items-center gap-1">
         {dots.map((dot, index) => {
           if (dot === -1) {
-            return (
-              <span key={`ellipsis-${index.toString()}`} className="text-gray-400">
-                …
-              </span>
-            );
+            return <Dots key={`ellipsis-${index.toString()}`} className="h-4 w-4 text-gray-400" aria-hidden="true" />;
           }
 
           const isCurrent = dot === currentPage;
@@ -84,14 +108,23 @@ export default function Pagination({ currentPage, totalPages, className, ...prop
               href={createPageUrl(dot)}
               aria-label={`ページ${dot}へ`}
               aria-current={isCurrent ? "page" : undefined}
-              className={twMerge(
-                "block h-2 w-2 rounded-full transition-all duration-400 ease-magnetic",
-                isCurrent ? "bg-gray-700" : "border border-gray-400 bg-white hover:brightness-90",
-              )}
-            />
+              className="text-gray-600 transition-all duration-400 ease-magnetic hover:brightness-90"
+            >
+              {isCurrent ? <CircleFilled className="h-3 w-3" /> : <CircleOutline className="h-3 w-3" />}
+            </Link>
           );
         })}
       </div>
+
+      {!isLastPage && (
+        <Link
+          href={createPageUrl(currentPage + 1)}
+          aria-label="次のページへ"
+          className="text-gray-600 transition-all duration-400 ease-magnetic hover:brightness-90"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </Link>
+      )}
     </nav>
   );
 }

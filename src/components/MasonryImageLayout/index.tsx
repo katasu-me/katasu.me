@@ -114,7 +114,15 @@ export default function MasonryImageLayout({
         ))}
       </div>
       {showPagination && totalPages > 1 && (
-        <Pagination currentPage={currentPage} totalPages={totalPages} className="mt-4" />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pathname={typeof window !== "undefined" ? window.location.pathname : "/"}
+          searchParams={
+            typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams()
+          }
+          className="mt-4"
+        />
       )}
     </div>
   );
