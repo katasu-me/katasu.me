@@ -16,7 +16,7 @@ type PageProps = {
   }>;
 };
 
-export default async function UserPage({ params, searchParams }: PageProps) {
+export default async function UsersPage({ params, searchParams }: PageProps) {
   const { username } = await params;
   const { search, view } = await searchParams;
 

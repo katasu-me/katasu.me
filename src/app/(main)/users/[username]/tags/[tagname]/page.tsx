@@ -16,7 +16,7 @@ type PageProps = {
   }>;
 };
 
-export default async function ImagesPage({ params, searchParams }: PageProps) {
+export default async function TagsPage({ params, searchParams }: PageProps) {
   const { username, tagname } = await params;
   const tagNameStr = decodeURIComponent(tagname);
 
