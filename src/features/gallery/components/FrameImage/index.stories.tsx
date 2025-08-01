@@ -30,10 +30,6 @@ const meta = {
       control: "text",
       description: "画像をクリックしたときのリンク先",
     },
-    requireConfirmation: {
-      control: "boolean",
-      description: "リンククリック前に確認のワンクッションを挟むかどうか",
-    },
   },
   args: {
     src: dummyImageDataUrl,
@@ -85,16 +81,6 @@ export const WithLink: Story = {
   args: {
     alt: "リンク付きの画像",
     href: "https://example.com",
-    width: 300,
-    height: 200,
-  },
-};
-
-export const WithConfirmation: Story = {
-  args: {
-    alt: "確認ボタン付きの画像",
-    href: "https://example.com",
-    requireConfirmation: true,
     width: 300,
     height: 200,
   },

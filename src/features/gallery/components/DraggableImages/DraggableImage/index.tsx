@@ -1,5 +1,8 @@
 import { motion, useMotionValue, useTransform } from "motion/react";
-import { type ComponentProps, type RefObject, useState } from "react";
+import Link from "next/link";
+import { type ComponentProps, type RefObject, useRef, useState } from "react";
+import { useClickAway } from "react-use";
+import { twMerge } from "tailwind-merge";
 import FrameImage from "@/features/gallery/components/FrameImage";
 
 type Props = {
@@ -15,9 +18,15 @@ const VERTICAL_MAX_WIDTH = 250;
 
 export default function DraggableImage({ item, initialPosition, containerRef, maxZIndex, delay }: Props) {
   const [zIndex, setZIndex] = useState(2);
+  const [isOpenOverlay, setIsOpenOverlay] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(initialPosition.x);
   const y = useMotionValue(initialPosition.y);
   const scale = useMotionValue(1);
+
+  useClickAway(overlayRef, () => {
+    setIsOpenOverlay(false);
+  });
 
   const rotateY = useTransform(x, [initialPosition.x - 100, initialPosition.x + 100], [-10, 10]);
 
@@ -34,6 +43,14 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
 
     maxZIndex.current = nextZIndex;
     setZIndex(nextZIndex);
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    updateZIndex();
+    if (item.href) {
+      e.preventDefault();
+      setIsOpenOverlay(true);
+    }
   };
 
   return (
@@ -71,17 +88,17 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
       }}
       drag
       dragConstraints={containerRef}
-      onClick={updateZIndex}
+      onClick={handleClick}
       onDragStart={updateZIndex}
     >
-      <FrameImage
-        src={item.src}
-        alt={item.alt}
-        width={item.width}
-        height={item.height}
-        href={item.href}
-        requireConfirmation
-      />
+      <FrameImage src={item.src} alt={item.alt} width={item.width} height={item.height} isBlurred={isOpenOverlay} />
+      {item.href && isOpenOverlay && (
+        <div className={twMerge("absolute inset-0 z-1 flex items-center justify-center")} ref={overlayRef}>
+          <Link className="w-2/3 py-6 text-center text-warm-white" href={item.href}>
+            この画像をみる
+          </Link>
+        </div>
+      )}
     </motion.div>
   );
 }
