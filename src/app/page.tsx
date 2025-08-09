@@ -10,12 +10,12 @@ export default function Home() {
     <div className="col-start-2">
       <section className="flex h-[calc(100vh-16px)] items-center justify-center">
         <div className="flex flex-col items-center justify-center">
-          <LogoImage className="w-48 sm:w-64" />
-          <h1 className="mt-16 text-center font-normal text-lg leading-7 tracking-[0.1em] sm:mt-20 sm:text-2xl sm:leading-9 sm:tracking-[0.2em]">
+          <LogoImage className="pc:w-64 w-48" />
+          <h1 className="mt-16 pc:mt-20 text-center font-normal pc:text-2xl text-lg leading-7 pc:leading-9 pc:tracking-[0.2em] tracking-[0.1em]">
             インターネットのかたすみにある、 <br />
             ぽつんと画像をおいておける場所。
           </h1>
-          <Button className="mt-8 sm:mt-10">がんばって開発中です</Button>
+          <Button className="mt-8 pc:mt-10">がんばって開発中です</Button>
         </div>
       </section>
 
