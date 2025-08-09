@@ -94,7 +94,7 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
       <FrameImage src={item.src} alt={item.alt} width={item.width} height={item.height} isBlurred={isOpenOverlay} />
       {item.href && isOpenOverlay && (
         <div className={twMerge("absolute inset-0 z-1 flex items-center justify-center")} ref={overlayRef}>
-          <Link className="w-2/3 py-6 text-center text-warm-white" href={item.href}>
+          <Link className="w-fit py-6 text-center text-warm-white hover:underline" href={item.href}>
             この画像をみる
           </Link>
         </div>
