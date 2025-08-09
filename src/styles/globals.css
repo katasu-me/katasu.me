@@ -17,10 +17,9 @@
   /**
    * 左右に2.5remの余白を持つレイアウト
    */
-  --grid-main-layout: 1fr min(1024px, 100% - 2.5rem) 1fr;
+  --grid-main-layout: 1fr min(768px, 100% - 2.5rem) 1fr;
 
   /** ブレークポイント */
-  --breakpoint-sp: 640px;
   --breakpoint-pc: 768px;
 }
 

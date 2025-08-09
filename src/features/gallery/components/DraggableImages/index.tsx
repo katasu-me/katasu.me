@@ -56,7 +56,11 @@ export default function DraggableImages({ items, className }: Props) {
   return (
     <div
       ref={containerRef}
-      className={twMerge("relative flex h-[90vh] w-full items-center justify-center overflow-x-clip", className)}
+      className={twMerge(
+        // FIXME: タブレットくらいのサイズで若干の横スクロールが発生する
+        "relative flex h-[90vh] w-full items-center justify-center overflow-x-clip pc:overflow-x-visible",
+        className,
+      )}
     >
       {items.map((item, i) => (
         <DraggableImage

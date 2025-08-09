@@ -1,3 +1,4 @@
+import Link from "next/link";
 import FrameImage from "@/features/gallery/components/FrameImage";
 import UserIcon from "@/features/user/components/UserIcon";
 
@@ -9,6 +10,21 @@ export default function ImagesPage() {
     width: 2560,
     height: 1440,
     label: "横長の風景",
+
+    tags: [
+      {
+        name: "風景",
+        href: "/users/a/tags/landscape",
+      },
+      {
+        name: "横長",
+        href: "/users/a/tags/wide",
+      },
+      {
+        name: "自然",
+        href: "/users/a/tags/nature",
+      },
+    ],
   };
 
   return (
@@ -17,9 +33,20 @@ export default function ImagesPage() {
         <UserIcon name="arrow2nd" src="https://avatars.githubusercontent.com/u/44780846?v=4" alt="ユーザーアイコン" />
       </header>
 
-      <div className="col-span-full flex flex-col items-center gap-8 text-center">
-        <FrameImage {...image} className="h-auto w-3xl" disableHoverEffect />
-        <h2>{image.label}</h2>
+      <div className="col-start-2 mx-auto w-full">
+        <FrameImage {...image} className="h-auto w-full " disableHoverEffect />
+        <h2 className="mt-8">{image.label}</h2>
+        <div>
+          {image.tags.map((tag) => (
+            <Link
+              key={tag.name}
+              href={tag.href}
+              className="mr-2 inline-block rounded bg-gray-200 px-3 py-1 text-gray-700 text-sm hover:bg-gray-300"
+            >
+              {tag.name}
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

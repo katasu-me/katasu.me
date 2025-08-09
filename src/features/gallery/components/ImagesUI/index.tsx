@@ -23,7 +23,7 @@ export default function ImagesUI({ view, images, pathname, searchParams }: Props
 
       {view === "random" ? (
         <>
-          <DraggableImages className="col-span-full" items={images} />
+          <DraggableImages className="col-span-full pc:col-auto pc:col-start-2" items={images} />
           <Button className="col-start-2 mx-auto flex items-center gap-2">
             <IconReload className="h-4 w-4" />
             画像をいれかえる
