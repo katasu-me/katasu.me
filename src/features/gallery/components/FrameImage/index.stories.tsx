@@ -34,9 +34,9 @@ const meta = {
       control: "boolean",
       description: "ぼかしを適用するかどうか",
     },
-    hasHoverEffect: {
+    disableHoverEffect: {
       control: "boolean",
-      description: "ホバーエフェクトを有効にするかどうか",
+      description: "ホバーエフェクトを無効にするかどうか",
     },
   },
   args: {
@@ -106,7 +106,7 @@ export const WithBlur: Story = {
 export const WithoutHoverEffect: Story = {
   args: {
     alt: "ホバーエフェクトなしの画像",
-    hasHoverEffect: false,
+    disableHoverEffect: true,
     width: 300,
     height: 200,
   },
