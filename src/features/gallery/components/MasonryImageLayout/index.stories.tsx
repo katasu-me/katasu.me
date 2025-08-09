@@ -34,7 +34,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "ポートレート画像",
     width: 300,
     height: 400,
-    linkHref: "https://example.com",
+    href: "https://example.com",
     title: "縦長の画像",
   },
   {
@@ -43,7 +43,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "風景画像",
     width: 400,
     height: 300,
-    linkHref: "https://example.com",
+    href: "https://example.com",
     title: "横長の風景",
   },
   {
@@ -52,7 +52,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "スクエア画像",
     width: 300,
     height: 300,
-    linkHref: "https://example.com",
+    href: "https://example.com",
     title: "正方形",
   },
   {
@@ -61,7 +61,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "縦長ポートレート",
     width: 280,
     height: 500,
-    linkHref: "https://example.com",
+    href: "https://example.com",
   },
   {
     id: "5",
@@ -69,7 +69,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "小さなポートレート",
     width: 250,
     height: 350,
-    linkHref: "https://example.com",
+    href: "https://example.com",
     title: "小さめの縦長",
   },
   {
@@ -78,7 +78,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "パノラマ画像",
     width: 450,
     height: 250,
-    linkHref: "https://example.com",
+    href: "https://example.com",
   },
   {
     id: "7",
@@ -86,7 +86,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "スマホ画像",
     width: 320,
     height: 480,
-    linkHref: "https://example.com",
+    href: "https://example.com",
     title: "スマホサイズ",
   },
   {
@@ -95,7 +95,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "アートワーク",
     width: 350,
     height: 350,
-    linkHref: "https://example.com",
+    href: "https://example.com",
   },
   {
     id: "9",
@@ -103,7 +103,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "ワイド画像",
     width: 500,
     height: 300,
-    linkHref: "https://example.com",
+    href: "https://example.com",
     title: "ワイドフォーマット",
   },
   {
@@ -112,7 +112,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "バナー画像",
     width: 200,
     height: 600,
-    linkHref: "https://example.com",
+    href: "https://example.com",
     title: "縦長バナー",
   },
   {
@@ -121,7 +121,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "風景画像2",
     width: 380,
     height: 280,
-    linkHref: "https://example.com",
+    href: "https://example.com",
   },
   {
     id: "12",
@@ -129,7 +129,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     alt: "パノラマ風景",
     width: 600,
     height: 200,
-    linkHref: "https://example.com",
+    href: "https://example.com",
     title: "超ワイド",
   },
 ];
@@ -153,7 +153,7 @@ export const PortraitGallery: Story = {
         alt: "ポートレート1",
         width: 300,
         height: 400,
-        linkHref: "https://example.com",
+        href: "https://example.com",
         title: "モデル画像",
       },
       {
@@ -162,7 +162,7 @@ export const PortraitGallery: Story = {
         alt: "ポートレート2",
         width: 250,
         height: 350,
-        linkHref: "https://example.com",
+        href: "https://example.com",
         title: "プロフィール",
       },
       {
@@ -171,7 +171,7 @@ export const PortraitGallery: Story = {
         alt: "ポートレート3",
         width: 320,
         height: 480,
-        linkHref: "https://example.com",
+        href: "https://example.com",
         title: "縦長撮影",
       },
       {
@@ -180,7 +180,7 @@ export const PortraitGallery: Story = {
         alt: "ポートレート4",
         width: 280,
         height: 420,
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
       {
         id: "portrait5",
@@ -189,7 +189,7 @@ export const PortraitGallery: Story = {
         width: 300,
         height: 450,
         title: "アート画像",
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
       {
         id: "portrait6",
@@ -197,7 +197,7 @@ export const PortraitGallery: Story = {
         alt: "ポートレート6",
         width: 260,
         height: 390,
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
     ],
   },
@@ -215,7 +215,7 @@ export const LandscapeGallery: Story = {
         width: 500,
         height: 300,
         title: "山の風景",
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
       {
         id: "landscape2",
@@ -224,7 +224,7 @@ export const LandscapeGallery: Story = {
         width: 600,
         height: 200,
         title: "パノラマビュー",
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
       {
         id: "landscape3",
@@ -233,7 +233,7 @@ export const LandscapeGallery: Story = {
         width: 450,
         height: 250,
         title: "海の景色",
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
       {
         id: "landscape4",
@@ -241,7 +241,7 @@ export const LandscapeGallery: Story = {
         alt: "風景4",
         width: 520,
         height: 280,
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
       {
         id: "landscape5",
@@ -250,7 +250,7 @@ export const LandscapeGallery: Story = {
         width: 480,
         height: 300,
         title: "都市の夜景",
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
     ],
   },
@@ -268,7 +268,7 @@ export const MixedAspectRatios: Story = {
         width: 300,
         height: 300,
         title: "スクエア",
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
       {
         id: "tall1",
@@ -277,7 +277,7 @@ export const MixedAspectRatios: Story = {
         width: 200,
         height: 600,
         title: "縦長バナー",
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
       {
         id: "wide1",
@@ -286,7 +286,7 @@ export const MixedAspectRatios: Story = {
         width: 600,
         height: 150,
         title: "ワイドバナー",
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
       {
         id: "portrait1",
@@ -294,7 +294,7 @@ export const MixedAspectRatios: Story = {
         alt: "ポートレート",
         width: 320,
         height: 480,
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
       {
         id: "landscape1",
@@ -302,7 +302,7 @@ export const MixedAspectRatios: Story = {
         alt: "ランドスケープ",
         width: 480,
         height: 320,
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
       {
         id: "square2",
@@ -311,7 +311,7 @@ export const MixedAspectRatios: Story = {
         width: 250,
         height: 250,
         title: "小スクエア",
-        linkHref: "https://example.com",
+        href: "https://example.com",
       },
     ],
   },

@@ -29,7 +29,7 @@ export default async function UsersPage({ params, searchParams }: PageProps) {
       alt: "画像",
       width: 2624,
       height: 3936,
-      href: "/test/images/1",
+      href: "/users/test/images/1",
       title: "縦長の画像",
     },
     {
@@ -38,7 +38,7 @@ export default async function UsersPage({ params, searchParams }: PageProps) {
       alt: "画像",
       width: 2560,
       height: 1440,
-      href: "/test/images/2",
+      href: "/users/test/images/2",
       title: "横長の風景",
     },
     {
@@ -47,7 +47,7 @@ export default async function UsersPage({ params, searchParams }: PageProps) {
       alt: "画像",
       width: 1440,
       height: 2560,
-      href: "/test/images/3",
+      href: "/users/test/images/3",
       title: "正方形",
     },
     {
@@ -56,7 +56,7 @@ export default async function UsersPage({ params, searchParams }: PageProps) {
       alt: "画像",
       width: 2560,
       height: 1440,
-      href: "/test/images/4",
+      href: "/users/test/images/4",
     },
   ];
 

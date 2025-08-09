@@ -26,7 +26,7 @@ const meta = {
       control: "number",
       description: "画像の高さ",
     },
-    linkHref: {
+    href: {
       control: "text",
       description: "画像をクリックしたときのリンク先",
     },
@@ -88,7 +88,7 @@ export const Large: Story = {
 export const WithLink: Story = {
   args: {
     alt: "リンク付きの画像",
-    linkHref: "https://example.com",
+    href: "https://example.com",
     width: 300,
     height: 200,
   },

@@ -14,8 +14,10 @@
   /** イージング */
   --ease-magnetic: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /** レイアウト */
-  --grid-main-layout: 1fr min(1024px, 100% - 2.5rem) 1fr;
+  /**
+   * 左右に1.5rem (24px) の余白を持つレイアウト
+   */
+  --grid-main-layout: 1fr min(1024px, 100% - 1.5rem) 1fr;
 }
 
 /** 共通インタラクティブスタイル */

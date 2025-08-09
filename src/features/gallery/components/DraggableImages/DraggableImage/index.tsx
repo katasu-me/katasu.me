@@ -47,7 +47,7 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
 
   const handleClick = (e: React.MouseEvent) => {
     updateZIndex();
-    if (item.linkHref) {
+    if (item.href) {
       e.preventDefault();
       setIsOpenOverlay(true);
     }
@@ -92,9 +92,9 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
       onDragStart={updateZIndex}
     >
       <FrameImage src={item.src} alt={item.alt} width={item.width} height={item.height} hasBlur={isOpenOverlay} />
-      {item.linkHref && isOpenOverlay && (
+      {item.href && isOpenOverlay && (
         <div className={twMerge("absolute inset-0 z-1 flex items-center justify-center")} ref={overlayRef}>
-          <Link className="w-fit py-6 text-center text-warm-white hover:underline" href={item.linkHref}>
+          <Link className="w-fit py-6 text-center text-warm-white hover:underline" href={item.href}>
             この画像をみる
           </Link>
         </div>

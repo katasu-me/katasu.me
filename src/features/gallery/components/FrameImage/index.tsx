@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 type FrameImageProps = {
   width: number;
   height: number;
-  linkHref?: string;
+  href?: string;
   hasBlur?: boolean;
   disableHoverEffect?: boolean;
 } & Omit<ComponentProps<typeof Image>, "width" | "height">;
@@ -15,7 +15,7 @@ export default function FrameImage({
   className,
   width,
   height,
-  linkHref,
+  href,
   hasBlur = false,
   disableHoverEffect = false,
   ...props
@@ -29,8 +29,8 @@ export default function FrameImage({
       )}
       style={{ aspectRatio: `${width} / ${height}` }}
     >
-      {linkHref && (
-        <Link className="focus:outline-none" href={linkHref}>
+      {href && (
+        <Link className="focus:outline-none" href={href}>
           {props.alt}
           <span className="absolute inset-0 z-1" />
         </Link>
