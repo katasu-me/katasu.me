@@ -26,9 +26,17 @@ const meta = {
       control: "number",
       description: "画像の高さ",
     },
-    href: {
+    linkHref: {
       control: "text",
       description: "画像をクリックしたときのリンク先",
+    },
+    hasBlur: {
+      control: "boolean",
+      description: "ぼかしを適用するかどうか",
+    },
+    hasHoverEffect: {
+      control: "boolean",
+      description: "ホバーエフェクトを有効にするかどうか",
     },
   },
   args: {
@@ -80,7 +88,25 @@ export const Large: Story = {
 export const WithLink: Story = {
   args: {
     alt: "リンク付きの画像",
-    href: "https://example.com",
+    linkHref: "https://example.com",
+    width: 300,
+    height: 200,
+  },
+};
+
+export const WithBlur: Story = {
+  args: {
+    alt: "ぼかし付きの画像",
+    hasBlur: true,
+    width: 300,
+    height: 200,
+  },
+};
+
+export const WithoutHoverEffect: Story = {
+  args: {
+    alt: "ホバーエフェクトなしの画像",
+    hasHoverEffect: false,
     width: 300,
     height: 200,
   },
