@@ -33,17 +33,13 @@ export default function ImagesPage() {
         <UserIcon name="arrow2nd" src="https://avatars.githubusercontent.com/u/44780846?v=4" alt="ユーザーアイコン" />
       </header>
 
-      <div className="col-start-2 mx-auto w-full">
-        <FrameImage {...image} className="h-auto w-full " disableHoverEffect />
-        <h2 className="mt-8">{image.label}</h2>
-        <div>
+      <div className="col-start-2 mx-auto w-full text-center">
+        <FrameImage {...image} className="h-auto w-full" disableHoverEffect />
+        <h2 className="mt-8 text-xl">{image.label}</h2>
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
           {image.tags.map((tag) => (
-            <Link
-              key={tag.name}
-              href={tag.href}
-              className="mr-2 inline-block rounded bg-gray-200 px-3 py-1 text-gray-700 text-sm hover:bg-gray-300"
-            >
-              {tag.name}
+            <Link key={tag.name} href={tag.href} className="text-sm text-warm-black hover:underline">
+              #{tag.name}
             </Link>
           ))}
         </div>
