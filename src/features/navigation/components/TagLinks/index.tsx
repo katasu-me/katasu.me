@@ -17,7 +17,7 @@ type TagLinksProps = {
 export default function TagLinks({ tags, className }: TagLinksProps) {
   return (
     <div className={twMerge("flex gap-2 overflow-x-scroll py-1", className)}>
-      <div className="flex h-8 pc:h-10 pc:w-26 w-20 shrink-0 items-center justify-center gap-1 rounded-md bg-warm-black p-2 text-center text-warm-white">
+      <div className="flex h-8 pc:h-10 shrink-0 items-center justify-center gap-1 rounded-md bg-warm-black p-2 px-4 text-center text-warm-white">
         <IconTag className="h-3 w-3" />
         <p className="text-xs">タグ</p>
       </div>
