@@ -2,7 +2,7 @@
   "name": "katasu.me",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --experimental-https -H local.katasu.me",
     "build": "next build",
     "build:worker": "opennextjs-cloudflare build",
     "start": "next start",
