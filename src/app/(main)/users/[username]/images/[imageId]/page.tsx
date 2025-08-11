@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "motion/react";
 import Link from "next/link";
 import IconFlag from "@/assets/icons/flag.svg";
 import IconPencil from "@/assets/icons/pencil.svg";
@@ -39,7 +42,21 @@ export default function ImagesPage() {
       </header>
 
       <div className="col-start-2 mx-auto w-full text-center">
-        <FrameImage {...image} className="h-auto w-full" disableHoverEffect />
+        <motion.div
+          initial={{
+            opacity: 0,
+            scale: 0.95,
+            rotate: 4,
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+            rotate: 0,
+          }}
+          transition={{ duration: 1, ease: "easeOut" }}
+        >
+          <FrameImage {...image} className="h-auto w-full" disableHoverEffect />
+        </motion.div>
         <h2 className="mt-8 text-xl">{image.label}</h2>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           {image.tags.map((tag) => (
