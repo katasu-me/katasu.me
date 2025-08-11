@@ -1,6 +1,11 @@
 import Link from "next/link";
+import IconFlag from "@/assets/icons/flag.svg";
+import IconPencil from "@/assets/icons/pencil.svg";
+import IconShare from "@/assets/icons/share.svg";
 import FrameImage from "@/features/gallery/components/FrameImage";
 import UserIcon from "@/features/user/components/UserIcon";
+import Button from "@/shared/components/Button";
+import IconButton from "@/shared/components/IconButton";
 
 export default function ImagesPage() {
   // TODO: 実際はAPIから画像データを取得する
@@ -42,6 +47,20 @@ export default function ImagesPage() {
               #{tag.name}
             </Link>
           ))}
+        </div>
+
+        <div className="mt-12 flex items-center justify-center">
+          {/* TODO: 編集ボタンは投稿したユーザーのみ表示 */}
+          <Button className="flex items-center gap-1">
+            <IconPencil className="h-4 w-4" />
+            <span className="text-sm">編集する</span>
+          </Button>
+          <IconButton className="ml-8">
+            <IconFlag className="h-4 w-4" />
+          </IconButton>
+          <IconButton className="ml-4">
+            <IconShare className="h-4 w-4" />
+          </IconButton>
         </div>
       </div>
     </div>
