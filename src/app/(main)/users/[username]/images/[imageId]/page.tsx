@@ -47,13 +47,20 @@ export default function ImagesPage() {
             opacity: 0,
             scale: 0.95,
             rotate: 4,
+            filter: "blur(8px)",
           }}
           animate={{
             opacity: 1,
             scale: 1,
             rotate: 0,
+            filter: "blur(0px)",
           }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          transition={{
+            type: "spring",
+            mass: 5,
+            stiffness: 550,
+            damping: 60,
+          }}
         >
           <FrameImage {...image} className="h-auto w-full" disableHoverEffect />
         </motion.div>
