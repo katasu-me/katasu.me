@@ -72,10 +72,10 @@ export default function ImagesPage() {
             <IconPencil className="h-4 w-4" />
             <span className="text-sm">編集する</span>
           </Button>
-          <IconButton className="ml-8">
+          <IconButton className="ml-6">
             <IconFlag className="h-4 w-4" />
           </IconButton>
-          <IconButton className="ml-4">
+          <IconButton className="ml-3">
             <IconShare className="h-4 w-4" />
           </IconButton>
         </div>
