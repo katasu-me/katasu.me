@@ -34,7 +34,7 @@ export default function ImagesUI({ view, images, pathname, searchParams }: Props
       )}
 
       <LayoutToggle
-        className="fixed right-6 bottom-6 z-50"
+        className="-translate-x-1/2 fixed bottom-6 left-1/2 z-50"
         value={view || "masonry"}
         masonryHref="?view=masonry"
         randomHref="?view=random"

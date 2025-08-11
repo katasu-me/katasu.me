@@ -24,7 +24,7 @@ export default function LayoutToggle({ value, masonryHref, randomHref, className
       <Link
         href={masonryHref}
         className={twMerge(
-          " flex items-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
+          "flex w-32 items-center justify-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
           value === "masonry" ? selectedClassname : unselectedClassname,
         )}
         role="tab"
@@ -32,11 +32,12 @@ export default function LayoutToggle({ value, masonryHref, randomHref, className
         aria-controls="masonry-layout"
       >
         <MasonryIcon className="h-4 w-4" />
+        <span>一覧</span>
       </Link>
       <Link
         href={randomHref}
         className={twMerge(
-          "flex items-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
+          "flex w-32 items-center justify-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
           value === "random" ? selectedClassname : unselectedClassname,
         )}
         role="tab"
@@ -44,6 +45,7 @@ export default function LayoutToggle({ value, masonryHref, randomHref, className
         aria-controls="random-layout"
       >
         <ShuffleIcon className="h-4 w-4" />
+        <span>シャッフル</span>
       </Link>
     </div>
   );
