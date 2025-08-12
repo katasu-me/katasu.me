@@ -69,15 +69,8 @@ export default function MasonryImageLayout({
     };
   }, [isReady]);
 
-  const paginatedImages = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return images.slice(startIndex, endIndex);
-  }, [images, currentPage, itemsPerPage]);
-
-  const totalPages = useMemo(() => {
-    return Math.ceil(images.length / itemsPerPage);
-  }, [images.length, itemsPerPage]);
+  const paginatedImages = images.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = Math.ceil(images.length / itemsPerPage);
 
   const imageColumns = useMemo(() => {
     const cols: ComponentProps<typeof FrameImage>[][] = Array.from({ length: columns }, () => []);
