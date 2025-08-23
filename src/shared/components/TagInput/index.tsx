@@ -273,6 +273,7 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
                     ? "bg-warm-black text-warm-white"
                     : "text-warm-black hover:bg-warm-black-25",
                 )}
+                data-highlighted={index === highlightedIndex ? "true" : "false"}
               >
                 {suggestTag}
               </button>

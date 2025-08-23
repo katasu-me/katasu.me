@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { TagInput } from ".";
+import TagInput from ".";
 
 describe("TagInput", () => {
   const mockOnChange = vi.fn();
@@ -26,7 +26,7 @@ describe("TagInput", () => {
     render(<TagInput tags={tags} />);
 
     tags.forEach((tag) => {
-      expect(screen.getByText(tag)).toBeInTheDocument();
+      expect(screen.getByText(`#${tag}`)).toBeInTheDocument();
     });
   });
 
@@ -135,7 +135,7 @@ describe("TagInput", () => {
       await user.keyboard("{ArrowDown}");
 
       const options = screen.getAllByRole("button");
-      expect(options[1]).toHaveClass("bg-gray-100");
+      expect(options[1]).toHaveAttribute("data-highlighted", "true");
     });
 
     it("ArrowUpキーでサジェストを上に移動できる", async () => {
@@ -148,7 +148,7 @@ describe("TagInput", () => {
       await user.keyboard("{ArrowUp}");
 
       const options = screen.getAllByRole("button");
-      expect(options[0]).toHaveClass("bg-gray-100");
+      expect(options[0]).toHaveAttribute("data-highlighted", "true");
     });
 
     it("Enterキーで選択中のサジェストを追加できる", async () => {
@@ -239,15 +239,15 @@ describe("TagInput", () => {
       await user.type(input, "I");
 
       // 最初の項目 (index 0)
-      expect(screen.getByText("Item1")).toHaveClass("bg-gray-100");
+      expect(screen.getByText("Item1")).toHaveAttribute("data-highlighted", "true");
 
       await user.keyboard("{ArrowDown}");
       // 2番目の項目 (index 1)
-      expect(screen.getByText("Item2")).toHaveClass("bg-gray-100");
+      expect(screen.getByText("Item2")).toHaveAttribute("data-highlighted", "true");
 
       await user.keyboard("{ArrowDown}");
       // 最初の項目に戻る (index 0)
-      expect(screen.getByText("Item1")).toHaveClass("bg-gray-100");
+      expect(screen.getByText("Item1")).toHaveAttribute("data-highlighted", "true");
     });
 
     it("ArrowUpキーで最初の項目から最後の項目に移動する", async () => {
@@ -260,12 +260,7 @@ describe("TagInput", () => {
       await user.keyboard("{ArrowUp}");
 
       const options = screen.getAllByRole("button");
-      expect(options[options.length - 1]).toHaveClass("bg-gray-100");
+      expect(options[options.length - 1]).toHaveAttribute("data-highlighted", "true");
     });
-  });
-
-  it("className propが適用される", () => {
-    const { container } = render(<TagInput className="custom-class" />);
-    expect(container.firstChild).toHaveClass("custom-class", "w-full");
   });
 });

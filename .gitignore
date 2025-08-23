@@ -49,3 +49,6 @@ certificates
 /__snapshots__
 /test-results
 /playwright-report
+
+# test
+/coverage
