@@ -28,7 +28,7 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
   const dropdownRef = useRef<HTMLDivElement>(null);
   const isComposingRef = useRef(false);
 
-  const filteredSuggestTags = [...new Set(suggestTags).difference(new Set(tags))];
+  const filteredSuggestTags = suggestTags.filter(tag => !tags.includes(tag));
 
   const addTag = (newTag: string | undefined) => {
     if (!newTag) {
