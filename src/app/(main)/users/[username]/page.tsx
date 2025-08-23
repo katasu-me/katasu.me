@@ -82,17 +82,14 @@ export default async function UsersPage({ params, searchParams }: PageProps) {
             {
               name: "風景",
               href: "/user/arrow2nd/tag/%E9%A2%A8%E6%99%AF",
-              image: "/dummy/a.avif",
             },
             {
               name: "ポートレート",
               href: "/user/arrow2nd/tag/%E3%83%9D%E3%83%BC%E3%83%88%E3%83%AC%E3%83%BC%E3%83%88",
-              image: "/dummy/b.avif",
             },
             {
               name: "空間",
               href: "/user/arrow2nd/tag/%E5%8B%95%E7%89%A9",
-              image: "/dummy/c.avif",
             },
           ]}
         />
