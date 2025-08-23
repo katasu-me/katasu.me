@@ -113,6 +113,10 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
 
       case "Tab":
       case "Enter":
+        if (inputValue.trim() === "") {
+          break;
+        }
+
         e.preventDefault();
 
         // IMEが入力中なら処理しない
@@ -139,13 +143,14 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
         break;
 
       case " ":
-        e.preventDefault();
-
         // IMEが入力中なら処理しない
         if (isComposingRef.current) {
           break;
         }
 
+        e.preventDefault();
+
+        // 空白だけなら入力させない
         if (inputValue.trim() === "") {
           break;
         }

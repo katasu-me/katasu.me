@@ -52,7 +52,7 @@ export default function ImageDrawer() {
                 id="image-tags"
               />
 
-              <Button type="submit" className="mt-8 w-full" variant="fill" disabled>
+              <Button type="submit" className="mt-8 w-full" variant="fill">
                 投稿
               </Button>
             </form>
