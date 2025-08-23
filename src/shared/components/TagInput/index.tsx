@@ -1,6 +1,6 @@
 "use client";
 
-import { type KeyboardEvent, useRef, useState } from "react";
+import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Tag from "./Tag";
 
@@ -22,8 +22,10 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [dropdownPosition, setDropdownPosition] = useState<"bottom" | "top">("top");
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const isComposingRef = useRef(false);
 
   const filteredSuggestTags = [...new Set(suggestTags).difference(new Set(tags))];
@@ -59,8 +61,6 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
   };
 
   const updateHighlightedIndex = (newIndex: number) => {
-    console.log("updateHighlightedIndex", newIndex);
-
     setHighlightedIndex(newIndex);
 
     // ハイライトされた要素が見えるようにスクロール
@@ -185,6 +185,43 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
     setOpen(false);
   };
 
+  // ドロップダウンの位置を計算する
+  useEffect(() => {
+    if (!open || !inputRef.current) {
+      return;
+    }
+
+    const updateDropdownPosition = () => {
+      if (!inputRef.current) {
+        return;
+      }
+
+      const inputRect = inputRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownMaxHeight = 240; // max-h-60 (240px)
+      const spaceBelow = viewportHeight - inputRect.bottom;
+      const spaceAbove = inputRect.top;
+
+      // 下に十分なスペースがあるか、上よりも下のスペースが大きい場合は下に表示
+      if (spaceBelow >= dropdownMaxHeight || spaceBelow >= spaceAbove) {
+        setDropdownPosition("bottom");
+      } else {
+        setDropdownPosition("top");
+      }
+    };
+
+    updateDropdownPosition();
+
+    // ウィンドウサイズ変更時に再計算
+    window.addEventListener("resize", updateDropdownPosition);
+    window.addEventListener("scroll", updateDropdownPosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updateDropdownPosition);
+      window.removeEventListener("scroll", updateDropdownPosition, true);
+    };
+  }, [open]);
+
   return (
     <div className={twMerge("w-full", className)}>
       <label htmlFor={id} className="mb-2 block font-medium text-sm text-warm-black">
@@ -212,7 +249,11 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
 
         {open && filteredSuggestTags.length > 0 && (
           <div
-            className="absolute top-full right-0 left-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-lg border border-warm-black-25 bg-warm-white shadow-lg"
+            ref={dropdownRef}
+            className={twMerge(
+              "absolute right-0 left-0 z-50 max-h-60 overflow-y-auto rounded-lg border border-warm-black-25 bg-warm-white shadow-lg",
+              dropdownPosition === "bottom" ? "top-full mt-1" : "bottom-full mb-1",
+            )}
             data-dropdown="true"
           >
             {filteredSuggestTags.map((suggestTag, index) => (
