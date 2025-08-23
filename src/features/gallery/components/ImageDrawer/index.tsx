@@ -1,13 +1,20 @@
+/** biome-ignore-all lint/nursery/useUniqueElementIds: 画面に複数出るドロワーではないため */
+import { useState } from "react";
 import { Drawer } from "vaul";
 import Button from "@/shared/components/Button";
+import Input from "@/shared/components/Input";
+import TagInput from "@/shared/components/TagInput";
 import FrameImage from "../FrameImage";
 
 export default function ImageDrawer() {
+  const [title, setTitle] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
   return (
     <Drawer.Root open>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
-        <Drawer.Content className="fixed right-0 bottom-0 left-0 h-fit rounded-t-xl bg-warm-white pc:px-4 px-8 py-4 outline-none">
+        <Drawer.Content className="fixed right-0 bottom-0 left-0 h-fit rounded-t-xl bg-warm-white p-8 pc:px-4 pt-4 outline-none">
           <Drawer.Handle />
           <div className="mx-auto mt-4 max-w-md">
             <Drawer.Title className="mb-4 text-warm-black text-xl ">投稿する</Drawer.Title>
@@ -18,25 +25,34 @@ export default function ImageDrawer() {
               width={2560}
               height={1440}
               alt="画像のプレビュー"
-              className="mx-auto mb-4 h-48 w-auto"
+              className="mx-auto mb-4 h-48 w-auto rotate-[1deg]"
             />
 
             <form>
-              <div className="mb-4">
-                <label className="mb-1 block font-medium text-sm text-warm-black" htmlFor="image-title">
-                  タイトル
-                  <span className="text-warm-black text-xs">（なくてもいいよ）</span>
-                </label>
-                {/** biome-ignore lint/nursery/useUniqueElementIds: このドロワーは常に1つしか表示されないため */}
-                <input
-                  id="image-title"
-                  type="text"
-                  className="w-full rounded-md border border-warm-black-50 px-3 py-2 text-warm-black focus:border-warm-black focus:outline-none"
-                  placeholder="タイトルを入力"
-                />
-              </div>
+              <Input
+                id="image-title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="タイトルを入力"
+                maxLength={100}
+                currentLength={title.length}
+                label={
+                  <>
+                    タイトル
+                    <span className="text-warm-black text-xs">（なくてもいいよ）</span>
+                  </>
+                }
+              />
 
-              <Button type="submit" className="mb-4 w-full" variant="fill" disabled>
+              <TagInput
+                suggestTags={["風景", "旅行", "食べ物", "動物", "建築", "アート", "自然", "ポートレート"]}
+                tags={selectedTags}
+                onChange={setSelectedTags}
+                placeholder="タグを追加"
+                id="image-tags"
+              />
+
+              <Button type="submit" className="mt-8 w-full" variant="fill" disabled>
                 投稿
               </Button>
             </form>
