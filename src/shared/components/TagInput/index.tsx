@@ -4,7 +4,7 @@ import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Tag from "./Tag";
 
-export type TagInputProps = {
+type Props = {
   /** タグの候補リスト */
   suggestTags?: string[];
   /** 入力されているタグのリスト */
@@ -18,7 +18,7 @@ export type TagInputProps = {
   id?: string;
 };
 
-export default function TagInput({ suggestTags = [], tags = [], onChange, placeholder, className, id }: TagInputProps) {
+export default function TagInput({ suggestTags = [], tags = [], onChange, placeholder, className, id }: Props) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -28,7 +28,7 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
   const dropdownRef = useRef<HTMLDivElement>(null);
   const isComposingRef = useRef(false);
 
-  const filteredSuggestTags = suggestTags.filter(tag => !tags.includes(tag));
+  const filteredSuggestTags = suggestTags.filter((tag) => !tags.includes(tag));
 
   const addTag = (newTag: string | undefined) => {
     if (!newTag) {

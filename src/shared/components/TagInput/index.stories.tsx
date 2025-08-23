@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
-import { TagInput, type TagInputProps } from ".";
+import { type ComponentProps, useState } from "react";
+import TagInput from ".";
 
 const meta = {
   title: "shared/TagInput",
@@ -37,7 +37,7 @@ const suggestTags = [
   "Parcel",
 ];
 
-const TagInputWithState = (args: TagInputProps) => {
+const TagInputWithState = (args: ComponentProps<typeof TagInput>) => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   return (
