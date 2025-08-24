@@ -14,8 +14,7 @@ type ButtonProps = BaseProps & {
 
 type LinkProps = BaseProps & {
   as: "link";
-  href: string;
-} & Omit<ComponentProps<typeof Link>, keyof BaseProps | "href">;
+} & Omit<ComponentProps<typeof Link>, keyof BaseProps>;
 
 type Props = ButtonProps | LinkProps;
 

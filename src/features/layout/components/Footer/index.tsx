@@ -22,9 +22,10 @@ export default function Footer({ logoType = "katasu.me", className, ...props }: 
         )}
 
         <nav className="flex flex-col items-center gap-2 text-sm text-warm-black">
-          <TextLink href="/news">お知らせ</TextLink>
-          <TextLink href="/terms">利用規約</TextLink>
-          <TextLink href="/privacy">プライバシーポリシー</TextLink>
+          {/* TODO: ページ作ったら差し替える */}
+          <TextLink href="/">お知らせ</TextLink>
+          <TextLink href="/">利用規約</TextLink>
+          <TextLink href="/">プライバシーポリシー</TextLink>
         </nav>
 
         <p className="text-xs">© katasu.me</p>

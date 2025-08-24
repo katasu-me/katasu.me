@@ -6,12 +6,10 @@ import type { ImageLayoutType } from "@/features/gallery/types/layout";
 
 type Props = {
   value: ImageLayoutType;
-  masonryHref: string;
-  randomHref: string;
   className?: string;
 };
 
-export default function LayoutToggle({ value, masonryHref, randomHref, className }: Props) {
+export default function LayoutToggle({ value, className }: Props) {
   const selectedClassname = "interactive-base bg-warm-black text-warm-white shadow-sm";
   const unselectedClassname = "interactive-scale-brightness text-warm-black-50 hover:text-warm-black";
 
@@ -22,7 +20,7 @@ export default function LayoutToggle({ value, masonryHref, randomHref, className
       aria-label="Layout selection"
     >
       <Link
-        href={masonryHref}
+        href={{ search: "?view=masonry" }}
         className={twMerge(
           "flex w-32 items-center justify-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
           value === "masonry" ? selectedClassname : unselectedClassname,
@@ -35,7 +33,7 @@ export default function LayoutToggle({ value, masonryHref, randomHref, className
         <span>一覧</span>
       </Link>
       <Link
-        href={randomHref}
+        href={{ search: "?view=random" }}
         className={twMerge(
           "flex w-32 items-center justify-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
           value === "random" ? selectedClassname : unselectedClassname,

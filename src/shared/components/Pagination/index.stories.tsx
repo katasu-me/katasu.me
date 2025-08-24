@@ -13,7 +13,6 @@ const meta = {
     totalPages: { control: "number" },
   },
   args: {
-    pathname: "/",
     searchParams: new URLSearchParams(),
   },
   decorators: [(Story) => <div suppressHydrationWarning>{Story()}</div>],

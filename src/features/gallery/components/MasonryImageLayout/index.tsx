@@ -14,11 +14,10 @@ const COLUMNS = new Map([
   [1024, 4], // lg
 ]);
 
-type MasonryImageLayoutProps = {
+type Props = {
   images: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
   currentPage?: number;
   itemsPerPage?: number;
-  pathname: string;
   searchParams: URLSearchParams | Record<string, string>;
   className?: string;
 };
@@ -27,10 +26,9 @@ export default function MasonryImageLayout({
   images,
   currentPage = 1,
   itemsPerPage = 20,
-  pathname,
   searchParams,
   className,
-}: MasonryImageLayoutProps) {
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [columns, setColumns] = useState(DEFAULT_COLUMNS);
   const [isReady, setIsReady] = useState(false);
@@ -103,13 +101,7 @@ export default function MasonryImageLayout({
         ))}
       </div>
       {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          pathname={pathname}
-          searchParams={searchParams}
-          className="mt-4"
-        />
+        <Pagination currentPage={currentPage} totalPages={totalPages} searchParams={searchParams} className="mt-4" />
       )}
     </div>
   );

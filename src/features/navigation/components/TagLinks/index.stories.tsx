@@ -8,10 +8,6 @@ const meta: Meta<typeof TagLinks> = {
     layout: "centered",
   },
   tags: ["autodocs"],
-  argTypes: {
-    tags: { control: "object" },
-    className: { control: "text" },
-  },
 };
 
 export default meta;
@@ -20,30 +16,30 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     tags: [
-      { name: "画像", href: "/user/arrow2nd/tag/画像" },
-      { name: "イラスト", href: "/user/arrow2nd/tag/イラスト" },
-      { name: "風景", href: "/user/arrow2nd/tag/風景" },
+      { name: "画像", userId: "test" },
+      { name: "イラスト", userId: "test" },
+      { name: "風景", userId: "test" },
     ],
   },
 };
 
 export const SingleTag: Story = {
   args: {
-    tags: [{ name: "画像", href: "/user/arrow2nd/tag/画像" }],
+    tags: [{ name: "画像", userId: "test" }],
   },
 };
 
 export const ManyTags: Story = {
   args: {
     tags: [
-      { name: "画像", href: "/user/arrow2nd/tag/画像" },
-      { name: "イラスト", href: "/user/arrow2nd/tag/イラスト" },
-      { name: "風景", href: "/user/arrow2nd/tag/風景" },
-      { name: "ポートレート", href: "/user/arrow2nd/tag/ポートレート" },
-      { name: "モノクロ", href: "/user/arrow2nd/tag/モノクロ" },
-      { name: "夕焼け", href: "/user/arrow2nd/tag/夕焼け" },
-      { name: "海", href: "/user/arrow2nd/tag/海" },
-      { name: "山", href: "/user/arrow2nd/tag/山" },
+      { name: "画像", userId: "test" },
+      { name: "イラスト", userId: "test" },
+      { name: "風景", userId: "test" },
+      { name: "ポートレート", userId: "test" },
+      { name: "モノクロ", userId: "test" },
+      { name: "夕焼け", userId: "test" },
+      { name: "海", userId: "test" },
+      { name: "山", userId: "test" },
     ],
   },
 };

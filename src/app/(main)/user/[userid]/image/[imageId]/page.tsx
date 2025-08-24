@@ -22,15 +22,15 @@ export default function ImagesPage() {
     tags: [
       {
         name: "風景",
-        href: "/users/a/tags/landscape",
+        href: "/user/a/tag/landscape",
       },
       {
         name: "横長",
-        href: "/users/a/tags/wide",
+        href: "/user/a/tag/wide",
       },
       {
         name: "自然",
-        href: "/users/a/tags/nature",
+        href: "/user/a/tag/nature",
       },
     ],
   };
@@ -67,7 +67,7 @@ export default function ImagesPage() {
         <h2 className="mt-8 text-xl">{image.label}</h2>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           {image.tags.map((tag) => (
-            <Link key={tag.name} href={tag.href} className="text-sm text-warm-black hover:underline">
+            <Link key={tag.name} href="/user/a/tag/a" className="text-sm text-warm-black hover:underline">
               #{tag.name}
             </Link>
           ))}

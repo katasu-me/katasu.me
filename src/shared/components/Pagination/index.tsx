@@ -8,10 +8,9 @@ import CircleOutline from "@/assets/icons/circle-outline.svg";
 import Dots from "@/assets/icons/dots.svg";
 import IconButton from "@/shared/components/IconButton";
 
-type PaginationProps = {
+type Props = {
   currentPage: number;
   totalPages: number;
-  pathname: string;
   searchParams: URLSearchParams | Record<string, string>;
   className?: string;
 } & Omit<ComponentProps<"nav">, "children">;
@@ -19,18 +18,11 @@ type PaginationProps = {
 const MAX_DOTS = 7;
 const EDGE_DOTS = 2;
 
-export default function Pagination({
-  currentPage,
-  totalPages,
-  pathname,
-  searchParams,
-  className,
-  ...props
-}: PaginationProps) {
-  const createPageUrl = (page: number) => {
+export default function Pagination({ currentPage, totalPages, searchParams, className, ...props }: Props) {
+  const createSearchParams = (page: number) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", page.toString());
-    return `${pathname}?${params.toString()}`;
+    return params.toString();
   };
 
   const renderDots = () => {
@@ -86,7 +78,13 @@ export default function Pagination({
       {...props}
     >
       {!isFirstPage && (
-        <IconButton as="link" href={createPageUrl(currentPage - 1)} title="前のページへ">
+        <IconButton
+          as="link"
+          href={{
+            search: createSearchParams(currentPage - 1),
+          }}
+          title="前のページへ"
+        >
           <ChevronLeft className="h-5 w-5" />
         </IconButton>
       )}
@@ -102,7 +100,9 @@ export default function Pagination({
           return (
             <Link
               key={dot}
-              href={createPageUrl(dot)}
+              href={{
+                search: createSearchParams(dot),
+              }}
               aria-label={`ページ${dot}へ`}
               aria-current={isCurrent ? "page" : undefined}
               className="interactive-scale-brightness group text-warm-black transition-all duration-400 ease-magnetic hover:brightness-90"
@@ -115,7 +115,13 @@ export default function Pagination({
       </div>
 
       {!isLastPage && (
-        <IconButton as="link" href={createPageUrl(currentPage + 1)} title="次のページへ">
+        <IconButton
+          as="link"
+          href={{
+            search: createSearchParams(currentPage + 1),
+          }}
+          title="次のページへ"
+        >
           <ChevronRight className="h-5 w-5" />
         </IconButton>
       )}

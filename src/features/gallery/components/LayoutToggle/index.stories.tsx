@@ -22,23 +22,17 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     value: "masonry",
-    masonryHref: "/masonry",
-    randomHref: "/random",
   },
 };
 
 export const Masonry: Story = {
   args: {
     value: "masonry",
-    masonryHref: "/masonry",
-    randomHref: "/random",
   },
 };
 
 export const Random: Story = {
   args: {
     value: "random",
-    masonryHref: "/masonry",
-    randomHref: "/random",
   },
 };

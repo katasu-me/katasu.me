@@ -1,10 +1,10 @@
-import Link, { type LinkProps } from "next/link";
-import type { PropsWithChildren } from "react";
+import Link from "next/link";
+import type { ComponentProps, PropsWithChildren } from "react";
 import { twMerge } from "tailwind-merge";
 
 type Props = {
   className?: string;
-} & PropsWithChildren<LinkProps>;
+} & PropsWithChildren<ComponentProps<typeof Link>>;
 
 export default function TextLink({ className, children, ...props }: Props) {
   return (

@@ -14,7 +14,10 @@ const meta = {
       alt: "ドラッグ可能な画像",
       width: 400,
       height: 600,
-      href: "/photo/1",
+      linkParams: {
+        userId: "test",
+        imageId: "1",
+      },
     },
     initialPosition: { x: 0, y: 0, rotation: 0 },
     delay: 0,
@@ -74,7 +77,10 @@ export const HorizontalImage: Story = {
       alt: "横長の画像",
       width: 600,
       height: 400,
-      href: "/photo/2",
+      linkParams: {
+        userId: "test",
+        imageId: "2",
+      },
     },
     initialPosition: { x: 0, y: 0, rotation: 0 },
     delay: 0,

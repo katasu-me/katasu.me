@@ -10,11 +10,10 @@ import MasonryImageLayout from "../MasonryImageLayout";
 type Props = {
   view: "masonry" | "random";
   images: ComponentProps<typeof FrameImage>[];
-  pathname: string;
   searchParams: URLSearchParams | Record<string, string>;
 };
 
-export default function ImagesUI({ view, images, pathname, searchParams }: Props) {
+export default function ImagesUI({ view, images, searchParams }: Props) {
   return (
     <>
       <div className="col-start-2">
@@ -30,15 +29,10 @@ export default function ImagesUI({ view, images, pathname, searchParams }: Props
           </Button>
         </>
       ) : (
-        <MasonryImageLayout className="col-start-2" images={images} pathname={pathname} searchParams={searchParams} />
+        <MasonryImageLayout className="col-start-2" images={images} searchParams={searchParams} />
       )}
 
-      <LayoutToggle
-        className="-translate-x-1/2 fixed bottom-6 left-1/2 z-50"
-        value={view || "masonry"}
-        masonryHref="?view=masonry"
-        randomHref="?view=random"
-      />
+      <LayoutToggle className="-translate-x-1/2 fixed bottom-6 left-1/2 z-50" value={view || "masonry"} />
     </>
   );
 }

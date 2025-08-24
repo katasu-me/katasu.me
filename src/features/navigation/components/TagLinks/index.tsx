@@ -1,21 +1,17 @@
+import type { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 import TagLink from "./TabLink";
 
-type Tag = {
-  name: string;
-  href: string;
-};
-
-type TagLinksProps = {
-  tags: Tag[];
+type Props = {
+  tags: ComponentProps<typeof TagLink>[];
   className?: string;
 };
 
-export default function TagLinks({ tags, className }: TagLinksProps) {
+export default function TagLinks({ tags, className }: Props) {
   return (
     <div className={twMerge("flex gap-2 overflow-x-scroll py-1", className)}>
       {tags.map((tag) => (
-        <TagLink key={tag.name} name={tag.name} href={tag.href} />
+        <TagLink key={tag.name} {...tag} />
       ))}
     </div>
   );
