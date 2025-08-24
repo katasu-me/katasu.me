@@ -18,25 +18,25 @@ jobs:
       - name: Setup Bun
         uses: ./.github/actions/setup-bun
 
-      - name: Create wrangler.toml from template
+      - name: Create wrangler.jsonc from template
         run: |
-          cp wrangler.example.toml wrangler.toml
+          cp wrangler.example.jsonc wrangler.jsonc
 
           # 開発環境の値を置換
-          # sed -i "s|<DEVELOPMENT_URL>|${{ secrets.DEVELOPMENT_URL }}|g" wrangler.toml
-          # sed -i "s|<FORM_BUG_REPORT_URL>|${{ secrets.FORM_BUG_REPORT_URL }}|g" wrangler.toml
-          # sed -i "s|<FORM_CONTACT_URL>|${{ secrets.FORM_CONTACT_URL }}|g" wrangler.toml
-          # sed -i "s|<DEVELOPMENT_KV_ID>|${{ secrets.DEVELOPMENT_KV_ID }}|g" wrangler.toml
-          # sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.toml
+          # sed -i "s|<DEVELOPMENT_URL>|${{ secrets.DEVELOPMENT_URL }}|g" wrangler.jsonc
+          # sed -i "s|<FORM_BUG_REPORT_URL>|${{ secrets.FORM_BUG_REPORT_URL }}|g" wrangler.jsonc
+          # sed -i "s|<FORM_CONTACT_URL>|${{ secrets.FORM_CONTACT_URL }}|g" wrangler.jsonc
+          # sed -i "s|<DEVELOPMENT_KV_ID>|${{ secrets.DEVELOPMENT_KV_ID }}|g" wrangler.jsonc
+          # sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.jsonc
 
           # 本番環境の値を置換
-          # sed -i "s|<PRODUCTION_URL>|${{ secrets.PRODUCTION_URL }}|g" wrangler.toml
-          # sed -i "s|<PRODUCTION_KV_ID>|${{ secrets.PRODUCTION_KV_ID }}|g" wrangler.toml
-          # sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.toml
-          # sed -i "s|<UMAMI_SCRIPT_URL>|${{ secrets.UMAMI_SCRIPT_URL }}|g" wrangler.toml
-          # sed -i "s|<UMAMI_WEBSITE_ID>|${{ secrets.UMAMI_WEBSITE_ID }}|g" wrangler.toml
+          # sed -i "s|<PRODUCTION_URL>|${{ secrets.PRODUCTION_URL }}|g" wrangler.jsonc
+          # sed -i "s|<PRODUCTION_KV_ID>|${{ secrets.PRODUCTION_KV_ID }}|g" wrangler.jsonc
+          # sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.jsonc
+          # sed -i "s|<UMAMI_SCRIPT_URL>|${{ secrets.UMAMI_SCRIPT_URL }}|g" wrangler.jsonc
+          # sed -i "s|<UMAMI_WEBSITE_ID>|${{ secrets.UMAMI_WEBSITE_ID }}|g" wrangler.jsonc
 
-          echo "wrangler.toml created successfully"
+          echo "wrangler.jsonc created successfully"
 
       - name: Cache build
         uses: actions/cache@v4
