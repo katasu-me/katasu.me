@@ -60,6 +60,7 @@ const nextConfig: NextConfig = {
         ]
       : [],
   },
+  typedRoutes: true,
   experimental: {
     reactCompiler: true,
   },
