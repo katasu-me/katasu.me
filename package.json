@@ -18,11 +18,14 @@
     "build-storybook": "storybook build",
     "db:generate": "drizzle-kit generate --dialect sqlite --out ./src/db/migrations --schema ./src/db/schema",
     "db:studio": "bun --env-file=.env.local run drizzle-kit studio",
-    "db:migrate": "wrangler d1 migrations apply katasu-me-dev",
-    "db:migrate:local": "wrangler d1 migrations apply katasu-me-dev --local",
+    "db:migrate": "wrangler d1 migrations apply katasu-me-dev --local",
+    "db:migrate:dev": "wrangler d1 migrations apply katasu-me-dev",
     "db:migrate:prod": "wrangler d1 migrations apply katasu-me",
     "db:push": "wrangler d1 execute katasu-me-dev --remote --file=$(ls ./src/db/migrations/*.sql | fzf)",
-    "db:push:prod": "wrangler d1 execute katasu-me --remote --file=$(ls ./src/db/migrations/*.sql | fzf)"
+    "db:push:prod": "wrangler d1 execute katasu-me --remote --file=$(ls ./src/db/migrations/*.sql | fzf)",
+    "db:seed": "wrangler d1 execute katasu-me-dev --file=./src/db/seeds/plans.sql --local",
+    "db:seed:dev": "wrangler d1 execute katasu-me-dev --file=./src/db/seeds/plans.sql",
+    "db:seed:prod": "wrangler d1 execute katasu-me --file=./src/db/seeds/plans.sql"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.6.5",

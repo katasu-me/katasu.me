@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
+import { plan } from "./plan";
 
 export const user = sqliteTable("user", {
   id: text("id")
@@ -10,13 +11,16 @@ export const user = sqliteTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: integer("emailVerified", { mode: "boolean" }).notNull().default(false),
   image: text("image"),
-  plan: text("plan").notNull().default("free"),
+  plan: text("plan")
+    .notNull()
+    .references(() => plan.id, { onDelete: "cascade" })
+    .default("free"),
   maxPhotos: integer("maxPhotos").notNull().default(1000),
   uploadedPhotos: integer("uploadedPhotos").notNull().default(0),
+  isActive: integer("isActive", { mode: "boolean" }).notNull().default(true),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" })
     .notNull()
-
     .default(sql`(unixepoch())`)
     .$onUpdate(() => new Date()),
 });
