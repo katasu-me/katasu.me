@@ -17,7 +17,7 @@ export const user = sqliteTable("user", {
     .default("free"),
   maxPhotos: integer("maxPhotos").notNull().default(1000),
   uploadedPhotos: integer("uploadedPhotos").notNull().default(0),
-  isActive: integer("isActive", { mode: "boolean" }).notNull().default(true),
+  isBanned: integer("isBanned", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" })
     .notNull()
