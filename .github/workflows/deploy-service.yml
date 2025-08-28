@@ -20,6 +20,7 @@ jobs:
 
       - name: Create wrangler.jsonc from template
         run: |
+          cd apps/service
           cp wrangler.example.jsonc wrangler.jsonc
 
           # 開発環境の値を置換
@@ -40,13 +41,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ${{ github.workspace }}/.next/cache
+            ${{ github.workspace }}/apps/service/.next/cache
+            ${{ github.workspace }}/.turbo
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
 
       - name: Build
-        run: bun run build:worker
+        run: turbo build:worker --filter=@katasu/service
 
       - name: Deploy to development environment
         if: github.ref == 'refs/heads/develop'
@@ -55,6 +57,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
+          workingDirectory: apps/service
 
       - name: Deploy to production environment
         if: github.ref == 'refs/heads/main'
@@ -63,3 +66,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy --env production
+          workingDirectory: apps/service
