@@ -8,9 +8,9 @@
   ],
   "scripts": {
     "dev": "turbo dev",
-    "dev:service": "turbo dev --filter=@katasu/service",
+    "dev:service": "turbo dev --filter=@katasu.me/service",
     "build": "turbo build",
-    "build:service": "turbo build:worker --filter=@katasu/service",
+    "build:service": "turbo build:worker --filter=@katasu.me/service",
     "build:worker": "turbo build:worker",
     "preview": "turbo preview",
     "lint": "turbo lint",
