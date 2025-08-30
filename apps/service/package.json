@@ -76,13 +76,6 @@
     "vitest": "^3.2.4",
     "wrangler": "^4.32.0"
   },
-  "imports": {
-    "#*": [
-      "./*",
-      "./*.ts",
-      "./*.tsx"
-    ]
-  },
   "overrides": {
     "@types/react": "19.1.11",
     "@types/react-dom": "19.1.7"
