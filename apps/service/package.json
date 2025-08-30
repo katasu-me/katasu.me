@@ -1,5 +1,5 @@
 {
-  "name": "@katasu/service",
+  "name": "@katasu.me/service",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --experimental-https -H local.katasu.me",
