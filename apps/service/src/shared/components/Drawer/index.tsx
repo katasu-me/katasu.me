@@ -8,13 +8,16 @@ type Props = {
   /** 内側 */
   children: (components: { Description: typeof VaulDrawer.Description; Close: typeof VaulDrawer.Close }) => ReactNode;
 
+  /** トリガー要素 */
+  triggerChildren?: ReactNode;
   /** 内側のコンテンツのクラス名 */
   innerClassname?: string;
 } & Pick<DialogProps, "open" | "onOpenChange">;
 
-export default function Drawer({ title, children, innerClassname, ...props }: Props) {
+export default function Drawer({ title, children, triggerChildren, innerClassname, ...props }: Props) {
   return (
     <VaulDrawer.Root {...props}>
+      {triggerChildren && <VaulDrawer.Trigger asChild>{triggerChildren}</VaulDrawer.Trigger>}
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 bg-black/40" />
         <VaulDrawer.Content className="fixed right-0 bottom-0 left-0 m-2 pc:m-4 h-fit overflow-hidden rounded-xl bg-warm-white p-8 pc:px-4 pt-4 outline-none">
