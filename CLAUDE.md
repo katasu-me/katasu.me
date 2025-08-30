@@ -6,41 +6,57 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 katasu.me は「インターネットのかたすみにある、ぽつんと画像をおいておける場所」をコンセプトとした画像共有Webアプリケーションです。Next.js 15 と Cloudflare Workers を使用して構築されています。
 
+### リポジトリ構成
+
+このプロジェクトはBunワークスペースを使用したモノレポ構成です：
+- `apps/service` - メインのNext.jsアプリケーション
+- `packages/service-db` - データベーススキーマ定義（Drizzle ORM）
+
 ## 開発コマンド
 
-### 基本コマンド
-- `bun dev` - 開発サーバーの起動（Turbopack使用）
-- `bun build` - 本番ビルド
-- `bun preview` - Cloudflare環境でのプレビュー（ビルド後に実行）
-- `bun check` - Biomeによるコード検査と自動修正（lint + format）
+### ルートディレクトリ（Turbo経由）
+- `bun dev` - 全ワークスペースの開発サーバー起動
+- `bun dev:service` - serviceアプリのみ開発サーバー起動
+- `bun build` - 全ワークスペースのビルド
+- `bun build:service` - serviceアプリのワーカービルド
+- `bun check` - 全ワークスペースのコード検査
+- `bun lint` / `bun format` - コード品質管理
+- `bun test` - 全ワークスペースのテスト実行
 
-### コード品質管理
-- `bun lint` - Biomeによるリント（自動修正付き）
-- `bun format` - Biomeによるフォーマット
-
-### Storybook
-- `bun storybook` - Storybookの起動（ポート6006）
-- `bun build-storybook` - Storybookの本番ビルド
-
-### Cloudflare関連
+### apps/service ディレクトリ
+- `bun dev` - 開発サーバーの起動（Turbopack使用、HTTPS有効）
+- `bun build` - Next.js本番ビルド
 - `bun build:worker` - OpenNext.js Cloudflareビルド
+- `bun preview` - Cloudflare環境でのプレビュー
 - `bun cf-typegen` - Cloudflare環境の型定義生成
+- `bun storybook` - Storybookの起動（ポート6006）
+
+### データベース関連（apps/service で実行）
+- `bun db:generate` - マイグレーションファイル生成
+- `bun db:studio` - Drizzle Studioの起動
+- `bun db:migrate` - ローカルDBへのマイグレーション適用
+- `bun db:migrate:dev` - 開発環境DBへのマイグレーション適用
+- `bun db:migrate:prod` - 本番環境DBへのマイグレーション適用
+- `bun db:seed` - シードデータの投入（ローカル/開発/本番）
 
 ## アーキテクチャ
 
 ### 技術スタック
-- **フレームワーク**: Next.js 15.3.2（App Router）
-- **React**: v19
+- **フレームワーク**: Next.js 15.5.0（App Router）
+- **React**: v19.1.1
 - **デプロイ環境**: Cloudflare Workers（@opennextjs/cloudflare）
+- **データベース**: Cloudflare D1 + Drizzle ORM
+- **認証**: Better Auth
 - **スタイリング**: Tailwind CSS v4
 - **UIライブラリ**: Radix UI、Motion（アニメーション）
 - **日本語処理**: BudouX（自然な改行位置計算）
 - **パッケージマネージャー**: Bun
-- **テスト**: bun test
-    - リファレンス: https://bun.sh/docs/cli/test.md
+- **モノレポツール**: Turborepo
+- **テスト**: Vitest + @testing-library/react
 
 ### ディレクトリ構成
 
+#### apps/service
 featuresベースの構成を採用し、機能単位でコンポーネントを整理しています。
 
 - `src/app/` - Next.js App Routerのページとレイアウト
@@ -48,6 +64,8 @@ featuresベースの構成を採用し、機能単位でコンポーネントを
 - `src/features/` - 機能別に整理されたコンポーネント
 - `src/assets/` - 画像、SVGなどの静的リソース
 - `src/styles/` - グローバルスタイルとCSS変数
+- `src/lib/` - ユーティリティ関数やヘルパー
+- `src/db.ts` - Drizzle ORMのDB接続設定
 
 **shared/ と features/ 配下の構成**
 必要に応じて以下のディレクトリを含むことができます：
@@ -56,6 +74,12 @@ featuresベースの構成を採用し、機能単位でコンポーネントを
 - `types/` - 型定義
 
 各コンポーネントには対応する`.stories.tsx`ファイルが付属し、Storybookで動作確認できます。
+
+#### packages/service-db
+- `src/schema/` - Drizzle ORMのスキーマ定義
+- `src/migrations/` - データベースマイグレーション
+- `src/seeds/` - シードデータ
+- `src/index.ts` - スキーマのエクスポート
 
 ### コード規約
 - **フォーマッター/リンター**: Biome（ESLint/Prettierの代替）
@@ -86,3 +110,5 @@ featuresベースの構成を採用し、機能単位でコンポーネントを
 - CSS ModulesとPostCSSが有効（px→rem自動変換、カスタムメディアクエリ対応）
 - Cloudflare環境の型定義は`cloudflare-env.d.ts`に生成される
 - Storybookを使用してコンポーネントの開発・テストを行う
+- データベーススキーマは`packages/service-db`で管理され、`apps/service`から参照
+- マイグレーションは`apps/service`ディレクトリから実行（`bun db:generate`）
