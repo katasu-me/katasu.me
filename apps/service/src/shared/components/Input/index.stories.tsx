@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/nursery/useUniqueElementIds: Storybookなので  */
+/** biome-ignore-all lint/correctness/useUniqueElementIds: Storybookなので */
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import Input from ".";
