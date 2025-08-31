@@ -1,8 +1,8 @@
-"use client";
-
 import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Tag from "./Tag";
+
+const NO_SELECT_HIGHLIGHTED_INDEX = -1;
 
 type Props = {
   /** タグの候補リスト */
@@ -21,7 +21,7 @@ type Props = {
 export default function TagInput({ suggestTags = [], tags = [], onChange, placeholder, className, id }: Props) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [highlightedIndex, setHighlightedIndex] = useState(NO_SELECT_HIGHLIGHTED_INDEX);
   const [dropdownPosition, setDropdownPosition] = useState<"bottom" | "top">("top");
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -93,25 +93,61 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
     inputRef.current = ref;
   };
 
+  const moveSuggestUp = () => {
+    // 選択なしなら末尾へ
+    if (highlightedIndex === NO_SELECT_HIGHLIGHTED_INDEX) {
+      updateHighlightedIndex(filteredSuggestTags.length - 1);
+    } else if (highlightedIndex === 0) {
+      // 先頭なら選択なしへ
+      updateHighlightedIndex(NO_SELECT_HIGHLIGHTED_INDEX);
+    } else {
+      updateHighlightedIndex(highlightedIndex - 1);
+    }
+  };
+
+  const moveSuggestDown = () => {
+    if (highlightedIndex === filteredSuggestTags.length - 1) {
+      // 末尾なら選択なしへ
+      updateHighlightedIndex(NO_SELECT_HIGHLIGHTED_INDEX);
+    } else {
+      updateHighlightedIndex(highlightedIndex + 1);
+    }
+  };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     // 補完ウィンドウが閉じていて、かつ入力中なら補完ウィンドウを開く
     if (!open && inputValue) {
       setOpen(true);
-      setHighlightedIndex(0);
+      setHighlightedIndex(NO_SELECT_HIGHLIGHTED_INDEX);
     }
 
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        updateHighlightedIndex(highlightedIndex < filteredSuggestTags.length - 1 ? highlightedIndex + 1 : 0);
+        moveSuggestDown();
         break;
 
       case "ArrowUp":
         e.preventDefault();
-        updateHighlightedIndex(highlightedIndex > 0 ? highlightedIndex - 1 : filteredSuggestTags.length - 1);
+        moveSuggestUp();
         break;
 
       case "Tab":
+        if (!open || filteredSuggestTags.length === 0) {
+          break;
+        }
+
+        e.preventDefault();
+
+        if (e.shiftKey) {
+          // Shift+Tab: 上へ移動
+          moveSuggestUp();
+        } else {
+          // Tab: 下へ移動
+          moveSuggestDown();
+        }
+        break;
+
       case "Enter":
         if (inputValue.trim() === "") {
           break;
@@ -175,7 +211,7 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
     setOpen(openState);
 
     if (openState) {
-      setHighlightedIndex(0);
+      setHighlightedIndex(-1);
     }
   };
 
