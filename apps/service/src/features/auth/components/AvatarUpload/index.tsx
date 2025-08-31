@@ -159,8 +159,9 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
         innerClassname="max-w-2xl"
         handleOnly
       >
-        {({ Close }) => (
+        {({ Description, Close }) => (
           <div className="flex flex-col gap-4">
+            <Description hidden>アップロードした画像をクロップしてください</Description>
             <div className="relative h-96 w-full overflow-hidden rounded-lg bg-warm-black-50/10">
               {imageSrc && (
                 <Cropper
