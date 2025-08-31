@@ -13,7 +13,7 @@ export default function DevelopedBy() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <Image src={ImageNeko.src} alt={`${AUTHOR_NAME}のアイコン`} fill />
+        <Image src={ImageNeko.src} alt={`${AUTHOR_NAME}のアイコン`} width={46} height={46} />
       </a>
     </div>
   );

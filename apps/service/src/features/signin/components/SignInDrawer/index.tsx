@@ -27,7 +27,7 @@ export default function SignInDrawer({ children }: PropsWithChildren) {
           <Description className="mb-6 text-gray-700 text-sm">
             <BudouX>katasu.me（かたすみ）はインターネットのかたすみに画像をおいておける、画像投稿サービスです。</BudouX>
           </Description>
-          <Button className="flex items-center gap-2" variant="fill" onClick={() => doSignIn()}>
+          <Button className="flex w-full items-center justify-center gap-2" variant="fill" onClick={() => doSignIn()}>
             <IconBrandGoogle className="h-5 w-5" />
             Googleでつづける
           </Button>
