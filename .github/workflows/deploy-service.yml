@@ -15,8 +15,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: ./.github/actions/setup-bun
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
 
       - name: Create wrangler.jsonc from template
         run: |
@@ -43,12 +43,12 @@ jobs:
           path: |
             ${{ github.workspace }}/apps/service/.next/cache
             ${{ github.workspace }}/.turbo
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
       - name: Build
-        run: bun run build:service
+        run: pnpm build:service
 
       - name: Deploy to development environment
         if: github.ref == 'refs/heads/develop'

@@ -15,29 +15,29 @@ katasu.me は「インターネットのかたすみにある、ぽつんと画�
 ## 開発コマンド
 
 ### ルートディレクトリ（Turbo経由）
-- `bun dev` - 全ワークスペースの開発サーバー起動
-- `bun dev:service` - serviceアプリのみ開発サーバー起動
-- `bun build` - 全ワークスペースのビルド
-- `bun build:service` - serviceアプリのワーカービルド
-- `bun check` - 全ワークスペースのコード検査
-- `bun lint` / `bun format` - コード品質管理
-- `bun test` - 全ワークスペースのテスト実行
+- `pnpm dev` - 全ワークスペースの開発サーバー起動
+- `pnpm dev:service` - serviceアプリのみ開発サーバー起動
+- `pnpm build` - 全ワークスペースのビルド
+- `pnpm build:service` - serviceアプリのワーカービルド
+- `pnpm check` - 全ワークスペースのコード検査
+- `pnpm lint` / `pnpm format` - コード品質管理
+- `pnpm test` - 全ワークスペースのテスト実行
 
 ### apps/service ディレクトリ
-- `bun dev` - 開発サーバーの起動（Turbopack使用、HTTPS有効）
-- `bun build` - Next.js本番ビルド
-- `bun build:worker` - OpenNext.js Cloudflareビルド
-- `bun preview` - Cloudflare環境でのプレビュー
-- `bun cf-typegen` - Cloudflare環境の型定義生成
-- `bun storybook` - Storybookの起動（ポート6006）
+- `pnpm dev` - 開発サーバーの起動（Turbopack使用、HTTPS有効）
+- `pnpm build` - Next.js本番ビルド
+- `pnpm build:worker` - OpenNext.js Cloudflareビルド
+- `pnpm preview` - Cloudflare環境でのプレビュー
+- `pnpm cf-typegen` - Cloudflare環境の型定義生成
+- `pnpm storybook` - Storybookの起動（ポート6006）
 
 ### データベース関連（apps/service で実行）
-- `bun db:generate` - マイグレーションファイル生成
-- `bun db:studio` - Drizzle Studioの起動
-- `bun db:migrate` - ローカルDBへのマイグレーション適用
-- `bun db:migrate:dev` - 開発環境DBへのマイグレーション適用
-- `bun db:migrate:prod` - 本番環境DBへのマイグレーション適用
-- `bun db:seed` - シードデータの投入（ローカル/開発/本番）
+- `pnpm db:generate` - マイグレーションファイル生成
+- `pnpm db:studio` - Drizzle Studioの起動
+- `pnpm db:migrate` - ローカルDBへのマイグレーション適用
+- `pnpm db:migrate:dev` - 開発環境DBへのマイグレーション適用
+- `pnpm db:migrate:prod` - 本番環境DBへのマイグレーション適用
+- `pnpm db:seed` - シードデータの投入（ローカル/開発/本番）
 
 ## アーキテクチャ
 
@@ -50,7 +50,7 @@ katasu.me は「インターネットのかたすみにある、ぽつんと画�
 - **スタイリング**: Tailwind CSS v4
 - **UIライブラリ**: Radix UI、Motion（アニメーション）
 - **日本語処理**: BudouX（自然な改行位置計算）
-- **パッケージマネージャー**: Bun
+- **パッケージマネージャー**: pnpm
 - **モノレポツール**: Turborepo
 - **テスト**: Vitest + @testing-library/react
 

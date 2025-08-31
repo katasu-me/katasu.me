@@ -1,3 +1,4 @@
 [tools]
 bun = "1"
+pnpm = "latest"
 turbo = "2.5.6"

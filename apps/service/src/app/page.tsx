@@ -1,6 +1,7 @@
 import LogoImage from "@/assets/logo.svg";
 import DemoImages from "@/features/landing/components/DemoImages";
 import Footer from "@/features/layout/components/Footer";
+import SignInDrawer from "@/features/signin/components/SignInDrawer";
 import BudouX from "@/shared/components/BudouX";
 import Button from "@/shared/components/Button";
 import { SITE_NAME } from "@/shared/constants/site";
@@ -15,7 +16,9 @@ export default function Home() {
             インターネットのかたすみにある、 <br />
             ぽつんと画像をおいておける場所。
           </h1>
-          <Button className="mt-8 pc:mt-10">がんばって開発中です</Button>
+          <SignInDrawer>
+            <Button className="mt-8 pc:mt-10 w-48">はじめる</Button>
+          </SignInDrawer>
         </div>
       </section>
 

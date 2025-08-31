@@ -13,8 +13,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: ./.github/actions/setup-bun
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
 
       - name: Build
-        run: bun run build
+        run: pnpm build
