@@ -11,16 +11,11 @@
     "dev:service": "turbo dev --filter=@katasu.me/service",
     "build": "turbo build",
     "build:service": "turbo build:worker --filter=@katasu.me/service",
-    "build:worker": "turbo build:worker",
     "preview": "turbo preview",
     "lint": "turbo lint",
     "format": "turbo format",
     "check": "turbo check",
-    "test": "turbo test",
-    "test:ui": "turbo test:ui",
-    "test:coverage": "turbo test:coverage",
-    "storybook": "turbo storybook",
-    "build-storybook": "turbo build-storybook"
+    "test": "turbo test"
   },
   "devDependencies": {
     "lefthook": "^1.12.3",

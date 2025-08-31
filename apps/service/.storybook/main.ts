@@ -3,6 +3,7 @@ import type { StorybookConfig } from "@storybook/nextjs";
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: ["@storybook/addon-links", "storybook-addon-pseudo-states", "@storybook/addon-docs"],
+
   framework: {
     name: "@storybook/nextjs",
     options: {},
@@ -11,7 +12,7 @@ const config: StorybookConfig = {
   webpackFinal: async (config) => {
     const fileLoaderRule = config.module?.rules?.find(
       (rule) => (rule as { test?: RegExp })?.test?.test(".svg"),
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: Stoybookなので許容
     ) as { [key: string]: any };
 
     config.module?.rules?.push(
