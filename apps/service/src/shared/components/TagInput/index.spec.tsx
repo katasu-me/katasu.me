@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { userEvent } from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import TagInput from "./index";
 
 describe("TagInput", () => {
@@ -30,10 +30,10 @@ describe("TagInput", () => {
 
     render(<TagInput suggestTags={suggestTags} tags={[]} onChange={mockOnChange} />);
 
-    const input = screen.getByRole("textbox");
-
     // Rを入力してReactを表示
+    const input = screen.getByRole("textbox");
     await user.type(input, "R");
+
     expect(screen.getByText("React")).toBeInTheDocument();
 
     // ArrowDownで選択してEnter
@@ -48,7 +48,7 @@ describe("TagInput", () => {
 
     render(<TagInput suggestTags={suggestTags} tags={["React", "TypeScript"]} onChange={mockOnChange} />);
 
-    // Reactの削除ボタンをクリック
+    // 削除ボタンをクリック
     const deleteButton = screen.getByLabelText("Reactを削除");
     await user.click(deleteButton);
 
@@ -60,9 +60,8 @@ describe("TagInput", () => {
 
     render(<TagInput suggestTags={suggestTags} tags={["React"]} onChange={mockOnChange} />);
 
-    const input = screen.getByRole("textbox");
-
     // 既存のタグを入力
+    const input = screen.getByRole("textbox");
     await user.type(input, "React");
     await user.keyboard("{Enter}");
 
@@ -75,9 +74,8 @@ describe("TagInput", () => {
 
     render(<TagInput suggestTags={suggestTags} tags={[]} onChange={mockOnChange} />);
 
-    const input = screen.getByRole("textbox");
-
     // 空白のみ入力してEnter
+    const input = screen.getByRole("textbox");
     await user.type(input, "   ");
     await user.keyboard("{Enter}");
 

@@ -55,4 +55,4 @@ yarn-error.log*
 **/playwright-report
 
 # test
-**/coverage
+**/__screenshots__
