@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/nursery/useUniqueElementIds: 画面に複数出るドロワーではないため */
 import { useState } from "react";
 import Button from "@/shared/components/Button";
 import Drawer from "@/shared/components/Drawer";
@@ -25,6 +24,7 @@ export default function ImageDrawer() {
           />
 
           <form>
+            {/** biome-ignore lint/correctness/useUniqueElementIds: 画面に複数でないので */}
             <Input
               id="image-title"
               value={title}
@@ -40,6 +40,7 @@ export default function ImageDrawer() {
               }
             />
 
+            {/** biome-ignore lint/correctness/useUniqueElementIds: 画面に複数でないので */}
             <TagInput
               suggestTags={["風景", "旅行", "食べ物", "動物", "建築", "アート", "自然", "ポートレート"]}
               tags={selectedTags}
