@@ -14,7 +14,7 @@
     "test": "turbo test"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.0.0",
+    "@biomejs/biome": "2.2.2",
     "lefthook": "^1.12.3",
     "turbo": "^2.5.6"
   }
