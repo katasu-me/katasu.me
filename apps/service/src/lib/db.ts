@@ -6,4 +6,3 @@ export function getDB(db: D1Database) {
     schema,
   });
 }
-
