@@ -44,7 +44,7 @@ export default function SignupForm() {
           name={fields.username.name}
           defaultValue={fields.username.defaultValue}
           label="ユーザー名"
-          placeholder="表示名を入力してください"
+          placeholder="ユーザー名を入力"
           error={fields.username.errors?.[0]}
           maxLength={MAX_USERNAME_LENGTH}
           currentLength={fields.username.value?.length ?? 0}
@@ -52,32 +52,32 @@ export default function SignupForm() {
         />
 
         <div className="space-y-3">
-          <label className="flex items-start gap-3">
+          <label className="flex items-center gap-3">
             <input
               key={fields.agreeToTerms.key}
               name={fields.agreeToTerms.name}
               defaultChecked={fields.agreeToTerms.defaultValue === "on"}
               type="checkbox"
-              className="mt-1 size-4 cursor-pointer accent-warm-black"
+              className="size-4 cursor-pointer accent-warm-black"
             />
             <span className="text-sm text-warm-black">
-              <a href="/terms" target="_blank" className="text-blue-600 underline hover:text-blue-800" rel="noopener">
+              <a href="/terms" target="_blank" className="mr-1 font-bold hover:underline" rel="noopener">
                 利用規約
               </a>
               に同意します
             </span>
           </label>
 
-          <label className="flex items-start gap-3">
+          <label className="flex items-center gap-3">
             <input
               key={fields.agreeToPrivacy.key}
               name={fields.agreeToPrivacy.name}
               defaultChecked={fields.agreeToPrivacy.defaultValue === "on"}
               type="checkbox"
-              className="mt-1 size-4 cursor-pointer accent-warm-black"
+              className="size-4 cursor-pointer accent-warm-black"
             />
             <span className="text-sm text-warm-black">
-              <a href="/privacy" target="_blank" className="text-blue-600 underline hover:text-blue-800" rel="noopener">
+              <a href="/privacy" target="_blank" className="mr-1 font-bold hover:underline" rel="noopener">
                 プライバシーポリシー
               </a>
               に同意します

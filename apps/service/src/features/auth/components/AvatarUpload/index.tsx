@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type ComponentPropsWithoutRef, useCallback, useRef, useState } from "react";
+import { type ChangeEvent, type ComponentPropsWithoutRef, type MouseEvent, useRef, useState } from "react";
 import Cropper, { type Area, type Point } from "react-easy-crop";
 import { twMerge } from "tailwind-merge";
 import IconClose from "@/assets/icons/close.svg";
@@ -11,8 +11,13 @@ import Drawer from "@/shared/components/Drawer";
 import { getCroppedImg } from "../../utils/cropImage";
 
 type Props = {
+  /** 選択されたファイルが変更された */
   onFileChange?: (file: File | null) => void;
+
+  /** エラーメッセージ */
   error?: string;
+
+  /** 追加のクラス名 */
   className?: string;
 } & Omit<ComponentPropsWithoutRef<"input">, "type" | "accept" | "onChange">;
 
@@ -25,7 +30,14 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      fileInputRef.current?.click();
+    }
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
 
     if (file) {
@@ -43,9 +55,9 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
     }
   };
 
-  const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
+  const handleCropComplete = (_croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
+  };
 
   const handleCropConfirm = async () => {
     if (!imageSrc || !croppedAreaPixels) {
@@ -79,18 +91,7 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
     }
   };
 
-  const resetCrop = () => {
-    setImageSrc(null);
-    setCrop({ x: 0, y: 0 });
-    setZoom(1);
-    setCroppedAreaPixels(null);
-  };
-
-  const handleClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleRemove = (e: React.MouseEvent) => {
+  const handleRemove = (e: MouseEvent) => {
     e.stopPropagation();
     setPreview(null);
 
@@ -101,30 +102,36 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
     onFileChange?.(null);
   };
 
+  const resetCrop = () => {
+    setImageSrc(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setCroppedAreaPixels(null);
+  };
+
+  const openFilePicker = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className={twMerge("flex flex-col items-center gap-2", className)}>
       <div className="relative">
         <button
           type="button"
-          onClick={handleClick}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handleClick();
-            }
-          }}
-          className="group interactive-scale-brightness relative size-24 cursor-pointer overflow-hidden rounded-full border-2 border-warm-black-50 border-dashed bg-warm-white"
+          onClick={openFilePicker}
+          onKeyDown={handleKeyDown}
+          className="group interactive-scale-brightness relative size-32 cursor-pointer overflow-hidden rounded-full border-2 border-warm-black-50 border-dashed bg-warm-white"
         >
           {preview ? (
             <>
-              <Image src={preview} alt="プレビュー" fill className="object-cover" />
+              <Image src={preview} alt="アイコンのプレビュー" fill className="object-cover" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-400 ease-magnetic group-hover:opacity-100">
                 <span className="text-white text-xs">変更</span>
               </div>
             </>
           ) : (
             <div className="flex size-full flex-col items-center justify-center gap-1">
-              <IconPlus className="h-4 w-4" />
+              <IconPlus className="size-4" />
               <span className="text-warm-black-50 text-xs">アイコン</span>
             </div>
           )}
@@ -134,9 +141,9 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
           <button
             type="button"
             onClick={handleRemove}
-            className="interactive-scale-brightness absolute top-0 right-0 flex size-6 cursor-pointer items-center justify-center rounded-full border border-warm-white bg-warm-black text-white text-xs"
+            className="interactive-scale-brightness absolute top-0 right-0 flex size-8 cursor-pointer items-center justify-center rounded-full border border-warm-white bg-warm-black text-white text-xs"
           >
-            <IconClose className="h-4 w-4" />
+            <IconClose className="size-5" />
           </button>
         )}
       </div>
@@ -170,7 +177,7 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
                   zoom={zoom}
                   aspect={1}
                   onCropChange={setCrop}
-                  onCropComplete={onCropComplete}
+                  onCropComplete={handleCropComplete}
                   onZoomChange={setZoom}
                   cropShape="round"
                   showGrid={true}
@@ -187,7 +194,7 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
                   min={1}
                   max={3}
                   step={0.1}
-                  onChange={(e) => setZoom(Number(e.target.value))}
+                  onChange={(e) => setZoom(Number.parseInt(e.target.value, 10))}
                   className="flex-1 accent-warm-black"
                 />
                 <span className="w-12 text-sm text-warm-black-50">{zoom.toFixed(1)}x</span>

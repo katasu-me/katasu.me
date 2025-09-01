@@ -24,7 +24,7 @@ export default function Input({ maxLength, currentLength, className, label, erro
         {...props}
         ref={ref}
         maxLength={maxLength}
-        className="w-full rounded-md border border-warm-black-50 px-3 py-2 text-warm-black placeholder:text-warm-black-50 focus:border-warm-black focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
+        className="w-full rounded-md border border-warm-black-50 bg-warm-white px-3 py-2 text-warm-black placeholder:text-warm-black-50 focus:border-warm-black focus:outline-none disabled:cursor-not-allowed disabled:bg-warm-black-10"
       />
       {hasBottom && (
         <div className="mt-1 flex items-center justify-end">
