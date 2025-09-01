@@ -6,7 +6,7 @@ import { useActionState } from "react";
 import Button from "@/shared/components/Button";
 import Input from "@/shared/components/Input";
 import { signupAction } from "../../actions/signup";
-import { MAX_USERNAME_LENGTH, signupSchema } from "../../schemas/signup";
+import { MAX_USERNAME_LENGTH, signUpFormSchema } from "../../schemas/signup-form";
 import AvatarUpload from "../AvatarUpload";
 
 export default function SignupForm() {
@@ -18,7 +18,7 @@ export default function SignupForm() {
     shouldRevalidate: "onInput",
     onValidate({ formData }) {
       return parseWithValibot(formData, {
-        schema: signupSchema,
+        schema: signUpFormSchema,
       });
     },
   });

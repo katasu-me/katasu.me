@@ -21,6 +21,22 @@ export const getAuth = (db: D1Database) => {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
       },
     },
+    databaseHooks: {
+      user: {
+        create: {
+          before: async (user) => {
+            // ユーザー名とアイコン画像はユーザーが設定するので空にする
+            return {
+              data: {
+                ...user,
+                name: "",
+                image: null,
+              },
+            };
+          },
+        },
+      },
+    },
     plugins: [nextCookies()],
   });
 };

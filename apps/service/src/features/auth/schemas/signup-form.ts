@@ -10,7 +10,7 @@ export const MAX_USERNAME_LENGTH = 50;
 export const MAX_AVATAR_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 export const ALLOWED_AVATAR_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 
-export const signupSchema = v.object({
+export const signUpFormSchema = v.object({
   username: v.pipe(
     v.string(USERNAME_REQUIRED_MESSAGE),
     v.transform((value) => value.trim()),
@@ -43,4 +43,4 @@ export const signupSchema = v.object({
   agreeToPrivacy: v.literal("on"),
 });
 
-export type SignupFormData = v.InferOutput<typeof signupSchema>;
+export type SignUpFormData = v.InferOutput<typeof signUpFormSchema>;
