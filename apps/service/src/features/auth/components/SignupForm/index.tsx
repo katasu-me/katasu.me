@@ -9,7 +9,7 @@ import { signupAction } from "../../actions/signup";
 import { MAX_USERNAME_LENGTH, signUpFormSchema } from "../../schemas/signup-form";
 import AvatarUpload from "../AvatarUpload";
 
-export default function SignupForm() {
+export default function SignUpForm() {
   const [lastResult, action] = useActionState(signupAction, undefined);
 
   const [form, fields] = useForm({

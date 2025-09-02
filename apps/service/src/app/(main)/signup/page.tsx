@@ -1,4 +1,4 @@
-import SignupForm from "@/features/auth/components/SignUpForm";
+import SignUpForm from "@/features/auth/components/SignUpForm";
 
 export default function SignUpPage() {
   return (
@@ -10,7 +10,7 @@ export default function SignUpPage() {
 
       <main className="col-start-2">
         <div className="mx-auto max-w-md rounded-lg bg-warm-black-10 p-8">
-          <SignupForm />
+          <SignUpForm />
         </div>
       </main>
     </div>
