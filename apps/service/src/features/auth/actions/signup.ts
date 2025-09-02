@@ -6,7 +6,12 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAuth } from "@/lib/auth";
 import { updateUser } from "@/lib/auth-client";
+import { uploadAvatarImage } from "@/lib/r2";
 import { signUpFormSchema } from "../schemas/signup-form";
+
+// TODO:
+// Workers で sharp はやっぱり動かない
+// → 別のライブラリを試すか、Cloudflare Image Resizingを使う
 
 export async function signupAction(_prevState: unknown, formData: FormData) {
   const { env } = getCloudflareContext();
@@ -17,29 +22,54 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
   });
 
   if (!session || !session.user?.id) {
-    return "ログインしてください";
+    redirect("/");
   }
 
+  // バリデーション
   const submission = parseWithValibot(formData, {
     schema: signUpFormSchema,
   });
 
+  // エラーならフォームにエラーメッセージを返す
   if (submission.status !== "success") {
     return submission.reply();
   }
 
+  let avatarUrl: string | undefined;
+
+  // アバター画像がある場合;
+  if (submission.value.avatar instanceof File) {
+    try {
+      const arrayBuffer = await submission.value.avatar.arrayBuffer();
+
+      await uploadAvatarImage(env.IMAGES_R2_BUCKET, {
+        type: "avatar",
+        imageBuffer: arrayBuffer,
+        userId: session.user.id,
+      });
+    } catch (error) {
+      console.error("アバター画像の処理エラー:", error);
+
+      return submission.reply({
+        formErrors: ["アバター画像のアップロードに失敗しました"],
+      });
+    }
+  }
+
   try {
-    // ユーザー情報を更新
+    // ユーザー名とアバターURLを更新
     await updateUser({
       name: submission.value.username,
+      image: avatarUrl,
     });
-
-    // 成功時はリダイレクト
-    redirect("/");
   } catch (error) {
-    console.error("サインアップエラー:", error);
+    console.error("新規登録エラー:", error);
+
     return submission.reply({
-      formErrors: ["ユーザー登録中にエラーが発生しました"],
+      formErrors: ["新規登録中にエラーが発生しました"],
     });
   }
+
+  // 成功時はリダイレクト
+  redirect(`/user/${session.user.id}`);
 }

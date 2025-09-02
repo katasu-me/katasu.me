@@ -30,7 +30,7 @@
     "@conform-to/react": "^1.8.2",
     "@conform-to/valibot": "^1.8.2",
     "@katasu.me/service-db": "workspace:*",
-    "@opennextjs/cloudflare": "^1.6.5",
+    "@opennextjs/cloudflare": "^1.7.0",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.2.6",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
@@ -44,6 +44,7 @@
     "react-dom": "19.1.1",
     "react-easy-crop": "^5.5.0",
     "react-use": "^17.6.0",
+    "sharp": "^0.34.3",
     "tailwind-merge": "^3.3.1",
     "valibot": "^1.1.0",
     "vaul": "^1.1.2"
@@ -80,7 +81,7 @@
     "vite-plugin-svgr": "^4.5.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4",
-    "wrangler": "^4.32.0"
+    "wrangler": "^4.33.1"
   },
   "overrides": {
     "@types/react": "19.1.11",

@@ -39,6 +39,10 @@
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
       "bucket_name": "katasu-me-dev-inc-cache"
+    },
+    {
+      "binding": "IMAGES_R2_BUCKET",
+      "bucket_name": "katasu-me-dev-images"
     }
   ],
 
@@ -93,6 +97,10 @@
         {
           "binding": "NEXT_INC_CACHE_R2_BUCKET",
           "bucket_name": "katasu-me-prod-inc-cache"
+        },
+        {
+          "binding": "IMAGES_R2_BUCKET",
+          "bucket_name": "katasu-me-prod-images"
         }
       ]
     }
