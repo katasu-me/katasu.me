@@ -44,10 +44,10 @@
     "react-dom": "19.1.1",
     "react-easy-crop": "^5.5.0",
     "react-use": "^17.6.0",
-    "sharp": "^0.34.3",
     "tailwind-merge": "^3.3.1",
     "valibot": "^1.1.0",
-    "vaul": "^1.1.2"
+    "vaul": "^1.1.2",
+    "wasm-image-optimization": "^1.2.30"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",

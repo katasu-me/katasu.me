@@ -71,9 +71,6 @@ importers:
       react-use:
         specifier: ^17.6.0
         version: 17.6.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      sharp:
-        specifier: ^0.34.3
-        version: 0.34.3
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
@@ -83,6 +80,9 @@ importers:
       vaul:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.1.9(@types/react@19.1.12))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      wasm-image-optimization:
+        specifier: ^1.2.30
+        version: 1.2.30
     devDependencies:
       '@biomejs/biome':
         specifier: 2.2.2
@@ -6982,6 +6982,9 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  wasm-image-optimization@1.2.30:
+    resolution: {integrity: sha512-cEKa22issBiNklY8+4LiydQsl5reQlPT1o4N24Jb8dxf+WEMBKVU3Mbs6RaojR0jMmJdwph9oZt7CYRBY+w+OA==}
+
   watchpack@2.4.4:
     resolution: {integrity: sha512-c5EGNOiyxxV5qmTtAB7rbiXxi1ooX1pQKMLX/MIabJjRA0SJBQOjKF+KSVfHkr9U1cADPon0mRiVe/riyaiDUA==}
     engines: {node: '>=10.13.0'}
@@ -7085,6 +7088,9 @@ packages:
     resolution: {integrity: sha512-hUrmaWBdVDcxvYqnyh09zunKzROWjbZTiNy8dBEjkS7ehEDQibXJ7XvlmtbwuTclUiIyN+CyXQD4Vmko8fNm8w==}
     engines: {node: '>=8'}
     hasBin: true
+
+  worker-lib@2.0.7:
+    resolution: {integrity: sha512-LkT+hMUakAAakGPtWVY3ZSJ91BgcXpPYzwcpJbkC2LXzwYiIiSgKxWxt1EM8s9c/z6Va6xZ49lELDvMSjwgbpA==}
 
   workerd@1.20250823.0:
     resolution: {integrity: sha512-95lToK9zeaC7bX5ZmlP/wz6zqoUPBk3hhec1JjEMGZrxsXY9cPRkjWNCcjDctQ17U97vjMcY/ymchgx7w8Cfmg==}
@@ -14445,6 +14451,7 @@ snapshots:
       '@img/sharp-win32-arm64': 0.34.3
       '@img/sharp-win32-ia32': 0.34.3
       '@img/sharp-win32-x64': 0.34.3
+    optional: true
 
   shebang-command@2.0.0:
     dependencies:
@@ -15172,6 +15179,10 @@ snapshots:
       - supports-color
     optional: true
 
+  wasm-image-optimization@1.2.30:
+    dependencies:
+      worker-lib: 2.0.7
+
   watchpack@2.4.4:
     dependencies:
       glob-to-regexp: 0.4.1
@@ -15341,6 +15352,8 @@ snapshots:
     dependencies:
       siginfo: 2.0.0
       stackback: 0.0.2
+
+  worker-lib@2.0.7: {}
 
   workerd@1.20250823.0:
     optionalDependencies:

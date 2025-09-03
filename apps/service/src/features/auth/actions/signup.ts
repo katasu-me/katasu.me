@@ -9,10 +9,6 @@ import { updateUser } from "@/lib/auth-client";
 import { uploadAvatarImage } from "@/lib/r2";
 import { signUpFormSchema } from "../schemas/signup-form";
 
-// TODO:
-// Workers で sharp はやっぱり動かない
-// → 別のライブラリを試すか、Cloudflare Image Resizingを使う
-
 export async function signupAction(_prevState: unknown, formData: FormData) {
   const { env } = getCloudflareContext();
 
