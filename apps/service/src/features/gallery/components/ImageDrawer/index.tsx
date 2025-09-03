@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Button from "@/shared/components/Button";
-import Drawer from "@/shared/components/Drawer";
-import Input from "@/shared/components/Input";
-import TagInput from "@/shared/components/TagInput";
+import Button from "@/components/Button";
+import Drawer from "@/components/Drawer";
+import Input from "@/components/Input";
+import TagInput from "@/components/TagInput";
 import FrameImage from "../FrameImage";
 
 export default function ImageDrawer() {

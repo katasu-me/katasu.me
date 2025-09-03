@@ -1,5 +1,5 @@
 import Link from "next/link";
-import BudouX from "@/shared/components/BudouX";
+import BudouX from "@/components/BudouX";
 
 type Props = {
   name: string;

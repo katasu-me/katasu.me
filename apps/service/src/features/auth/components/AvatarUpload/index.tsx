@@ -6,8 +6,8 @@ import Cropper, { type Area, type Point } from "react-easy-crop";
 import { twMerge } from "tailwind-merge";
 import IconClose from "@/assets/icons/close.svg";
 import IconPlus from "@/assets/icons/plus.svg";
-import Button from "@/shared/components/Button";
-import Drawer from "@/shared/components/Drawer";
+import Button from "@/components/Button";
+import Drawer from "@/components/Drawer";
 import { getCroppedImg } from "../../lib/cropImage";
 
 type Props = {

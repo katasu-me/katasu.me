@@ -5,10 +5,10 @@ import Link from "next/link";
 import IconFlag from "@/assets/icons/flag.svg";
 import IconPencil from "@/assets/icons/pencil.svg";
 import IconShare from "@/assets/icons/share.svg";
+import Button from "@/components/Button";
+import IconButton from "@/components/IconButton";
 import UserIcon from "@/features/auth/components/UserIcon";
 import FrameImage from "@/features/gallery/components/FrameImage";
-import Button from "@/shared/components/Button";
-import IconButton from "@/shared/components/IconButton";
 
 export default function ImagesPage() {
   // TODO: 実際はAPIから画像データを取得する

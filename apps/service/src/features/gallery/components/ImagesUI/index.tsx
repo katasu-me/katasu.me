@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import IconReload from "@/assets/icons/reload.svg";
-import Button from "@/shared/components/Button";
+import Button from "@/components/Button";
 import DraggableImages from "../DraggableImages";
 import type FrameImage from "../FrameImage";
 import ImageDropArea from "../ImageDropArea";

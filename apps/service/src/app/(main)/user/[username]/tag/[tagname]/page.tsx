@@ -1,10 +1,10 @@
 import Link from "next/link";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
+import IconButton from "@/components/IconButton";
 import UserIcon from "@/features/auth/components/UserIcon";
 import ImagesUI from "@/features/gallery/components/ImagesUI";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
-import IconButton from "@/shared/components/IconButton";
 
 type PageProps = {
   params: Promise<{

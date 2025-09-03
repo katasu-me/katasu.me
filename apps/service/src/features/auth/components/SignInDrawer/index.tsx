@@ -2,10 +2,10 @@
 
 import type { PropsWithChildren } from "react";
 import IconBrandGoogle from "@/assets/icons/brand-google.svg";
+import BudouX from "@/components/BudouX";
+import Button from "@/components/Button";
+import Drawer from "@/components/Drawer";
 import { signIn } from "@/lib/auth-client";
-import BudouX from "@/shared/components/BudouX";
-import Button from "@/shared/components/Button";
-import Drawer from "@/shared/components/Drawer";
 import { getGreeting } from "../../lib/get-greeting";
 
 export default function SignInDrawer({ children }: PropsWithChildren) {

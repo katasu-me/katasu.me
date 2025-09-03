@@ -3,8 +3,8 @@
 import { useForm } from "@conform-to/react";
 import { parseWithValibot } from "@conform-to/valibot";
 import { useActionState } from "react";
-import Button from "@/shared/components/Button";
-import Input from "@/shared/components/Input";
+import Button from "@/components/Button";
+import Input from "@/components/Input";
 import { signupAction } from "../../actions/signup";
 import { MAX_USERNAME_LENGTH, signUpFormSchema } from "../../schemas/signup-form";
 import AvatarUpload from "../AvatarUpload";

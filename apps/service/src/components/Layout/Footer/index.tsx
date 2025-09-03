@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 import LogoImage from "@/assets/logo.svg";
-import TextLink from "@/shared/components/TextLink";
+import TextLink from "@/components/TextLink";
 import DevelopedBy from "./DevelopedBy";
 
 type Props = {
