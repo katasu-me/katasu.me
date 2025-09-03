@@ -59,19 +59,52 @@ katasu.me は「インターネットのかたすみにある、ぽつんと画�
 #### apps/service
 featuresベースの構成を採用し、機能単位でコンポーネントを整理しています。
 
-- `src/app/` - Next.js App Routerのページとレイアウト
-- `src/shared/` - プロジェクト全体で共有されるコード
-- `src/features/` - 機能別に整理されたコンポーネント
-- `src/assets/` - 画像、SVGなどの静的リソース
-- `src/styles/` - グローバルスタイルとCSS変数
-- `src/lib/` - ユーティリティ関数やヘルパー
-- `src/db.ts` - Drizzle ORMのDB接続設定
+```
+src/
+├── app/                    # Next.js App Router（ページとレイアウト）
+├── components/             # プロジェクト全体で共有される汎用UIコンポーネント
+│   ├── Button/            # 基本UIコンポーネント（直接配置）
+│   ├── Input/
+│   ├── Layout/            # レイアウト関連コンポーネント
+│   ├── Navigation/        # ナビゲーション関連コンポーネント
+│   ├── constants/         # 定数定義
+│   └── types/            # 型定義
+├── features/              # ビジネスロジック単位で機能を分割
+│   ├── auth/             # 認証・ユーザー管理
+│   │   ├── components/   # 認証専用コンポーネント
+│   │   ├── actions/      # Server Actions
+│   │   ├── schemas/      # バリデーションスキーマ
+│   │   └── lib/         # 認証関連ユーティリティ
+│   └── gallery/         # 画像ギャラリー機能
+│       ├── components/  # ギャラリー専用コンポーネント
+│       └── types/       # ギャラリー関連型定義
+├── assets/               # 画像、SVGなどの静的リソース
+├── styles/               # グローバルスタイルとCSS変数
+├── lib/                  # プロジェクト全体で使用されるユーティリティ関数
+└── db.ts                 # Drizzle ORMのDB接続設定
+```
 
-**shared/ と features/ 配下の構成**
-必要に応じて以下のディレクトリを含むことができます：
-- `components/` - コンポーネント（shared: 汎用UI、features: 機能専用）
-- `constants/` - 定数定義
-- `types/` - 型定義
+#### ディレクトリ配置のルール
+
+**components/ ディレクトリ**
+- 複数のfeatureや全体で使用される汎用的なUIコンポーネント・定数・型を配置
+- 基本UIコンポーネントは `components/` 直下に配置（`components/Button/`）
+- 関連するコンポーネントはグループ化（`components/Layout/`、`components/Navigation/`）
+
+**features/ ディレクトリ**
+- ビジネスロジック単位で機能を分割
+- 各feature内では以下の構成を基本とする：
+  - `components/` - その機能専用のコンポーネント
+  - `actions/` - Server Actions（必要に応じて）
+  - `schemas/` - バリデーションスキーマ（必要に応じて）
+  - `lib/` - その機能専用のユーティリティ
+  - `types/` - その機能専用の型定義
+- 他のfeatureに依存しすぎない適度な独立性を保つ
+
+**lib/ ディレクトリ**
+- プロジェクト全体で使用される共通のユーティリティ関数
+- 外部サービスとの連携（Cloudflare R2、画像処理など）
+- 複数のfeatureで共有される可能性が高い機能
 
 各コンポーネントには対応する`.stories.tsx`ファイルが付属し、Storybookで動作確認できます。
 
