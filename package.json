@@ -15,6 +15,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
+    "@mizchi/lsmcp": "0.10.0-rc.6",
+    "@typescript/native-preview": "7.0.0-dev.20250902.1",
     "lefthook": "^1.12.3",
     "turbo": "^2.5.6"
   }
