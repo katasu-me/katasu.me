@@ -1,12 +1,12 @@
 import type { ComponentProps } from "react";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
+import UserIcon from "@/features/auth/components/UserIcon";
 import type FrameImage from "@/features/gallery/components/FrameImage";
 import ImagesUI from "@/features/gallery/components/ImagesUI";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
-import TagLinks from "@/features/navigation/components/TagLinks";
-import UserIcon from "@/features/user/components/UserIcon";
 import IconButton from "@/shared/components/IconButton";
+import TagLinks from "@/shared/components/Navigation/TagLinks";
 
 type PageProps = {
   params: Promise<{

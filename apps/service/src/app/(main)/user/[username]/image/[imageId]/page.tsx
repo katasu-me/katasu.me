@@ -5,8 +5,8 @@ import Link from "next/link";
 import IconFlag from "@/assets/icons/flag.svg";
 import IconPencil from "@/assets/icons/pencil.svg";
 import IconShare from "@/assets/icons/share.svg";
+import UserIcon from "@/features/auth/components/UserIcon";
 import FrameImage from "@/features/gallery/components/FrameImage";
-import UserIcon from "@/features/user/components/UserIcon";
 import Button from "@/shared/components/Button";
 import IconButton from "@/shared/components/IconButton";
 

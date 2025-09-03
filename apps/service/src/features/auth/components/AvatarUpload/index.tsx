@@ -8,7 +8,7 @@ import IconClose from "@/assets/icons/close.svg";
 import IconPlus from "@/assets/icons/plus.svg";
 import Button from "@/shared/components/Button";
 import Drawer from "@/shared/components/Drawer";
-import { getCroppedImg } from "../../utils/cropImage";
+import { getCroppedImg } from "../../lib/cropImage";
 
 type Props = {
   /** 選択されたファイルが変更された */
