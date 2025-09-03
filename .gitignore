@@ -58,4 +58,4 @@ yarn-error.log*
 **/__screenshots__
 
 # lsmcp cache
-.lsmcp/cache
+**/.lsmcp/cache
