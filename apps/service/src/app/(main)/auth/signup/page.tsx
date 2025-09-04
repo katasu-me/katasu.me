@@ -1,6 +1,12 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import SignUpForm from "@/features/auth/components/SignUpForm";
+import { getAuthenticatedSession } from "@/lib/get-session";
 
-export default function SignUpPage() {
+export default async function SignUpPage() {
+  const { env } = getCloudflareContext();
+
+  await getAuthenticatedSession(env.DB);
+
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
       <header className="col-start-2 flex flex-col items-center justify-center">

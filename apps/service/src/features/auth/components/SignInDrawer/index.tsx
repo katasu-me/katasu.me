@@ -14,9 +14,9 @@ export default function SignInDrawer({ children }: PropsWithChildren) {
   const doSignIn = async () => {
     await signIn.social({
       provider: "google",
-      callbackURL: "/",
-      newUserCallbackURL: "/signup",
-      errorCallbackURL: "/error/signin",
+      callbackURL: "/auth/redirect",
+      newUserCallbackURL: "/auth/signup",
+      errorCallbackURL: "/error", // TODO: エラーページを作成
     });
   };
 

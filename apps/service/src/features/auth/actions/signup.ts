@@ -2,38 +2,29 @@
 
 import { parseWithValibot } from "@conform-to/valibot";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getAuth } from "@/lib/auth";
 import { updateUser } from "@/lib/auth-client";
+import { getAuthenticatedSession } from "@/lib/get-session";
 import { uploadAvatarImage } from "@/lib/r2";
 import { signUpFormSchema } from "../schemas/signup-form";
 
 export async function signupAction(_prevState: unknown, formData: FormData) {
   const { env } = getCloudflareContext();
-
-  const auth = getAuth(env.DB);
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session || !session.user?.id) {
-    redirect("/");
-  }
+  const session = await getAuthenticatedSession(env.DB);
 
   // バリデーション
   const submission = parseWithValibot(formData, {
     schema: signUpFormSchema,
   });
 
-  // エラーならフォームにエラーメッセージを返す
+  // エラーならフォームにエラーを返す
   if (submission.status !== "success") {
     return submission.reply();
   }
 
   let avatarUrl: string | undefined;
 
-  // アバター画像がある場合;
+  // アバター画像がある場合
   if (submission.value.avatar instanceof File) {
     try {
       const arrayBuffer = await submission.value.avatar.arrayBuffer();
@@ -66,6 +57,6 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     });
   }
 
-  // 成功時はリダイレクト
+  // 成功時はユーザーページへリダイレクト
   redirect(`/user/${session.user.id}`);
 }
