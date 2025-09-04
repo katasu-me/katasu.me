@@ -129,13 +129,11 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
 export const Default: Story = {
   args: {
     images: sampleImages,
-    searchParams: {},
   },
 };
 
 export const PortraitGallery: Story = {
   args: {
-    searchParams: {},
     images: [
       {
         id: "portrait1",
@@ -189,7 +187,6 @@ export const PortraitGallery: Story = {
 
 export const LandscapeGallery: Story = {
   args: {
-    searchParams: {},
     images: [
       {
         id: "landscape1",
@@ -236,7 +233,6 @@ export const LandscapeGallery: Story = {
 
 export const MixedAspectRatios: Story = {
   args: {
-    searchParams: {},
     images: [
       {
         id: "square1",
@@ -291,7 +287,6 @@ export const MixedAspectRatios: Story = {
 export const FewImages: Story = {
   args: {
     images: sampleImages.slice(0, 4),
-    searchParams: {},
   },
 };
 
@@ -300,7 +295,6 @@ export const WithPagination: Story = {
     images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
     currentPage: 1,
     itemsPerPage: 12,
-    searchParams: {},
   },
 };
 
@@ -309,7 +303,6 @@ export const PaginationSecondPage: Story = {
     images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
     currentPage: 2,
     itemsPerPage: 12,
-    searchParams: {},
   },
 };
 
@@ -318,6 +311,5 @@ export const PaginationLastPage: Story = {
     images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
     currentPage: 3,
     itemsPerPage: 12,
-    searchParams: {},
   },
 };

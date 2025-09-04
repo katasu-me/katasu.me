@@ -8,6 +8,71 @@ import type FrameImage from "@/features/gallery/components/FrameImage";
 import ImagesUI from "@/features/gallery/components/ImagesUI";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
 
+const images: ComponentProps<typeof FrameImage>[] = [
+  {
+    id: "1",
+    src: "/dummy/a.avif",
+    alt: "画像",
+    width: 2624,
+    height: 3936,
+    title: "縦長の画像",
+    linkParams: {
+      userId: "test",
+      imageId: "1",
+    },
+  },
+  {
+    id: "2",
+    src: "/dummy/b.avif",
+    alt: "画像",
+    width: 2560,
+    height: 1440,
+    title: "横長の風景",
+    linkParams: {
+      userId: "test",
+      imageId: "2",
+    },
+  },
+  {
+    id: "3",
+    src: "/dummy/c.avif",
+    alt: "画像",
+    width: 1440,
+    height: 2560,
+    title: "正方形",
+    linkParams: {
+      userId: "test",
+      imageId: "3",
+    },
+  },
+  {
+    id: "4",
+    src: "/dummy/d.avif",
+    alt: "画像",
+    width: 2560,
+    height: 1440,
+    linkParams: {
+      userId: "test",
+      imageId: "4",
+    },
+  },
+];
+
+const tags = [
+  {
+    name: "風景",
+    userId: "test",
+  },
+  {
+    name: "ポートレート",
+    userId: "test",
+  },
+  {
+    name: "空間",
+    userId: "test",
+  },
+];
+
 type PageProps = {
   params: Promise<{
     userid: string;
@@ -20,59 +85,11 @@ type PageProps = {
 
 export default async function UsersPage({ params, searchParams }: PageProps) {
   const { userid } = await params;
-  const { search, view } = await searchParams;
+  const resolvedSearchParams = await searchParams;
 
-  console.log("UserPage searchParams:", userid, search);
+  // ユーザーIDが存在するか確認
 
-  const images: ComponentProps<typeof FrameImage>[] = [
-    {
-      id: "1",
-      src: "/dummy/a.avif",
-      alt: "画像",
-      width: 2624,
-      height: 3936,
-      title: "縦長の画像",
-      linkParams: {
-        userId: "test",
-        imageId: "1",
-      },
-    },
-    {
-      id: "2",
-      src: "/dummy/b.avif",
-      alt: "画像",
-      width: 2560,
-      height: 1440,
-      title: "横長の風景",
-      linkParams: {
-        userId: "test",
-        imageId: "2",
-      },
-    },
-    {
-      id: "3",
-      src: "/dummy/c.avif",
-      alt: "画像",
-      width: 1440,
-      height: 2560,
-      title: "正方形",
-      linkParams: {
-        userId: "test",
-        imageId: "3",
-      },
-    },
-    {
-      id: "4",
-      src: "/dummy/d.avif",
-      alt: "画像",
-      width: 2560,
-      height: 1440,
-      linkParams: {
-        userId: "test",
-        imageId: "4",
-      },
-    },
-  ];
+  console.log("UserPage searchParams:", userid, resolvedSearchParams);
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
@@ -90,25 +107,9 @@ export default async function UsersPage({ params, searchParams }: PageProps) {
       </header>
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-        <TagLinks
-          className="col-start-2"
-          tags={[
-            {
-              name: "風景",
-              userId: "test",
-            },
-            {
-              name: "ポートレート",
-              userId: "test",
-            },
-            {
-              name: "空間",
-              userId: "test",
-            },
-          ]}
-        />
+        <TagLinks className="col-start-2" tags={tags} />
 
-        <ImagesUI view={view || "masonry"} images={images} searchParams={await searchParams} />
+        <ImagesUI view={resolvedSearchParams.view || "masonry"} images={images} />
       </div>
     </div>
   );
