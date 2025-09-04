@@ -9,6 +9,12 @@ import { signupAction } from "../../actions/signup";
 import { MAX_USERNAME_LENGTH, signUpFormSchema } from "../../schemas/signup-form";
 import AvatarUpload from "../AvatarUpload";
 
+// TODO:
+// - [ ] サーバー側でのバリデーションエラーが表示に反映されるか未確認
+// - [ ] conformの使い方が終わってるので要修正
+// - [ ] クライアント側のバリデーションタイミングを調整
+// - [ ] 利用規約、プライバシーポリシーのリンク先を修正
+
 export default function SignUpForm() {
   const [lastResult, action] = useActionState(signupAction, undefined);
 
