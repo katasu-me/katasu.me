@@ -13,6 +13,7 @@ import AvatarUpload from "../AvatarUpload";
 // - [ ] サーバー側でのバリデーションエラーが表示に反映されるか未確認
 // - [ ] conformの使い方が終わってるので要修正
 // - [ ] クライアント側のバリデーションタイミングを調整
+// - [ ] 送信中表示
 // - [ ] 利用規約、プライバシーポリシーのリンク先を修正
 
 export default function SignUpForm() {
