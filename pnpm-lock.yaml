@@ -192,9 +192,6 @@ importers:
       drizzle-orm:
         specifier: ^0.44.4
         version: 0.44.5(better-sqlite3@12.2.0)(bun-types@1.2.21(@types/react@19.1.12))(kysely@0.28.5)
-      nanoid:
-        specifier: ^5.1.5
-        version: 5.1.5
     devDependencies:
       drizzle-kit:
         specifier: ^0.31.4

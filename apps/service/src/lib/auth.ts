@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { nanoid } from "nanoid";
 import { getDB } from "./db";
 
 export const getAuth = (db: D1Database) => {
@@ -34,6 +35,13 @@ export const getAuth = (db: D1Database) => {
               },
             };
           },
+        },
+      },
+    },
+    advanced: {
+      database: {
+        generateId: ({ size }) => {
+          return nanoid(size);
         },
       },
     },

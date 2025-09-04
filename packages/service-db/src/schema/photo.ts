@@ -1,14 +1,11 @@
 import { sql } from "drizzle-orm";
 import { index, integer, primaryKey, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
-import { nanoid } from "nanoid";
 import { user } from "./user";
 
 export const photo = sqliteTable(
   "photo",
   {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => nanoid()),
+    id: text("id").primaryKey(),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -25,9 +22,7 @@ export const photo = sqliteTable(
 export const tag = sqliteTable(
   "tag",
   {
-    id: text("id")
-      .primaryKey()
-      .$defaultFn(() => nanoid()),
+    id: text("id").primaryKey(),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
