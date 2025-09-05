@@ -9,11 +9,20 @@ import { signupAction } from "../../actions/signup";
 import { MAX_USERNAME_LENGTH, signUpFormSchema } from "../../schemas/signup-form";
 import AvatarUpload from "../AvatarUpload";
 
+// MEMO: 初期状態でエラーの状態にしておくことで先に進めないようにする
+const defaultResult: SubmissionResult<string[]> = {
+  status: 'error',
+  error: {
+    agreeToTerms: ["利用規約への同意が必要です"],
+    agreeToPrivacy: ["プライバシーポリシーへの同意が必要です"]
+  }
+}
+
 export default function SignUpForm() {
   const [lastResult, action] = useActionState(signupAction, undefined);
 
   const [form, fields] = useForm({
-    lastResult,
+    lastResult: lastResult || defaultResult,
     shouldValidate: "onBlur",
     shouldRevalidate: "onInput",
     onValidate({ formData }) {
@@ -23,11 +32,8 @@ export default function SignUpForm() {
     },
   });
 
-  const isFormValid =
-    fields.username.value?.trim() &&
-    fields.agreeToTerms.value === "on" &&
-    fields.agreeToPrivacy.value === "on" &&
-    !Object.values(fields).some((field) => (field.errors ?? []).length > 0);
+  // MEMO: trim()剥がしたかったけどisDirtyが実装されるまでは無理そう
+  const isFormValid = !Object.values(form.allErrors).length && fields.username.value?.trim();
 
   return (
     <form action={action} id={form.id} onSubmit={form.onSubmit} noValidate>
