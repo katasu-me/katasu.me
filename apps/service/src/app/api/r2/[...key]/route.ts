@@ -1,10 +1,11 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { notFound } from "next/navigation";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ key: string[] }> }) {
   // 本番なら404に
   if (process.env.NODE_ENV !== "development") {
-    return new Response("Not Found", { status: 404 });
+    notFound();
   }
 
   const { env } = getCloudflareContext();
