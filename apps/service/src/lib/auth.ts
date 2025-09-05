@@ -52,10 +52,10 @@ export const getAuth = (db: D1Database) => {
 };
 
 /**
- * 認証を要求し、認証済みのBetterAuthインスタンスを取得する
+ * 認証を要求してセッション情報を取得する
  * 認証されていない場合はトップへリダイレクトする
  * @param db D1Database
- * @return BetterAuthインスタンス
+ * @return BetterAuthインスタンス, セッション情報
  */
 export async function requireAuth(db: D1Database) {
   const auth = getAuth(db);
@@ -68,5 +68,5 @@ export async function requireAuth(db: D1Database) {
     redirect("/");
   }
 
-  return auth;
+  return { auth, session };
 }
