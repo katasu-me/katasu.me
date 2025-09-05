@@ -1,10 +1,14 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getAuthenticatedSession } from "@/lib/get-session";
+import { requireAuth } from "@/lib/auth";
 
 export async function GET() {
   const { env } = getCloudflareContext();
-  const session = await getAuthenticatedSession(env.DB);
+  const auth = await requireAuth(env.DB);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   // 新規登録前ならサインアップページへリダイレクト
   if (session.user.name === "" && !session.user.image) {

@@ -2,6 +2,8 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { nanoid } from "nanoid";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { getDB } from "./db";
 
 export const getAuth = (db: D1Database) => {
@@ -48,3 +50,23 @@ export const getAuth = (db: D1Database) => {
     plugins: [nextCookies()],
   });
 };
+
+/**
+ * 認証を要求し、認証済みのBetterAuthインスタンスを取得する
+ * 認証されていない場合はトップへリダイレクトする
+ * @param db D1Database
+ * @return BetterAuthインスタンス
+ */
+export async function requireAuth(db: D1Database) {
+  const auth = getAuth(db);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  // アカウントが存在しない場合はトップへリダイレクト
+  if (!session || !session.user?.id) {
+    redirect("/");
+  }
+
+  return auth;
+}

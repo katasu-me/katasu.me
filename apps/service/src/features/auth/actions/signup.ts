@@ -2,15 +2,19 @@
 
 import { parseWithValibot } from "@conform-to/valibot";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { requireAuth } from "@/lib/auth";
 import { updateUser } from "@/lib/auth-client";
-import { getAuthenticatedSession } from "@/lib/get-session";
 import { uploadAvatarImage } from "@/lib/r2";
 import { signUpFormSchema } from "../schemas/signup-form";
 
 export async function signupAction(_prevState: unknown, formData: FormData) {
   const { env } = getCloudflareContext();
-  const session = await getAuthenticatedSession(env.DB);
+  const auth = await requireAuth(env.DB);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   // バリデーション
   const submission = parseWithValibot(formData, {
@@ -45,10 +49,20 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
 
   try {
     // ユーザー名とアバターURLを更新
-    await updateUser({
+    const result = await updateUser({
       name: submission.value.username,
       image: avatarUrl,
     });
+
+    if (result.error) {
+      console.error("ユーザー情報更新エラー:", result.error);
+
+      return submission.reply({
+        formErrors: ["ユーザー情報の更新中にエラーが発生しました"], // TODO: 詳細なエラー内容を表示するか検討
+      });
+    }
+
+    console.log("ユーザー更新結果:", result);
   } catch (error) {
     console.error("新規登録エラー:", error);
 
