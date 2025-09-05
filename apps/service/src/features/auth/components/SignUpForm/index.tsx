@@ -32,6 +32,15 @@ export default function SignUpForm() {
     },
   });
 
+  /**
+   * 挿入されたファイルを検証させる関数
+   * - AvatarUploadでonChangeを乗っ取っているためgetInputPropsのonChangeが効かない。
+   * - なので、onFileChangeでvalidateを呼び出すようにする。
+   */
+  const handleAvatarChange = () => {
+    form.validate({ name: fields.avatar.name });
+  }
+
   // MEMO: trim()剥がしたかったけどisDirtyが実装されるまでは無理そう
   const isFormValid = !Object.values(form.allErrors).length && fields.username.value?.trim();
 
@@ -41,6 +50,7 @@ export default function SignUpForm() {
         <AvatarUpload
           {...getInputProps(fields.avatar, { type: 'file' })}
           error={fields.avatar.errors?.[0]}
+          onFileChange={handleAvatarChange}
         />
 
         <Input
