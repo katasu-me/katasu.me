@@ -20,24 +20,10 @@ export const signUpFormSchema = v.object({
   ),
   avatar: v.optional(
     v.pipe(
-      v.unknown(),
-      v.transform((value) => {
-        // 空のファイルやファイルが選択されていない場合はundefinedを返す
-        if (!value || (value instanceof File && (value.size === 0 || value.name === ""))) {
-          return undefined;
-        }
-
-        return value;
-      }),
-      v.union([
-        v.undefined(),
-        v.pipe(
-          v.instance(File),
-          v.maxSize(MAX_AVATAR_FILE_SIZE, AVATAR_FILE_SIZE_MESSAGE),
-          v.mimeType(ALLOWED_AVATAR_FILE_TYPES, AVATAR_FILE_TYPE_MESSAGE),
-        ),
-      ]),
-    ),
+      v.file(),
+      v.maxSize(MAX_AVATAR_FILE_SIZE, AVATAR_FILE_SIZE_MESSAGE),
+      v.mimeType(ALLOWED_AVATAR_FILE_TYPES, AVATAR_FILE_TYPE_MESSAGE),
+    )
   ),
   agreeToTerms: v.literal("on"),
   agreeToPrivacy: v.literal("on"),
