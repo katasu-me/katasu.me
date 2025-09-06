@@ -82,7 +82,7 @@ export default async function TagsPage({ params, searchParams }: PageProps) {
       <h1 className="col-start-2 text-4xl">{`#${tagNameStr}`}</h1>
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-        <ImagesUI view={view || "masonry"} images={images} searchParams={await searchParams} />
+        <ImagesUI view={view || "masonry"} images={images} />
       </div>
     </div>
   );

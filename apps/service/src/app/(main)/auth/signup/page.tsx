@@ -3,7 +3,9 @@ import SignUpForm from "@/features/auth/components/SignUpForm";
 import { requireAuth } from "@/lib/auth";
 
 export default async function SignUpPage() {
-  const { env } = getCloudflareContext();
+  const { env } = await getCloudflareContext({
+    async: true,
+  });
 
   await requireAuth(env.DB);
 
