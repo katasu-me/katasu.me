@@ -51,7 +51,7 @@ const nextConfig: NextConfig = {
       ? [
           {
             protocol: "https",
-            hostname: "avatars.githubusercontent.com",
+            hostname: "local.katasu.me",
           },
           {
             protocol: "https",

@@ -7,7 +7,7 @@ export const user = sqliteTable("user", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: integer("emailVerified", { mode: "boolean" }).notNull().default(false),
-  image: text("image"),
+  hasAvatar: integer("has_avatar", { mode: "boolean" }).notNull().default(false),
   plan: text("plan")
     .notNull()
     .references(() => plan.id, { onDelete: "cascade" })
@@ -21,6 +21,8 @@ export const user = sqliteTable("user", {
     .default(sql`(unixepoch())`)
     .$onUpdate(() => new Date()),
 });
+
+export type User = typeof user.$inferSelect;
 
 export const session = sqliteTable("session", {
   id: text("id").primaryKey(),
@@ -37,6 +39,8 @@ export const session = sqliteTable("session", {
     .default(sql`(unixepoch())`)
     .$onUpdate(() => new Date()),
 });
+
+export type Session = typeof session.$inferSelect;
 
 export const account = sqliteTable("account", {
   id: text("id").primaryKey(),
@@ -59,6 +63,8 @@ export const account = sqliteTable("account", {
     .$onUpdate(() => new Date()),
 });
 
+export type Account = typeof account.$inferSelect;
+
 export const verification = sqliteTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
@@ -70,3 +76,5 @@ export const verification = sqliteTable("verification", {
     .default(sql`(unixepoch())`)
     .$onUpdate(() => new Date()),
 });
+
+export type Verification = typeof verification.$inferSelect;

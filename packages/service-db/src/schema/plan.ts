@@ -4,3 +4,5 @@ export const plan = sqliteTable("plan", {
   id: text("id").primaryKey(),
   name: text("name").notNull().unique(),
 });
+
+export type Plan = typeof plan.$inferSelect;

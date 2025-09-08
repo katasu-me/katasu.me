@@ -19,6 +19,8 @@ export const photo = sqliteTable(
   (table) => [index("idx_photo_user_id_created_at").on(table.userId, table.createdAt)],
 );
 
+export type Photo = typeof photo.$inferSelect;
+
 export const tag = sqliteTable(
   "tag",
   {
@@ -37,6 +39,8 @@ export const tag = sqliteTable(
   ],
 );
 
+export type Tag = typeof tag.$inferSelect;
+
 export const photoTag = sqliteTable(
   "photo_tag",
   {
@@ -53,3 +57,5 @@ export const photoTag = sqliteTable(
     index("idx_photo_tag_tag_id").on(table.tagId),
   ],
 );
+
+export type PhotoTag = typeof photoTag.$inferSelect;

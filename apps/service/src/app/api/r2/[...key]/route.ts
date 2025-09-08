@@ -12,6 +12,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ key
   const resolvedParams = await params;
   const key = resolvedParams.key.join("/");
 
+  console.log("[DEV] Fetching file from R2 with key:", key);
+
   try {
     const object = await env.IMAGES_R2_BUCKET.get(key);
 

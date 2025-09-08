@@ -1,15 +1,16 @@
+import * as schema from "@katasu.me/service-db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { drizzle } from "drizzle-orm/d1";
 import { nanoid } from "nanoid";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getDB } from "./db";
 
 export const getAuth = (db: D1Database) => {
   return betterAuth({
     baseURL: process.env.BETTER_AUTH_URL,
-    database: drizzleAdapter(getDB(db), {
+    database: drizzleAdapter(drizzle(db, { schema }), {
       provider: "sqlite",
     }),
     session: {

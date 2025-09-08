@@ -1,3 +1,6 @@
+import { getUserById } from "@katasu.me/service-db";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { notFound } from "next/navigation";
 import type { ComponentProps } from "react";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
@@ -7,6 +10,7 @@ import UserIcon from "@/features/auth/components/UserIcon";
 import type FrameImage from "@/features/gallery/components/FrameImage";
 import ImagesUI from "@/features/gallery/components/ImagesUI";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
+import { getUserAvatarUrl } from "@/lib/r2";
 
 const images: ComponentProps<typeof FrameImage>[] = [
   {
@@ -85,16 +89,25 @@ type PageProps = {
 
 export default async function UsersPage({ params, searchParams }: PageProps) {
   const { userid } = await params;
+
+  const { env } = await getCloudflareContext({
+    async: true,
+  });
+
+  const user = await getUserById(env.DB, userid);
+
+  // ユーザーが存在しない場合は404
+  if (!user) {
+    notFound();
+  }
+
+  const avatarUrl = getUserAvatarUrl(user);
   const resolvedSearchParams = await searchParams;
-
-  // ユーザーIDが存在するか確認
-
-  console.log("UserPage searchParams:", userid, resolvedSearchParams);
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
       <header className="col-start-2 flex items-center justify-between">
-        <UserIcon name="test" src="https://avatars.githubusercontent.com/u/44780846?v=4" alt="ユーザーアイコン" />
+        <UserIcon name={user.name} src={avatarUrl} alt="ユーザーアイコン" />
 
         <div className="flex items-center gap-2">
           <IconButton title="検索">

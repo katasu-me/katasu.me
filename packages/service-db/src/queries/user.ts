@@ -1,21 +1,21 @@
 import { eq } from "drizzle-orm";
-import type { DrizzleD1Database } from "drizzle-orm/d1";
-import { user } from "../schema/user";
 
-type NewUser = typeof user.$inferInsert;
-type UpdateUser = Partial<Omit<NewUser, "id" | "createdAt">>;
+import type { AnyD1Database } from "drizzle-orm/d1";
+import type { User } from "../schema";
+import { getDB } from "./db";
 
-export async function updateUser(db: DrizzleD1Database, userId: string, userData: UpdateUser) {
-  const [updatedUser] = await db.update(user).set(userData).where(eq(user.id, userId)).returning();
-  return updatedUser;
-}
+/**
+ * ユーザーIDからユーザーを取得する
+ * @param dbInstance D1インスタンス
+ * @param userId ユーザーID
+ * @returns ユーザー情報、存在しない場合はundefined
+ */
+export async function getUserById(dbInstance: AnyD1Database, userId: string): Promise<User | undefined> {
+  const db = getDB(dbInstance);
 
-export async function deleteUser(db: DrizzleD1Database, userId: string) {
-  const [deletedUser] = await db.delete(user).where(eq(user.id, userId)).returning();
-  return deletedUser;
-}
+  const user = await db.query.user.findFirst({
+    where: (u) => eq(u.id, userId),
+  });
 
-export async function getUserById(db: DrizzleD1Database, userId: string) {
-  const [foundUser] = await db.select().from(user).where(eq(user.id, userId)).limit(1);
-  return foundUser;
+  return user;
 }

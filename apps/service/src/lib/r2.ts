@@ -1,3 +1,4 @@
+import type { User } from "@katasu.me/service-db";
 import { generateAvatarImage, generateImageVariants } from "./image";
 
 type UploadAvatarImageOptions = {
@@ -100,4 +101,34 @@ export async function uploadImage(r2: R2Bucket, options: UploadImageOptions): Pr
   } catch (error) {
     throw new Error(`画像のアップロードに失敗しました: ${error}`);
   }
+}
+
+/**
+ * R2バケットのパブリックURLを取得
+ * @returns R2バケットのパブリックURL
+ * @throws 環境変数が設定されていない場合にエラーをスロー
+ */
+function getBucketPublicUrl(): string {
+  const bucketPublicUrl = process.env.R2_PUBLIC_URL;
+
+  if (!bucketPublicUrl) {
+    throw new Error("R2_PUBLIC_URLが設定されていません");
+  }
+
+  return bucketPublicUrl;
+}
+
+/**
+ * ユーザーのアバターURLを取得
+ * @param user ユーザー情報
+ * @returns アバターURL
+ */
+export function getUserAvatarUrl(user: User): string {
+  const bucketPublicUrl = getBucketPublicUrl();
+
+  if (user.hasAvatar) {
+    return `${bucketPublicUrl}/avatars/${user.id}.avif`;
+  }
+
+  return "/images/default-avatar-icon.avif";
 }

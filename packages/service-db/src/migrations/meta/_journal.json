@@ -22,6 +22,13 @@
       "when": 1756176947352,
       "tag": "0002_slow_wiccan",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1757372490342,
+      "tag": "0003_fearless_slyde",
+      "breakpoints": true
     }
   ]
 }
