@@ -63,6 +63,8 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   experimental: {
     reactCompiler: true,
+    useCache: true,
+    cacheComponents: true,
   },
 };
 

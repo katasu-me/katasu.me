@@ -1,7 +1,6 @@
-import { getUserById } from "@katasu.me/service-db";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { notFound } from "next/navigation";
 import type { ComponentProps } from "react";
+import { fetchUserWithCache } from "@/actions/user";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
 import IconButton from "@/components/IconButton";
@@ -90,11 +89,7 @@ type PageProps = {
 export default async function UsersPage({ params, searchParams }: PageProps) {
   const { userid } = await params;
 
-  const { env } = await getCloudflareContext({
-    async: true,
-  });
-
-  const user = await getUserById(env.DB, userid);
+  const user = await fetchUserWithCache(userid);
 
   // ユーザーが存在しない場合は404
   if (!user) {
