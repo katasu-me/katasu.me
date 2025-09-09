@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { fetchUserWithCache } from "@/actions/user";
 import IconFlag from "@/assets/icons/flag.svg";
 import IconPencil from "@/assets/icons/pencil.svg";
 import IconShare from "@/assets/icons/share.svg";
 import Button from "@/components/Button";
+import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
-import UserIcon from "@/features/auth/components/UserIcon";
+import BigImage from "@/features/gallery/components/BigImage";
 
 // TODO: 実際はAPIから画像データを取得する
 const image = {
@@ -38,7 +40,9 @@ type PageProps = {
 };
 
 export default async function ImagesPage({ params }: PageProps) {
-  const { userid } = await params;
+  const { userid, imageid } = await params;
+
+  console.log("ImagesPage render", userid, imageid);
 
   const user = await fetchUserWithCache(userid);
 
@@ -49,9 +53,7 @@ export default async function ImagesPage({ params }: PageProps) {
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <header className="col-start-2 flex items-center justify-between">
-        <UserIcon name="arrow2nd" src="https://avatars.githubusercontent.com/u/44780846?v=4" alt="ユーザーアイコン" />
-      </header>
+      <Header user={user} />
 
       <div className="col-start-2 mx-auto w-full text-center">
         <BigImage {...image} />

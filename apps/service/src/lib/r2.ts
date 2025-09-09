@@ -1,4 +1,3 @@
-import type { User } from "@katasu.me/service-db";
 import { generateAvatarImage, generateImageVariants } from "./image";
 
 type UploadAvatarImageOptions = {
@@ -120,14 +119,15 @@ function getBucketPublicUrl(): string {
 
 /**
  * ユーザーのアバターURLを取得
- * @param user ユーザー情報
+ * @param userId ユーザーID
+ * @param hasAvatar アバターが設定されているかどうか
  * @returns アバターURL
  */
-export function getUserAvatarUrl(user: User): string {
+export function getUserAvatarUrl(userId: string, hasAvatar: boolean): string {
   const bucketPublicUrl = getBucketPublicUrl();
 
-  if (user.hasAvatar) {
-    return `${bucketPublicUrl}/avatars/${user.id}.avif`;
+  if (hasAvatar) {
+    return `${bucketPublicUrl}/avatars/${userId}.avif`;
   }
 
   return "/images/default-avatar-icon.avif";

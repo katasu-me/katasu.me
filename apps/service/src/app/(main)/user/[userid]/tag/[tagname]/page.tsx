@@ -1,8 +1,11 @@
-import Link from "next/link";
+import { notFound } from "next/navigation";
+import type { ComponentProps } from "react";
+import { fetchUserWithCache } from "@/actions/user";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
+import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
-import UserIcon from "@/features/auth/components/UserIcon";
+import type FrameImage from "@/features/gallery/components/FrameImage";
 import ImagesUI from "@/features/gallery/components/ImagesUI";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
 
@@ -16,23 +19,33 @@ type PageProps = {
   }>;
 };
 
-export default async function TagsPage({ params, searchParams }: PageProps) {
+export default async function TagPage({ params, searchParams }: PageProps) {
   const { userid, tagname } = await params;
-  const tagNameStr = decodeURIComponent(tagname);
+
+  const user = await fetchUserWithCache(userid);
+
+  // ユーザーが存在しない場合は404
+  if (!user) {
+    notFound();
+  }
 
   console.log("TagsPage params:", userid, tagname);
 
+  const tagNameStr = decodeURIComponent(tagname);
   const { view } = await searchParams;
 
-  const images = [
+  const images: ComponentProps<typeof FrameImage>[] = [
     {
       id: "1",
       src: "/dummy/a.avif",
       alt: "画像",
       width: 2624,
       height: 3936,
-      href: "/test/images/1",
       title: "縦長の画像",
+      linkParams: {
+        userId: user.id,
+        imageId: "1",
+      },
     },
     {
       id: "2",
@@ -40,8 +53,11 @@ export default async function TagsPage({ params, searchParams }: PageProps) {
       alt: "画像",
       width: 2560,
       height: 1440,
-      href: "/test/images/2",
       title: "横長の風景",
+      linkParams: {
+        userId: user.id,
+        imageId: "2",
+      },
     },
     {
       id: "3",
@@ -49,8 +65,11 @@ export default async function TagsPage({ params, searchParams }: PageProps) {
       alt: "画像",
       width: 1440,
       height: 2560,
-      href: "/test/images/3",
       title: "正方形",
+      linkParams: {
+        userId: user.id,
+        imageId: "3",
+      },
     },
     {
       id: "4",
@@ -58,26 +77,26 @@ export default async function TagsPage({ params, searchParams }: PageProps) {
       alt: "画像",
       width: 2560,
       height: 1440,
-      href: "/test/images/4",
+      linkParams: {
+        userId: user.id,
+        imageId: "4",
+      },
     },
   ];
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <header className="col-start-2 flex items-center justify-between">
-        <Link className="interactive-scale" href="/user/arrow2nd">
-          <UserIcon name="arrow2nd" src="https://avatars.githubusercontent.com/u/44780846?v=4" alt="ユーザーアイコン" />
-        </Link>
-
+      <Header user={user}>
         <div className="flex items-center gap-2">
           <IconButton title="検索">
             <IconSearch className="h-6 w-6" />
           </IconButton>
+
           <IconButton title="その他">
             <IconDots className="h-6 w-6" />
           </IconButton>
         </div>
-      </header>
+      </Header>
 
       <h1 className="col-start-2 text-4xl">{`#${tagNameStr}`}</h1>
 
