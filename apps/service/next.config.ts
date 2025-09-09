@@ -64,7 +64,6 @@ const nextConfig: NextConfig = {
   experimental: {
     reactCompiler: true,
     useCache: true,
-    cacheComponents: true,
   },
 };
 
