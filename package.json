@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "turbo dev",
     "dev:service": "turbo dev --filter=@katasu.me/service",
+    "dev:service:opr": "op run --env-file=./apps/service/.env.local -- pnpm run dev:service",
     "build": "turbo build",
     "build:service": "turbo build:worker --filter=@katasu.me/service",
     "preview": "turbo preview",
