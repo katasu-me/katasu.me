@@ -1,8 +1,8 @@
 "use server";
 
 import { parseWithValibot } from "@conform-to/valibot";
+import { updateUser } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
 import { uploadAvatarImage } from "@/lib/r2";
@@ -10,7 +10,7 @@ import { signUpFormSchema } from "../schemas/signup-form";
 
 export async function signupAction(_prevState: unknown, formData: FormData) {
   const { env } = getCloudflareContext();
-  const { auth, session } = await requireAuth(env.DB);
+  const { session } = await requireAuth(env.DB);
 
   // バリデーション
   const submission = parseWithValibot(formData, {
@@ -21,8 +21,6 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
   if (submission.status !== "success") {
     return submission.reply();
   }
-
-  let avatarUrl: string | undefined;
 
   // アバター画像がある場合
   if (submission.value.avatar instanceof File) {
@@ -44,23 +42,13 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
   }
 
   try {
-    // ユーザー名とアバターURLを更新
-    const result = await auth.api.updateUser({
-      body: {
-        name: submission.value.username,
-        image: avatarUrl,
-      },
-      headers: await headers(),
+    // ユーザー情報を更新
+    const result = await updateUser(env.DB, session.user.id, {
+      name: submission.value.username,
+      hasAvatar: !!submission.value.avatar,
     });
 
-    if (!result.status) {
-      console.error("ユーザー情報更新エラー");
-
-      return submission.reply({
-        formErrors: ["ユーザー情報の更新中にエラーが発生しました"], // TODO: 詳細なエラー内容を表示するか検討
-      });
-    }
-
+    // TODO: 消す
     console.log("ユーザー更新結果:", result);
   } catch (error) {
     console.error("新規登録エラー:", error);
