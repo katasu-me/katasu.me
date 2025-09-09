@@ -11,3 +11,5 @@ onlyBuiltDependencies:
   - geckodriver
   - lefthook
   - workerd
+
+resolutionMode: time-based
