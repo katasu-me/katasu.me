@@ -7,19 +7,8 @@ import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import type FrameImage from "@/features/gallery/components/FrameImage";
 import GalleryView from "@/features/gallery/components/GalleryView";
-import type { ImageLayoutType } from "@/features/gallery/types/layout";
 
-type PageProps = {
-  params: Promise<{
-    userid: string;
-    tagname: string;
-  }>;
-  searchParams: Promise<{
-    view?: ImageLayoutType;
-  }>;
-};
-
-export default async function TagPage({ params, searchParams }: PageProps) {
+export default async function TagPage({ params, searchParams }: PageProps<"/user/[userid]/tag/[tagname]">) {
   const { userid, tagname } = await params;
 
   const user = await fetchUserWithCache(userid);

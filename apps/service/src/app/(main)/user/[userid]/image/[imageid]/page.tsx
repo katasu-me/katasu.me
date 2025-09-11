@@ -32,14 +32,7 @@ const image = {
   ],
 };
 
-type PageProps = {
-  params: Promise<{
-    userid: string;
-    imageid: string;
-  }>;
-};
-
-export default async function ImagesPage({ params }: PageProps) {
+export default async function ImagesPage({ params }: PageProps<"/user/[userid]/image/[imageid]">) {
   const { userid, imageid } = await params;
 
   console.log("ImagesPage render", userid, imageid);

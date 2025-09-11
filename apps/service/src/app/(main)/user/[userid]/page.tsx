@@ -8,7 +8,6 @@ import IconButton from "@/components/IconButton";
 import TagLinks from "@/components/Navigation/TagLinks";
 import type FrameImage from "@/features/gallery/components/FrameImage";
 import GalleryView from "@/features/gallery/components/GalleryView";
-import type { ImageLayoutType } from "@/features/gallery/types/layout";
 
 const tags = [
   {
@@ -25,17 +24,7 @@ const tags = [
   },
 ];
 
-type PageProps = {
-  params: Promise<{
-    userid: string;
-  }>;
-  searchParams: Promise<{
-    search?: string;
-    view?: ImageLayoutType;
-  }>;
-};
-
-export default async function UserPage({ params, searchParams }: PageProps) {
+export default async function UserPage({ params, searchParams }: PageProps<"/user/[userid]">) {
   const { userid } = await params;
 
   const user = await fetchUserWithCache(userid);
