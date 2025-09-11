@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { ComponentProps } from "react";
+import { fallback, object, parse } from "valibot";
 import { fetchUserWithCache } from "@/actions/user";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
@@ -7,7 +8,7 @@ import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import TagLinks from "@/components/Navigation/TagLinks";
 import type FrameImage from "@/features/gallery/components/FrameImage";
-import GalleryView from "@/features/gallery/components/GalleryView";
+import GalleryView, { GalleryViewSchema } from "@/features/gallery/components/GalleryView";
 
 const tags = [
   {
@@ -24,6 +25,10 @@ const tags = [
   },
 ];
 
+const searchParamsSchema = object({
+  view: fallback(GalleryViewSchema, "masonry"),
+});
+
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userid]">) {
   const { userid } = await params;
 
@@ -34,7 +39,7 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
     notFound();
   }
 
-  const resolvedSearchParams = await searchParams;
+  const { view } = parse(searchParamsSchema, await searchParams);
 
   const images: ComponentProps<typeof FrameImage>[] = [
     {
@@ -100,7 +105,7 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
         <TagLinks className="col-start-2" tags={tags} />
-        <GalleryView view={resolvedSearchParams.view || "masonry"} images={images} />
+        <GalleryView view={view} images={images} />
       </div>
     </div>
   );

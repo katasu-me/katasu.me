@@ -1,12 +1,17 @@
 import { notFound } from "next/navigation";
 import type { ComponentProps } from "react";
+import { fallback, object, parse } from "valibot";
 import { fetchUserWithCache } from "@/actions/user";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import type FrameImage from "@/features/gallery/components/FrameImage";
-import GalleryView from "@/features/gallery/components/GalleryView";
+import GalleryView, { GalleryViewSchema } from "@/features/gallery/components/GalleryView";
+
+const searchParamsSchema = object({
+  view: fallback(GalleryViewSchema, "masonry"),
+});
 
 export default async function TagPage({ params, searchParams }: PageProps<"/user/[userid]/tag/[tagname]">) {
   const { userid, tagname } = await params;
@@ -21,7 +26,7 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
   console.log("TagsPage params:", userid, tagname);
 
   const tagNameStr = decodeURIComponent(tagname);
-  const { view } = await searchParams;
+  const { view } = parse(searchParamsSchema, await searchParams);
 
   const images: ComponentProps<typeof FrameImage>[] = [
     {
@@ -90,7 +95,7 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
       <h1 className="col-start-2 text-4xl">{`#${tagNameStr}`}</h1>
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-        <GalleryView view={view || "masonry"} images={images} />
+        <GalleryView view={view} images={images} />
       </div>
     </div>
   );

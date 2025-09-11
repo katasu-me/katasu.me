@@ -1,4 +1,5 @@
 import type { ComponentProps } from "react";
+import { type InferOutput, literal, union } from "valibot";
 import IconReload from "@/assets/icons/reload.svg";
 import Button from "@/components/Button";
 import DraggableImages from "../DraggableImages";
@@ -7,8 +8,10 @@ import ImageDropArea from "../ImageDropArea";
 import LayoutToggle from "../LayoutToggle";
 import MasonryImageLayout from "../MasonryImageLayout";
 
+export const GalleryViewSchema = union([literal("masonry"), literal("random")]);
+
 type Props = {
-  view: "masonry" | "random";
+  view: InferOutput<typeof GalleryViewSchema>;
   images: ComponentProps<typeof FrameImage>[];
 };
 
