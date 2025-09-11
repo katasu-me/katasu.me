@@ -5,7 +5,9 @@ import { user } from "./user";
 export const photo = sqliteTable(
   "photo",
   {
-    id: text("id").primaryKey(),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -24,7 +26,9 @@ export type Photo = typeof photo.$inferSelect;
 export const tag = sqliteTable(
   "tag",
   {
-    id: text("id").primaryKey(),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => nanoid()),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -59,3 +63,6 @@ export const photoTag = sqliteTable(
 );
 
 export type PhotoTag = typeof photoTag.$inferSelect;
+function nanoid(): string | import("drizzle-orm").SQL<unknown> {
+  throw new Error("Function not implemented.");
+}
