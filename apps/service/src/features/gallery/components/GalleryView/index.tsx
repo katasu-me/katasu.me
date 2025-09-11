@@ -12,7 +12,7 @@ type Props = {
   images: ComponentProps<typeof FrameImage>[];
 };
 
-export default function ImagesUI({ view, images }: Props) {
+export default function GalleryView({ view, images }: Props) {
   return (
     <>
       <div className="col-start-2">
@@ -31,7 +31,7 @@ export default function ImagesUI({ view, images }: Props) {
         <MasonryImageLayout className="col-start-2" images={images} />
       )}
 
-      <LayoutToggle className="-translate-x-1/2 fixed bottom-6 left-1/2 z-50" value={view || "masonry"} />
+      <LayoutToggle className="-translate-x-1/2 fixed bottom-6 left-1/2 z-10" value={view || "masonry"} />
     </>
   );
 }

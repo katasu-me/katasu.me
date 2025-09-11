@@ -6,7 +6,7 @@ import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import type FrameImage from "@/features/gallery/components/FrameImage";
-import ImagesUI from "@/features/gallery/components/ImagesUI";
+import GalleryView from "@/features/gallery/components/GalleryView";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
 
 type PageProps = {
@@ -101,7 +101,7 @@ export default async function TagPage({ params, searchParams }: PageProps) {
       <h1 className="col-start-2 text-4xl">{`#${tagNameStr}`}</h1>
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-        <ImagesUI view={view || "masonry"} images={images} />
+        <GalleryView view={view || "masonry"} images={images} />
       </div>
     </div>
   );

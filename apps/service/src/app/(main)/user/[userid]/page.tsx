@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import TagLinks from "@/components/Navigation/TagLinks";
 import type FrameImage from "@/features/gallery/components/FrameImage";
-import ImagesUI from "@/features/gallery/components/ImagesUI";
+import GalleryView from "@/features/gallery/components/GalleryView";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
 
 const tags = [
@@ -111,7 +111,7 @@ export default async function UserPage({ params, searchParams }: PageProps) {
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
         <TagLinks className="col-start-2" tags={tags} />
-        <ImagesUI view={resolvedSearchParams.view || "masonry"} images={images} />
+        <GalleryView view={resolvedSearchParams.view || "masonry"} images={images} />
       </div>
     </div>
   );
