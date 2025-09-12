@@ -2,7 +2,7 @@
 
 import { type DragEvent, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import IconPhotoPlus from "@/assets/icons/photo-plus.svg";
+import IconImagePlus from "@/assets/icons/image-plus.svg";
 import ImageDrawer from "../ImageDrawer";
 
 type Props = {
@@ -32,6 +32,7 @@ export default function ImageDropArea({ title, className }: Props) {
 
     if (e.dataTransfer.files !== null && e.dataTransfer.files.length > 0) {
       if (e.dataTransfer.files.length === 1) {
+        e.dataTransfer.files[0];
         console.log("onDrop", e.dataTransfer.files);
       } else {
         alert("ファイルは１個まで選択可能です");
@@ -57,7 +58,7 @@ export default function ImageDropArea({ title, className }: Props) {
         type="button"
       >
         <div className="flex items-center gap-2 text-sm tracking-wider">
-          <IconPhotoPlus className="h-4 w-4" />
+          <IconImagePlus className="h-4 w-4" />
           <p>{isDragging ? "ドラッグ&ドロップしてアップロード" : title}</p>
         </div>
       </button>

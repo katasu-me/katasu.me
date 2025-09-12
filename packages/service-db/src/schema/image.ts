@@ -1,9 +1,10 @@
 import { sql } from "drizzle-orm";
 import { index, integer, primaryKey, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
+import { nanoid } from "nanoid";
 import { user } from "./user";
 
-export const photo = sqliteTable(
-  "photo",
+export const image = sqliteTable(
+  "image",
   {
     id: text("id")
       .primaryKey()
@@ -18,10 +19,10 @@ export const photo = sqliteTable(
     isHidden: integer("is_hidden", { mode: "boolean" }).notNull().default(false),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   },
-  (table) => [index("idx_photo_user_id_created_at").on(table.userId, table.createdAt)],
+  (table) => [index("idx_image_user_id_created_at").on(table.userId, table.createdAt)],
 );
 
-export type Photo = typeof photo.$inferSelect;
+export type Image = typeof image.$inferSelect;
 
 export const tag = sqliteTable(
   "tag",
@@ -33,36 +34,33 @@ export const tag = sqliteTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
-    photoCount: integer("photo_count").notNull().default(0),
+    imageCount: integer("image_count").notNull().default(0),
     isHidden: integer("is_hidden", { mode: "boolean" }).notNull().default(false),
   },
   (table) => [
     unique("unique_user_tag_name").on(table.userId, table.name),
-    index("idx_tag_user_id_photo_count").on(table.userId, table.photoCount),
+    index("idx_tag_user_id_image_count").on(table.userId, table.imageCount),
     index("idx_tag_user_id_name").on(table.userId, table.name),
   ],
 );
 
 export type Tag = typeof tag.$inferSelect;
 
-export const photoTag = sqliteTable(
-  "photo_tag",
+export const imageTag = sqliteTable(
+  "image_tag",
   {
-    photoId: text("photo_id")
+    imageId: text("image_id")
       .notNull()
-      .references(() => photo.id, { onDelete: "cascade" }),
+      .references(() => image.id, { onDelete: "cascade" }),
     tagId: text("tag_id")
       .notNull()
       .references(() => tag.id, { onDelete: "cascade" }),
   },
   (table) => [
-    primaryKey({ columns: [table.photoId, table.tagId] }),
-    index("idx_photo_tag_photo_id").on(table.photoId),
-    index("idx_photo_tag_tag_id").on(table.tagId),
+    primaryKey({ columns: [table.imageId, table.tagId] }),
+    index("idx_image_tag_image_id").on(table.imageId),
+    index("idx_image_tag_tag_id").on(table.tagId),
   ],
 );
 
-export type PhotoTag = typeof photoTag.$inferSelect;
-function nanoid(): string | import("drizzle-orm").SQL<unknown> {
-  throw new Error("Function not implemented.");
-}
+export type ImageTag = typeof imageTag.$inferSelect;

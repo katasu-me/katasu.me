@@ -1,3 +1,3 @@
-export * from "./photo";
+export * from "./image";
 export * from "./plan";
 export * from "./user";
