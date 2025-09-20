@@ -1,1 +1,0 @@
-updateImageHidden as hideImage;
