@@ -35,6 +35,10 @@ export const imageRelations = relations(image, ({ one, many }) => ({
 
 export type Image = typeof image.$inferSelect;
 
+export type ImageWithTags = Image & {
+  tags: Omit<Tag, "userId">[];
+};
+
 /**
  * タグ
  */
@@ -63,6 +67,10 @@ export const tagRelations = relations(tag, ({ one, many }) => ({
 
 export type Tag = typeof tag.$inferSelect;
 
+export type TagWithImages = Tag & {
+  images: Omit<Image, "userId">[];
+};
+
 /**
  * 画像とタグの中間テーブル
  */
@@ -89,5 +97,3 @@ export const imageTagRelations = relations(imageTag, ({ one }) => ({
     references: [tag.id],
   }),
 }));
-
-export type ImageTag = typeof imageTag.$inferSelect;

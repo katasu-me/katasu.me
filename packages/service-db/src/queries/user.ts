@@ -21,6 +21,27 @@ export async function getUserById(dbInstance: AnyD1Database, userId: string): Pr
 }
 
 /**
+ * ユーザーの画像投稿状況を取得する
+ * @param dbInstance D1インスタンス
+ * @param userId ユーザーID
+ * @returns ユーザーの画像投稿状況、存在しない場合はundefined
+ */
+export async function getUserImageStatus(
+  dbInstance: AnyD1Database,
+  userId: string,
+): Promise<Pick<User, "maxPhotos" | "uploadedPhotos"> | undefined> {
+  const db = getDB(dbInstance);
+
+  return await db.query.user.findFirst({
+    where: (u) => eq(u.id, userId),
+    columns: {
+      maxPhotos: true,
+      uploadedPhotos: true,
+    },
+  });
+}
+
+/**
  * ユーザー情報を更新する
  * @param dbInstance D1インスタンス
  * @param userId ユーザーID
@@ -37,4 +58,16 @@ export async function updateUser(
   const updatedUser = await db.update(user).set(updateData).where(eq(user.id, userId)).returning().get();
 
   return updatedUser;
+}
+
+/**
+ * ユーザーをBANする
+ * @param dbInstance D1インスタンス
+ * @param userId ユーザーID
+ * @returns 更新後のユーザー情報
+ */
+export async function banUser(dbInstance: AnyD1Database, userId: string): Promise<User | undefined> {
+  const db = getDB(dbInstance);
+
+  return await db.update(user).set({ isBanned: true }).where(eq(user.id, userId)).returning().get();
 }
