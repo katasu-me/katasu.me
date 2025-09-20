@@ -36,6 +36,20 @@
       "when": 1757678847758,
       "tag": "0004_strong_korath",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1758354354886,
+      "tag": "0005_young_unus",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1758354430823,
+      "tag": "0006_freezing_marten_broadcloak",
+      "breakpoints": true
     }
   ]
 }

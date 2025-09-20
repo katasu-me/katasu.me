@@ -48,14 +48,9 @@ export const tag = sqliteTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
-    imageCount: integer("image_count").notNull().default(0),
     isHidden: integer("is_hidden", { mode: "boolean" }).notNull().default(false),
   },
-  (table) => [
-    unique("unique_user_tag_name").on(table.userId, table.name),
-    index("idx_tag_user_id_image_count").on(table.userId, table.imageCount),
-    index("idx_tag_user_id_name").on(table.userId, table.name),
-  ],
+  (table) => [unique("unique_user_tag_name").on(table.userId, table.name)],
 );
 
 export const tagRelations = relations(tag, ({ one, many }) => ({
@@ -81,11 +76,7 @@ export const imageTag = sqliteTable(
       .notNull()
       .references(() => tag.id, { onDelete: "cascade" }),
   },
-  (table) => [
-    primaryKey({ columns: [table.imageId, table.tagId] }),
-    index("idx_image_tag_image_id").on(table.imageId),
-    index("idx_image_tag_tag_id").on(table.tagId),
-  ],
+  (table) => [primaryKey({ columns: [table.imageId, table.tagId] })],
 );
 
 export const imageTagRelations = relations(imageTag, ({ one }) => ({
