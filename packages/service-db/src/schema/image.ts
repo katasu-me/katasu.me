@@ -1,8 +1,11 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { index, integer, primaryKey, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 import { user } from "./user";
 
+/**
+ * 画像
+ */
 export const image = sqliteTable(
   "image",
   {
@@ -22,8 +25,19 @@ export const image = sqliteTable(
   (table) => [index("idx_image_user_id_created_at").on(table.userId, table.createdAt)],
 );
 
+export const imageRelations = relations(image, ({ one, many }) => ({
+  user: one(user, {
+    fields: [image.userId],
+    references: [user.id],
+  }),
+  imageTag: many(imageTag),
+}));
+
 export type Image = typeof image.$inferSelect;
 
+/**
+ * タグ
+ */
 export const tag = sqliteTable(
   "tag",
   {
@@ -44,8 +58,19 @@ export const tag = sqliteTable(
   ],
 );
 
+export const tagRelations = relations(tag, ({ one, many }) => ({
+  user: one(user, {
+    fields: [tag.userId],
+    references: [user.id],
+  }),
+  imageTag: many(imageTag),
+}));
+
 export type Tag = typeof tag.$inferSelect;
 
+/**
+ * 画像とタグの中間テーブル
+ */
 export const imageTag = sqliteTable(
   "image_tag",
   {
@@ -62,5 +87,16 @@ export const imageTag = sqliteTable(
     index("idx_image_tag_tag_id").on(table.tagId),
   ],
 );
+
+export const imageTagRelations = relations(imageTag, ({ one }) => ({
+  image: one(image, {
+    fields: [imageTag.imageId],
+    references: [image.id],
+  }),
+  tag: one(tag, {
+    fields: [imageTag.tagId],
+    references: [tag.id],
+  }),
+}));
 
 export type ImageTag = typeof imageTag.$inferSelect;
