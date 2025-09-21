@@ -41,6 +41,18 @@
   }
 }
 
+.interactive-scale-sm {
+  transition: all 400ms var(--ease-magnetic);
+
+  &:hover {
+    transform: scale(1.01);
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
 .interactive-scale-brightness {
   transition: all 400ms var(--ease-magnetic);
 

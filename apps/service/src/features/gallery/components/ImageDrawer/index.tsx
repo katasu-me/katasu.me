@@ -1,16 +1,18 @@
-import { useState } from "react";
-import Button from "@/shared/components/Button";
-import Drawer from "@/shared/components/Drawer";
-import Input from "@/shared/components/Input";
-import TagInput from "@/shared/components/TagInput";
+import { type ComponentProps, useState } from "react";
+import Button from "@/components/Button";
+import Drawer from "@/components/Drawer";
+import Input from "@/components/Input";
+import TagInput from "@/components/TagInput";
 import FrameImage from "../FrameImage";
 
-export default function ImageDrawer() {
+type Props = Pick<ComponentProps<typeof Drawer>, "open" | "onOpenChange">;
+
+export default function ImageDrawer(props: Props) {
   const [title, setTitle] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   return (
-    <Drawer title="投稿する" open>
+    <Drawer title="投稿する" {...props}>
       {({ Description }) => (
         <>
           <Description hidden>新しい画像を投稿するフォーム</Description>

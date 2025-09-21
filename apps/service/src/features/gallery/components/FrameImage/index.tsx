@@ -26,8 +26,8 @@ export default function FrameImage({
   return (
     <div
       className={twMerge(
-        "group relative overflow-hidden border-5 border-white bg-warm-black-25 shadow-md transition-transform duration-400 ease-magnetic",
-        !disableHoverEffect && "hover:scale-[101%] active:scale-[99%]",
+        "group intaraction-base relative overflow-hidden border-5 border-white bg-warm-black-25 shadow-md",
+        !disableHoverEffect && "interactive-scale-sm",
         className,
       )}
       style={{ aspectRatio: `${width} / ${height}` }}

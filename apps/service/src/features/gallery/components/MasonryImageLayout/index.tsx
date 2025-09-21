@@ -1,8 +1,9 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { type ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import Pagination from "@/shared/components/Pagination";
+import Pagination from "@/components/Pagination";
 import FrameImage from "../FrameImage";
 
 const DEFAULT_COLUMNS = 2;
@@ -18,20 +19,15 @@ type Props = {
   images: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
   currentPage?: number;
   itemsPerPage?: number;
-  searchParams: URLSearchParams | Record<string, string>;
   className?: string;
 };
 
-export default function MasonryImageLayout({
-  images,
-  currentPage = 1,
-  itemsPerPage = 20,
-  searchParams,
-  className,
-}: Props) {
+export default function MasonryImageLayout({ images, currentPage = 1, itemsPerPage = 20, className }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [columns, setColumns] = useState(DEFAULT_COLUMNS);
   const [isReady, setIsReady] = useState(false);
+
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const updateColumns = (entries: ResizeObserverEntry[]) => {

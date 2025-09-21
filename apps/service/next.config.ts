@@ -51,7 +51,7 @@ const nextConfig: NextConfig = {
       ? [
           {
             protocol: "https",
-            hostname: "avatars.githubusercontent.com",
+            hostname: "local.katasu.me",
           },
           {
             protocol: "https",
@@ -63,6 +63,7 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   experimental: {
     reactCompiler: true,
+    useCache: true,
   },
 };
 

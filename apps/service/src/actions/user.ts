@@ -1,0 +1,21 @@
+"use server";
+
+import { getUserById, type User } from "@katasu.me/service-db";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { cacheTag } from "next/dist/server/use-cache/cache-tag";
+
+/**
+ * ユーザー情報を取得
+ * @param userId ユーザーID
+ * @returns ユーザー情報、存在しない場合はundefined
+ */
+export async function fetchUserWithCache(userId: string): Promise<User | undefined> {
+  "use cache";
+
+  cacheTag("user", userId);
+
+  const { env } = getCloudflareContext();
+  const user = await getUserById(env.DB, userId);
+
+  return user;
+}

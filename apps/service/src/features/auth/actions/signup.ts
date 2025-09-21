@@ -1,39 +1,28 @@
 "use server";
 
 import { parseWithValibot } from "@conform-to/valibot";
+import { updateUser } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getAuth } from "@/lib/auth";
-import { updateUser } from "@/lib/auth-client";
+import { requireAuth } from "@/lib/auth";
 import { uploadAvatarImage } from "@/lib/r2";
 import { signUpFormSchema } from "../schemas/signup-form";
 
 export async function signupAction(_prevState: unknown, formData: FormData) {
   const { env } = getCloudflareContext();
-
-  const auth = getAuth(env.DB);
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session || !session.user?.id) {
-    redirect("/");
-  }
+  const { session } = await requireAuth(env.DB);
 
   // バリデーション
   const submission = parseWithValibot(formData, {
     schema: signUpFormSchema,
   });
 
-  // エラーならフォームにエラーメッセージを返す
+  // エラーならフォームにエラーを返す
   if (submission.status !== "success") {
     return submission.reply();
   }
 
-  let avatarUrl: string | undefined;
-
-  // アバター画像がある場合;
+  // アバター画像がある場合
   if (submission.value.avatar instanceof File) {
     try {
       const arrayBuffer = await submission.value.avatar.arrayBuffer();
@@ -53,11 +42,14 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
   }
 
   try {
-    // ユーザー名とアバターURLを更新
-    await updateUser({
+    // ユーザー情報を更新
+    const result = await updateUser(env.DB, session.user.id, {
       name: submission.value.username,
-      image: avatarUrl,
+      hasAvatar: !!submission.value.avatar,
     });
+
+    // TODO: 消す
+    console.log("ユーザー更新結果:", result);
   } catch (error) {
     console.error("新規登録エラー:", error);
 
@@ -66,6 +58,6 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     });
   }
 
-  // 成功時はリダイレクト
+  // 成功時はユーザーページへリダイレクト
   redirect(`/user/${session.user.id}`);
 }

@@ -22,6 +22,34 @@
       "when": 1756176947352,
       "tag": "0002_slow_wiccan",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1757372490342,
+      "tag": "0003_fearless_slyde",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1757678847758,
+      "tag": "0004_strong_korath",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1758354354886,
+      "tag": "0005_young_unus",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1758354430823,
+      "tag": "0006_freezing_marten_broadcloak",
+      "breakpoints": true
     }
   ]
 }
