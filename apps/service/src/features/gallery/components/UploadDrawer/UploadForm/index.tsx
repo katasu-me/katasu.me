@@ -47,9 +47,7 @@ export default function UploadForm({ defaultImageFile }: Props) {
 
   const [form, fields] = useForm({
     lastResult: lastResult || defaultResult,
-    defaultValue: {
-      tags: [] as string[],
-    },
+    defaultValue: { tags: [] },
     shouldValidate: "onBlur",
     shouldRevalidate: "onInput",
     onValidate({ formData }) {
