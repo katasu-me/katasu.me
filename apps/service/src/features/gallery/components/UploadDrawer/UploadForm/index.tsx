@@ -92,6 +92,8 @@ export default function UploadForm({ defaultImageFile }: Props) {
       dt.items.add(defaultImageFile);
       input.files = dt.files;
 
+      form.validate({ name: fields.file.name });
+
       isDnDFileSet.current = true;
     }
   };
