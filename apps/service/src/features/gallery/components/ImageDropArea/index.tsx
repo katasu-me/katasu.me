@@ -39,8 +39,6 @@ export default function ImageDropArea({ title, className }: Props) {
       }
 
       setDefaultImageFile(e.dataTransfer.files[0]);
-      e.dataTransfer.clearData();
-
       setOpen(true);
     }
   };
