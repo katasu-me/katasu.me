@@ -3,7 +3,9 @@
 import { type DragEvent, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import IconImagePlus from "@/assets/icons/image-plus.svg";
-import ImageDrawer from "../ImageDrawer";
+import UploadDrawer from "../UploadDrawer";
+
+const MAX_FILE_COUNT = 1;
 
 type Props = {
   title: string;
@@ -13,32 +15,41 @@ type Props = {
 export default function ImageDropArea({ title, className }: Props) {
   const [open, setOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [defaultImageFile, setDefaultImageFile] = useState<File | undefined>();
 
-  const onDragEnter = (e: DragEvent<HTMLButtonElement>) => {
+  const handleDragEnter = (e: DragEvent<HTMLButtonElement>) => {
     if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
-      console.log("onDragEnter", e.dataTransfer.items);
       setIsDragging(true);
     }
   };
 
-  const onDragLeave = (e: DragEvent<HTMLButtonElement>) => {
-    console.log("onDragLeave", e);
+  const handleDragLeave = (_e: DragEvent<HTMLButtonElement>) => {
     setIsDragging(false);
   };
 
-  const onDrop = (e: DragEvent<HTMLButtonElement>) => {
+  const handleDrop = (e: DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
     setIsDragging(false);
 
     if (e.dataTransfer.files !== null && e.dataTransfer.files.length > 0) {
-      if (e.dataTransfer.files.length === 1) {
-        e.dataTransfer.files[0];
-        console.log("onDrop", e.dataTransfer.files);
-      } else {
-        alert("ファイルは１個まで選択可能です");
+      if (e.dataTransfer.files.length !== MAX_FILE_COUNT) {
+        alert(`画像は${MAX_FILE_COUNT}個まで選択できます`);
+        return;
       }
 
+      setDefaultImageFile(e.dataTransfer.files[0]);
       e.dataTransfer.clearData();
+
+      setOpen(true);
+    }
+  };
+
+  const handleOpenChange = (state: boolean) => {
+    setOpen(state);
+
+    if (!state) {
+      setDefaultImageFile(undefined);
     }
   };
 
@@ -51,10 +62,10 @@ export default function ImageDropArea({ title, className }: Props) {
           className,
         )}
         onClick={() => setOpen(true)}
-        onDragEnter={onDragEnter}
-        onDragLeave={onDragLeave}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
         onDragOver={(e) => e.preventDefault()}
-        onDrop={onDrop}
+        onDrop={handleDrop}
         type="button"
       >
         <div className="flex items-center gap-2 text-sm tracking-wider">
@@ -62,7 +73,7 @@ export default function ImageDropArea({ title, className }: Props) {
           <p>{isDragging ? "ドラッグ&ドロップしてアップロード" : title}</p>
         </div>
       </button>
-      <ImageDrawer open={open} onOpenChange={(state) => setOpen(state)} />
+      <UploadDrawer open={open} onOpenChange={handleOpenChange} defaultImageFile={defaultImageFile} />
     </>
   );
 }

@@ -14,7 +14,7 @@ describe("TagInput", () => {
   it("タグを追加できる", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={[]} onChange={mockOnChange} placeholder="タグを入力" />);
+    render(<TagInput suggestTags={suggestTags} tags={[]} onChangeTags={mockOnChange} placeholder="タグを入力" />);
 
     const input = screen.getByPlaceholderText("タグを入力");
 
@@ -28,7 +28,7 @@ describe("TagInput", () => {
   it("サジェストから選択できる", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={[]} onChange={mockOnChange} />);
+    render(<TagInput suggestTags={suggestTags} tags={[]} onChangeTags={mockOnChange} />);
 
     // Rを入力してReactを表示
     const input = screen.getByRole("textbox");
@@ -46,7 +46,7 @@ describe("TagInput", () => {
   it("タグを削除できる", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={["React", "TypeScript"]} onChange={mockOnChange} />);
+    render(<TagInput suggestTags={suggestTags} tags={["React", "TypeScript"]} onChangeTags={mockOnChange} />);
 
     // 削除ボタンをクリック
     const deleteButton = screen.getByLabelText("Reactを削除");
@@ -58,7 +58,7 @@ describe("TagInput", () => {
   it("重複したタグは追加されない", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={["React"]} onChange={mockOnChange} />);
+    render(<TagInput suggestTags={suggestTags} tags={["React"]} onChangeTags={mockOnChange} />);
 
     // 既存のタグを入力
     const input = screen.getByRole("textbox");
@@ -72,7 +72,7 @@ describe("TagInput", () => {
   it("空白文字列は追加されない", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={[]} onChange={mockOnChange} />);
+    render(<TagInput suggestTags={suggestTags} tags={[]} onChangeTags={mockOnChange} />);
 
     // 空白のみ入力してEnter
     const input = screen.getByRole("textbox");
@@ -85,7 +85,7 @@ describe("TagInput", () => {
   it("Backspaceで最後のタグを削除できる", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={["React", "TypeScript"]} onChange={mockOnChange} />);
+    render(<TagInput suggestTags={suggestTags} tags={["React", "TypeScript"]} onChangeTags={mockOnChange} />);
 
     const input = screen.getByRole("textbox");
     await user.click(input);

@@ -1,18 +1,18 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import ImageDrawer from "./";
+import UploadDrawer from "./";
 
 const meta = {
-  title: "Gallery/ImageDrawer",
-  component: ImageDrawer,
+  title: "Gallery/UploadDrawer",
+  component: UploadDrawer,
   parameters: {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
-} satisfies Meta<typeof ImageDrawer>;
+} satisfies Meta<typeof UploadDrawer>;
 
 export default meta;
 
-type Story = StoryObj<typeof ImageDrawer>;
+type Story = StoryObj<typeof UploadDrawer>;
 
 export const Default: Story = {
   args: {},

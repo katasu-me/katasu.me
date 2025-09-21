@@ -42,7 +42,7 @@ const TagInputWithState = (args: ComponentProps<typeof TagInput>) => {
 
   return (
     <div className="w-96">
-      <TagInput {...args} tags={selectedTags} onChange={setSelectedTags} />
+      <TagInput {...args} tags={selectedTags} onChangeTags={setSelectedTags} />
       {selectedTags.length > 0 && (
         <div className="mt-4 rounded-lg bg-gray-50 p-4">
           <h3 className="mb-2 font-medium text-sm">選択されたタグ:</h3>
@@ -73,7 +73,7 @@ export const WithInitialValues: Story = {
 
     return (
       <div className="w-96">
-        <TagInput {...args} tags={selectedTags} onChange={setSelectedTags} />
+        <TagInput {...args} tags={selectedTags} onChangeTags={setSelectedTags} />
       </div>
     );
   },

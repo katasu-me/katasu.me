@@ -1,24 +1,38 @@
-import { type KeyboardEvent, useEffect, useRef, useState } from "react";
+import { type ComponentPropsWithoutRef, type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Tag from "./Tag";
 
 const NO_SELECT_HIGHLIGHTED_INDEX = -1;
 
 type Props = {
+  /** タグの最大個数 */
+  maxTags: number;
+  /** タグの最大文字数 */
+  maxTagTextLength: number;
+
   /** タグの候補リスト */
-  suggestTags?: string[];
+  suggestTags: string[];
   /** 入力されているタグのリスト */
-  tags?: string[];
+  tags: string[];
+
   /** タグが変更された */
-  onChange?: (value: string[]) => void;
-  /** プレースホルダー */
-  placeholder?: string;
+  onChangeTags?: (value: string[]) => void;
+  /** エラーメッセージ */
+  error?: string;
+} & ComponentPropsWithoutRef<"input">;
 
-  className?: string;
-  id?: string;
-};
-
-export default function TagInput({ suggestTags = [], tags = [], onChange, placeholder, className, id }: Props) {
+export default function TagInput({
+  maxTags,
+  maxTagTextLength,
+  suggestTags = [],
+  tags = [],
+  onChangeTags,
+  placeholder,
+  error,
+  className,
+  id,
+  ...inputProps
+}: Props) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(NO_SELECT_HIGHLIGHTED_INDEX);
@@ -29,6 +43,7 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
   const isComposingRef = useRef(false);
 
   const filteredSuggestTags = suggestTags.filter((tag) => !tags.includes(tag));
+  const hasBottom = !!error;
 
   const addTag = (newTag: string | undefined) => {
     if (!newTag) {
@@ -40,12 +55,22 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
       return;
     }
 
+    // タグ個数制限チェック
+    if (tags.length >= maxTags) {
+      return;
+    }
+
+    // タグ文字数制限チェック
+    if (newTag.length > maxTagTextLength) {
+      return;
+    }
+
     const newTags = [...tags, newTag];
 
     setInputValue("");
     setOpen(false);
 
-    onChange?.(newTags);
+    onChangeTags?.(newTags);
     inputRef.current?.focus();
   };
 
@@ -56,7 +81,7 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
 
     const newValue = tags.filter((tag) => tag !== targetTag);
 
-    onChange?.(newValue);
+    onChangeTags?.(newValue);
     inputRef.current?.focus();
   };
 
@@ -200,10 +225,17 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
         }
         break;
     }
+
+    inputProps.onKeyDown?.(e);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
+
+    // タグ文字数制限チェック
+    if (newValue.length > maxTagTextLength) {
+      return;
+    }
 
     setInputValue(newValue);
 
@@ -213,6 +245,8 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
     if (openState) {
       setHighlightedIndex(-1);
     }
+
+    inputProps.onChange?.(e);
   };
 
   const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -224,6 +258,8 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
     }
 
     setOpen(false);
+
+    inputProps.onBlur?.(e);
   };
 
   // ドロップダウンの位置を計算する
@@ -275,6 +311,7 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
           ))}
 
           <input
+            {...inputProps}
             id={id}
             ref={handleInputMount}
             type="text"
@@ -317,6 +354,11 @@ export default function TagInput({ suggestTags = [], tags = [], onChange, placeh
           </div>
         )}
       </div>
+      {hasBottom && (
+        <div className="mt-1 flex items-center justify-end">
+          {error && <p className="flex-1 text-red-600 text-sm">{error}</p>}
+        </div>
+      )}
     </div>
   );
 }
