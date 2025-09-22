@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "@conform-to/react";
+import { getFormProps, getInputProps, SubmissionResult, useForm } from "@conform-to/react";
 import { parseWithValibot } from "@conform-to/valibot";
 import { useActionState } from "react";
 import Button from "@/components/Button";
@@ -8,6 +8,15 @@ import Input from "@/components/Input";
 import { signupAction } from "../../actions/signup";
 import { MAX_USERNAME_LENGTH, signUpFormSchema } from "../../schemas/signup-form";
 import AvatarUpload from "../AvatarUpload";
+
+// MEMO: 初期状態でエラーの状態にしておくことで先に進めないようにする
+const defaultResult: SubmissionResult<string[]> = {
+  status: 'error',
+  error: {
+    agreeToTerms: ["利用規約への同意が必要です"],
+    agreeToPrivacy: ["プライバシーポリシーへの同意が必要です"]
+  }
+}
 
 // TODO:
 // - [ ] サーバー側でのバリデーションエラーが表示に反映されるか未確認
@@ -20,7 +29,7 @@ export default function SignUpForm() {
   const [lastResult, action] = useActionState(signupAction, undefined);
 
   const [form, fields] = useForm({
-    lastResult,
+    lastResult: lastResult || defaultResult,
     shouldValidate: "onBlur",
     shouldRevalidate: "onInput",
     onValidate({ formData }) {
@@ -30,26 +39,29 @@ export default function SignUpForm() {
     },
   });
 
-  const isFormValid =
-    fields.username.value?.trim() &&
-    fields.agreeToTerms.value === "on" &&
-    fields.agreeToPrivacy.value === "on" &&
-    !Object.values(fields).some((field) => (field.errors ?? []).length > 0);
+  /**
+   * 挿入されたファイルを検証させる関数
+   * - AvatarUploadでonChangeを乗っ取っているためgetInputPropsのonChangeが効かない。
+   * - なので、onFileChangeでvalidateを呼び出すようにする。
+   */
+  const handleAvatarChange = () => {
+    form.validate({ name: fields.avatar.name });
+  }
+
+  // MEMO: trim()剥がしたかったけどisDirtyが実装されるまでは無理そう
+  const isFormValid = !Object.values(form.allErrors).length && fields.username.value?.trim();
 
   return (
-    <form action={action} id={form.id} onSubmit={form.onSubmit} noValidate>
+    <form {...getFormProps(form)} action={action} noValidate>
       <div className="flex flex-col gap-6">
         <AvatarUpload
-          key={fields.avatar.key}
-          name={fields.avatar.name}
-          defaultValue={fields.avatar.defaultValue}
+          {...getInputProps(fields.avatar, { type: 'file' })}
           error={fields.avatar.errors?.[0]}
+          onFileChange={handleAvatarChange}
         />
 
         <Input
-          key={fields.username.key}
-          name={fields.username.name}
-          defaultValue={fields.username.defaultValue}
+          {...getInputProps(fields.username, { type: 'text' })}
           label="ユーザー名"
           placeholder="ユーザー名を入力"
           error={fields.username.errors?.[0]}
@@ -61,11 +73,9 @@ export default function SignUpForm() {
         <div className="space-y-3">
           <label className="flex items-center gap-3">
             <input
-              key={fields.agreeToTerms.key}
-              name={fields.agreeToTerms.name}
-              defaultChecked={fields.agreeToTerms.defaultValue === "on"}
-              type="checkbox"
+              {...getInputProps(fields.agreeToTerms, { type: 'checkbox' })}
               className="size-4 cursor-pointer accent-warm-black"
+              required={true}
             />
             <span className="text-sm text-warm-black">
               <a href="/terms" target="_blank" className="mr-1 font-bold hover:underline" rel="noopener">
@@ -77,11 +87,9 @@ export default function SignUpForm() {
 
           <label className="flex items-center gap-3">
             <input
-              key={fields.agreeToPrivacy.key}
-              name={fields.agreeToPrivacy.name}
-              defaultChecked={fields.agreeToPrivacy.defaultValue === "on"}
-              type="checkbox"
+              {...getInputProps(fields.agreeToPrivacy, { type: 'checkbox' })}
               className="size-4 cursor-pointer accent-warm-black"
+              required={true}
             />
             <span className="text-sm text-warm-black">
               <a href="/privacy" target="_blank" className="mr-1 font-bold hover:underline" rel="noopener">
