@@ -1,8 +1,6 @@
 name: Unit Tests
 
-on:
-  push:
-    branches: [main, develop]
+on: push
 
 jobs:
   test:
