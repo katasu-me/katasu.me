@@ -61,6 +61,11 @@ const nextConfig: NextConfig = {
       : [],
   },
   typedRoutes: true,
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
   experimental: {
     reactCompiler: true,
     useCache: true,
