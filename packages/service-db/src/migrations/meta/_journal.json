@@ -50,6 +50,13 @@
       "when": 1758354430823,
       "tag": "0006_freezing_marten_broadcloak",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1758953533029,
+      "tag": "0007_salty_machine_man",
+      "breakpoints": true
     }
   ]
 }

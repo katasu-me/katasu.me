@@ -15,7 +15,6 @@ export const image = sqliteTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    filename: text("filename").notNull(),
     width: integer("width").notNull(),
     height: integer("height").notNull(),
     title: text("title"),
