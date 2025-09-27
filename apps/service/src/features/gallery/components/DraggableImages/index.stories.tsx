@@ -21,7 +21,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    items: [
+    images: [
       {
         src: "https://placehold.jp/400x600.png",
         alt: "縦長の画像サンプル1",

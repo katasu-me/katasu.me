@@ -6,7 +6,7 @@ import type FrameImage from "../FrameImage";
 import DraggableImage from "./DraggableImage";
 
 type Props = {
-  items: ComponentProps<typeof FrameImage>[];
+  images: ComponentProps<typeof FrameImage>[];
   className?: string;
 };
 
@@ -34,7 +34,7 @@ const getRandomPosition = (): Position => {
   };
 };
 
-export default function DraggableImages({ items, className }: Props) {
+export default function DraggableImages({ images, className }: Props) {
   const [positions, setPositions] = useState<Position[]>([]);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,13 +45,13 @@ export default function DraggableImages({ items, className }: Props) {
     document.addEventListener("gesturestart", preventDefault);
     document.addEventListener("gesturechange", preventDefault);
 
-    setPositions(items.map(() => getRandomPosition()));
+    setPositions(images.map(() => getRandomPosition()));
 
     return () => {
       document.removeEventListener("gesturestart", preventDefault);
       document.removeEventListener("gesturechange", preventDefault);
     };
-  }, [items.map]);
+  }, [images.map]);
 
   return (
     <div
@@ -62,7 +62,7 @@ export default function DraggableImages({ items, className }: Props) {
         className,
       )}
     >
-      {items.map((item, i) => (
+      {images.map((item, i) => (
         <DraggableImage
           key={i.toString()}
           item={item}
