@@ -1,4 +1,4 @@
-import type { ComponentPropsWithRef, ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 type Props = {
@@ -7,9 +7,9 @@ type Props = {
   className?: string;
   label?: ReactNode;
   error?: string;
-} & ComponentPropsWithRef<"input">;
+} & ComponentProps<"input">;
 
-export default function Input({ maxLength, currentLength, className, label, error, ref, ...props }: Props) {
+export default function Input({ maxLength, currentLength, className, label, error, ...props }: Props) {
   const length = currentLength ?? props.value?.toString().length ?? 0;
   const hasBottom = error || maxLength;
 
@@ -22,7 +22,6 @@ export default function Input({ maxLength, currentLength, className, label, erro
       )}
       <input
         {...props}
-        ref={ref}
         maxLength={maxLength}
         className="w-full rounded-md border border-warm-black-50 bg-warm-white px-3 py-2 text-warm-black placeholder:text-warm-black-50 focus:border-warm-black focus:outline-none disabled:cursor-not-allowed disabled:bg-warm-black-10"
       />

@@ -2,8 +2,8 @@ import { eq } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { type Image, type ImageWithTags, image, imageTag, tag } from "../../schema";
 import type { ActionResult } from "../../types/error";
+import type { ImageFormData } from "../../types/image";
 import { getDB } from "../db";
-import type { ImageFormData } from "./types";
 
 /**
  * 画像情報を更新する

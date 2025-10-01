@@ -62,7 +62,10 @@ const TagInputWithState = (args: ComponentProps<typeof TagInput>) => {
 export const Default: Story = {
   render: (args) => <TagInputWithState {...args} />,
   args: {
+    maxTags: 10,
+    maxTagTextLength: 20,
     suggestTags,
+    tags: [],
     placeholder: "技術名を入力してください...",
   },
 };
@@ -78,7 +81,10 @@ export const WithInitialValues: Story = {
     );
   },
   args: {
+    maxTags: 10,
+    maxTagTextLength: 20,
     suggestTags,
+    tags: [],
     placeholder: "技術名を入力してください...",
   },
 };
@@ -86,7 +92,10 @@ export const WithInitialValues: Story = {
 export const CustomPlaceholder: Story = {
   render: (args) => <TagInputWithState {...args} />,
   args: {
+    maxTags: 10,
+    maxTagTextLength: 20,
     suggestTags,
+    tags: [],
     placeholder: "スキルを追加...",
   },
 };
@@ -94,7 +103,10 @@ export const CustomPlaceholder: Story = {
 export const NoOptions: Story = {
   render: (args) => <TagInputWithState {...args} />,
   args: {
+    maxTags: 10,
+    maxTagTextLength: 20,
     suggestTags: [],
+    tags: [],
     placeholder: "オプションがありません",
   },
 };
@@ -102,6 +114,8 @@ export const NoOptions: Story = {
 export const ManyOptions: Story = {
   render: (args) => <TagInputWithState {...args} />,
   args: {
+    maxTags: 10,
+    maxTagTextLength: 20,
     suggestTags: [
       ...suggestTags,
       "Node.js",
@@ -115,6 +129,7 @@ export const ManyOptions: Story = {
       "Spring Boot",
       ".NET Core",
     ],
+    tags: [],
     placeholder: "技術名を入力してください...",
   },
 };

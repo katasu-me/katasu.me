@@ -37,13 +37,14 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   } catch (error) {
     console.error("Upload image error:", error);
 
-    return {
-      ...submission,
-      status: "error",
-      error: {
-        message: "画像のアップロードに失敗しました",
-      },
-    };
+    return;
+    // return {
+    //   ...submission,
+    //   status: "error",
+    //   error: {
+    //     message: "画像のアップロードに失敗しました",
+    //   },
+    // };
   }
 
   // 画像の幅・高さを取得
@@ -69,13 +70,15 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   if (!registerImageResult.success) {
     console.error("Register image error:", registerImageResult.error);
 
-    return {
-      ...submission,
-      status: "error",
-      error: {
-        message: registerImageResult.error.message,
-      },
-    };
+    return;
+
+    // return {
+    //   ...submission,
+    //   status: "error",
+    //   error: {
+    //     message: registerImageResult.error.message,
+    //   },
+    // };
   }
 
   // TODO:

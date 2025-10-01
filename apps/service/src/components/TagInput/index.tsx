@@ -1,4 +1,4 @@
-import { type ComponentPropsWithoutRef, type KeyboardEvent, useEffect, useRef, useState } from "react";
+import { type ComponentProps, type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Tag from "./Tag";
 
@@ -19,7 +19,7 @@ type Props = {
   onChangeTags?: (value: string[]) => void;
   /** エラーメッセージ */
   error?: string;
-} & ComponentPropsWithoutRef<"input">;
+} & ComponentProps<"input">;
 
 export default function TagInput({
   maxTags,
