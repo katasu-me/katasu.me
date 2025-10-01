@@ -2,6 +2,7 @@ import { getFormProps, getInputProps, type SubmissionResult, useForm, useInputCo
 import { parseWithValibot } from "@conform-to/valibot";
 import { type ComponentProps, useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
+import IconExclamationCircleFilled from "@/assets/icons/exclamation-circle.svg";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import TagInput from "@/components/TagInput";
@@ -34,20 +35,24 @@ function SubmitButton({ disabled }: Pick<ComponentProps<"button">, "disabled">) 
 
 type Props = {
   defaultImageFile?: File;
+  onSuccess?: () => void;
 };
 
-export default function UploadForm({ defaultImageFile }: Props) {
-  const [lastResult, action] = useActionState(uploadAction, undefined);
+type PreviewImage = {
+  src: string;
+  width: number;
+  height: number;
+};
 
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [imageInfo, setImageInfo] = useState<{ width: number; height: number } | null>(null);
+export default function UploadForm({ defaultImageFile, onSuccess }: Props) {
+  const [lastResult, action] = useActionState(uploadAction, undefined);
+  const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const isDnDFileSet = useRef(false);
 
   const [form, fields] = useForm({
     lastResult: lastResult || defaultResult,
-    defaultValue: { tags: [] },
     shouldValidate: "onBlur",
     shouldRevalidate: "onInput",
     onValidate({ formData }) {
@@ -59,6 +64,23 @@ export default function UploadForm({ defaultImageFile }: Props) {
 
   const tagInput = useInputControl(fields.tags);
 
+  // React 19で送信後にフォームがリセットされる問題のワークアラウンド
+  // @see https://github.com/edmundhung/conform/issues/681
+  useEffect(() => {
+    const preventDefault = (event: Event) => {
+      if (event.target === document.forms.namedItem(form.id)) {
+        event.preventDefault();
+        setPreviewImage(null);
+      }
+    };
+
+    document.addEventListener("reset", preventDefault, true);
+
+    return () => {
+      document.removeEventListener("reset", preventDefault, true);
+    };
+  }, [form.id]);
+
   // DnDで渡された画像ファイルがあればプレビューにセット
   useEffect(() => {
     if (defaultImageFile) {
@@ -69,8 +91,11 @@ export default function UploadForm({ defaultImageFile }: Props) {
         const imageSrc = e.target?.result as string;
 
         img.onload = () => {
-          setImageSrc(imageSrc);
-          setImageInfo({ width: img.width, height: img.height });
+          setPreviewImage({
+            src: imageSrc,
+            width: img.width,
+            height: img.height,
+          });
         };
 
         img.src = imageSrc;
@@ -79,6 +104,13 @@ export default function UploadForm({ defaultImageFile }: Props) {
       reader.readAsDataURL(defaultImageFile);
     }
   }, [defaultImageFile]);
+
+  // アップロード成功時にコールバック発火
+  useEffect(() => {
+    if (lastResult?.status === "success") {
+      onSuccess?.();
+    }
+  }, [lastResult, onSuccess]);
 
   const setFileInputRef = (input: HTMLInputElement | null) => {
     fileInputRef.current = input;
@@ -101,8 +133,7 @@ export default function UploadForm({ defaultImageFile }: Props) {
 
     // 画像が選択されなかった場合はリセット
     if (!file) {
-      setImageSrc(null);
-      setImageInfo(null);
+      setPreviewImage(null);
       return;
     }
 
@@ -113,8 +144,11 @@ export default function UploadForm({ defaultImageFile }: Props) {
       const imageSrc = e.target?.result as string;
 
       img.onload = () => {
-        setImageSrc(imageSrc);
-        setImageInfo({ width: img.width, height: img.height });
+        setPreviewImage({
+          src: imageSrc,
+          width: img.width,
+          height: img.height,
+        });
       };
 
       img.src = imageSrc;
@@ -145,11 +179,11 @@ export default function UploadForm({ defaultImageFile }: Props) {
         onClick={handlePreviewClick}
         aria-label="画像を選択"
       >
-        {imageSrc ? (
+        {previewImage ? (
           <FrameImage
-            src={imageSrc}
-            width={imageInfo?.width || 2560}
-            height={imageInfo?.height || 1440}
+            src={previewImage.src}
+            width={previewImage.width || 2560}
+            height={previewImage.height || 1440}
             alt="画像のプレビュー"
             className={imageClassname}
           />
@@ -157,6 +191,14 @@ export default function UploadForm({ defaultImageFile }: Props) {
           <ImagePlaceholder className={imageClassname} />
         )}
       </button>
+
+      {/* フォーム全体のエラー */}
+      {form.errors && form.errors.length > 0 && (
+        <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-600 bg-red-50 p-4">
+          <IconExclamationCircleFilled className="size-6 text-red-600" />
+          <p className="text-red-600 text-sm">{form.errors[0]}</p>
+        </div>
+      )}
 
       <form {...getFormProps(form)} action={action} noValidate>
         {/* 画像 */}

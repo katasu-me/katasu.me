@@ -51,6 +51,11 @@ export default function ImageDropArea({ title, className }: Props) {
     }
   };
 
+  const handleSuccess = () => {
+    setOpen(false);
+    setDefaultImageFile(undefined);
+  };
+
   return (
     <>
       <button
@@ -71,7 +76,12 @@ export default function ImageDropArea({ title, className }: Props) {
           <p>{isDragging ? "ドラッグ&ドロップしてアップロード" : title}</p>
         </div>
       </button>
-      <UploadDrawer open={open} onOpenChange={handleOpenChange} defaultImageFile={defaultImageFile} />
+      <UploadDrawer
+        open={open}
+        onOpenChange={handleOpenChange}
+        onSuccess={handleSuccess}
+        defaultImageFile={defaultImageFile}
+      />
     </>
   );
 }

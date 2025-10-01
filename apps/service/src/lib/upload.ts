@@ -83,8 +83,6 @@ export async function uploadImage(r2: R2Bucket, options: UploadImageOptions): Pr
   try {
     const variants = await generateImageVariants(options.imageBuffer);
 
-    console.log(variants);
-
     const originalKey = generateR2Key("image", options.userId, options.imageId, "original");
     const thumbnailKey = generateR2Key("image", options.userId, options.imageId, "thumbnail");
 

@@ -5,6 +5,7 @@ import { registerImage } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { imageSize } from "image-size";
 import { nanoid } from "nanoid";
+import { revalidateTag } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { uploadImage } from "@/lib/upload";
 import { uploadImageSchema } from "../schemas/upload";
@@ -17,13 +18,13 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     schema: uploadImageSchema,
   });
 
-  console.log("uploadAction", { submission });
-
   if (submission.status !== "success") {
     return submission.reply();
   }
 
   const imageId = nanoid();
+  const userId = session.user.id;
+
   const imageArrayBuffer = await submission.value.file.arrayBuffer();
 
   // 画像をアップロード
@@ -31,20 +32,15 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     await uploadImage(env.IMAGES_R2_BUCKET, {
       type: "image",
       imageBuffer: imageArrayBuffer,
-      userId: session.user.id,
+      userId,
       imageId,
     });
   } catch (error) {
     console.error("Upload image error:", error);
 
-    return;
-    // return {
-    //   ...submission,
-    //   status: "error",
-    //   error: {
-    //     message: "画像のアップロードに失敗しました",
-    //   },
-    // };
+    return submission.reply({
+      formErrors: ["画像のアップロードに失敗しました"],
+    });
   }
 
   // 画像の幅・高さを取得
@@ -70,17 +66,13 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   if (!registerImageResult.success) {
     console.error("Register image error:", registerImageResult.error);
 
-    return;
-
-    // return {
-    //   ...submission,
-    //   status: "error",
-    //   error: {
-    //     message: registerImageResult.error.message,
-    //   },
-    // };
+    return submission.reply({
+      formErrors: [registerImageResult.error.message],
+    });
   }
 
-  // TODO:
-  // ここでユーザーのマイページの画像取得
+  // 自身のマイページのキャッシュを飛ばす
+  revalidateTag(`user/${userId}`);
+
+  return submission.reply();
 }

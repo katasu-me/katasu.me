@@ -2,7 +2,7 @@
 
 import { getUserById, type User } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { cacheTag } from "next/dist/server/use-cache/cache-tag";
+import { unstable_cacheTag as cacheTag } from "next/cache";
 
 /**
  * ユーザー情報を取得

@@ -1,5 +1,6 @@
-import { getImagesByUserId } from "@katasu.me/service-db";
+import { type GetImagesByUserIdOptions, getImagesByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { unstable_cacheTag as cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { fallback, object, parse } from "valibot";
 import { fetchUserWithCache } from "@/actions/user";
@@ -30,6 +31,16 @@ const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "masonry"),
 });
 
+const cachedGetImagesByUserId = async (userId: string, options: GetImagesByUserIdOptions) => {
+  "use cache";
+
+  cacheTag(`user/${userId}`);
+
+  const { env } = getCloudflareContext();
+
+  return getImagesByUserId(env.DB, userId, options);
+};
+
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userid]">) {
   const { userid } = await params;
 
@@ -40,23 +51,19 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
     notFound();
   }
 
-  const { env } = getCloudflareContext();
   const { view } = parse(searchParamsSchema, await searchParams);
 
-  // TODO: ここらへんを関数に切って 'use cache' でキャッシュしたい
-  const getImagesResult = await getImagesByUserId(env.DB, userid, {
+  const fetchUserImagesResult = await cachedGetImagesByUserId(userid, {
     offset: 0,
     order: "desc",
   });
 
-  console.log(getImagesResult);
-
-  if (!getImagesResult.success) {
-    console.error("Failed to fetch images:", getImagesResult.error);
+  if (!fetchUserImagesResult.success) {
+    console.error("Failed to fetch images:", fetchUserImagesResult.error);
     notFound(); // FIXME: 500を返す
   }
 
-  const images = getImagesResult.data.map((image) => toFrameImageProps(image, userid));
+  const images = fetchUserImagesResult.data.map((image) => toFrameImageProps(image, userid));
 
   // TODO: EnptyStateがないのでつくる
 

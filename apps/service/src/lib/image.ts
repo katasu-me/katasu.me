@@ -22,8 +22,6 @@ type ConvertAvifOptions = Pick<OptimizeParams, "width" | "height" | "quality">;
  */
 export async function convertToAvif(imageData: BufferSource, options?: ConvertAvifOptions): Promise<OptimizeResult> {
   try {
-    console.log("Starting image optimization to AVIF...", options);
-
     const optimizeResult = await optimizeImageExt({
       format: "avif",
       image: imageData,
