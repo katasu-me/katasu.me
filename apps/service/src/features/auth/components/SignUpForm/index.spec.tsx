@@ -1,9 +1,9 @@
+import { parseWithValibot } from "@conform-to/valibot";
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import SignUpForm from "./index";
-import { parseWithValibot } from "@conform-to/valibot";
 import { signUpFormSchema } from "../../schemas/signup-form";
+import SignUpForm from "./index";
 
 vi.mock("../../actions/signup", () => ({
   signupAction: vi.fn(),
@@ -23,8 +23,7 @@ describe("SignUpForm", () => {
 
     const usernameInput = screen.getByLabelText("ユーザー名");
     const termsCheckbox = screen.getByLabelText(/利用規約に同意します/);
-    const privacyCheckbox =
-      screen.getByLabelText(/プライバシーポリシーに同意します/);
+    const privacyCheckbox = screen.getByLabelText(/プライバシーポリシーに同意します/);
     const submitButton = screen.getByRole("button", { name: "新規登録" });
 
     // 初期状態では送信ボタンが無効
@@ -57,8 +56,7 @@ describe("SignUpForm", () => {
 
     const usernameInput = screen.getByLabelText("ユーザー名");
     const termsCheckbox = screen.getByLabelText(/利用規約に同意します/);
-    const privacyCheckbox =
-      screen.getByLabelText(/プライバシーポリシーに同意します/);
+    const privacyCheckbox = screen.getByLabelText(/プライバシーポリシーに同意します/);
     const submitButton = screen.getByRole("button", { name: "新規登録" });
 
     // すべての条件を満たして送信ボタンを有効にする
@@ -99,8 +97,7 @@ describe("SignUpForm", () => {
 
     const usernameInput = screen.getByLabelText("ユーザー名");
     const termsCheckbox = screen.getByLabelText(/利用規約に同意します/);
-    const privacyCheckbox =
-      screen.getByLabelText(/プライバシーポリシーに同意します/);
+    const privacyCheckbox = screen.getByLabelText(/プライバシーポリシーに同意します/);
     const submitButton = screen.getByRole("button", { name: "新規登録" });
 
     // フォームに入力
@@ -130,10 +127,7 @@ describe("SignUpForm", () => {
     expect(submission.status).toBe("success");
 
     // テストなので成功時の型にアサーション
-    submission = submission as Extract<
-      typeof submission,
-      { status: "success" }
-    >;
+    submission = submission as Extract<typeof submission, { status: "success" }>;
 
     expect(submission.value.username).toBe("testuser123");
     expect(submission.value.agreeToTerms).toBe("on");

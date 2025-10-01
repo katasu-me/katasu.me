@@ -23,7 +23,7 @@ export const signUpFormSchema = v.object({
       v.file(),
       v.maxSize(MAX_AVATAR_FILE_SIZE, AVATAR_FILE_SIZE_MESSAGE),
       v.mimeType(ALLOWED_AVATAR_FILE_TYPES, AVATAR_FILE_TYPE_MESSAGE),
-    )
+    ),
   ),
   agreeToTerms: v.literal("on"),
   agreeToPrivacy: v.literal("on"),

@@ -3,10 +3,18 @@ import { uploadAvatarImage, uploadImage } from "./r2";
 
 vi.mock("./image", () => ({
   generateImageVariants: vi.fn(async () => ({
-    original: Buffer.from("original-buffer"),
-    thumbnail: Buffer.from("thumbnail-buffer"),
+    original: {
+      data: {
+        buffer: Buffer.from("original-buffer").buffer,
+      },
+    },
+    thumbnail: {
+      data: {
+        buffer: Buffer.from("thumbnail-buffer").buffer,
+      },
+    },
   })),
-  generateAvatarImage: vi.fn(async () => Buffer.from("avatar-buffer")),
+  generateAvatarImage: vi.fn(async () => Buffer.from("avatar-buffer").buffer),
 }));
 
 describe("uploadImage", () => {
@@ -27,15 +35,19 @@ describe("uploadImage", () => {
     });
 
     expect(mockR2Bucket.put).toHaveBeenCalledTimes(2);
-    expect(mockR2Bucket.put).toHaveBeenCalledWith("images/testuser/image123.avif", Buffer.from("original-buffer"), {
-      httpMetadata: {
-        contentType: "image/avif",
-        cacheControl: "public, max-age=31536000",
+    expect(mockR2Bucket.put).toHaveBeenCalledWith(
+      "images/testuser/image123.avif",
+      Buffer.from("original-buffer").buffer,
+      {
+        httpMetadata: {
+          contentType: "image/avif",
+          cacheControl: "public, max-age=31536000",
+        },
       },
-    });
+    );
     expect(mockR2Bucket.put).toHaveBeenCalledWith(
       "images/testuser/image123_thumbnail.avif",
-      Buffer.from("thumbnail-buffer"),
+      Buffer.from("thumbnail-buffer").buffer,
       {
         httpMetadata: {
           contentType: "image/avif",
@@ -62,7 +74,7 @@ describe("uploadAvatarImage", () => {
       userId: "testuser",
     });
 
-    expect(mockR2Bucket.put).toHaveBeenCalledWith("avatars/testuser.avif", Buffer.from("avatar-buffer"), {
+    expect(mockR2Bucket.put).toHaveBeenCalledWith("avatars/testuser.avif", Buffer.from("avatar-buffer").buffer, {
       httpMetadata: {
         contentType: "image/avif",
         cacheControl: "public, max-age=31536000",

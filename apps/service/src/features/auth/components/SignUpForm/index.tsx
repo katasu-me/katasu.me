@@ -1,6 +1,6 @@
 "use client";
 
-import { getFormProps, getInputProps, SubmissionResult, useForm } from "@conform-to/react";
+import { getFormProps, getInputProps, type SubmissionResult, useForm } from "@conform-to/react";
 import { parseWithValibot } from "@conform-to/valibot";
 import { useActionState } from "react";
 import Button from "@/components/Button";
@@ -11,12 +11,12 @@ import AvatarUpload from "../AvatarUpload";
 
 // MEMO: 初期状態でエラーの状態にしておくことで先に進めないようにする
 const defaultResult: SubmissionResult<string[]> = {
-  status: 'error',
+  status: "error",
   error: {
     agreeToTerms: ["利用規約への同意が必要です"],
-    agreeToPrivacy: ["プライバシーポリシーへの同意が必要です"]
-  }
-}
+    agreeToPrivacy: ["プライバシーポリシーへの同意が必要です"],
+  },
+};
 
 // TODO:
 // - [ ] サーバー側でのバリデーションエラーが表示に反映されるか未確認
@@ -46,7 +46,7 @@ export default function SignUpForm() {
    */
   const handleAvatarChange = () => {
     form.validate({ name: fields.avatar.name });
-  }
+  };
 
   // MEMO: trim()剥がしたかったけどisDirtyが実装されるまでは無理そう
   const isFormValid = !Object.values(form.allErrors).length && fields.username.value?.trim();
@@ -55,13 +55,13 @@ export default function SignUpForm() {
     <form {...getFormProps(form)} action={action} noValidate>
       <div className="flex flex-col gap-6">
         <AvatarUpload
-          {...getInputProps(fields.avatar, { type: 'file' })}
+          {...getInputProps(fields.avatar, { type: "file" })}
           error={fields.avatar.errors?.[0]}
           onFileChange={handleAvatarChange}
         />
 
         <Input
-          {...getInputProps(fields.username, { type: 'text' })}
+          {...getInputProps(fields.username, { type: "text" })}
           label="ユーザー名"
           placeholder="ユーザー名を入力"
           error={fields.username.errors?.[0]}
@@ -73,7 +73,7 @@ export default function SignUpForm() {
         <div className="space-y-3">
           <label className="flex items-center gap-3">
             <input
-              {...getInputProps(fields.agreeToTerms, { type: 'checkbox' })}
+              {...getInputProps(fields.agreeToTerms, { type: "checkbox" })}
               className="size-4 cursor-pointer accent-warm-black"
               required={true}
             />
@@ -87,7 +87,7 @@ export default function SignUpForm() {
 
           <label className="flex items-center gap-3">
             <input
-              {...getInputProps(fields.agreeToPrivacy, { type: 'checkbox' })}
+              {...getInputProps(fields.agreeToPrivacy, { type: "checkbox" })}
               className="size-4 cursor-pointer accent-warm-black"
               required={true}
             />
