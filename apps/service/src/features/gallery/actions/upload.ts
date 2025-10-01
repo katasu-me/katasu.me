@@ -6,7 +6,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { imageSize } from "image-size";
 import { nanoid } from "nanoid";
 import { requireAuth } from "@/lib/auth";
-import { uploadImage } from "@/lib/r2";
+import { uploadImage } from "@/lib/upload";
 import { uploadImageSchema } from "../schemas/upload";
 
 export async function uploadAction(_prevState: unknown, formData: FormData) {

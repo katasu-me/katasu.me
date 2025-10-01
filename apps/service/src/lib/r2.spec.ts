@@ -1,84 +1,65 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { uploadAvatarImage, uploadImage } from "./r2";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { getImageUrl, getUserAvatarUrl } from "./r2";
 
-vi.mock("./image", () => ({
-  generateImageVariants: vi.fn(async () => ({
-    original: {
-      data: {
-        buffer: Buffer.from("original-buffer").buffer,
-      },
-    },
-    thumbnail: {
-      data: {
-        buffer: Buffer.from("thumbnail-buffer").buffer,
-      },
-    },
-  })),
-  generateAvatarImage: vi.fn(async () => Buffer.from("avatar-buffer").buffer),
-}));
-
-describe("uploadImage", () => {
-  const mockR2Bucket = {
-    put: vi.fn(),
-  } as unknown as R2Bucket;
+describe("getUserAvatarUrl", () => {
+  const originalEnv = process.env;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetModules();
+    process.env = { ...originalEnv };
+    process.env.R2_PUBLIC_URL = "https://example.com";
   });
 
-  it("画像をR2にアップロードする", async () => {
-    await uploadImage(mockR2Bucket, {
-      type: "image",
-      imageBuffer: Buffer.from("test"),
-      userId: "testuser",
-      imageId: "image123",
-    });
+  afterEach(() => {
+    process.env = originalEnv;
+  });
 
-    expect(mockR2Bucket.put).toHaveBeenCalledTimes(2);
-    expect(mockR2Bucket.put).toHaveBeenCalledWith(
-      "images/testuser/image123.avif",
-      Buffer.from("original-buffer").buffer,
-      {
-        httpMetadata: {
-          contentType: "image/avif",
-          cacheControl: "public, max-age=31536000",
-        },
-      },
-    );
-    expect(mockR2Bucket.put).toHaveBeenCalledWith(
-      "images/testuser/image123_thumbnail.avif",
-      Buffer.from("thumbnail-buffer").buffer,
-      {
-        httpMetadata: {
-          contentType: "image/avif",
-          cacheControl: "public, max-age=31536000",
-        },
-      },
-    );
+  it("アバターが設定されている場合、R2のURLを返す", () => {
+    const url = getUserAvatarUrl("testuser", true);
+    expect(url).toBe("https://example.com/avatars/testuser.avif");
+  });
+
+  it("アバターが設定されていない場合、デフォルトのURLを返す", () => {
+    const url = getUserAvatarUrl("testuser", false);
+    expect(url).toBe("/images/default-avatar-icon.avif");
+  });
+
+  it("R2_PUBLIC_URLが設定されていない場合、エラーをスローする", () => {
+    delete process.env.R2_PUBLIC_URL;
+    expect(() => getUserAvatarUrl("testuser", true)).toThrow("R2_PUBLIC_URLが設定されていません");
   });
 });
 
-describe("uploadAvatarImage", () => {
-  const mockR2Bucket = {
-    put: vi.fn(),
-  } as unknown as R2Bucket;
+describe("getImageUrl", () => {
+  const originalEnv = process.env;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetModules();
+    process.env = { ...originalEnv };
+    process.env.R2_PUBLIC_URL = "https://example.com";
   });
 
-  it("アバターをR2にアップロードする", async () => {
-    await uploadAvatarImage(mockR2Bucket, {
-      type: "avatar",
-      imageBuffer: Buffer.from("avatar"),
-      userId: "testuser",
-    });
+  afterEach(() => {
+    process.env = originalEnv;
+  });
 
-    expect(mockR2Bucket.put).toHaveBeenCalledWith("avatars/testuser.avif", Buffer.from("avatar-buffer").buffer, {
-      httpMetadata: {
-        contentType: "image/avif",
-        cacheControl: "public, max-age=31536000",
-      },
-    });
+  it("サムネイル画像のURLを返す（デフォルト）", () => {
+    const url = getImageUrl("testuser", "image123");
+    expect(url).toBe("https://example.com/images/testuser/image123_thumbnail.avif");
+  });
+
+  it("サムネイル画像のURLを返す（明示的指定）", () => {
+    const url = getImageUrl("testuser", "image123", "thumbnail");
+    expect(url).toBe("https://example.com/images/testuser/image123_thumbnail.avif");
+  });
+
+  it("オリジナル画像のURLを返す", () => {
+    const url = getImageUrl("testuser", "image123", "original");
+    expect(url).toBe("https://example.com/images/testuser/image123.avif");
+  });
+
+  it("R2_PUBLIC_URLが設定されていない場合、エラーをスローする", () => {
+    delete process.env.R2_PUBLIC_URL;
+    expect(() => getImageUrl("testuser", "image123")).toThrow("R2_PUBLIC_URLが設定されていません");
   });
 });
