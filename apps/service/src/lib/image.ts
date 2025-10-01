@@ -6,6 +6,9 @@ const DEFAULT_QUALITY = 80;
 /** サムネイルの最大サイズ */
 const THUMBNAIL_MAX_SIZE = 500;
 
+/** 画像の最大サイズ (4K) */
+const IMAGE_MAX_SIZE = 4096;
+
 /** アバター画像のサイズ */
 const AVATAR_SIZE = 400;
 
@@ -56,7 +59,10 @@ export async function generateImageVariants(imageData: BufferSource): Promise<Im
   try {
     const [original, thumbnail] = await Promise.all([
       // オリジナル
-      convertToAvif(imageData),
+      convertToAvif(imageData, {
+        width: IMAGE_MAX_SIZE,
+        height: IMAGE_MAX_SIZE,
+      }),
       // サムネイル
       convertToAvif(imageData, {
         width: THUMBNAIL_MAX_SIZE,
