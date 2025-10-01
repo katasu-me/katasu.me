@@ -44,7 +44,7 @@ export default function FormContent({
       {/* 画像のプレビュー */}
       <button
         type="button"
-        className="mb-6 block w-full cursor-pointer"
+        className={twMerge("block w-full cursor-pointer", !pending && "mb-6")}
         onClick={handlePreviewClick}
         aria-label="画像を選択"
         disabled={pending}
