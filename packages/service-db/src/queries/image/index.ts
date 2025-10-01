@@ -1,6 +1,4 @@
-export * from "./image/add";
-export * from "./image/delete";
-export * from "./image/get";
-
-export type * from "./image/types";
-export * from "./image/update";
+export * from "./delete";
+export * from "./get";
+export * from "./register";
+export * from "./update";

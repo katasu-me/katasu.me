@@ -1,10 +1,10 @@
-import { type OptimizeParams, optimizeImage } from "wasm-image-optimization/next";
+import { type OptimizeParams, type OptimizeResult, optimizeImageExt } from "wasm-image-optimization/next";
 
 /** AVIF変換時のデフォルト画質 */
 const DEFAULT_QUALITY = 80;
 
 /** サムネイルの最大サイズ */
-const THUMBNAIL_MAX_SIZE = 1000;
+const THUMBNAIL_MAX_SIZE = 500;
 
 /** アバター画像のサイズ */
 const AVATAR_SIZE = 400;
@@ -15,11 +15,13 @@ type ConvertAvifOptions = Pick<OptimizeParams, "width" | "height" | "quality">;
  * AVIF形式へ変換
  * @param imageData 画像
  * @param options オプション
- * @returns 変換後の画像
+ * @returns 変換結果
  */
-async function convertToAvif(imageData: BufferSource, options?: ConvertAvifOptions): Promise<ArrayBuffer> {
+export async function convertToAvif(imageData: BufferSource, options?: ConvertAvifOptions): Promise<OptimizeResult> {
   try {
-    const image = await optimizeImage({
+    console.log("Starting image optimization to AVIF...", options);
+
+    const optimizeResult = await optimizeImageExt({
       format: "avif",
       image: imageData,
       width: options?.width,
@@ -27,11 +29,11 @@ async function convertToAvif(imageData: BufferSource, options?: ConvertAvifOptio
       quality: options?.quality ?? DEFAULT_QUALITY,
     });
 
-    if (!image) {
+    if (!optimizeResult) {
       throw new Error("画像の最適化に失敗しました");
     }
 
-    return image.buffer;
+    return optimizeResult;
   } catch (error) {
     throw new Error(`画像のリサイズに失敗しました: ${error}`);
   }
@@ -39,10 +41,10 @@ async function convertToAvif(imageData: BufferSource, options?: ConvertAvifOptio
 
 export type ImageVariantResult = {
   /** オリジナル画像 */
-  original: ArrayBuffer;
+  original: OptimizeResult;
 
   /** サムネイル画像 */
-  thumbnail: ArrayBuffer;
+  thumbnail: OptimizeResult;
 };
 
 /**
@@ -52,7 +54,7 @@ export type ImageVariantResult = {
  */
 export async function generateImageVariants(imageData: BufferSource): Promise<ImageVariantResult> {
   try {
-    const [originalArrayBuffer, thumbnailArrayBuffer] = await Promise.all([
+    const [original, thumbnail] = await Promise.all([
       // オリジナル
       convertToAvif(imageData),
       // サムネイル
@@ -62,10 +64,7 @@ export async function generateImageVariants(imageData: BufferSource): Promise<Im
       }),
     ]);
 
-    return {
-      original: originalArrayBuffer,
-      thumbnail: thumbnailArrayBuffer,
-    };
+    return { original, thumbnail };
   } catch (error) {
     throw new Error(`画像バリアントの生成に失敗しました: ${error}`);
   }
@@ -78,10 +77,12 @@ export async function generateImageVariants(imageData: BufferSource): Promise<Im
  */
 export async function generateAvatarImage(imageData: BufferSource): Promise<ArrayBuffer> {
   try {
-    return convertToAvif(imageData, {
+    const result = await convertToAvif(imageData, {
       width: AVATAR_SIZE,
       height: AVATAR_SIZE,
     });
+
+    return result.data.buffer as ArrayBuffer;
   } catch (error) {
     throw new Error(`アバター画像の生成に失敗しました: ${error}`);
   }

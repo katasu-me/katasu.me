@@ -1,12 +1,11 @@
 import { eq, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
-import { nanoid } from "nanoid";
 import { type Image, type ImageWithTags, image, imageTag, type Tag, tag, user } from "../../schema";
 import type { ActionResult } from "../../types/error";
+import type { ImageFormData } from "../../types/image";
 import { getDB } from "../db";
 import { getUserImageStatus } from "../user";
 import { deleteImage } from "./delete";
-import type { ImageFormData } from "./types";
 
 /**
  * 画像を登録する
@@ -40,27 +39,35 @@ export async function registerImage(
   }
 
   const { tags, ...newImageData } = imageData;
-  const imageId = nanoid();
 
-  // タグが指定されていない場合は画像の登録だけ行う
+  // タグが指定されていないなら、画像の登録だけ行う
   if (!tags || tags.length === 0) {
     try {
-      const imageResult = await db
-        .insert(image)
-        .values({
-          id: imageId,
-          userId,
-          ...newImageData,
-        })
-        .returning()
-        .get();
+      const [insertImageResult] = await db.batch([
+        // 画像を登録
+        db
+          .insert(image)
+          .values({ userId, ...newImageData })
+          .returning(),
+        // ユーザーの投稿枚数を更新
+        db
+          .update(user)
+          .set({ uploadedPhotos: sql`${user.uploadedPhotos} + 1` })
+          .where(eq(user.id, userId)),
+      ]);
+
+      const imageResult = insertImageResult.at(0);
+
+      if (!imageResult) {
+        return {
+          success: false,
+          error: { message: "不明なエラーで画像の登録に失敗しました" },
+        };
+      }
 
       return {
         success: true,
-        data: {
-          ...imageResult,
-          tags: [],
-        },
+        data: { ...imageResult, tags: [] },
       };
     } catch (error) {
       return {
@@ -73,26 +80,23 @@ export async function registerImage(
     }
   }
 
-  let insertImageResult: Image[];
+  let insertImageResults: Image[];
   let insertTagResults: Tag[];
 
   try {
-    [insertImageResult, insertTagResults] = await db.batch([
+    [insertImageResults, insertTagResults] = await db.batch([
       // 画像を登録
       db
         .insert(image)
-        .values({
-          id: imageId,
-          userId,
-          ...newImageData,
-        })
+        .values({ userId, ...newImageData })
         .returning(),
       // タグを登録
       db
         .insert(tag)
         .values(tags.map((name) => ({ userId, name })))
-        .onConflictDoNothing({
+        .onConflictDoUpdate({
           target: [tag.userId, tag.name],
+          set: { name: sql`excluded.name` }, // 既にあるタグも取得したいので
         })
         .returning(),
       // ユーザーの投稿枚数を更新
@@ -111,7 +115,8 @@ export async function registerImage(
     };
   }
 
-  const imageResult = insertImageResult.at(0);
+  const imageId = newImageData.id;
+  const imageResult = insertImageResults.at(0);
 
   // あんまないと思うけど念のため
   if (!imageResult) {

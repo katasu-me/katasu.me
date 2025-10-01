@@ -56,6 +56,9 @@ importers:
       drizzle-orm:
         specifier: ^0.44.4
         version: 0.44.5(better-sqlite3@12.2.0)(bun-types@1.2.21(@types/react@19.1.12))(kysely@0.28.5)
+      image-size:
+        specifier: ^2.0.2
+        version: 2.0.2
       motion:
         specifier: ^12.23.12
         version: 12.23.12(react-dom@19.1.1(react@19.1.1))(react@19.1.1)

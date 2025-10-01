@@ -37,6 +37,7 @@
     "better-auth": "^1.3.7",
     "budoux": "^0.7.0",
     "drizzle-orm": "^0.44.4",
+    "image-size": "^2.0.2",
     "motion": "^12.23.12",
     "nanoid": "^5.1.5",
     "next": "15.5.2",

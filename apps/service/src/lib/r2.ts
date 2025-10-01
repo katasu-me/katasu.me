@@ -75,7 +75,7 @@ export async function uploadAvatarImage(r2: R2Bucket, options: UploadAvatarImage
 }
 
 /**
- * 画像とサムネイルを生成してR2にアップロード
+ * 画像をAVIFに変換してR2にアップロード（オリジナルとサムネイルの両方）
  * @param r2 Cloudflare R2バケットインスタンス
  * @param options アップロードオプション
  */
@@ -83,18 +83,19 @@ export async function uploadImage(r2: R2Bucket, options: UploadImageOptions): Pr
   try {
     const variants = await generateImageVariants(options.imageBuffer);
 
+    console.log(variants);
+
     const originalKey = generateR2Key("image", options.userId, options.imageId, "original");
     const thumbnailKey = generateR2Key("image", options.userId, options.imageId, "thumbnail");
 
-    // オリジナル画像とサムネイルをアップロード
     await Promise.all([
       upload(r2, originalKey, {
         ...options,
-        imageBuffer: variants.original,
+        imageBuffer: variants.original.data.buffer as ArrayBuffer,
       }),
       upload(r2, thumbnailKey, {
         ...options,
-        imageBuffer: variants.thumbnail,
+        imageBuffer: variants.thumbnail.data.buffer as ArrayBuffer,
       }),
     ]);
   } catch (error) {
@@ -131,4 +132,17 @@ export function getUserAvatarUrl(userId: string, hasAvatar: boolean): string {
   }
 
   return "/images/default-avatar-icon.avif";
+}
+
+/**
+ * 画像のURLを取得
+ * @param userId ユーザーID
+ * @param imageId 画像ID
+ * @param variant 画像バリアント（デフォルト: thumbnail）
+ * @returns 画像URL
+ */
+export function getImageUrl(userId: string, imageId: string, variant: "original" | "thumbnail" = "thumbnail"): string {
+  const bucketPublicUrl = getBucketPublicUrl();
+  const suffix = variant === "thumbnail" ? "_thumbnail" : "";
+  return `${bucketPublicUrl}/images/${userId}/${imageId}${suffix}.avif`;
 }
