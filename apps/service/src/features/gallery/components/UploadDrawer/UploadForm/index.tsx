@@ -1,47 +1,26 @@
 import { getFormProps, getInputProps, type SubmissionResult, useForm, useInputControl } from "@conform-to/react";
 import { parseWithValibot } from "@conform-to/valibot";
-import { type ComponentProps, useActionState, useEffect, useRef, useState } from "react";
-import { useFormStatus } from "react-dom";
-import IconExclamationCircleFilled from "@/assets/icons/exclamation-circle.svg";
-import Button from "@/components/Button";
-import Input from "@/components/Input";
-import TagInput from "@/components/TagInput";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { uploadAction } from "@/features/gallery/actions/upload";
-import {
-  MAX_TAG_COUNT,
-  MAX_TAG_TEXT_LENGTH,
-  MAX_TITLE_LENGTH,
-  uploadImageSchema,
-} from "@/features/gallery/schemas/upload";
-import FrameImage from "../../FrameImage";
-import ImagePlaceholder from "../../ImagePlaceholder";
-
-const defaultResult: SubmissionResult<string[]> = {
-  status: "error",
-  error: {
-    file: [""],
-  },
-};
-
-function SubmitButton({ disabled }: Pick<ComponentProps<"button">, "disabled">) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button type="submit" className="mt-8 w-full" variant="fill" disabled={disabled || pending}>
-      {pending ? "投稿中..." : "投稿"}
-    </Button>
-  );
-}
+import { uploadImageSchema } from "@/features/gallery/schemas/upload";
+import FormContent from "./FormContent";
 
 type Props = {
   defaultImageFile?: File;
   onSuccess?: () => void;
 };
 
-type PreviewImage = {
+export type PreviewImage = {
   src: string;
   width: number;
   height: number;
+};
+
+const defaultResult: SubmissionResult<string[]> = {
+  status: "error",
+  error: {
+    file: [""],
+  },
 };
 
 export default function UploadForm({ defaultImageFile, onSuccess }: Props) {
@@ -167,82 +146,24 @@ export default function UploadForm({ defaultImageFile, onSuccess }: Props) {
 
   const isFormValid = Object.values(form.allErrors).length === 0;
 
-  const imageClassname =
-    "h-48 pc:w-auto w-full rotate-[1deg] transition-transform duration-400 ease-magnetic hover:scale-105";
-
   return (
-    <>
-      {/* 画像のプレビュー */}
-      <button
-        type="button"
-        className="mx-auto mb-4 block cursor-pointer"
-        onClick={handlePreviewClick}
-        aria-label="画像を選択"
-      >
-        {previewImage ? (
-          <FrameImage
-            src={previewImage.src}
-            width={previewImage.width || 2560}
-            height={previewImage.height || 1440}
-            alt="画像のプレビュー"
-            className={imageClassname}
-          />
-        ) : (
-          <ImagePlaceholder className={imageClassname} />
-        )}
-      </button>
-
-      {/* フォーム全体のエラー */}
-      {form.errors && form.errors.length > 0 && (
-        <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-600 bg-red-50 p-4">
-          <IconExclamationCircleFilled className="size-6 text-red-600" />
-          <p className="text-red-600 text-sm">{form.errors[0]}</p>
-        </div>
-      )}
-
-      <form {...getFormProps(form)} action={action} noValidate>
-        {/* 画像 */}
-        <input
-          {...getInputProps(fields.file, { type: "file" })}
-          ref={setFileInputRef}
-          accept="image/jpeg,image/png,image/webp"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-        {fields.file.errors?.at(0) && (
-          <p className="mb-4 text-center text-red-600 text-sm">{fields.file.errors.at(0)}</p>
-        )}
-
-        {/* タイトル */}
-        <Input
-          {...getInputProps(fields.title, { type: "text" })}
-          label={
-            <>
-              タイトル
-              <span className="text-warm-black text-xs">（なくてもいいよ）</span>
-            </>
-          }
-          placeholder="タイトルを入力"
-          error={fields.title.errors?.at(0)}
-          maxLength={MAX_TITLE_LENGTH}
-          currentLength={fields.title.value?.length ?? 0}
-          autoComplete="off"
-        />
-
-        {/* タグ */}
-        <TagInput
-          id={fields.tags.id}
-          maxTags={MAX_TAG_COUNT}
-          maxTagTextLength={MAX_TAG_TEXT_LENGTH}
-          suggestTags={[]} // TODO: 後でサジェスト機能を実装する
-          tags={(tagInput.value as string[]) || []}
-          onChangeTags={handleTagChange}
-          placeholder="タグを追加"
-          error={fields.tags.errors?.at(0)}
-        />
-
-        <SubmitButton disabled={!isFormValid} />
-      </form>
-    </>
+    <form {...getFormProps(form)} action={action} noValidate>
+      <input
+        {...getInputProps(fields.file, { type: "file" })}
+        ref={setFileInputRef}
+        accept="image/jpeg,image/png,image/webp"
+        onChange={handleFileChange}
+        className="hidden"
+      />
+      <FormContent
+        previewImage={previewImage}
+        handlePreviewClick={handlePreviewClick}
+        form={form}
+        fields={fields}
+        tagInput={tagInput}
+        handleTagChange={handleTagChange}
+        isFormValid={isFormValid}
+      />
+    </form>
   );
 }

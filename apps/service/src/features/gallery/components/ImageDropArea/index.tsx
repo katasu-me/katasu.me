@@ -60,7 +60,7 @@ export default function ImageDropArea({ title, className }: Props) {
     <>
       <button
         className={twMerge(
-          "interactive-scale-sm flex w-full items-center justify-center rounded-xl border border-warm-black-50 border-dashed bg-warm-white py-6 hover:brightness-90",
+          "interactive-scale-sm flex w-full items-center justify-center rounded-xl border-2 border-warm-black-50 border-dashed bg-warm-white py-6 hover:brightness-90",
           isDragging && "scale-[101%] brightness-90",
           className,
         )}
@@ -76,6 +76,7 @@ export default function ImageDropArea({ title, className }: Props) {
           <p>{isDragging ? "ドラッグ&ドロップしてアップロード" : title}</p>
         </div>
       </button>
+
       <UploadDrawer
         open={open}
         onOpenChange={handleOpenChange}

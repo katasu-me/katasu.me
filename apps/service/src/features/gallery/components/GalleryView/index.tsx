@@ -19,7 +19,7 @@ export default function GalleryView({ view, images }: Props) {
   return (
     <>
       <div className="col-start-2">
-        <ImageDropArea title="あたらしい画像をおく" />
+        <ImageDropArea title="あたらしい画像を投稿する" />
       </div>
 
       {view === "random" ? (
@@ -34,7 +34,7 @@ export default function GalleryView({ view, images }: Props) {
         <MasonryImageLayout className="col-start-2" images={images} />
       )}
 
-      <LayoutToggle className="-translate-x-1/2 fixed bottom-6 left-1/2 z-10" value={view || "masonry"} />
+      <LayoutToggle className="-translate-x-1/2 fixed bottom-6 left-1/2 z-[calc(infinity)]" value={view || "masonry"} />
     </>
   );
 }
