@@ -3,9 +3,6 @@ import type { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 import ChevronLeft from "@/assets/icons/chevron-left.svg";
 import ChevronRight from "@/assets/icons/chevron-right.svg";
-import CircleFilled from "@/assets/icons/circle-filled.svg";
-import CircleOutline from "@/assets/icons/circle-outline.svg";
-import Dots from "@/assets/icons/dots.svg";
 import IconButton from "@/components/IconButton";
 
 type Props = {
@@ -15,9 +12,6 @@ type Props = {
   className?: string;
 } & Omit<ComponentProps<"nav">, "children">;
 
-const MAX_DOTS = 7;
-const EDGE_DOTS = 2;
-
 export default function Pagination({ currentPage, totalPages, searchParams, className, ...props }: Props) {
   const createSearchParams = (page: number) => {
     const params = new URLSearchParams(searchParams);
@@ -25,49 +19,116 @@ export default function Pagination({ currentPage, totalPages, searchParams, clas
     return params.toString();
   };
 
-  const renderDots = () => {
-    const dots = [];
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
 
-    // ページ数が少ない場合は全て表示
-    if (totalPages <= MAX_DOTS) {
-      for (let i = 1; i <= totalPages; i++) {
-        dots.push(i);
-      }
-      return dots;
+    // 先頭ページ
+    const isFirstCurrent = currentPage === 1;
+    pageNumbers.push(
+      <Link
+        key={1}
+        href={{
+          search: createSearchParams(1),
+        }}
+        aria-label="ページ1へ"
+        aria-current={isFirstCurrent ? "page" : undefined}
+        className={twMerge(
+          "rounded-md border border-gray-300 px-3 py-2 transition-all duration-400 ease-magnetic",
+          isFirstCurrent ? "bg-warm-black text-white" : "bg-white text-warm-black hover:brightness-90",
+        )}
+      >
+        1
+      </Link>,
+    );
+
+    // 省略記号（必要な場合）
+    if (currentPage > 3) {
+      pageNumbers.push(
+        <span key="ellipsis1" className="px-3 py-2 text-warm-black" aria-hidden="true">
+          ...
+        </span>,
+      );
     }
 
-    // 現在のページが先頭寄りの場合
-    if (currentPage <= EDGE_DOTS + 2) {
-      for (let i = 1; i <= EDGE_DOTS + 2; i++) {
-        dots.push(i);
-      }
-      dots.push(-1);
-      dots.push(totalPages);
-      return dots;
+    // n-1ページ（現在のページが2以上の場合）
+    if (currentPage > 2) {
+      pageNumbers.push(
+        <Link
+          key={currentPage - 1}
+          href={{
+            search: createSearchParams(currentPage - 1),
+          }}
+          aria-label={`ページ${currentPage - 1}へ`}
+          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-warm-black transition-all duration-400 ease-magnetic hover:brightness-90"
+        >
+          {currentPage - 1}
+        </Link>,
+      );
     }
 
-    // 現在のページが末尾寄りの場合
-    if (currentPage >= totalPages - (EDGE_DOTS + 1)) {
-      dots.push(1);
-      dots.push(-1);
-      for (let i = totalPages - (EDGE_DOTS + 1); i <= totalPages; i++) {
-        dots.push(i);
-      }
-      return dots;
+    // 現在のページ（先頭と末尾でない場合）
+    if (currentPage !== 1 && currentPage !== totalPages) {
+      pageNumbers.push(
+        <span
+          key={currentPage}
+          aria-current="page"
+          className="rounded-md border border-gray-300 bg-warm-black px-3 py-2 text-white"
+        >
+          {currentPage}
+        </span>,
+      );
     }
 
-    // 現在のページが中央の場合
-    dots.push(1);
-    dots.push(-1);
-    dots.push(currentPage - 1);
-    dots.push(currentPage);
-    dots.push(currentPage + 1);
-    dots.push(-1);
-    dots.push(totalPages);
-    return dots;
+    // n+1ページ（現在のページが末尾でない場合）
+    if (currentPage < totalPages - 1) {
+      pageNumbers.push(
+        <Link
+          key={currentPage + 1}
+          href={{
+            search: createSearchParams(currentPage + 1),
+          }}
+          aria-label={`ページ${currentPage + 1}へ`}
+          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-warm-black transition-all duration-400 ease-magnetic hover:brightness-90"
+        >
+          {currentPage + 1}
+        </Link>,
+      );
+    }
+
+    // 省略記号（必要な場合）
+    if (currentPage < totalPages - 2) {
+      pageNumbers.push(
+        <span key="ellipsis2" className="px-3 py-2 text-warm-black" aria-hidden="true">
+          ...
+        </span>,
+      );
+    }
+
+    // 末尾ページ
+    if (totalPages !== 1) {
+      const isLastCurrent = currentPage === totalPages;
+      pageNumbers.push(
+        <Link
+          key={totalPages}
+          href={{
+            search: createSearchParams(totalPages),
+          }}
+          aria-label={`ページ${totalPages}へ`}
+          aria-current={isLastCurrent ? "page" : undefined}
+          className={twMerge(
+            "rounded-md border border-gray-300 px-3 py-2 transition-all duration-400 ease-magnetic",
+            isLastCurrent ? "bg-warm-black text-white" : "bg-white text-warm-black hover:brightness-90",
+          )}
+        >
+          {totalPages}
+        </Link>,
+      );
+    }
+
+    return pageNumbers;
   };
 
-  const dots = renderDots();
+  const pageNumbers = renderPageNumbers();
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === totalPages;
 
@@ -89,30 +150,7 @@ export default function Pagination({ currentPage, totalPages, searchParams, clas
         </IconButton>
       )}
 
-      <div className="flex items-center gap-2">
-        {dots.map((dot, index) => {
-          if (dot === -1) {
-            return <Dots key={`ellipsis-${index.toString()}`} className="h-3 w-3 text-warm-black" aria-hidden="true" />;
-          }
-
-          const isCurrent = dot === currentPage;
-
-          return (
-            <Link
-              key={dot}
-              href={{
-                search: createSearchParams(dot),
-              }}
-              aria-label={`ページ${dot}へ`}
-              aria-current={isCurrent ? "page" : undefined}
-              className="interactive-scale-brightness group text-warm-black transition-all duration-400 ease-magnetic hover:brightness-90"
-            >
-              <CircleOutline className={twMerge("h-2 w-2", isCurrent && "hidden")} />
-              <CircleFilled className={twMerge("h-2 w-2", !isCurrent && "hidden")} />
-            </Link>
-          );
-        })}
-      </div>
+      <div className="flex items-center gap-2">{pageNumbers}</div>
 
       {!isLastPage && (
         <IconButton

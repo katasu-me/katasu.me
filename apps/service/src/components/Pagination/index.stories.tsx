@@ -69,15 +69,3 @@ export const LastPage: Story = {
     totalPages: 10,
   },
 };
-
-export const WithCustomStyle: Story = {
-  args: {
-    currentPage: 3,
-    totalPages: 10,
-  },
-  render: (args) => (
-    <div className="bg-gray-100 p-8">
-      <Pagination {...args} />
-    </div>
-  ),
-};
