@@ -39,8 +39,8 @@ describe("generateImageVariants", () => {
     expect(mockOptimizeImageExt).toHaveBeenNthCalledWith(1, {
       format: "avif",
       image: testImageBuffer,
-      width: undefined,
-      height: undefined,
+      width: 4096,
+      height: 4096,
       quality: 80,
     });
     expect(mockOptimizeImageExt).toHaveBeenNthCalledWith(2, {
