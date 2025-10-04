@@ -6,6 +6,13 @@ import TagInput from "./index";
 describe("TagInput", () => {
   const mockOnChange = vi.fn();
   const suggestTags = ["React", "TypeScript", "JavaScript"];
+  const defaultProps = {
+    maxTags: 10,
+    maxTagTextLength: 20,
+    suggestTags,
+    tags: [],
+    onChangeTags: mockOnChange,
+  };
 
   beforeEach(() => {
     mockOnChange.mockClear();
@@ -14,7 +21,7 @@ describe("TagInput", () => {
   it("タグを追加できる", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={[]} onChangeTags={mockOnChange} placeholder="タグを入力" />);
+    render(<TagInput {...defaultProps} placeholder="タグを入力" />);
 
     const input = screen.getByPlaceholderText("タグを入力");
 
@@ -28,7 +35,7 @@ describe("TagInput", () => {
   it("サジェストから選択できる", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={[]} onChangeTags={mockOnChange} />);
+    render(<TagInput {...defaultProps} />);
 
     // Rを入力してReactを表示
     const input = screen.getByRole("textbox");
@@ -46,7 +53,7 @@ describe("TagInput", () => {
   it("タグを削除できる", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={["React", "TypeScript"]} onChangeTags={mockOnChange} />);
+    render(<TagInput {...defaultProps} tags={["React", "TypeScript"]} />);
 
     // 削除ボタンをクリック
     const deleteButton = screen.getByLabelText("Reactを削除");
@@ -58,7 +65,7 @@ describe("TagInput", () => {
   it("重複したタグは追加されない", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={["React"]} onChangeTags={mockOnChange} />);
+    render(<TagInput {...defaultProps} tags={["React"]} />);
 
     // 既存のタグを入力
     const input = screen.getByRole("textbox");
@@ -72,7 +79,7 @@ describe("TagInput", () => {
   it("空白文字列は追加されない", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={[]} onChangeTags={mockOnChange} />);
+    render(<TagInput {...defaultProps} />);
 
     // 空白のみ入力してEnter
     const input = screen.getByRole("textbox");
@@ -85,7 +92,7 @@ describe("TagInput", () => {
   it("Backspaceで最後のタグを削除できる", async () => {
     const user = userEvent.setup();
 
-    render(<TagInput suggestTags={suggestTags} tags={["React", "TypeScript"]} onChangeTags={mockOnChange} />);
+    render(<TagInput {...defaultProps} tags={["React", "TypeScript"]} />);
 
     const input = screen.getByRole("textbox");
     await user.click(input);

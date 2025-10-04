@@ -1,7 +1,7 @@
 import {
+  type FetchImagesOptions,
   fetchImagesByTagId,
   fetchTotalImageCountByTagId,
-  type GetImagesByUserIdOptions,
   type Tag,
 } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
@@ -23,7 +23,7 @@ const cachedFetchTotalImageCountByTagId = async (tagId: string) => {
   return fetchTotalImageCountByTagId(env.DB, tagId);
 };
 
-const cachedFetchImagesByTagId = async (tagId: string, options: GetImagesByUserIdOptions) => {
+const cachedFetchImagesByTagId = async (tagId: string, options: FetchImagesOptions) => {
   "use cache";
 
   cacheTag(`tag/${tagId}`);
