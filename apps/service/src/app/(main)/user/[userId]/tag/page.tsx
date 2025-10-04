@@ -41,7 +41,7 @@ export default async function TagListPage({ params }: PageProps<"/user/[userId]/
       <h1 className="col-start-2 text-4xl">すべてのタグ</h1>
 
       {allTags.length > 0 ? (
-        <div className="col-start-2 mx-auto flex w-full flex-wrap gap-2">
+        <div className="col-start-2 mx-auto flex min-h-48 w-full flex-wrap gap-2">
           {allTags.map((tag) => (
             <TagLink key={tag.id} {...tag} />
           ))}
