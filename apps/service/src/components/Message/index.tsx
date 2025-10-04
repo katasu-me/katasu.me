@@ -20,7 +20,7 @@ export default function EmptyState({ message, icon = "plant", className, ...prop
   return (
     <div
       className={twMerge(
-        "flex flex-col items-center justify-center gap-2 py-24 text-center text-warm-black-50",
+        "col-start-2 flex flex-col items-center justify-center gap-2 py-24 text-center text-warm-black-50",
         className,
       )}
       {...props}

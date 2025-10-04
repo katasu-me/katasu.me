@@ -3,30 +3,6 @@ import type { ComponentProps } from "react";
 import type FrameImage from "@/features/gallery/components/FrameImage";
 import MasonryImageLayout from "./index";
 
-const meta = {
-  title: "Gallery/MasonryImageLayout",
-  tags: ["autodocs"],
-  component: MasonryImageLayout,
-  parameters: {
-    layout: "fullscreen",
-  },
-  argTypes: {
-    images: {
-      description: "表示する画像の配列",
-    },
-  },
-  decorators: [
-    (Story) => (
-      <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
-        <Story />
-      </div>
-    ),
-  ],
-} satisfies Meta<typeof MasonryImageLayout>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
 const sampleImages: ComponentProps<typeof FrameImage>[] = [
   {
     id: "1",
@@ -126,11 +102,30 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
   },
 ];
 
-export const Default: Story = {
+const meta = {
+  title: "Gallery/MasonryImageLayout",
+  tags: ["autodocs"],
+  component: MasonryImageLayout,
+  parameters: {
+    layout: "fullscreen",
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
+        <Story />
+      </div>
+    ),
+  ],
   args: {
     images: sampleImages,
+    totalImageCount: sampleImages.length,
   },
-};
+} satisfies Meta<typeof MasonryImageLayout>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
 
 export const PortraitGallery: Story = {
   args: {

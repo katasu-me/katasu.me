@@ -1,6 +1,9 @@
+import { fetchTagsByUserId } from "@katasu.me/service-db";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { unstable_cacheTag as cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { fallback, object, parse, string } from "valibot";
-import { fetchUserWithCache } from "@/actions/user";
+import { cachedFetchUserById } from "@/actions/user";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
@@ -9,35 +12,34 @@ import TagLinks from "@/components/Navigation/TagLinks";
 import { GalleryViewSchema } from "@/features/gallery/components/GalleryView";
 import UserPageContents from "./_components/UserPageContents";
 
-const tags = [
-  {
-    name: "風景",
-    userId: "test",
-  },
-  {
-    name: "ポートレート",
-    userId: "test",
-  },
-  {
-    name: "空間",
-    userId: "test",
-  },
-];
+const cachedFetchTagsByUserId = async (userId: string) => {
+  "use cache";
+
+  cacheTag(`/user/${userId}`);
+
+  const { env } = getCloudflareContext();
+
+  return fetchTagsByUserId(env.DB, userId, "usage");
+};
 
 const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "masonry"),
   page: fallback(string(), "1"),
 });
 
-export default async function UserPage({ params, searchParams }: PageProps<"/user/[userid]">) {
-  const { userid } = await params;
+export default async function UserPage({ params, searchParams }: PageProps<"/user/[userId]">) {
+  const { userId } = await params;
 
-  const user = await fetchUserWithCache(userid);
+  const user = await cachedFetchUserById(userId);
 
   // ユーザーが存在しない場合は404
   if (!user) {
     notFound();
   }
+
+  const fetchTagsResult = await cachedFetchTagsByUserId(userId);
+
+  const tags = fetchTagsResult.success ? fetchTagsResult.data : [];
 
   const { view, page: rawPage } = parse(searchParamsSchema, await searchParams);
   const currentPage = Number.parseInt(rawPage, 10);

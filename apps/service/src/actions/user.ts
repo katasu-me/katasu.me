@@ -9,7 +9,7 @@ import { unstable_cacheTag as cacheTag } from "next/cache";
  * @param userId ユーザーID
  * @returns ユーザー情報、存在しない場合はundefined
  */
-export async function fetchUserWithCache(userId: string): Promise<User | undefined> {
+export async function cachedFetchUserById(userId: string): Promise<User | undefined> {
   "use cache";
 
   cacheTag("user", userId);

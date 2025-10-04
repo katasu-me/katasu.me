@@ -11,7 +11,7 @@ export default function TagLinks({ tags, className }: Props) {
   return (
     <div className={twMerge("flex gap-2 overflow-x-scroll py-1", className)}>
       {tags.map((tag) => (
-        <TagLink key={tag.name} {...tag} />
+        <TagLink key={tag.id} {...tag} />
       ))}
     </div>
   );

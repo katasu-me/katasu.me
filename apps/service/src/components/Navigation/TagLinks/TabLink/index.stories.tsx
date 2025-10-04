@@ -18,18 +18,21 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
+    id: "1",
     name: "風景",
   },
 };
 
 export const LongName: Story = {
   args: {
+    id: "2",
     name: "とても長いタグ名のサンプル",
   },
 };
 
 export const ShortName: Story = {
   args: {
+    id: "3",
     name: "猫",
   },
 };

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchUserWithCache } from "@/actions/user";
+import { cachedFetchUserById } from "@/actions/user";
 import IconFlag from "@/assets/icons/flag.svg";
 import IconPencil from "@/assets/icons/pencil.svg";
 import IconShare from "@/assets/icons/share.svg";
@@ -32,12 +32,12 @@ const image = {
   ],
 };
 
-export default async function ImagesPage({ params }: PageProps<"/user/[userid]/image/[imageid]">) {
-  const { userid, imageid } = await params;
+export default async function ImagesPage({ params }: PageProps<"/user/[userId]/image/[imageId]">) {
+  const { userId, imageId } = await params;
 
-  console.log("ImagesPage render", userid, imageid);
+  console.log("ImagesPage render", userId, imageId);
 
-  const user = await fetchUserWithCache(userid);
+  const user = await cachedFetchUserById(userId);
 
   // ユーザーが存在しない場合は404
   if (!user) {
