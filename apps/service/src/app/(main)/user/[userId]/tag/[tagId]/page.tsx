@@ -8,7 +8,7 @@ import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
-import { GalleryViewSchema } from "@/features/gallery/components/GalleryView";
+import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { tagPageCacheTag } from "@/lib/cache-tags";
 import TagPageContents from "./_components/TagPageContents";
 
@@ -53,8 +53,8 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
     notFound();
   }
 
-  const { view, page: rawPage } = parse(searchParamsSchema, await searchParams);
-  const currentPage = Number.parseInt(rawPage, 10);
+  const { view, page: pageStr } = parse(searchParamsSchema, await searchParams);
+  const currentPage = Number.parseInt(pageStr, 10);
 
   if (currentPage <= 0) {
     notFound();

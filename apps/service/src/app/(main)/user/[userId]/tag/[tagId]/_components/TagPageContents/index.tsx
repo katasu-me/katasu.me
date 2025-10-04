@@ -14,7 +14,7 @@ import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
 import { tagPageCacheTag } from "@/lib/cache-tags";
 
-const cachedFetchTotalImageCountByTagId = async (userId: string, tagId: string) => {
+const cachedFetchTotalImageCount = async (userId: string, tagId: string) => {
   "use cache";
 
   cacheTag(tagPageCacheTag(userId, tagId));
@@ -24,7 +24,7 @@ const cachedFetchTotalImageCountByTagId = async (userId: string, tagId: string) 
   return fetchTotalImageCountByTagId(env.DB, tagId);
 };
 
-const cachedFetchImagesByTagId = async (userId: string, tagId: string, options: FetchImagesOptions) => {
+const cachedFetchImages = async (userId: string, tagId: string, options: FetchImagesOptions) => {
   "use cache";
 
   cacheTag(tagPageCacheTag(userId, tagId));
@@ -42,7 +42,7 @@ type Props = {
 
 export default async function TagPageContents({ tag, view, currentPage = 1 }: Props) {
   // 総画像枚数を取得
-  const fetchTotalImageCountResult = await cachedFetchTotalImageCountByTagId(tag.userId, tag.id);
+  const fetchTotalImageCountResult = await cachedFetchTotalImageCount(tag.userId, tag.id);
 
   if (!fetchTotalImageCountResult.success) {
     console.error("Failed to fetch total image count:", fetchTotalImageCountResult.error);
@@ -63,7 +63,7 @@ export default async function TagPageContents({ tag, view, currentPage = 1 }: Pr
   }
 
   // 画像を取得
-  const fetchTagImagesResult = await cachedFetchImagesByTagId(tag.userId, tag.id, {
+  const fetchTagImagesResult = await cachedFetchImages(tag.userId, tag.id, {
     offset,
     order: "desc",
   });

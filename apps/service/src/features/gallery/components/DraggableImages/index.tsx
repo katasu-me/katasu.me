@@ -22,10 +22,14 @@ const DEFAULT_POSITION: Position = {
   rotation: 0,
 };
 
-const getRandomPosition = (): Position => {
+const getRandomPosition = (container?: HTMLDivElement | null): Position => {
   const margin = 200; // 画像の半分程度のマージン
-  const maxX = (window.innerWidth - margin * 2) / 2;
-  const maxY = (window.innerHeight - margin * 2) / 2;
+
+  const containerWidth = container?.clientWidth ?? window.innerWidth;
+  const containerHeight = container?.clientHeight ?? window.innerHeight;
+
+  const maxX = (containerWidth - margin * 2) / 2;
+  const maxY = (containerHeight - margin * 2) / 2;
 
   return {
     x: -maxX + Math.random() * maxX * 2,
@@ -45,7 +49,9 @@ export default function DraggableImages({ images, className }: Props) {
     document.addEventListener("gesturestart", preventDefault);
     document.addEventListener("gesturechange", preventDefault);
 
-    setPositions(images.map(() => getRandomPosition()));
+    if (containerRef.current) {
+      setPositions(images.map(() => getRandomPosition(containerRef.current)));
+    }
 
     return () => {
       document.removeEventListener("gesturestart", preventDefault);
@@ -58,7 +64,7 @@ export default function DraggableImages({ images, className }: Props) {
       ref={containerRef}
       className={twMerge(
         // FIXME: タブレットくらいのサイズで若干の横スクロールが発生する
-        "relative flex h-[90vh] w-full items-center justify-center overflow-x-clip pc:overflow-x-visible",
+        "relative flex h-[80vh] w-full items-center justify-center overflow-x-clip",
         className,
       )}
     >

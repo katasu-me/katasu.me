@@ -132,7 +132,7 @@ export async function fetchImagesByUserId(
  * @param userId ユーザーID
  * @returns ランダムに取得した画像一覧
  */
-export async function getRandomImagesByUserId(
+export async function fetchRandomImagesByUserId(
   dbInstance: AnyD1Database,
   userId: string,
   limit = DEFAULT_RANDOM_IMAGES_LIMIT,

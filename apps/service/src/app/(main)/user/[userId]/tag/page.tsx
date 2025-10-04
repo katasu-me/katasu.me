@@ -8,7 +8,7 @@ import Message from "@/components/Message";
 import TagLink from "@/components/Navigation/TagLinks/TabLink";
 import { userPageCacheTag } from "@/lib/cache-tags";
 
-const cachedFetchAllTagsByUserId = async (userId: string) => {
+const cachedFetchAllTags = async (userId: string) => {
   "use cache";
 
   cacheTag(userPageCacheTag(userId));
@@ -30,7 +30,7 @@ export default async function TagListPage({ params }: PageProps<"/user/[userId]/
     notFound();
   }
 
-  const fetchTagsResult = await cachedFetchAllTagsByUserId(userId);
+  const fetchTagsResult = await cachedFetchAllTags(userId);
 
   const allTags = fetchTagsResult.success ? fetchTagsResult.data : [];
 

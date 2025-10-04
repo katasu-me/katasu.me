@@ -9,11 +9,11 @@ import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import TagLinks from "@/components/Navigation/TagLinks";
-import { GalleryViewSchema } from "@/features/gallery/components/GalleryView";
+import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { userPageCacheTag } from "@/lib/cache-tags";
 import UserPageContents from "./_components/UserPageContents";
 
-const cachedFetchTagsByUserId = async (userId: string) => {
+const cachedFetchTags = async (userId: string) => {
   "use cache";
 
   cacheTag(userPageCacheTag(userId));
@@ -41,12 +41,12 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
     notFound();
   }
 
-  const fetchTagsResult = await cachedFetchTagsByUserId(userId);
+  const fetchTagsResult = await cachedFetchTags(userId);
 
   const tags = fetchTagsResult.success ? fetchTagsResult.data : [];
 
-  const { view, page: rawPage } = parse(searchParamsSchema, await searchParams);
-  const currentPage = Number.parseInt(rawPage, 10);
+  const { view, page: pageStr } = parse(searchParamsSchema, await searchParams);
+  const currentPage = Number.parseInt(pageStr, 10);
 
   if (currentPage <= 0) {
     notFound();
