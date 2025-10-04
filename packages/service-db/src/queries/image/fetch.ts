@@ -1,4 +1,4 @@
-import { asc, desc, eq, sql } from "drizzle-orm";
+import { asc, count, desc, eq, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { type ImageWithTags, image } from "../../schema";
 import type { ActionResult } from "../../types/error";
@@ -19,7 +19,7 @@ export const DEFAULT_RANDOM_IMAGES_LIMIT = 10;
  * @param imageId 画像ID
  * @returns 画像情報、存在しない場合はundefined
  */
-export async function getImageById(
+export async function fetchImageById(
   dbInstance: AnyD1Database,
   imageId: string,
 ): Promise<ActionResult<ImageWithTags | undefined>> {
@@ -78,7 +78,7 @@ export async function getImageById(
  * @param userId ユーザーID
  * @returns 画像一覧
  */
-export async function getImagesByUserId(
+export async function fetchImagesByUserId(
   dbInstance: AnyD1Database,
   userId: string,
   opts: GetImagesByUserIdOptions,
@@ -173,6 +173,36 @@ export async function getRandomImagesByUserId(
       success: false,
       error: {
         message: "ランダム画像の取得に失敗しました",
+        rawError: error,
+      },
+    };
+  }
+}
+
+/**
+ * ユーザーIDから総投稿画像数を取得する
+ * @param dbInstance D1インスタンス
+ * @param userId ユーザーID
+ * @return 総投稿枚数
+ */
+export async function fetchTotalImageCountByUserId(
+  dbInstance: AnyD1Database,
+  userId: string,
+): Promise<ActionResult<number>> {
+  try {
+    const db = getDB(dbInstance);
+
+    const result = await db.select({ count: count() }).from(image).where(eq(image.userId, userId));
+
+    return {
+      success: true,
+      data: result.at(0)?.count ?? 0,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: "総投稿画像数の取得に失敗しました",
         rawError: error,
       },
     };

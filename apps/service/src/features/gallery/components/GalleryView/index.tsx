@@ -13,9 +13,11 @@ export const GalleryViewSchema = union([literal("masonry"), literal("random")]);
 type Props = {
   view: InferOutput<typeof GalleryViewSchema>;
   images: ComponentProps<typeof FrameImage>[];
+  totalImageCount: number;
+  currentPage?: number;
 };
 
-export default function GalleryView({ view, images }: Props) {
+export default function GalleryView({ view, images, totalImageCount, currentPage }: Props) {
   return (
     <>
       <div className="col-start-2">
@@ -31,7 +33,12 @@ export default function GalleryView({ view, images }: Props) {
           </Button>
         </>
       ) : (
-        <MasonryImageLayout className="col-start-2" images={images} />
+        <MasonryImageLayout
+          className="col-start-2"
+          images={images}
+          totalImageCount={totalImageCount}
+          currentPage={currentPage}
+        />
       )}
 
       <LayoutToggle className="-translate-x-1/2 fixed bottom-6 left-1/2 z-[calc(infinity)]" value={view || "masonry"} />
