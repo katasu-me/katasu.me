@@ -64,7 +64,7 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
       </Header>
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-        <TagLinks className="col-start-2" tags={tags} userId={userId} />
+        {tags.length > 0 && <TagLinks className="col-start-2" tags={tags} userId={userId} />}
         <UserPageContents user={user} view={view} currentPage={currentPage} />
       </div>
     </div>
