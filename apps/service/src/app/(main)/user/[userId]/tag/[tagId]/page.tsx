@@ -9,6 +9,7 @@ import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import { GalleryViewSchema } from "@/features/gallery/components/GalleryView";
+import { tagPageCacheTag } from "@/lib/cache-tags";
 import TagPageContents from "./_components/TagPageContents";
 
 const searchParamsSchema = object({
@@ -19,7 +20,7 @@ const searchParamsSchema = object({
 const cachedFetchTagById = async (userId: string, tagId: string) => {
   "use cache";
 
-  cacheTag(`/user/${userId}/tag/${tagId}`);
+  cacheTag(tagPageCacheTag(userId, tagId));
 
   const { env } = getCloudflareContext();
 

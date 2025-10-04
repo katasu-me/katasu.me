@@ -6,11 +6,12 @@ import { cachedFetchUserById } from "@/actions/user";
 import Header from "@/components/Header";
 import Message from "@/components/Message";
 import TagLink from "@/components/Navigation/TagLinks/TabLink";
+import { userPageCacheTag } from "@/lib/cache-tags";
 
 const cachedFetchAllTagsByUserId = async (userId: string) => {
   "use cache";
 
-  cacheTag(`/user/${userId}`);
+  cacheTag(userPageCacheTag(userId));
 
   const { env } = getCloudflareContext();
 

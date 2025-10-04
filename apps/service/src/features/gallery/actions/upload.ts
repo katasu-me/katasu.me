@@ -7,6 +7,7 @@ import { imageSize } from "image-size";
 import { nanoid } from "nanoid";
 import { revalidateTag } from "next/cache";
 import { requireAuth } from "@/lib/auth";
+import { tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 import { uploadImage } from "@/lib/upload";
 import { uploadImageSchema } from "../schemas/upload";
 
@@ -72,7 +73,12 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   }
 
   // 自身のマイページのキャッシュを飛ばす
-  revalidateTag(`user/${userId}`);
+  revalidateTag(userPageCacheTag(userId));
+
+  // タグページのキャッシュを飛ばす
+  for (const tag of registerImageResult.data.tags) {
+    revalidateTag(tagPageCacheTag(userId, tag.id));
+  }
 
   return submission.reply();
 }

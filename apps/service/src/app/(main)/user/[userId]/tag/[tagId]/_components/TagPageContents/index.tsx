@@ -12,11 +12,12 @@ import GalleryView from "@/features/gallery/components/GalleryView";
 import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
+import { tagPageCacheTag } from "@/lib/cache-tags";
 
 const cachedFetchTotalImageCountByTagId = async (userId: string, tagId: string) => {
   "use cache";
 
-  cacheTag(`/user/${userId}/tag/${tagId}`);
+  cacheTag(tagPageCacheTag(userId, tagId));
 
   const { env } = getCloudflareContext();
 
@@ -26,7 +27,7 @@ const cachedFetchTotalImageCountByTagId = async (userId: string, tagId: string) 
 const cachedFetchImagesByTagId = async (userId: string, tagId: string, options: FetchImagesOptions) => {
   "use cache";
 
-  cacheTag(`/user/${userId}/tag/${tagId}`);
+  cacheTag(tagPageCacheTag(userId, tagId));
 
   const { env } = getCloudflareContext();
 

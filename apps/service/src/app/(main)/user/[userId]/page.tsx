@@ -10,12 +10,13 @@ import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import TagLinks from "@/components/Navigation/TagLinks";
 import { GalleryViewSchema } from "@/features/gallery/components/GalleryView";
+import { userPageCacheTag } from "@/lib/cache-tags";
 import UserPageContents from "./_components/UserPageContents";
 
 const cachedFetchTagsByUserId = async (userId: string) => {
   "use cache";
 
-  cacheTag(`/user/${userId}`);
+  cacheTag(userPageCacheTag(userId));
 
   const { env } = getCloudflareContext();
 
