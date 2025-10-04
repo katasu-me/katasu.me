@@ -1,0 +1,53 @@
+import { fetchTagsByUserId } from "@katasu.me/service-db";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { unstable_cacheTag as cacheTag } from "next/cache";
+import { notFound } from "next/navigation";
+import { cachedFetchUserById } from "@/actions/user";
+import Header from "@/components/Header";
+import Message from "@/components/Message";
+import TagLink from "@/components/Navigation/TagLinks/TabLink";
+
+const cachedFetchAllTagsByUserId = async (userId: string) => {
+  "use cache";
+
+  cacheTag(`/user/${userId}`);
+
+  const { env } = getCloudflareContext();
+
+  return fetchTagsByUserId(env.DB, userId, {
+    order: "name",
+  });
+};
+
+export default async function TagListPage({ params }: PageProps<"/user/[userId]/tag">) {
+  const { userId } = await params;
+
+  const user = await cachedFetchUserById(userId);
+
+  // ユーザーが存在しない場合は404
+  if (!user) {
+    notFound();
+  }
+
+  const fetchTagsResult = await cachedFetchAllTagsByUserId(userId);
+
+  const allTags = fetchTagsResult.success ? fetchTagsResult.data : [];
+
+  return (
+    <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
+      <Header user={user} />
+
+      <h1 className="col-start-2 text-4xl">すべてのタグ</h1>
+
+      {allTags.length > 0 ? (
+        <div className="col-start-2 mx-auto flex w-full flex-wrap gap-2">
+          {allTags.map((tag) => (
+            <TagLink key={tag.id} {...tag} />
+          ))}
+        </div>
+      ) : (
+        <Message message="からっぽです" />
+      )}
+    </div>
+  );
+}

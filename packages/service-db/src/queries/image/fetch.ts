@@ -4,7 +4,7 @@ import { type ImageWithTags, image, imageTag } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import { getDB } from "../db";
 
-export type GetImagesByUserIdOptions = {
+export type FetchImagesOptions = {
   limit?: number;
   offset?: number;
   order?: "asc" | "desc";
@@ -81,7 +81,7 @@ export async function fetchImageById(
 export async function fetchImagesByUserId(
   dbInstance: AnyD1Database,
   userId: string,
-  opts: GetImagesByUserIdOptions,
+  opts: FetchImagesOptions,
 ): Promise<ActionResult<ImageWithTags[]>> {
   try {
     const db = getDB(dbInstance);
@@ -219,7 +219,7 @@ export async function fetchTotalImageCountByUserId(
 export async function fetchImagesByTagId(
   dbInstance: AnyD1Database,
   tagId: string,
-  opts: GetImagesByUserIdOptions,
+  opts: FetchImagesOptions,
 ): Promise<ActionResult<ImageWithTags[]>> {
   try {
     const db = getDB(dbInstance);

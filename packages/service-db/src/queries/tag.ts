@@ -43,26 +43,31 @@ export async function fetchTagById(dbInstance: AnyD1Database, tagId: string): Pr
   }
 }
 
+type FetchTagsOptions = {
+  limit?: number;
+  order?: "usage" | "name";
+};
+
 /**
  * ユーザーのタグ一覧を取得する
  * @param dbInstance D1インスタンス
  * @param userId ユーザーID
- * @param order 並び順
+ * @param opts オプション
  * @returns タグ一覧
  */
 export async function fetchTagsByUserId(
   dbInstance: AnyD1Database,
   userId: string,
-  order?: "usage" | "name",
+  opts?: FetchTagsOptions,
 ): Promise<ActionResult<Tag[]>> {
   try {
     const db = getDB(dbInstance);
 
     // 使用頻度順
-    if (order === "usage") {
+    if (opts?.order === "usage") {
       const usageCount = count(imageTag.imageId).as("usage_count");
 
-      const results = await db
+      let query = db
         .select({
           id: tag.id,
           userId: tag.userId,
@@ -73,7 +78,14 @@ export async function fetchTagsByUserId(
         .leftJoin(imageTag, eq(tag.id, imageTag.tagId))
         .where(eq(tag.userId, userId))
         .groupBy(tag.id)
-        .orderBy(desc(usageCount));
+        .orderBy(desc(usageCount))
+        .$dynamic();
+
+      if (opts.limit) {
+        query = query.limit(opts.limit);
+      }
+
+      const results = await query;
 
       return {
         success: true,
@@ -82,7 +94,13 @@ export async function fetchTagsByUserId(
     }
 
     // 名前順
-    const results = await db.select().from(tag).where(eq(tag.userId, userId)).orderBy(tag.name);
+    let query = db.select().from(tag).where(eq(tag.userId, userId)).orderBy(tag.name).$dynamic();
+
+    if (opts?.limit) {
+      query = query.limit(opts.limit);
+    }
+
+    const results = await query;
 
     return {
       success: true,
