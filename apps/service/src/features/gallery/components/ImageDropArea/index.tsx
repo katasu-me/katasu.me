@@ -9,10 +9,11 @@ const MAX_FILE_COUNT = 1;
 
 type Props = {
   title: string;
+  defaultTags?: string[];
   className?: string;
 };
 
-export default function ImageDropArea({ title, className }: Props) {
+export default function ImageDropArea({ title, defaultTags, className }: Props) {
   const [open, setOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [defaultImageFile, setDefaultImageFile] = useState<File | undefined>();
@@ -82,6 +83,7 @@ export default function ImageDropArea({ title, className }: Props) {
         onOpenChange={handleOpenChange}
         onSuccess={handleSuccess}
         defaultImageFile={defaultImageFile}
+        defaultTags={defaultTags}
       />
     </>
   );

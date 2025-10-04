@@ -15,13 +15,14 @@ type Props = {
   images: ComponentProps<typeof FrameImage>[];
   totalImageCount: number;
   currentPage?: number;
+  defaultTags?: string[];
 };
 
-export default function GalleryView({ view, images, totalImageCount, currentPage }: Props) {
+export default function GalleryView({ view, images, totalImageCount, currentPage, defaultTags }: Props) {
   return (
     <>
       <div className="col-start-2">
-        <ImageDropArea title="あたらしい画像を投稿する" />
+        <ImageDropArea title="あたらしい画像を投稿する" defaultTags={defaultTags} />
       </div>
 
       {view === "random" ? (

@@ -7,6 +7,7 @@ import FormContent from "./FormContent";
 
 type Props = {
   defaultImageFile?: File;
+  defaultTags?: string[];
   onSuccess?: () => void;
 };
 
@@ -23,7 +24,7 @@ const defaultResult: SubmissionResult<string[]> = {
   },
 };
 
-export default function UploadForm({ defaultImageFile, onSuccess }: Props) {
+export default function UploadForm({ defaultImageFile, defaultTags = [], onSuccess }: Props) {
   const [lastResult, action] = useActionState(uploadAction, undefined);
   const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
 
@@ -38,6 +39,9 @@ export default function UploadForm({ defaultImageFile, onSuccess }: Props) {
       return parseWithValibot(formData, {
         schema: uploadImageSchema,
       });
+    },
+    defaultValue: {
+      tags: defaultTags,
     },
   });
 

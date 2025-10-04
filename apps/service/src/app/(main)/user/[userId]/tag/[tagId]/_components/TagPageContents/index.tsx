@@ -13,20 +13,20 @@ import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
 
-const cachedFetchTotalImageCountByTagId = async (tagId: string) => {
+const cachedFetchTotalImageCountByTagId = async (userId: string, tagId: string) => {
   "use cache";
 
-  cacheTag(`tag/${tagId}`);
+  cacheTag(`/user/${userId}/tag/${tagId}`);
 
   const { env } = getCloudflareContext();
 
   return fetchTotalImageCountByTagId(env.DB, tagId);
 };
 
-const cachedFetchImagesByTagId = async (tagId: string, options: FetchImagesOptions) => {
+const cachedFetchImagesByTagId = async (userId: string, tagId: string, options: FetchImagesOptions) => {
   "use cache";
 
-  cacheTag(`tag/${tagId}`);
+  cacheTag(`/user/${userId}/tag/${tagId}`);
 
   const { env } = getCloudflareContext();
 
@@ -41,7 +41,7 @@ type Props = {
 
 export default async function TagPageContents({ tag, view, currentPage = 1 }: Props) {
   // 総画像枚数を取得
-  const fetchTotalImageCountResult = await cachedFetchTotalImageCountByTagId(tag.id);
+  const fetchTotalImageCountResult = await cachedFetchTotalImageCountByTagId(tag.userId, tag.id);
 
   if (!fetchTotalImageCountResult.success) {
     console.error("Failed to fetch total image count:", fetchTotalImageCountResult.error);
@@ -62,7 +62,7 @@ export default async function TagPageContents({ tag, view, currentPage = 1 }: Pr
   }
 
   // 画像を取得
-  const fetchTagImagesResult = await cachedFetchImagesByTagId(tag.id, {
+  const fetchTagImagesResult = await cachedFetchImagesByTagId(tag.userId, tag.id, {
     offset,
     order: "desc",
   });
@@ -74,5 +74,13 @@ export default async function TagPageContents({ tag, view, currentPage = 1 }: Pr
 
   const images = fetchTagImagesResult.data.map((image) => toFrameImageProps(image, tag.userId));
 
-  return <GalleryView view={view} images={images} totalImageCount={totalImageCount} currentPage={currentPage} />;
+  return (
+    <GalleryView
+      view={view}
+      images={images}
+      totalImageCount={totalImageCount}
+      currentPage={currentPage}
+      defaultTags={[tag.name]}
+    />
+  );
 }
