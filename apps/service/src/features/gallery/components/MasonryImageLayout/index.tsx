@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { type ComponentProps, useEffect, useMemo, useRef, useState } from "react";
+import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Pagination from "@/components/Pagination";
 import { IMAGES_PER_PAGE } from "../../constants/images";
@@ -23,6 +23,19 @@ type Props = {
   itemsPerPage?: number;
   className?: string;
 };
+
+function getImageColumns(paginatedImages: Props["images"], columns: number) {
+  const cols: ComponentProps<typeof FrameImage>[][] = Array.from({ length: columns }, () => []);
+  const colHeights = new Array(columns).fill(0);
+
+  for (const image of paginatedImages) {
+    const shortestCol = colHeights.indexOf(Math.min(...colHeights));
+    cols[shortestCol].push(image);
+    colHeights[shortestCol] += image.height / image.width;
+  }
+
+  return cols;
+}
 
 export default function MasonryImageLayout({
   images,
@@ -71,21 +84,8 @@ export default function MasonryImageLayout({
     };
   }, [isReady]);
 
-  const paginatedImages = images.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const totalPages = Math.ceil(totalImageCount / itemsPerPage);
-
-  const imageColumns = useMemo(() => {
-    const cols: ComponentProps<typeof FrameImage>[][] = Array.from({ length: columns }, () => []);
-    const colHeights = new Array(columns).fill(0);
-
-    for (const image of paginatedImages) {
-      const shortestCol = colHeights.indexOf(Math.min(...colHeights));
-      cols[shortestCol].push(image);
-      colHeights[shortestCol] += image.height / image.width;
-    }
-
-    return cols;
-  }, [paginatedImages, columns]);
+  const imageColumns = getImageColumns(images, columns);
 
   return (
     <div className={twMerge("flex flex-col gap-6", className)}>
