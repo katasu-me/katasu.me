@@ -14,7 +14,7 @@ export default function RemoveButton({ userId, imageId }: Props) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteClick = async () => {
-    const confirmResult = window.confirm("この画像を削除しますか？");
+    const confirmResult = window.confirm("この画像を削除しますか？ （もとに戻せません！）");
 
     if (!confirmResult) {
       return;
