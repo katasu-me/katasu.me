@@ -8,7 +8,7 @@ import { nanoid } from "nanoid";
 import { revalidateTag } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
-import { uploadImage } from "@/lib/upload";
+import { uploadImage } from "@/lib/r2";
 import { uploadImageSchema } from "../schemas/upload";
 
 export async function uploadAction(_prevState: unknown, formData: FormData) {

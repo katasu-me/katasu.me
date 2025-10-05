@@ -7,10 +7,10 @@ import IconButton from "@/components/IconButton";
 import Message from "@/components/Message";
 import BigImage from "@/features/gallery/components/BigImage";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
-import { getImageUrl } from "@/lib/r2";
 import { DEFAULT_IMAGE_TITLE } from "../../_constants/title";
 import { cachedFetchImage } from "../../_lib/fetch";
 import EditButton from "./EditButton";
+import RemoveButton from "./RemoveButton";
 
 type Props = {
   authorUserId: string;
@@ -53,17 +53,14 @@ export default async function ImagePageContent({ authorUserId, imageId, canEdit 
         </div>
       )}
 
-      <div className="mt-12 flex items-center justify-center gap-6">
-        {/* 編集 */}
+      <div className="mt-12 flex flex-col items-center justify-center gap-6">
         {canEdit && (
-          <EditButton
-            imageId={image.id}
-            imageSrc={getImageUrl(authorUserId, image.id, "original")}
-            imageWidth={image.width ?? 2560}
-            imageHeight={image.height ?? 1440}
-            title={image.title}
-            tags={image.tags.map((tag) => tag.name)}
-          />
+          <div className="flex items-center gap-3">
+            {/* 編集 */}
+            <EditButton imageId={image.id} title={image.title} tags={image.tags.map((tag) => tag.name)} />
+            {/* 削除 */}
+            <RemoveButton userId={authorUserId} imageId={image.id} />
+          </div>
         )}
 
         <div className="flex items-center gap-3">

@@ -3,7 +3,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import { twMerge } from "tailwind-merge";
 
 type ButtonProps = {
-  variant?: "fill" | "outline";
+  variant?: "fill" | "outline" | "danger";
   asChild?: boolean;
 } & ComponentPropsWithoutRef<"button">;
 
@@ -21,6 +21,10 @@ export default function Button({ variant = "outline", asChild, className, childr
     [
       "outline",
       "border border-warm-black bg-warm-white text-warm-black hover:bg-warm-black hover:text-warm-white hover:shadow-lg active:bg-warm-black active:text-warm-white disabled:border-warm-black-50 disabled:bg-warm-white disabled:text-warm-black-50 disabled:hover:bg-warm-white disabled:hover:text-warm-black-50 disabled:shadow-none",
+    ],
+    [
+      "danger",
+      "bg-warm-white border border-red-700 text-red-700 hover:bg-red-700 hover:text-warm-white hover:shadow-lg active:brightness-90 disabled:bg-red-300 disabled:hover:brightness-100 disabled:shadow-none",
     ],
   ]);
 
