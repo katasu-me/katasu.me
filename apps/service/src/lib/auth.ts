@@ -53,16 +53,27 @@ export const getAuth = (db: D1Database) => {
 };
 
 /**
+ * ユーザーのセッションを取得
+ * @param db D1Database
+ * @return セッション
+ */
+export async function getUserSession(db: D1Database) {
+  const auth = getAuth(db);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  return { auth, session };
+}
+
+/**
  * 認証を要求してセッション情報を取得する
  * 認証されていない場合はトップへリダイレクトする
  * @param db D1Database
  * @return BetterAuthインスタンス, セッション情報
  */
 export async function requireAuth(db: D1Database) {
-  const auth = getAuth(db);
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const { auth, session } = await getUserSession(db);
 
   // アカウントが存在しない場合はトップへリダイレクト
   if (!session || !session.user?.id) {

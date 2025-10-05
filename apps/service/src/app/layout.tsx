@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans_JP } from "next/font/google";
 import type { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
-import { SITE_DESCRIPTION_LONG, SITE_DESCRIPTION_SHORT, SITE_NAME } from "@/constants/site";
+import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 
 import "../styles/globals.css";
+import { generateMetadataTitle } from "@/lib/meta";
 
 const ibmPlexSansJP = IBM_Plex_Sans_JP({
   variable: "--font-ibm-plex-sans-jp",
@@ -14,7 +15,7 @@ const ibmPlexSansJP = IBM_Plex_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  title: `${SITE_NAME} | ${SITE_DESCRIPTION_SHORT}`,
+  ...generateMetadataTitle(),
   description: SITE_DESCRIPTION_LONG,
 };
 

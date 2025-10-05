@@ -1,6 +1,3 @@
-import { fetchImageById } from "@katasu.me/service-db";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cacheTag as cacheTag } from "next/cache";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { twMerge } from "tailwind-merge";
@@ -12,27 +9,17 @@ import IconButton from "@/components/IconButton";
 import Message from "@/components/Message";
 import BigImage from "@/features/gallery/components/BigImage";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
-import { imagePageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
-
-const DEFAULT_IMAGE_TITLE = "タイトルなし";
-
-const cachedFetchImage = async (userId: string, imageId: string) => {
-  "use cache";
-
-  cacheTag(userPageCacheTag(userId), imagePageCacheTag(userId, imageId));
-
-  const { env } = getCloudflareContext();
-
-  return fetchImageById(env.DB, imageId);
-};
+import { DEFAULT_IMAGE_TITLE } from "../../_constants/title";
+import { cachedFetchImage } from "../../_lib/fetch";
 
 type Props = {
-  userId: string;
+  authorUserId: string;
   imageId: string;
+  canEdit?: boolean;
 };
 
-export default async function ImagePageContent({ userId, imageId }: Props) {
-  const fetchImage = await cachedFetchImage(userId, imageId);
+export default async function ImagePageContent({ authorUserId, imageId, canEdit = false }: Props) {
+  const fetchImage = await cachedFetchImage(authorUserId, imageId);
 
   if (!fetchImage.success) {
     return <Message message="画像が取得できませんでした" />;
@@ -57,7 +44,7 @@ export default async function ImagePageContent({ userId, imageId }: Props) {
           {image.tags.map((tag) => (
             <Link
               key={tag.name}
-              href={`/user/${userId}/tag/${tag.id}`}
+              href={`/user/${authorUserId}/tag/${tag.id}`}
               className="text-sm text-warm-black hover:underline"
             >
               #{tag.name}
@@ -66,18 +53,26 @@ export default async function ImagePageContent({ userId, imageId }: Props) {
         </div>
       )}
 
-      <div className="mt-12 flex items-center justify-center">
-        {/* TODO: 編集ボタンは投稿したユーザーのみ表示 */}
-        <Button className="flex items-center gap-1">
-          <IconPencil className="h-4 w-4" />
-          <span className="text-sm">編集する</span>
-        </Button>
-        <IconButton className="ml-6">
-          <IconFlag className="h-4 w-4" />
-        </IconButton>
-        <IconButton className="ml-3">
-          <IconShare className="h-4 w-4" />
-        </IconButton>
+      <div className="mt-12 flex items-center justify-center gap-6">
+        {/* 編集 */}
+        {canEdit && (
+          <Button className="flex items-center gap-1">
+            <IconPencil className="h-4 w-4" />
+            <span className="text-sm">編集する</span>
+          </Button>
+        )}
+
+        <div className="flex items-center gap-3">
+          {/* 通報 */}
+          <IconButton>
+            <IconFlag className="h-4 w-4" />
+          </IconButton>
+
+          {/* シェア */}
+          <IconButton>
+            <IconShare className="h-4 w-4" />
+          </IconButton>
+        </div>
       </div>
     </div>
   );
