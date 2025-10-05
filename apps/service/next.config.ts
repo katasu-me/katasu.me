@@ -50,10 +50,6 @@ const nextConfig: NextConfig = {
             from: path.join(dir, "node_modules/wasm-image-optimization/dist/esm/libImage.wasm"),
             to: path.join(dir, ".next/esm/libImage.wasm"),
           },
-          {
-            from: path.join(dir, "node_modules/wasm-image-optimization/dist/cjs"),
-            to: path.join(dir, ".next/cjs"),
-          },
         ],
       }),
     );
