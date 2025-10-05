@@ -51,7 +51,8 @@
    * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
    */
   "vars": {
-    "BETTER_AUTH_URL": "<DEVELOPMENT_URL>"
+    "BETTER_AUTH_URL": "<DEVELOPMENT_URL>",
+    "R2_PUBLIC_URL": "<DEVELOPMENT_R2_URL>"
   },
   /**
    * Note: Use secrets to store sensitive data.
@@ -83,7 +84,8 @@
         "custom_domain": true
       },
       "vars": {
-        "BETTER_AUTH_URL": "<PRODUCTION_URL>"
+        "BETTER_AUTH_URL": "<PRODUCTION_URL>",
+        "R2_PUBLIC_URL": "<PRODUCTION_R2_URL>"
       },
       "d1_databases": [
         {

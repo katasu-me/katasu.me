@@ -2,11 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { generateAvatarImage, generateImageVariants } from "./image";
 
 // optimizeImageExtのモック
-vi.mock("wasm-image-optimization/next", () => ({
+vi.mock("wasm-image-optimization", () => ({
   optimizeImageExt: vi.fn(),
 }));
 
-import { optimizeImageExt } from "wasm-image-optimization/next";
+import { optimizeImageExt } from "wasm-image-optimization";
 
 // テスト用の画像バッファを作成
 function createTestImageBuffer(): ArrayBuffer {

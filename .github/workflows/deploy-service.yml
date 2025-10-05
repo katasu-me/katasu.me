@@ -26,7 +26,7 @@ jobs:
           # 開発環境の値を置換
           sed -i "s|<DEVELOPMENT_URL>|${{ secrets.DEVELOPMENT_URL }}|g" wrangler.jsonc
           sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.jsonc
-          # sed -i "s|<FORM_BUG_REPORT_URL>|${{ secrets.FORM_BUG_REPORT_URL }}|g" wrangler.jsonc
+          sed -i "s|<DEVELOPMENT_R2_URL>|${{ vars.DEVELOPMENT_R2_URL }}|g" wrangler.jsonc
           # sed -i "s|<FORM_CONTACT_URL>|${{ secrets.FORM_CONTACT_URL }}|g" wrangler.jsonc
 
           # 本番環境の値を置換

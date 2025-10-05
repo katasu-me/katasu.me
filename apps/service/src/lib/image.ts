@@ -1,4 +1,4 @@
-import { type OptimizeParams, type OptimizeResult, optimizeImageExt } from "wasm-image-optimization/next";
+import { type OptimizeParams, type OptimizeResult, optimizeImageExt } from "wasm-image-optimization";
 
 /** AVIF変換時のデフォルト画質 */
 const DEFAULT_QUALITY = 80;
