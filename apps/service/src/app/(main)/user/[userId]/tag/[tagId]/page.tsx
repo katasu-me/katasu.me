@@ -1,5 +1,6 @@
 import { fetchTagById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import type { Metadata } from "next";
 import { unstable_cacheTag as cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { fallback, object, parse, string } from "valibot";
@@ -10,6 +11,7 @@ import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { tagPageCacheTag } from "@/lib/cache-tags";
+import { generateMetadataTitle } from "@/lib/meta";
 import TagPageContents from "./_components/TagPageContents";
 
 const searchParamsSchema = object({
@@ -26,6 +28,27 @@ const cachedFetchTagById = async (userId: string, tagId: string) => {
 
   return fetchTagById(env.DB, tagId);
 };
+
+export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag/[tagId]">): Promise<Metadata> {
+  const { userId, tagId } = await params;
+
+  const fetchTagResult = await cachedFetchTagById(userId, tagId);
+
+  if (!fetchTagResult.success || !fetchTagResult.data) {
+    notFound();
+  }
+
+  const tag = fetchTagResult.data;
+  const user = await cachedFetchUserById(tag.userId);
+
+  if (!user) {
+    notFound();
+  }
+
+  return generateMetadataTitle({
+    pageTitle: `#${tag.name} - ${user.name}`,
+  });
+}
 
 export default async function TagPage({ params, searchParams }: PageProps<"/user/[userId]/tag/[tagId]">) {
   const { userId, tagId } = await params;

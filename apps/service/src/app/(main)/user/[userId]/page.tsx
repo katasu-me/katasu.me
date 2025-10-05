@@ -1,5 +1,6 @@
 import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import type { Metadata } from "next";
 import { unstable_cacheTag as cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { fallback, object, parse, string } from "valibot";
@@ -11,6 +12,7 @@ import IconButton from "@/components/IconButton";
 import TagLinks from "@/components/Navigation/TagLinks";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { userPageCacheTag } from "@/lib/cache-tags";
+import { generateMetadataTitle } from "@/lib/meta";
 import UserPageContents from "./_components/UserPageContents";
 
 const cachedFetchTags = async (userId: string) => {
@@ -30,6 +32,20 @@ const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "masonry"),
   page: fallback(string(), "1"),
 });
+
+export async function generateMetadata({ params }: PageProps<"/user/[userId]">): Promise<Metadata> {
+  const { userId } = await params;
+
+  const user = await cachedFetchUserById(userId);
+
+  if (!user) {
+    notFound();
+  }
+
+  return generateMetadataTitle({
+    pageTitle: user.name,
+  });
+}
 
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userId]">) {
   const { userId } = await params;
