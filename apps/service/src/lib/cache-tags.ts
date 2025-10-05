@@ -1,4 +1,11 @@
 /**
+ * ユーザーデータのキャッシュタグを生成
+ */
+export function userDataCacheTag(userId: string): string {
+  return `user-${userId}`;
+}
+
+/**
  * ユーザーページのキャッシュタグを生成
  */
 export function userPageCacheTag(userId: string): string {

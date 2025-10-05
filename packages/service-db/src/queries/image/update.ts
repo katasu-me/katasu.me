@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { type Image, type ImageWithTags, image, imageTag, tag } from "../../schema";
 import type { ActionResult } from "../../types/error";
@@ -32,7 +32,7 @@ export async function updateImage(
       };
     }
 
-    // タグが指定されていない場合は削除だけ行う
+    // タグが指定されていない場合は既存のタグを全て削除して終了
     if (!tags || tags.length === 0) {
       await db.delete(imageTag).where(eq(imageTag.imageId, imageId));
 
@@ -45,6 +45,8 @@ export async function updateImage(
       };
     }
 
+    console.log("Updating image tags:", tags);
+
     const [_deleteResult, insertTagResults] = await db.batch([
       // 既存のタグとの関連を全て削除
       db
@@ -54,8 +56,9 @@ export async function updateImage(
       db
         .insert(tag)
         .values(tags.map((name) => ({ userId: imageResult.userId, name })))
-        .onConflictDoNothing({
+        .onConflictDoUpdate({
           target: [tag.userId, tag.name],
+          set: { name: sql`excluded.name` }, // 既にあるタグも取得したいので
         })
         .returning(),
     ]);

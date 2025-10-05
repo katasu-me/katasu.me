@@ -100,6 +100,7 @@ export async function registerImage(
         })
         .returning(),
       // ユーザーの投稿枚数を更新
+      // FIXME: ここやばいので都度 COUNT するようにする
       db
         .update(user)
         .set({ uploadedPhotos: sql`${user.uploadedPhotos} + 1` })

@@ -3,6 +3,7 @@
 import { getUserById, type User } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { unstable_cacheTag as cacheTag } from "next/cache";
+import { userDataCacheTag } from "@/lib/cache-tags";
 
 /**
  * ユーザー情報を取得
@@ -12,7 +13,7 @@ import { unstable_cacheTag as cacheTag } from "next/cache";
 export async function cachedFetchUserById(userId: string): Promise<User | undefined> {
   "use cache";
 
-  cacheTag("user", userId);
+  cacheTag(userDataCacheTag(userId));
 
   const { env } = getCloudflareContext();
   const user = await getUserById(env.DB, userId);

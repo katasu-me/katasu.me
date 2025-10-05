@@ -2,15 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import IconFlag from "@/assets/icons/flag.svg";
-import IconPencil from "@/assets/icons/pencil.svg";
 import IconShare from "@/assets/icons/share.svg";
-import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
 import Message from "@/components/Message";
 import BigImage from "@/features/gallery/components/BigImage";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
+import { getImageUrl } from "@/lib/r2";
 import { DEFAULT_IMAGE_TITLE } from "../../_constants/title";
 import { cachedFetchImage } from "../../_lib/fetch";
+import EditButton from "./EditButton";
 
 type Props = {
   authorUserId: string;
@@ -56,10 +56,14 @@ export default async function ImagePageContent({ authorUserId, imageId, canEdit 
       <div className="mt-12 flex items-center justify-center gap-6">
         {/* 編集 */}
         {canEdit && (
-          <Button className="flex items-center gap-1">
-            <IconPencil className="h-4 w-4" />
-            <span className="text-sm">編集する</span>
-          </Button>
+          <EditButton
+            imageId={image.id}
+            imageSrc={getImageUrl(authorUserId, image.id, "original")}
+            imageWidth={image.width ?? 2560}
+            imageHeight={image.height ?? 1440}
+            title={image.title}
+            tags={image.tags.map((tag) => tag.name)}
+          />
         )}
 
         <div className="flex items-center gap-3">
