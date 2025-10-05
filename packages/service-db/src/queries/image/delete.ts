@@ -1,6 +1,6 @@
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
-import { image, imageTag, user } from "../../schema";
+import { image, imageTag } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import { getDB } from "../db";
 
@@ -11,11 +11,7 @@ import { getDB } from "../db";
  * @param imageId 画像ID
  * @returns 削除結果
  */
-export async function deleteImage(
-  dbInstance: AnyD1Database,
-  userId: string,
-  imageId: string,
-): Promise<ActionResult<void>> {
+export async function deleteImage(dbInstance: AnyD1Database, imageId: string): Promise<ActionResult<void>> {
   try {
     const db = getDB(dbInstance);
 
@@ -28,11 +24,6 @@ export async function deleteImage(
       db
         .delete(image)
         .where(eq(image.id, imageId)),
-      // ユーザーの投稿枚数を更新
-      db
-        .update(user)
-        .set({ uploadedPhotos: sql`${user.uploadedPhotos} - 1` })
-        .where(eq(user.id, userId)),
     ]);
 
     return {

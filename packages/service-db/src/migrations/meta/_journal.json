@@ -57,6 +57,13 @@
       "when": 1758953533029,
       "tag": "0007_salty_machine_man",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1759659191373,
+      "tag": "0008_panoramic_morgan_stark",
+      "breakpoints": true
     }
   ]
 }

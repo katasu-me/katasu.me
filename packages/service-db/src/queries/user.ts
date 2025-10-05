@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { type User, user } from "../schema";
 import { getDB } from "./db";
+import { fetchTotalImageCountByUserId } from "./image/fetch";
 
 /**
  * ユーザーIDからユーザーを取得する
@@ -26,19 +27,33 @@ export async function getUserById(dbInstance: AnyD1Database, userId: string): Pr
  * @param userId ユーザーID
  * @returns ユーザーの画像投稿状況、存在しない場合はundefined
  */
-export async function getUserImageStatus(
+export async function fetchUserImageStatus(
   dbInstance: AnyD1Database,
   userId: string,
-): Promise<Pick<User, "maxPhotos" | "uploadedPhotos"> | undefined> {
+): Promise<{ maxPhotos: number; uploadedPhotos: number } | undefined> {
   const db = getDB(dbInstance);
 
-  return await db.query.user.findFirst({
+  const userInfo = await db.query.user.findFirst({
     where: (u) => eq(u.id, userId),
     columns: {
       maxPhotos: true,
-      uploadedPhotos: true,
     },
   });
+
+  if (!userInfo) {
+    return undefined;
+  }
+
+  const uploadedPhotosResult = await fetchTotalImageCountByUserId(dbInstance, userId);
+
+  if (!uploadedPhotosResult.success) {
+    return undefined;
+  }
+
+  return {
+    maxPhotos: userInfo.maxPhotos,
+    uploadedPhotos: uploadedPhotosResult.data,
+  };
 }
 
 /**

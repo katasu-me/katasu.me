@@ -13,7 +13,6 @@ export const user = sqliteTable("user", {
     .references(() => plan.id, { onDelete: "cascade" })
     .default("free"),
   maxPhotos: integer("maxPhotos").notNull().default(1000),
-  uploadedPhotos: integer("uploadedPhotos").notNull().default(0),
   isBanned: integer("isBanned", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" })

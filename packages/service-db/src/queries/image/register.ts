@@ -1,10 +1,10 @@
 import { eq, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
-import { type Image, type ImageWithTags, image, imageTag, type Tag, tag, user } from "../../schema";
+import { type Image, type ImageWithTags, image, imageTag, type Tag, tag } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import type { ImageFormData } from "../../types/image";
 import { getDB } from "../db";
-import { getUserImageStatus } from "../user";
+import { fetchUserImageStatus } from "../user";
 import { deleteImage } from "./delete";
 
 /**
@@ -22,7 +22,7 @@ export async function registerImage(
   const db = getDB(dbInstance);
 
   // ユーザーの画像投稿上限を超えていないか確認
-  const userImageStatus = await getUserImageStatus(dbInstance, userId);
+  const userImageStatus = await fetchUserImageStatus(dbInstance, userId);
 
   if (!userImageStatus) {
     return {
@@ -43,22 +43,14 @@ export async function registerImage(
   // タグが指定されていないなら、画像の登録だけ行う
   if (!tags || tags.length === 0) {
     try {
-      const [insertImageResult] = await db.batch([
-        // 画像を登録
-        db
-          .insert(image)
-          .values({ userId, ...newImageData })
-          .returning(),
-        // ユーザーの投稿枚数を更新
-        db
-          .update(user)
-          .set({ uploadedPhotos: sql`${user.uploadedPhotos} + 1` })
-          .where(eq(user.id, userId)),
-      ]);
+      // 画像を登録
+      const insertImageResult = await db
+        .insert(image)
+        .values({ userId, ...newImageData })
+        .returning()
+        .get();
 
-      const imageResult = insertImageResult.at(0);
-
-      if (!imageResult) {
+      if (!insertImageResult) {
         return {
           success: false,
           error: { message: "不明なエラーで画像の登録に失敗しました" },
@@ -67,7 +59,7 @@ export async function registerImage(
 
       return {
         success: true,
-        data: { ...imageResult, tags: [] },
+        data: { ...insertImageResult, tags: [] },
       };
     } catch (error) {
       return {
@@ -99,12 +91,6 @@ export async function registerImage(
           set: { name: sql`excluded.name` }, // 既にあるタグも取得したいので
         })
         .returning(),
-      // ユーザーの投稿枚数を更新
-      // FIXME: ここやばいので都度 COUNT するようにする
-      db
-        .update(user)
-        .set({ uploadedPhotos: sql`${user.uploadedPhotos} + 1` })
-        .where(eq(user.id, userId)),
     ]);
   } catch (error) {
     return {
@@ -121,7 +107,7 @@ export async function registerImage(
 
   // あんまないと思うけど念のため
   if (!imageResult) {
-    await deleteImage(dbInstance, userId, imageId).catch(() => {
+    await deleteImage(dbInstance, userId).catch(() => {
       // 失敗しても無視
     });
 
