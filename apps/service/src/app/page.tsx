@@ -1,9 +1,9 @@
 import LogoImage from "@/assets/logo.svg";
 import BudouX from "@/components/BudouX";
 import Button from "@/components/Button";
-import { SITE_NAME } from "@/components/constants/site";
 import DemoImages from "@/components/DemoImages";
 import Footer from "@/components/Layout/Footer";
+import { SITE_NAME } from "@/constants/site";
 import SignInDrawer from "@/features/auth/components/SignInDrawer";
 
 export default function Home() {

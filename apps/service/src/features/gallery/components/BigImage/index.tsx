@@ -28,7 +28,7 @@ export default function BigImage(props: Props) {
         damping: 60,
       }}
     >
-      <FrameImage {...props} className="h-auto w-full" disableHoverEffect />
+      <FrameImage {...props} className="mx-auto h-auto pc:max-h-[70vh] pc:w-auto w-full" disableHoverEffect />
     </motion.div>
   );
 }
