@@ -5,7 +5,7 @@ import { fetchImageById, updateImage } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { revalidateTag } from "next/cache";
 import { requireAuth } from "@/lib/auth";
-import { imagePageCacheTag, tagPageCacheTag } from "@/lib/cache-tags";
+import { imagePageCacheTag, tagPageCacheTag, userTagsPageCacheTag } from "@/lib/cache-tags";
 import { editImageSchema } from "../schemas/edit";
 
 export async function editImageAction(_prevState: unknown, formData: FormData) {
@@ -32,19 +32,19 @@ export async function editImageAction(_prevState: unknown, formData: FormData) {
     });
   }
 
-  if (!fetchImageResult.data) {
+  const prevImageData = fetchImageResult.data;
+
+  if (!prevImageData) {
     return submission.reply({
       formErrors: ["画像が存在しません"],
     });
   }
 
-  if (fetchImageResult.data.userId !== userId) {
+  if (prevImageData.userId !== userId) {
     return submission.reply({
       formErrors: ["権限がありません"],
     });
   }
-
-  console.log(userId, title, tags);
 
   // 画像情報を更新
   const updateImageResult = await updateImage(env.DB, imageId, {
@@ -62,9 +62,10 @@ export async function editImageAction(_prevState: unknown, formData: FormData) {
 
   // キャッシュを無効化
   revalidateTag(imagePageCacheTag(userId, imageId));
+  revalidateTag(userTagsPageCacheTag(userId));
 
-  // タグページのキャッシュを無効化
-  for (const tag of updateImageResult.data.tags) {
+  // 古いタグのキャッシュを無効化
+  for (const tag of prevImageData.tags) {
     revalidateTag(tagPageCacheTag(userId, tag.id));
   }
 

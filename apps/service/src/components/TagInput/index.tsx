@@ -299,15 +299,30 @@ export default function TagInput({
     };
   }, [open]);
 
+  const isDisabled = inputProps.disabled;
+
   return (
     <div className={twMerge("w-full", className)}>
-      <label htmlFor={id} className="mb-2 block font-medium text-sm text-warm-black">
+      <label
+        htmlFor={id}
+        className={twMerge("mb-2 block font-medium text-sm text-warm-black", isDisabled && "text-warm-black-50")}
+      >
         タグ
       </label>
       <div className="relative">
-        <div className="flex w-full flex-wrap items-center gap-1 rounded-lg border border-warm-black-50 bg-warm-white px-3 py-2 transition-colors duration-400 ease-magnetic focus-within:border-warm-black">
+        <div
+          className={twMerge(
+            "flex w-full flex-wrap items-center gap-1 rounded-lg border border-warm-black-50 bg-warm-white px-3 py-2 transition-colors duration-400 ease-magnetic",
+            isDisabled ? "cursor-not-allowed bg-warm-black-10 opacity-60" : "focus-within:border-warm-black",
+          )}
+        >
           {tags.map((tag, index) => (
-            <Tag key={`${tag}-${index.toString()}`} tagName={tag} onClickRemove={() => removeTag(tag)} />
+            <Tag
+              key={`${tag}-${index.toString()}`}
+              tagName={tag}
+              onClickRemove={() => removeTag(tag)}
+              disabled={isDisabled}
+            />
           ))}
 
           <input
@@ -320,7 +335,10 @@ export default function TagInput({
             onKeyDown={handleKeyDown}
             onBlur={handleInputBlur}
             placeholder={tags.length === 0 ? placeholder : ""}
-            className="min-w-[120px] flex-1 bg-transparent text-warm-black outline-none placeholder:text-warm-black-50"
+            className={twMerge(
+              "min-w-[120px] flex-1 bg-transparent text-warm-black outline-none placeholder:text-warm-black-50",
+              isDisabled && "cursor-not-allowed",
+            )}
             autoComplete="off"
           />
         </div>

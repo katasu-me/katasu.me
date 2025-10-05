@@ -7,14 +7,11 @@ import EditImageDrawer from "@/features/gallery/components/EditImageDrawer";
 
 type Props = {
   imageId: string;
-  imageSrc: string;
-  imageWidth: number;
-  imageHeight: number;
   title?: string | null;
   tags: string[];
 };
 
-export default function EditButton({ imageId, imageSrc, imageWidth, imageHeight, title, tags }: Props) {
+export default function EditButton({ imageId, title, tags }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -28,9 +25,6 @@ export default function EditButton({ imageId, imageSrc, imageWidth, imageHeight,
         open={isOpen}
         onOpenChange={setIsOpen}
         imageId={imageId}
-        imageSrc={imageSrc}
-        imageWidth={imageWidth}
-        imageHeight={imageHeight}
         defaultTitle={title ?? undefined}
         defaultTags={tags}
         onSuccess={() => {

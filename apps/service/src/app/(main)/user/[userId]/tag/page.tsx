@@ -7,13 +7,13 @@ import { cachedFetchUserById } from "@/actions/user";
 import Header from "@/components/Header";
 import Message from "@/components/Message";
 import TagLink from "@/components/Navigation/TagLinks/TabLink";
-import { userPageCacheTag } from "@/lib/cache-tags";
+import { userPageCacheTag, userTagsPageCacheTag } from "@/lib/cache-tags";
 import { generateMetadataTitle } from "@/lib/meta";
 
 const cachedFetchAllTags = async (userId: string) => {
   "use cache";
 
-  cacheTag(userPageCacheTag(userId));
+  cacheTag(userPageCacheTag(userId), userTagsPageCacheTag(userId));
 
   const { env } = getCloudflareContext();
 
@@ -58,7 +58,7 @@ export default async function TagListPage({ params }: PageProps<"/user/[userId]/
       <h1 className="col-start-2 text-4xl">すべてのタグ</h1>
 
       {allTags.length > 0 ? (
-        <div className="col-start-2 mx-auto flex min-h-48 w-full flex-wrap gap-2">
+        <div className="col-start-2 mx-auto flex min-h-48 w-full flex-wrap content-start items-start gap-2">
           {allTags.map((tag) => (
             <TagLink key={tag.id} {...tag} />
           ))}

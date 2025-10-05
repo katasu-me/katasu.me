@@ -73,6 +73,7 @@ export async function fetchTagsByUserId(
           userId: tag.userId,
           name: tag.name,
           isHidden: tag.isHidden,
+          usageCount: usageCount,
         })
         .from(tag)
         .leftJoin(imageTag, eq(tag.id, imageTag.tagId))
@@ -87,9 +88,10 @@ export async function fetchTagsByUserId(
 
       const results = await query;
 
+      // usageCountを除外
       return {
         success: true,
-        data: results,
+        data: results.map(({ usageCount: _, ...tag }) => tag),
       };
     }
 

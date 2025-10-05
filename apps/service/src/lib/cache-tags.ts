@@ -13,6 +13,13 @@ export function userPageCacheTag(userId: string): string {
 }
 
 /**
+ * ユーザーのタグ一覧ページのキャッシュタグを生成
+ */
+export function userTagsPageCacheTag(userId: string): string {
+  return `/user/${userId}/tag`;
+}
+
+/**
  * タグページのキャッシュタグを生成
  */
 export function tagPageCacheTag(userId: string, tagId: string): string {

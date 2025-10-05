@@ -7,9 +7,6 @@ import FormContent from "./FormContent";
 
 type Props = {
   imageId: string;
-  imageSrc: string;
-  imageWidth: number;
-  imageHeight: number;
   defaultTitle?: string;
   defaultTags?: string[];
   onSuccess?: () => void;
@@ -22,15 +19,7 @@ const defaultResult: SubmissionResult<string[]> = {
   },
 };
 
-export default function EditImageForm({
-  imageId,
-  imageSrc,
-  imageWidth,
-  imageHeight,
-  defaultTitle = "",
-  defaultTags = [],
-  onSuccess,
-}: Props) {
+export default function EditImageForm({ imageId, defaultTitle = "", defaultTags = [], onSuccess }: Props) {
   const [lastResult, action] = useActionState(editImageAction, undefined);
 
   const [form, fields] = useForm({
@@ -76,6 +65,7 @@ export default function EditImageForm({
 
   const handleTagChange = (tags: string[]) => {
     tagInput.change(tags);
+    form.validate();
   };
 
   const isFormValid = Object.values(form.allErrors).length === 0;
@@ -84,9 +74,6 @@ export default function EditImageForm({
     <form {...getFormProps(form)} action={action} noValidate>
       <input {...getInputProps(fields.imageId, { type: "hidden" })} />
       <FormContent
-        imageSrc={imageSrc}
-        imageWidth={imageWidth}
-        imageHeight={imageHeight}
         form={form}
         fields={fields}
         tagInput={tagInput}

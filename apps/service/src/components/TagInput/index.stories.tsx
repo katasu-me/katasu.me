@@ -133,3 +133,23 @@ export const ManyOptions: Story = {
     placeholder: "技術名を入力してください...",
   },
 };
+
+export const Disabled: Story = {
+  render: (args) => {
+    const [selectedTags] = useState<string[]>(["React", "TypeScript", "Tailwind CSS"]);
+
+    return (
+      <div className="w-96">
+        <TagInput {...args} tags={selectedTags} onChangeTags={() => {}} />
+      </div>
+    );
+  },
+  args: {
+    maxTags: 10,
+    maxTagTextLength: 20,
+    suggestTags,
+    tags: [],
+    placeholder: "編集できません",
+    disabled: true,
+  },
+};
