@@ -1,3 +1,5 @@
+import path from "node:path";
+import CopyPlugin from "copy-webpack-plugin";
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -32,11 +34,29 @@ const nextConfig: NextConfig = {
       },
     },
   },
-  webpack(config) {
+  webpack(config, { dir }) {
     config.module.rules.push({
       test: /\.svg$/i,
       use: ["@svgr/webpack"],
     });
+
+    // WASM ファイルを .next ディレクトリにコピー
+    // XXX: wasmのパス解決がうまくいかないので、一旦無理矢理やってる
+    config.plugins = config.plugins || [];
+    config.plugins.push(
+      new CopyPlugin({
+        patterns: [
+          {
+            from: path.join(dir, "node_modules/wasm-image-optimization/dist/esm/libImage.wasm"),
+            to: path.join(dir, ".next/esm/libImage.wasm"),
+          },
+          {
+            from: path.join(dir, "node_modules/wasm-image-optimization/dist/cjs"),
+            to: path.join(dir, ".next/cjs"),
+          },
+        ],
+      }),
+    );
 
     // canvasモジュールの警告を回避
     config.resolve.alias = {

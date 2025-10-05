@@ -69,6 +69,7 @@
     "@vitejs/plugin-react": "^5.0.1",
     "@vitest/ui": "^3.2.4",
     "better-sqlite3": "^12.2.0",
+    "copy-webpack-plugin": "^13.0.1",
     "dotenv-cli": "^10.0.0",
     "drizzle-kit": "^0.31.4",
     "esbuild": "^0.25.9",
