@@ -44,6 +44,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 
   return generateMetadataTitle({
     pageTitle: user.name,
+    noindex: false, // ユーザーページのみインデックスさせる
   });
 }
 

@@ -47,6 +47,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
 
   return generateMetadataTitle({
     pageTitle: `#${tag.name} - ${user.name}`,
+    noindex: true,
   });
 }
 

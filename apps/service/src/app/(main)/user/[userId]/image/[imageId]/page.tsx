@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/ima
 
   return generateMetadataTitle({
     pageTitle: `${title} - ${user.name}`,
+    noindex: true,
   });
 }
 

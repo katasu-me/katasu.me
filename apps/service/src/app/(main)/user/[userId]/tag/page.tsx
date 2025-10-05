@@ -33,6 +33,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
 
   return generateMetadataTitle({
     pageTitle: `すべてのタグ - ${user.name}`,
+    noindex: true,
   });
 }
 
