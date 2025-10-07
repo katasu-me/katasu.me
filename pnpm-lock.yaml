@@ -24,6 +24,25 @@ importers:
         specifier: ^2.5.6
         version: 2.5.6
 
+  apps/image-optimizer:
+    dependencies:
+      '@hono/valibot-validator':
+        specifier: ^0.5.3
+        version: 0.5.3(hono@4.9.10)(valibot@1.1.0(typescript@5.9.2))
+      hono:
+        specifier: ^4.9.10
+        version: 4.9.10
+      valibot:
+        specifier: ^1.1.0
+        version: 1.1.0(typescript@5.9.2)
+      wasm-image-optimization:
+        specifier: ^1.2.30
+        version: 1.2.30
+    devDependencies:
+      wrangler:
+        specifier: ^4.4.0
+        version: 4.33.1(@cloudflare/workers-types@4.20251004.0)
+
   apps/service:
     dependencies:
       '@conform-to/react':
@@ -37,7 +56,7 @@ importers:
         version: link:../../packages/service-db
       '@opennextjs/cloudflare':
         specifier: ^1.7.0
-        version: 1.7.0(wrangler@4.33.1)
+        version: 1.7.0(wrangler@4.33.1(@cloudflare/workers-types@4.20251004.0))
       '@radix-ui/react-slot':
         specifier: ^1.2.3
         version: 1.2.3(@types/react@19.1.12)(react@19.1.1)
@@ -55,7 +74,10 @@ importers:
         version: 0.7.0
       drizzle-orm:
         specifier: ^0.44.4
-        version: 0.44.5(better-sqlite3@12.2.0)(bun-types@1.2.21(@types/react@19.1.12))(kysely@0.28.5)
+        version: 0.44.5(@cloudflare/workers-types@4.20251004.0)(better-sqlite3@12.2.0)(bun-types@1.2.21(@types/react@19.1.12))(kysely@0.28.5)
+      hono:
+        specifier: ^4.9.10
+        version: 4.9.10
       image-size:
         specifier: ^2.0.2
         version: 2.0.2
@@ -89,9 +111,6 @@ importers:
       vaul:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.1.9(@types/react@19.1.12))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      wasm-image-optimization:
-        specifier: ^1.2.30
-        version: 1.2.30
     devDependencies:
       '@biomejs/biome':
         specifier: 2.2.2
@@ -191,13 +210,13 @@ importers:
         version: 3.2.4(@types/node@24.3.0)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jiti@2.5.1)(jsdom@26.1.0)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.1)
       wrangler:
         specifier: ^4.33.1
-        version: 4.33.1
+        version: 4.33.1(@cloudflare/workers-types@4.20251004.0)
 
   packages/service-db:
     dependencies:
       drizzle-orm:
         specifier: ^0.44.4
-        version: 0.44.5(better-sqlite3@12.2.0)(bun-types@1.2.21(@types/react@19.1.12))(kysely@0.28.5)
+        version: 0.44.5(@cloudflare/workers-types@4.20251004.0)(better-sqlite3@12.2.0)(bun-types@1.2.21(@types/react@19.1.12))(kysely@0.28.5)
       nanoid:
         specifier: ^5.1.5
         version: 5.1.5
@@ -1246,6 +1265,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@cloudflare/workers-types@4.20251004.0':
+    resolution: {integrity: sha512-FkTBHEyOBwphbW4SLQ2XLCgNntD2wz0v1Si7NwJeN0JAPW/39/w6zhsKy3rsh+203tuSfBgsoP34+Os4RaySOw==}
+
   '@conform-to/dom@1.8.2':
     resolution: {integrity: sha512-5eDqI9366+23Fl/E5zxebuy2FCebJKpSrdE/c6PZQ5Ul59BYQ17pBmkLkvxAKjPXW+Qq77BJyjGjuklwmqN08A==}
 
@@ -1755,6 +1777,12 @@ packages:
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
+
+  '@hono/valibot-validator@0.5.3':
+    resolution: {integrity: sha512-91wjmjDvrTdEm2ZcuCyLBghtld78QoLEduzfkqLo1L74n6sqqoVfc0gDfmju1Ar6w1eK8Q0UyIubrtj4KMWVnQ==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      valibot: ^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc
 
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
@@ -4914,6 +4942,10 @@ packages:
 
   hmac-drbg@1.0.1:
     resolution: {integrity: sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==}
+
+  hono@4.9.10:
+    resolution: {integrity: sha512-AlI15ijFyKTXR7eHo7QK7OR4RoKIedZvBuRjO8iy4zrxvlY5oFCdiRG/V/lFJHCNXJ0k72ATgnyzx8Yqa5arug==}
+    engines: {node: '>=16.9.0'}
 
   html-encoding-sniffer@4.0.0:
     resolution: {integrity: sha512-Y22oTqIU4uuPgEemfz7NDJz6OeKf12Lsu+QC+s3BVpda64lTiMYCyGwg5ki4vFxkMwQdeZDl2adZoqUgdFuTgQ==}
@@ -9163,6 +9195,9 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20250823.0':
     optional: true
 
+  '@cloudflare/workers-types@4.20251004.0':
+    optional: true
+
   '@conform-to/dom@1.8.2': {}
 
   '@conform-to/react@1.8.2(react@19.1.1)':
@@ -9457,6 +9492,11 @@ snapshots:
     optional: true
 
   '@hexagon/base64@1.1.28': {}
+
+  '@hono/valibot-validator@0.5.3(hono@4.9.10)(valibot@1.1.0(typescript@5.9.2))':
+    dependencies:
+      hono: 4.9.10
+      valibot: 1.1.0(typescript@5.9.2)
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
@@ -9757,7 +9797,7 @@ snapshots:
       - aws-crt
       - supports-color
 
-  '@opennextjs/cloudflare@1.7.0(wrangler@4.33.1)':
+  '@opennextjs/cloudflare@1.7.0(wrangler@4.33.1(@cloudflare/workers-types@4.20251004.0))':
     dependencies:
       '@dotenvx/dotenvx': 1.31.0
       '@opennextjs/aws': 3.7.6
@@ -9765,7 +9805,7 @@ snapshots:
       enquirer: 2.4.1
       glob: 11.0.3
       ts-tqdm: 0.8.6
-      wrangler: 4.33.1
+      wrangler: 4.33.1(@cloudflare/workers-types@4.20251004.0)
       yargs: 18.0.0
     transitivePeerDependencies:
       - aws-crt
@@ -12376,8 +12416,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.5(better-sqlite3@12.2.0)(bun-types@1.2.21(@types/react@19.1.12))(kysely@0.28.5):
+  drizzle-orm@0.44.5(@cloudflare/workers-types@4.20251004.0)(better-sqlite3@12.2.0)(bun-types@1.2.21(@types/react@19.1.12))(kysely@0.28.5):
     optionalDependencies:
+      '@cloudflare/workers-types': 4.20251004.0
       better-sqlite3: 12.2.0
       bun-types: 1.2.21(@types/react@19.1.12)
       kysely: 0.28.5
@@ -13055,6 +13096,8 @@ snapshots:
       hash.js: 1.1.7
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
+
+  hono@4.9.10: {}
 
   html-encoding-sniffer@4.0.0:
     dependencies:
@@ -15506,7 +15549,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20250823.0
       '@cloudflare/workerd-windows-64': 1.20250823.0
 
-  wrangler@4.33.1:
+  wrangler@4.33.1(@cloudflare/workers-types@4.20251004.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@cloudflare/unenv-preset': 2.7.0(unenv@2.0.0-rc.19)(workerd@1.20250823.0)
@@ -15517,6 +15560,7 @@ snapshots:
       unenv: 2.0.0-rc.19
       workerd: 1.20250823.0
     optionalDependencies:
+      '@cloudflare/workers-types': 4.20251004.0
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil

@@ -42,11 +42,33 @@ export async function convertToAvif(imageData: BufferSource, options?: ConvertAv
 
 export type ImageVariantResult = {
   /** オリジナル画像 */
-  original: OptimizeResult;
+  original: {
+    data: string;
+    width: number;
+    height: number;
+  };
 
   /** サムネイル画像 */
-  thumbnail: OptimizeResult;
+  thumbnail: {
+    data: string;
+    width: number;
+    height: number;
+  };
 };
+
+/**
+ * Uint8ArrayをBase64エンコード
+ */
+function uint8ArrayToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  const len = bytes.byteLength;
+
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+
+  return btoa(binary);
+}
 
 /**
  * 画像のバリアントを生成
@@ -68,7 +90,18 @@ export async function generateImageVariants(imageData: BufferSource): Promise<Im
       }),
     ]);
 
-    return { original, thumbnail };
+    return {
+      original: {
+        data: uint8ArrayToBase64(original.data),
+        width: original.width,
+        height: original.height,
+      },
+      thumbnail: {
+        data: uint8ArrayToBase64(thumbnail.data),
+        width: thumbnail.width,
+        height: thumbnail.height,
+      },
+    };
   } catch (error) {
     throw new Error(`画像バリアントの生成に失敗しました: ${error}`);
   }
@@ -79,14 +112,14 @@ export async function generateImageVariants(imageData: BufferSource): Promise<Im
  * @param imageData 画像
  * @returns アバター画像
  */
-export async function generateAvatarImage(imageData: BufferSource): Promise<ArrayBuffer> {
+export async function generateAvatarImage(imageData: BufferSource): Promise<Uint8Array> {
   try {
     const result = await convertToAvif(imageData, {
       width: AVATAR_SIZE,
       height: AVATAR_SIZE,
     });
 
-    return result.data.buffer as ArrayBuffer;
+    return result.data;
   } catch (error) {
     throw new Error(`アバター画像の生成に失敗しました: ${error}`);
   }

@@ -8,7 +8,8 @@ import { nanoid } from "nanoid";
 import { revalidateTag } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
-import { uploadImage } from "@/lib/r2";
+import { convertImageVariants } from "@/lib/image-optimizer";
+import { generateR2Key, uploadImage } from "@/lib/r2";
 import { uploadImageSchema } from "../schemas/upload";
 
 export async function uploadAction(_prevState: unknown, formData: FormData) {
@@ -26,13 +27,39 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   const imageId = nanoid();
   const userId = session.user.id;
 
-  const imageArrayBuffer = await submission.value.file.arrayBuffer();
+  // R2キーの重複チェック
+  const originalKey = generateR2Key("image", userId, imageId, "original");
+  const existingOriginal = await env.IMAGES_R2_BUCKET.head(originalKey);
+
+  if (existingOriginal) {
+    console.error("画像IDが重複しました", { userId, imageId });
+
+    return submission.reply({
+      formErrors: ["画像IDが重複しています。もう一度お試しください"],
+    });
+  }
+
+  // 画像を変換
+  let variants: {
+    original: { data: ArrayBuffer; width: number; height: number };
+    thumbnail: { data: ArrayBuffer; width: number; height: number };
+  };
+
+  try {
+    variants = await convertImageVariants(env.IMAGE_OPTIMIZER_URL, env.IMAGE_OPTIMIZER_SECRET, submission.value.file);
+  } catch (error) {
+    console.error("Convert image error:", error);
+
+    return submission.reply({
+      formErrors: ["画像の変換に失敗しました"],
+    });
+  }
 
   // 画像をアップロード
   try {
     await uploadImage(env.IMAGES_R2_BUCKET, {
       type: "image",
-      imageBuffer: imageArrayBuffer,
+      variants,
       userId,
       imageId,
     });
@@ -46,6 +73,7 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
 
   // 画像の幅・高さを取得
   // NOTE: wasm-image-optimizationの戻りで取得できるが、縦画像が横向きとして扱われる時があるので使わない
+  const imageArrayBuffer = await submission.value.file.arrayBuffer();
   const dimensions = imageSize(new Uint8Array(imageArrayBuffer));
 
   // orientationの値が 5, 6, 7, 8 (90度または270度回転) の場合は入れ替える

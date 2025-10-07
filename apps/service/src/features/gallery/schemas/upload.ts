@@ -1,6 +1,6 @@
 import * as v from "valibot";
 
-const MAX_IMAGE_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+export const MAX_IMAGE_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_IMAGE_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 
 export const MAX_TITLE_LENGTH = 100;

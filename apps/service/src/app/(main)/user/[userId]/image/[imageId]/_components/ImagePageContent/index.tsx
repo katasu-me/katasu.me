@@ -53,7 +53,7 @@ export default async function ImagePageContent({ authorUserId, imageId, canEdit 
         </div>
       )}
 
-      <div className="mt-4 flex items-center justify-center gap-3">
+      <div className="mt-4 flex items-center justify-center gap-2">
         {/* 通報 */}
         <IconButton>
           <IconFlag className="h-4 w-4" />
@@ -68,9 +68,7 @@ export default async function ImagePageContent({ authorUserId, imageId, canEdit 
       <div className="mt-7 flex flex-col items-center justify-center gap-6">
         {canEdit && (
           <div className="flex items-center gap-3">
-            {/* 編集 */}
             <EditButton imageId={image.id} title={image.title} tags={image.tags.map((tag) => tag.name)} />
-            {/* 削除 */}
             <RemoveButton userId={authorUserId} imageId={image.id} />
           </div>
         )}

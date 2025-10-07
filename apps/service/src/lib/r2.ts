@@ -1,19 +1,31 @@
-import { generateAvatarImage, generateImageVariants } from "./image";
-
 type UploadAvatarImageOptions = {
   type: "avatar";
   imageBuffer: ArrayBuffer;
   userId: string;
 };
 
+type ImageVariant = {
+  data: ArrayBuffer;
+  width: number;
+  height: number;
+};
+
 type UploadImageOptions = {
   type: "image";
-  imageBuffer: ArrayBuffer;
+  variants: {
+    original: ImageVariant;
+    thumbnail: ImageVariant;
+  };
   userId: string;
   imageId: string;
 };
 
-type UploadOptions = UploadAvatarImageOptions | UploadImageOptions;
+// 内部的にR2へアップロードする際の型
+type UploadToR2Options = {
+  imageBuffer: ArrayBuffer;
+  userId: string;
+  imageId?: string;
+};
 
 /**
  * R2バケットのパブリックURLを取得
@@ -31,21 +43,37 @@ function getBucketPublicUrl(): string {
 }
 
 /**
+ * パスコンポーネントをサニタイズ
+ * @param input サニタイズ対象の文字列
+ * @returns サニタイズされた文字列
+ */
+function sanitizePathComponent(input: string): string {
+  // 英数字、アンダースコア、ハイフンのみ許可
+  return input.replace(/[^a-zA-Z0-9_-]/g, "");
+}
+
+/**
  * R2のキーを生成
  * @returns R2のキー
  */
-function generateR2Key(
+export function generateR2Key(
   type: "avatar" | "image",
   userId: string,
   imageId?: string,
   variant?: "original" | "thumbnail",
 ): string {
+  const safeUserId = sanitizePathComponent(userId);
+  const safeImageId = imageId ? sanitizePathComponent(imageId) : undefined;
+
   if (type === "avatar") {
-    return `avatars/${userId}.avif`;
+    return `avatars/${safeUserId}.avif`;
   }
 
   if (type === "image") {
-    const baseKey = `images/${userId}/${imageId}`;
+    if (!safeImageId) {
+      throw new Error("画像IDが必要です");
+    }
+    const baseKey = `images/${safeUserId}/${safeImageId}`;
     return variant === "thumbnail" ? `${baseKey}_thumbnail.avif` : `${baseKey}.avif`;
   }
 
@@ -55,9 +83,10 @@ function generateR2Key(
 /**
  * 画像をR2にアップロード
  * @param r2 Cloudflare R2バケットインスタンス
+ * @param key R2のキー
  * @param options アップロードオプション
  */
-async function upload(r2: R2Bucket, key: string, options: UploadOptions): Promise<void> {
+async function upload(r2: R2Bucket, key: string, options: UploadToR2Options): Promise<void> {
   try {
     await r2.put(key, options.imageBuffer, {
       httpMetadata: {
@@ -100,18 +129,17 @@ export function getImageUrl(userId: string, imageId: string, variant: "original"
 }
 
 /**
- * アバター画像を生成してR2にアップロード
+ * 変換済みアバター画像をR2にアップロード
  * @param r2 Cloudflare R2バケットインスタンス
  * @param options アップロードオプション
  */
 export async function uploadAvatarImage(r2: R2Bucket, options: UploadAvatarImageOptions): Promise<void> {
   try {
-    const avatarBuffer = await generateAvatarImage(options.imageBuffer);
     const key = generateR2Key("avatar", options.userId);
 
     await upload(r2, key, {
-      ...options,
-      imageBuffer: avatarBuffer,
+      imageBuffer: options.imageBuffer,
+      userId: options.userId,
     });
   } catch (error) {
     throw new Error(`アバター画像のアップロードに失敗しました: ${error}`);
@@ -119,25 +147,25 @@ export async function uploadAvatarImage(r2: R2Bucket, options: UploadAvatarImage
 }
 
 /**
- * 画像をAVIFに変換してR2にアップロード（オリジナルとサムネイルの両方）
+ * 変換済み画像をR2にアップロード（オリジナルとサムネイルの両方）
  * @param r2 Cloudflare R2バケットインスタンス
  * @param options アップロードオプション
  */
 export async function uploadImage(r2: R2Bucket, options: UploadImageOptions): Promise<void> {
   try {
-    const variants = await generateImageVariants(options.imageBuffer);
-
     const originalKey = generateR2Key("image", options.userId, options.imageId, "original");
     const thumbnailKey = generateR2Key("image", options.userId, options.imageId, "thumbnail");
 
     await Promise.all([
       upload(r2, originalKey, {
-        ...options,
-        imageBuffer: variants.original.data.buffer as ArrayBuffer,
+        imageBuffer: options.variants.original.data,
+        userId: options.userId,
+        imageId: options.imageId,
       }),
       upload(r2, thumbnailKey, {
-        ...options,
-        imageBuffer: variants.thumbnail.data.buffer as ArrayBuffer,
+        imageBuffer: options.variants.thumbnail.data,
+        userId: options.userId,
+        imageId: options.imageId,
       }),
     ]);
   } catch (error) {
