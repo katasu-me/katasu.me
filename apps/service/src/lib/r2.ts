@@ -4,17 +4,11 @@ type UploadAvatarImageOptions = {
   userId: string;
 };
 
-type ImageVariant = {
-  data: ArrayBuffer;
-  width: number;
-  height: number;
-};
-
 type UploadImageOptions = {
   type: "image";
   variants: {
-    original: ImageVariant;
-    thumbnail: ImageVariant;
+    original: ArrayBuffer;
+    thumbnail: ArrayBuffer;
   };
   userId: string;
   imageId: string;
@@ -66,7 +60,7 @@ export function generateR2Key(
   const safeImageId = imageId ? sanitizePathComponent(imageId) : undefined;
 
   if (type === "avatar") {
-    return `avatars/${safeUserId}.avif`;
+    return `avatars/${safeUserId}.webp`;
   }
 
   if (type === "image") {
@@ -74,7 +68,7 @@ export function generateR2Key(
       throw new Error("画像IDが必要です");
     }
     const baseKey = `images/${safeUserId}/${safeImageId}`;
-    return variant === "thumbnail" ? `${baseKey}_thumbnail.avif` : `${baseKey}.avif`;
+    return variant === "thumbnail" ? `${baseKey}_thumbnail.webp` : `${baseKey}.webp`;
   }
 
   throw new Error("アップロードタイプが無効です");
@@ -90,7 +84,7 @@ async function upload(r2: R2Bucket, key: string, options: UploadToR2Options): Pr
   try {
     await r2.put(key, options.imageBuffer, {
       httpMetadata: {
-        contentType: "image/avif",
+        contentType: "image/webp",
         cacheControl: "public, max-age=31536000", // 1年間キャッシュ
       },
     });
@@ -109,10 +103,10 @@ export function getUserAvatarUrl(userId: string, hasAvatar: boolean): string {
   const bucketPublicUrl = getBucketPublicUrl();
 
   if (hasAvatar) {
-    return `${bucketPublicUrl}/avatars/${userId}.avif`;
+    return `${bucketPublicUrl}/avatars/${userId}.webp`;
   }
 
-  return "/images/default-avatar-icon.avif";
+  return "/images/default-avatar-icon.webp";
 }
 
 /**
@@ -125,7 +119,7 @@ export function getUserAvatarUrl(userId: string, hasAvatar: boolean): string {
 export function getImageUrl(userId: string, imageId: string, variant: "original" | "thumbnail" = "thumbnail"): string {
   const bucketPublicUrl = getBucketPublicUrl();
   const suffix = variant === "thumbnail" ? "_thumbnail" : "";
-  return `${bucketPublicUrl}/images/${userId}/${imageId}${suffix}.avif`;
+  return `${bucketPublicUrl}/images/${userId}/${imageId}${suffix}.webp`;
 }
 
 /**
@@ -158,12 +152,12 @@ export async function uploadImage(r2: R2Bucket, options: UploadImageOptions): Pr
 
     await Promise.all([
       upload(r2, originalKey, {
-        imageBuffer: options.variants.original.data,
+        imageBuffer: options.variants.original,
         userId: options.userId,
         imageId: options.imageId,
       }),
       upload(r2, thumbnailKey, {
-        imageBuffer: options.variants.thumbnail.data,
+        imageBuffer: options.variants.thumbnail,
         userId: options.userId,
         imageId: options.imageId,
       }),

@@ -13,6 +13,9 @@ const IMAGE_MAX_SIZE = 4096;
 /** アバター画像のサイズ */
 const AVATAR_SIZE = 400;
 
+/** 許容される最大アスペクト比（縦:横 または 横:縦） */
+const MAX_ASPECT_RATIO = 4;
+
 type GenerateImageOptions = {
   originalWidth: number;
   originalHeight: number;
@@ -32,9 +35,23 @@ type ConvertWebpOptions = {
  */
 async function convertToWebp(imageData: BufferSource, options?: ConvertWebpOptions): Promise<OptimizeResult> {
   try {
+    // アスペクト比をチェック
+    if (options?.originalWidth && options?.originalHeight) {
+      const aspectRatio =
+        Math.max(options.originalWidth, options.originalHeight) /
+        Math.min(options.originalWidth, options.originalHeight);
+
+      if (aspectRatio > MAX_ASPECT_RATIO) {
+        throw new Error(`画像のアスペクト比が極端すぎます（最大${MAX_ASPECT_RATIO}:1まで）`);
+      }
+    }
+
     // 縦横のサイズを制限
     const width = options?.maxWidth ? Math.min(options.originalWidth, options.maxWidth) : options?.originalWidth;
     const height = options?.maxHeight ? Math.min(options.originalHeight, options.maxHeight) : options?.originalHeight;
+
+    console.log("Original size:", options?.originalWidth, "x", options?.originalHeight);
+    console.log(`Resizing image to ${width}x${height}`);
 
     const optimizeResult = await optimizeImageExt({
       format: "webp",

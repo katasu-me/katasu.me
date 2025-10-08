@@ -3,7 +3,6 @@
 import { parseWithValibot } from "@conform-to/valibot";
 import { registerImage } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { imageSize } from "image-size";
 import { nanoid } from "nanoid";
 import { revalidateTag } from "next/cache";
 import { requireAuth } from "@/lib/auth";
@@ -40,18 +39,19 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   }
 
   // 画像を変換
-  let variants: {
-    original: { data: ArrayBuffer; width: number; height: number };
-    thumbnail: { data: ArrayBuffer; width: number; height: number };
-  };
+  let convertResult: Awaited<ReturnType<typeof convertImageVariants>>;
 
   try {
-    variants = await convertImageVariants(env.IMAGE_OPTIMIZER_URL, env.IMAGE_OPTIMIZER_SECRET, submission.value.file);
+    convertResult = await convertImageVariants(
+      env.IMAGE_OPTIMIZER_URL,
+      env.IMAGE_OPTIMIZER_SECRET,
+      submission.value.file,
+    );
   } catch (error) {
     console.error("Convert image error:", error);
 
     return submission.reply({
-      formErrors: ["画像の変換に失敗しました"],
+      formErrors: ["画像の変換に失敗しました"], // TODO: APIからのエラーメッセージを返す
     });
   }
 
@@ -59,7 +59,10 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   try {
     await uploadImage(env.IMAGES_R2_BUCKET, {
       type: "image",
-      variants,
+      variants: {
+        original: convertResult.original.data,
+        thumbnail: convertResult.thumbnail.data,
+      },
       userId,
       imageId,
     });
@@ -71,23 +74,11 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     });
   }
 
-  // 画像の幅・高さを取得
-  // NOTE: wasm-image-optimizationの戻りで取得できるが、縦画像が横向きとして扱われる時があるので使わない
-  const imageArrayBuffer = await submission.value.file.arrayBuffer();
-  const dimensions = imageSize(new Uint8Array(imageArrayBuffer));
-
-  // orientationの値が 5, 6, 7, 8 (90度または270度回転) の場合は入れ替える
-  // @see https://exiftool.org/TagNames/EXIF.html#:~:text=0x0112,8%20=%20Rotate%20270%20CW
-  const needsSwap = dimensions.orientation && [5, 6, 7, 8].includes(dimensions.orientation);
-  const width = needsSwap ? dimensions.height : dimensions.width;
-  const height = needsSwap ? dimensions.width : dimensions.height;
-
   // DBに登録
   const registerImageResult = await registerImage(env.DB, session.user.id, {
+    ...convertResult.dimensions,
     id: imageId,
     title: submission.value.title ?? null,
-    width,
-    height,
     tags: submission.value.tags,
     isHidden: false,
   });
