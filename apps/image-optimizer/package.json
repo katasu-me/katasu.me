@@ -9,6 +9,7 @@
   "dependencies": {
     "@hono/valibot-validator": "^0.5.3",
     "hono": "^4.9.10",
+    "image-size": "^2.0.2",
     "valibot": "^1.1.0",
     "wasm-image-optimization": "^1.2.30"
   },

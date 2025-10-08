@@ -1,6 +1,7 @@
+import { imageSize } from "image-size";
 import { type OptimizeParams, type OptimizeResult, optimizeImageExt } from "wasm-image-optimization";
 
-/** AVIF変換時のデフォルト画質 */
+/** WebP変換時のデフォルト画質 */
 const DEFAULT_QUALITY = 80;
 
 /** サムネイルの最大サイズ */
@@ -12,21 +13,34 @@ const IMAGE_MAX_SIZE = 4096;
 /** アバター画像のサイズ */
 const AVATAR_SIZE = 400;
 
-type ConvertAvifOptions = Pick<OptimizeParams, "width" | "height" | "quality">;
+type GenerateImageOptions = {
+  originalWidth: number;
+  originalHeight: number;
+};
+
+type ConvertWebpOptions = {
+  maxWidth?: number;
+  maxHeight?: number;
+} & GenerateImageOptions &
+  Pick<OptimizeParams, "quality">;
 
 /**
- * AVIF形式へ変換
+ * WebP形式へ変換
  * @param imageData 画像
  * @param options オプション
  * @returns 変換結果
  */
-export async function convertToAvif(imageData: BufferSource, options?: ConvertAvifOptions): Promise<OptimizeResult> {
+async function convertToWebp(imageData: BufferSource, options?: ConvertWebpOptions): Promise<OptimizeResult> {
   try {
+    // 縦横のサイズを制限
+    const width = options?.maxWidth ? Math.min(options.originalWidth, options.maxWidth) : options?.originalWidth;
+    const height = options?.maxHeight ? Math.min(options.originalHeight, options.maxHeight) : options?.originalHeight;
+
     const optimizeResult = await optimizeImageExt({
-      format: "avif",
+      format: "webp",
       image: imageData,
-      width: options?.width,
-      height: options?.height,
+      width,
+      height,
       quality: options?.quality ?? DEFAULT_QUALITY,
     });
 
@@ -39,22 +53,6 @@ export async function convertToAvif(imageData: BufferSource, options?: ConvertAv
     throw new Error(`画像のリサイズに失敗しました: ${error}`);
   }
 }
-
-export type ImageVariantResult = {
-  /** オリジナル画像 */
-  original: {
-    data: string;
-    width: number;
-    height: number;
-  };
-
-  /** サムネイル画像 */
-  thumbnail: {
-    data: string;
-    width: number;
-    height: number;
-  };
-};
 
 /**
  * Uint8ArrayをBase64エンコード
@@ -70,37 +68,78 @@ function uint8ArrayToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
+export type ImageDimensionsResult = {
+  /** 画像の幅 (orientation考慮済み) */
+  width: number;
+  /** 画像の高さ (orientation考慮済み) */
+  height: number;
+};
+
 /**
- * 画像のバリアントを生成
- * @param imageData 画像
- * @returns 生成された画像バリアント
+ * 画像サイズと向きを取得
+ * @param imageData 画像データ
+ * @returns 画像サイズ情報（orientation考慮済み）
  */
-export async function generateImageVariants(imageData: BufferSource): Promise<ImageVariantResult> {
+export function getImageDimensions(imageData: ArrayBuffer): ImageDimensionsResult {
+  const dimensions = imageSize(new Uint8Array(imageData));
+
+  if (!dimensions.width || !dimensions.height) {
+    throw new Error("画像サイズの取得に失敗しました");
+  }
+
+  // orientationの値が 5, 6, 7, 8 (90度または270度回転) の場合は入れ替える
+  // @see https://exiftool.org/TagNames/EXIF.html#:~:text=0x0112,8%20=%20Rotate%20270%20CW
+  const needsSwap = dimensions.orientation && [5, 6, 7, 8].includes(dimensions.orientation);
+  const width = needsSwap ? dimensions.height : dimensions.width;
+  const height = needsSwap ? dimensions.width : dimensions.height;
+
+  return { width, height };
+}
+
+export type ImageVariantResult = {
+  /** オリジナル画像 */
+  original: string;
+  /** サムネイル画像 */
+  thumbnail: string;
+  /** 画像サイズ情報 */
+  dimensions: ImageDimensionsResult;
+};
+
+/**
+ * 圧縮した画像とサムネイル画像を生成
+ * @param imageData 画像
+ * @returns 生成されたバリアント
+ */
+export async function generateImageVariants(
+  imageData: ArrayBuffer,
+  { originalWidth, originalHeight }: GenerateImageOptions,
+): Promise<ImageVariantResult> {
   try {
     const [original, thumbnail] = await Promise.all([
       // オリジナル
-      convertToAvif(imageData, {
-        width: IMAGE_MAX_SIZE,
-        height: IMAGE_MAX_SIZE,
+      convertToWebp(imageData, {
+        originalWidth,
+        originalHeight,
+        maxWidth: IMAGE_MAX_SIZE,
+        maxHeight: IMAGE_MAX_SIZE,
       }),
       // サムネイル
-      convertToAvif(imageData, {
-        width: THUMBNAIL_MAX_SIZE,
-        height: THUMBNAIL_MAX_SIZE,
+      convertToWebp(imageData, {
+        originalWidth,
+        originalHeight,
+        maxWidth: THUMBNAIL_MAX_SIZE,
+        maxHeight: THUMBNAIL_MAX_SIZE,
+        quality: 50,
       }),
     ]);
 
+    // 画像サイズ情報を取得
+    const dimensions = getImageDimensions(imageData);
+
     return {
-      original: {
-        data: uint8ArrayToBase64(original.data),
-        width: original.width,
-        height: original.height,
-      },
-      thumbnail: {
-        data: uint8ArrayToBase64(thumbnail.data),
-        width: thumbnail.width,
-        height: thumbnail.height,
-      },
+      original: uint8ArrayToBase64(original.data),
+      thumbnail: uint8ArrayToBase64(thumbnail.data),
+      dimensions,
     };
   } catch (error) {
     throw new Error(`画像バリアントの生成に失敗しました: ${error}`);
@@ -112,11 +151,13 @@ export async function generateImageVariants(imageData: BufferSource): Promise<Im
  * @param imageData 画像
  * @returns アバター画像
  */
-export async function generateAvatarImage(imageData: BufferSource): Promise<Uint8Array> {
+export async function generateAvatarImage(imageData: ArrayBuffer, opts: GenerateImageOptions): Promise<Uint8Array> {
   try {
-    const result = await convertToAvif(imageData, {
-      width: AVATAR_SIZE,
-      height: AVATAR_SIZE,
+    const result = await convertToWebp(imageData, {
+      ...opts,
+      maxWidth: AVATAR_SIZE,
+      maxHeight: AVATAR_SIZE,
+      quality: 50,
     });
 
     return result.data;
