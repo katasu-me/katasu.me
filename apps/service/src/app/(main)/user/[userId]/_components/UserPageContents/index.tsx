@@ -12,6 +12,7 @@ import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
 import GalleryView from "@/features/gallery/components/GalleryView";
+import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
@@ -65,7 +66,14 @@ export default async function UserPageContents({ user, view, currentPage = 1 }: 
   // 0枚ならからっぽ
   const totalImageCount = fetchTotalImageCountResult.data;
   if (totalImageCount <= 0) {
-    return <Message message="からっぽです" />;
+    return (
+      <>
+        <div className="col-start-2">
+          <ImageDropArea title="あたらしい画像を投稿する" />
+        </div>
+        <Message message="からっぽです" />
+      </>
+    );
   }
 
   let fetchUserImagesResult: ActionResult<ImageWithTags[]>;
