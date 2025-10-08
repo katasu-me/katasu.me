@@ -16,12 +16,12 @@ describe("getUserAvatarUrl", () => {
 
   it("アバターが設定されている場合、R2のURLを返す", () => {
     const url = getUserAvatarUrl("testuser", true);
-    expect(url).toBe("https://example.com/avatars/testuser.avif");
+    expect(url).toBe("https://example.com/avatars/testuser.webp");
   });
 
   it("アバターが設定されていない場合、デフォルトのURLを返す", () => {
     const url = getUserAvatarUrl("testuser", false);
-    expect(url).toBe("/images/default-avatar-icon.avif");
+    expect(url).toBe("/images/default-avatar-icon.webp");
   });
 
   it("R2_PUBLIC_URLが設定されていない場合、エラーをスローする", () => {
@@ -45,17 +45,17 @@ describe("getImageUrl", () => {
 
   it("サムネイル画像のURLを返す（デフォルト）", () => {
     const url = getImageUrl("testuser", "image123");
-    expect(url).toBe("https://example.com/images/testuser/image123_thumbnail.avif");
+    expect(url).toBe("https://example.com/images/testuser/image123_thumbnail.webp");
   });
 
   it("サムネイル画像のURLを返す（明示的指定）", () => {
     const url = getImageUrl("testuser", "image123", "thumbnail");
-    expect(url).toBe("https://example.com/images/testuser/image123_thumbnail.avif");
+    expect(url).toBe("https://example.com/images/testuser/image123_thumbnail.webp");
   });
 
   it("オリジナル画像のURLを返す", () => {
     const url = getImageUrl("testuser", "image123", "original");
-    expect(url).toBe("https://example.com/images/testuser/image123.avif");
+    expect(url).toBe("https://example.com/images/testuser/image123.webp");
   });
 
   it("R2_PUBLIC_URLが設定されていない場合、エラーをスローする", () => {
