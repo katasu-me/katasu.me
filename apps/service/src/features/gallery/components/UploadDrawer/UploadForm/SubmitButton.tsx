@@ -7,7 +7,7 @@ export default function SubmitButton({ disabled }: Pick<ComponentProps<"button">
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" className="mt-8 w-full" variant="fill" disabled={disabled || pending}>
+    <Button type="submit" className="mt-6 w-full" variant="fill" disabled={disabled || pending}>
       {pending ? (
         <span className="flex items-center justify-center gap-2">
           <IconLoader2 className="size-5 animate-spin" />

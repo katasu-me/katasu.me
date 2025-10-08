@@ -1,9 +1,9 @@
 import { getInputProps, type useForm, type useInputControl } from "@conform-to/react";
 import { motion } from "motion/react";
+import { useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { twMerge } from "tailwind-merge";
 import type { InferOutput } from "valibot";
-import IconExclamationCircle from "@/assets/icons/exclamation-circle.svg";
 import Input from "@/components/Input";
 import TagInput from "@/components/TagInput";
 import { DEFAULT_TRANSITION } from "@/constants/animation";
@@ -15,6 +15,7 @@ import {
 } from "@/features/gallery/schemas/upload";
 import FrameImage from "../../FrameImage";
 import ImagePlaceholder from "../../ImagePlaceholder";
+import { ErrorMessage } from "./ErrorMessage";
 import type { PreviewImage } from "./index";
 import SubmitButton from "./SubmitButton";
 
@@ -26,6 +27,7 @@ type Props = {
   tagInput: ReturnType<typeof useInputControl>;
   handleTagChange: (tags: string[]) => void;
   isFormValid: boolean;
+  onPendingChange?: (pending: boolean) => void;
 };
 
 export default function FormContent({
@@ -36,15 +38,20 @@ export default function FormContent({
   tagInput,
   handleTagChange,
   isFormValid,
+  onPendingChange,
 }: Props) {
   const { pending } = useFormStatus();
+
+  useEffect(() => {
+    onPendingChange?.(pending);
+  }, [pending, onPendingChange]);
 
   return (
     <>
       {/* 画像のプレビュー */}
       <button
         type="button"
-        className={twMerge("block w-full cursor-pointer", !pending && "mb-6")}
+        className={twMerge("block w-full cursor-pointer", !pending && "mb-4")}
         onClick={handlePreviewClick}
         aria-label="画像を選択"
         disabled={pending}
@@ -86,19 +93,13 @@ export default function FormContent({
         </motion.div>
       </button>
 
-      {/* フォーム全体のエラー */}
-      {form.errors && form.errors.length > 0 && (
-        <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-600 bg-red-50 p-4">
-          <IconExclamationCircle className="size-6 text-red-600" />
-          <p className="text-red-600 text-sm">{form.errors[0]}</p>
-        </div>
-      )}
-
-      {fields.file.errors?.at(0) && <p className="mb-4 text-center text-red-600 text-sm">{fields.file.errors.at(0)}</p>}
+      {/* フォームのエラー */}
+      {form.errors && form.errors?.length > 0 && <ErrorMessage text={form.errors[0]} />}
+      {fields.file.errors?.at(0) && <ErrorMessage text={fields.file.errors[0]} />}
 
       {/* タイトル・タグ入力欄 */}
       <motion.div
-        className="overflow-hidden"
+        className="flex flex-col gap-4 overflow-hidden"
         animate={{
           opacity: pending ? 0 : 1,
           height: pending ? 0 : "auto",
@@ -114,7 +115,7 @@ export default function FormContent({
               <span className="text-warm-black text-xs">（なくてもいいよ）</span>
             </>
           }
-          placeholder="タイトルを入力"
+          placeholder="すてきな画像"
           error={fields.title.errors?.at(0)}
           maxLength={MAX_TITLE_LENGTH}
           currentLength={fields.title.value?.length ?? 0}
@@ -130,7 +131,7 @@ export default function FormContent({
           suggestTags={[]} // TODO: 後でサジェスト機能を実装する
           tags={(tagInput.value as string[]) || []}
           onChangeTags={handleTagChange}
-          placeholder="タグを追加"
+          placeholder="風景とか…"
           error={fields.tags.errors?.at(0)}
           disabled={pending}
         />
