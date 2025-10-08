@@ -42,7 +42,8 @@ const app = new Hono<{ Bindings: Bindings }>()
       if (error instanceof HTTPException) {
         throw error;
       }
-      throw new HTTPException(500, { message: `Internal Server Error: ${error}` });
+
+      throw new HTTPException(500, { message: `${error}` });
     }
   })
 
@@ -68,7 +69,7 @@ const app = new Hono<{ Bindings: Bindings }>()
         throw error;
       }
 
-      throw new HTTPException(500, { message: `Internal Server Error: ${error}` });
+      throw new HTTPException(500, { message: `${error}` });
     }
   });
 

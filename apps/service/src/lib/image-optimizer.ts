@@ -1,4 +1,5 @@
 import { hc } from "hono/client";
+import { ERROR_MESSAGES } from "@/features/gallery/constants/error-messages";
 import type { AppType } from "../../../image-optimizer/src";
 
 /**
@@ -40,8 +41,8 @@ export async function convertImageVariants(apiUrl: string, secret: string, image
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error("Conversion failed:", errorText);
-    throw new Error(`画像変換に失敗しました: ${errorText}`);
+    const errorMessage = errorText || ERROR_MESSAGES.UNKNOWN_ERROR;
+    throw new Error(errorMessage);
   }
 
   const { original, thumbnail, dimensions } = await response.json();
@@ -72,7 +73,8 @@ export async function convertAvatarImage(apiUrl: string, secret: string, imageFi
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`アバター画像変換に失敗しました: ${errorText}`);
+    const errorMessage = errorText || ERROR_MESSAGES.UNKNOWN_ERROR;
+    throw new Error(errorMessage);
   }
 
   return await response.arrayBuffer();

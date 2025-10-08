@@ -9,6 +9,7 @@ import { requireAuth } from "@/lib/auth";
 import { tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 import { convertImageVariants } from "@/lib/image-optimizer";
 import { generateR2Key, uploadImage } from "@/lib/r2";
+import { ERROR_MESSAGES } from "../constants/error-messages";
 import { uploadImageSchema } from "../schemas/upload";
 
 export async function uploadAction(_prevState: unknown, formData: FormData) {
@@ -34,7 +35,7 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     console.error("画像IDが重複しました", { userId, imageId });
 
     return submission.reply({
-      formErrors: ["画像IDが重複しています。もう一度お試しください"],
+      formErrors: [ERROR_MESSAGES.IMAGE_ID_DUPLICATE],
     });
   }
 
@@ -50,8 +51,10 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   } catch (error) {
     console.error("Convert image error:", error);
 
+    const errorMessage = error instanceof Error ? error.message : ERROR_MESSAGES.IMAGE_CONVERSION_FAILED;
+
     return submission.reply({
-      formErrors: ["画像の変換に失敗しました"], // TODO: APIからのエラーメッセージを返す
+      formErrors: [errorMessage],
     });
   }
 
@@ -70,7 +73,7 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     console.error("Upload image error:", error);
 
     return submission.reply({
-      formErrors: ["画像のアップロードに失敗しました"],
+      formErrors: [ERROR_MESSAGES.IMAGE_UPLOAD_FAILED],
     });
   }
 
@@ -87,7 +90,7 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     console.error("Register image error:", registerImageResult.error);
 
     return submission.reply({
-      formErrors: [registerImageResult.error.message],
+      formErrors: [ERROR_MESSAGES.IMAGE_REGISTER_FAILED],
     });
   }
 
