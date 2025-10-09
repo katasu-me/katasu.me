@@ -17,6 +17,7 @@ import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
 import { userPageCacheTag } from "@/lib/cache-tags";
+import { getUserSession } from "@/lib/auth";
 
 const cachedFetchTotalImageCount = async (userId: string) => {
   "use cache";
@@ -63,14 +64,21 @@ export default async function UserPageContents({ user, view, currentPage = 1 }: 
     return <Message message="画像の取得に失敗しました" icon="error" />;
   }
 
+  // ログインユーザーのセッションを取得
+  const { env } = getCloudflareContext();
+  const { session } = await getUserSession(env.DB);
+  const isOwner = session?.user?.id === user.id;
+
   // 0枚ならからっぽ
   const totalImageCount = fetchTotalImageCountResult.data;
   if (totalImageCount <= 0) {
     return (
       <>
-        <div className="col-start-2">
-          <ImageDropArea title="あたらしい画像を投稿する" />
-        </div>
+        {isOwner && (
+          <div className="col-start-2">
+            <ImageDropArea title="あたらしい画像を投稿する" />
+          </div>
+        )}
         <Message message="からっぽです" />
       </>
     );
@@ -109,5 +117,5 @@ export default async function UserPageContents({ user, view, currentPage = 1 }: 
 
   const images = fetchUserImagesResult.data.map((image) => toFrameImageProps(image, user.id));
 
-  return <GalleryView view={view} images={images} totalImageCount={totalImageCount} currentPage={currentPage} />;
+  return <GalleryView view={view} images={images} totalImageCount={totalImageCount} currentPage={currentPage} showUploadArea={isOwner} />;
 }

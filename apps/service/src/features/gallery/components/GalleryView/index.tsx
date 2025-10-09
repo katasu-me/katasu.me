@@ -17,18 +17,21 @@ type Props = {
   totalImageCount: number;
   currentPage?: number;
   defaultTags?: string[];
+  showUploadArea?: boolean;
 };
 
-export default function GalleryView({ view, images, totalImageCount, currentPage, defaultTags }: Props) {
+export default function GalleryView({ view, images, totalImageCount, currentPage, defaultTags, showUploadArea = true }: Props) {
   const handleSwapClick = () => {
     window.location.reload();
   };
 
   return (
     <>
-      <div className="col-start-2">
-        <ImageDropArea title="あたらしい画像を投稿する" defaultTags={defaultTags} />
-      </div>
+      {showUploadArea && (
+        <div className="col-start-2">
+          <ImageDropArea title="あたらしい画像を投稿する" defaultTags={defaultTags} />
+        </div>
+      )}
 
       {view === "random" ? (
         <>
