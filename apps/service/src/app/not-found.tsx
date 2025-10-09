@@ -5,7 +5,7 @@ import Button from "@/components/Button";
 import BudouX from "@/components/BudouX";
 import { generateMetadataTitle } from "@/lib/meta";
 
-export const metadata: Metadata = generateMetadataTitle("お探しのページが見つかりません");
+export const metadata: Metadata = generateMetadataTitle({ pageTitle: "お探しのページが見つかりません" });
 
 export default function NotFound() {
   return (
