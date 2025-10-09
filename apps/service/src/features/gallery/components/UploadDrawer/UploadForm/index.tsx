@@ -188,20 +188,36 @@ export default function UploadForm({
         disabled={isPending}
       >
         <motion.div
+          initial={false}
           animate={
             isPending
               ? {
-                  rotate: [1, -2, 3, -2, 1],
+                  scale: [0.98, 1.015, 0.99, 1.025, 0.985, 1.02, 0.98], // ゆらいでいるイメージ
+                  opacity: [0.3, 0.7, 0.85, 0.95, 1, 1, 1],
+                  filter: ["blur(8px)", "blur(4px)", "blur(2px)", "blur(3px)", "blur(1px)", "blur(0.5px)", "blur(0px)"],
                   transition: {
-                    duration: 0.6,
-                    repeat: Number.POSITIVE_INFINITY,
-                    repeatDelay: 1,
-                    ease: "easeInOut",
+                    scale: {
+                      duration: 4.8,
+                      times: [0, 0.15, 0.28, 0.5, 0.65, 0.82, 1],
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                    },
+                    opacity: {
+                      duration: 4.8,
+                      times: [0, 0.15, 0.28, 0.5, 0.65, 0.82, 1],
+                      ease: "easeOut",
+                    },
+                    filter: {
+                      duration: 4.8,
+                      times: [0, 0.15, 0.28, 0.5, 0.65, 0.82, 1],
+                      ease: "easeOut",
+                    },
                   },
                 }
               : {
-                  rotate: 1,
                   scale: 1,
+                  opacity: 1,
+                  filter: "blur(0px)",
                 }
           }
           whileHover={!isPending ? { scale: 1.05 } : undefined}
