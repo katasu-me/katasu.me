@@ -26,18 +26,12 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
   // アバター画像がある場合
   if (submission.value.avatar instanceof File) {
     try {
-      // TODO: DEBUG
-      console.log("[signup.ts]", env.IMAGE_OPTIMIZER_URL, env.IMAGE_OPTIMIZER_SECRET);
-
       // 画像を変換
       const convertedAvatar = await convertAvatarImage(
         env.IMAGE_OPTIMIZER_URL,
         env.IMAGE_OPTIMIZER_SECRET,
         submission.value.avatar,
       );
-
-      // TODO: DEBUG
-      console.log("[signup.ts]", session.user.id);
 
       // 変換済み画像をアップロード
       await uploadAvatarImage(env.IMAGES_R2_BUCKET, {
