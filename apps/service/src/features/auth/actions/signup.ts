@@ -33,6 +33,8 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
         submission.value.avatar,
       );
 
+      console.log("[signup.ts]", session.user.id);
+
       // 変換済み画像をアップロード
       await uploadAvatarImage(env.IMAGES_R2_BUCKET, {
         type: "avatar",

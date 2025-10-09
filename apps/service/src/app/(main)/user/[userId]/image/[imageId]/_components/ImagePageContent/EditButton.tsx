@@ -3,7 +3,7 @@
 import { useState } from "react";
 import IconPencil from "@/assets/icons/pencil.svg";
 import Button from "@/components/Button";
-import EditImageDrawer from "@/features/gallery/components/EditImageDrawer";
+import EditDrawer from "@/features/gallery/components/EditDrawer";
 
 type Props = {
   imageId: string;
@@ -21,7 +21,7 @@ export default function EditButton({ imageId, title, tags }: Props) {
         <span className="text-sm">編集する</span>
       </Button>
 
-      <EditImageDrawer
+      <EditDrawer
         open={isOpen}
         onOpenChange={setIsOpen}
         imageId={imageId}
