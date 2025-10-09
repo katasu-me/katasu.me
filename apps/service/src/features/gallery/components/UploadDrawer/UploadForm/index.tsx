@@ -2,7 +2,6 @@ import { getFormProps, getInputProps, type SubmissionResult, useForm, useInputCo
 import { parseWithValibot } from "@conform-to/valibot";
 import { motion } from "motion/react";
 import { useActionState, useEffect, useRef, useState } from "react";
-import { useFormStatus } from "react-dom";
 import { twMerge } from "tailwind-merge";
 import { DEFAULT_TRANSITION } from "@/constants/animation";
 import { uploadAction } from "@/features/gallery/actions/upload";
@@ -20,10 +19,11 @@ import FrameImage from "../../FrameImage";
 import ImagePlaceholder from "../../ImagePlaceholder";
 
 type Props = {
+  isPending: boolean;
+  onPendingChange: (pending: boolean) => void;
   defaultImageFile?: File;
   defaultTags?: string[];
   onSuccess?: () => void;
-  onPendingChange?: (pending: boolean) => void;
 };
 
 export type PreviewImage = {
@@ -39,13 +39,19 @@ const defaultResult: SubmissionResult<string[]> = {
   },
 };
 
-export default function UploadForm({ defaultImageFile, defaultTags = [], onSuccess, onPendingChange }: Props) {
+export default function UploadForm({
+  isPending,
+  onPendingChange,
+  defaultImageFile,
+  defaultTags = [],
+  onSuccess,
+}: Props) {
   const [lastResult, action] = useActionState(uploadAction, undefined);
   const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
-  const { pending } = useFormStatus();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const isDnDFileSet = useRef(false);
+  const prevResultRef = useRef(lastResult);
 
   const [form, fields] = useForm({
     lastResult: lastResult || defaultResult,
@@ -56,6 +62,9 @@ export default function UploadForm({ defaultImageFile, defaultTags = [], onSucce
         schema: uploadImageSchema,
       });
     },
+    onSubmit: () => {
+      onPendingChange(true);
+    },
     defaultValue: {
       tags: defaultTags,
     },
@@ -63,6 +72,20 @@ export default function UploadForm({ defaultImageFile, defaultTags = [], onSucce
 
   const tagInput = useInputControl(fields.tags);
   const isFormValid = Object.values(form.allErrors).length === 0;
+
+  // 結果の変化を検知
+  if (lastResult !== prevResultRef.current) {
+    prevResultRef.current = lastResult;
+
+    // レンダリング後に実行
+    queueMicrotask(() => {
+      onPendingChange(false);
+
+      if (lastResult?.status === "success") {
+        onSuccess?.();
+      }
+    });
+  }
 
   // React 19で送信後にフォームがリセットされる問題のワークアラウンド
   usePreventFormReset(form.id, () => {
@@ -92,18 +115,6 @@ export default function UploadForm({ defaultImageFile, defaultTags = [], onSucce
       reader.readAsDataURL(defaultImageFile);
     }
   }, [defaultImageFile]);
-
-  // アップロード成功時にコールバック発火
-  useEffect(() => {
-    if (lastResult?.status === "success") {
-      onSuccess?.();
-    }
-  }, [lastResult, onSuccess]);
-
-  // pending状態を親に通知
-  useEffect(() => {
-    onPendingChange?.(pending);
-  }, [pending, onPendingChange]);
 
   const setFileInputRef = (input: HTMLInputElement | null) => {
     fileInputRef.current = input;
@@ -171,14 +182,14 @@ export default function UploadForm({ defaultImageFile, defaultTags = [], onSucce
       {/* 画像のプレビュー */}
       <button
         type="button"
-        className={twMerge("block w-full cursor-pointer", !pending && "mb-4")}
+        className={twMerge("block w-full cursor-pointer", !isPending && "mb-4")}
         onClick={handlePreviewClick}
         aria-label="画像を選択"
-        disabled={pending}
+        disabled={isPending}
       >
         <motion.div
           animate={
-            pending
+            isPending
               ? {
                   rotate: [1, -2, 3, -2, 1],
                   transition: {
@@ -193,7 +204,7 @@ export default function UploadForm({ defaultImageFile, defaultTags = [], onSucce
                   scale: 1,
                 }
           }
-          whileHover={!pending ? { scale: 1.05 } : undefined}
+          whileHover={!isPending ? { scale: 1.05 } : undefined}
           transition={DEFAULT_TRANSITION}
         >
           {previewImage ? (
@@ -221,8 +232,8 @@ export default function UploadForm({ defaultImageFile, defaultTags = [], onSucce
       <motion.div
         className="flex flex-col gap-4 overflow-hidden"
         animate={{
-          opacity: pending ? 0 : 1,
-          height: pending ? 0 : "auto",
+          opacity: isPending ? 0 : 1,
+          height: isPending ? 0 : "auto",
         }}
         transition={DEFAULT_TRANSITION}
       >
@@ -235,7 +246,7 @@ export default function UploadForm({ defaultImageFile, defaultTags = [], onSucce
           maxTitleLength={MAX_TITLE_LENGTH}
           maxTagCount={MAX_TAG_COUNT}
           maxTagTextLength={MAX_TAG_TEXT_LENGTH}
-          disabled={pending}
+          disabled={isPending}
         />
       </motion.div>
 

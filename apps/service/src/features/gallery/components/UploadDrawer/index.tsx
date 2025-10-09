@@ -5,7 +5,7 @@ import UploadForm from "./UploadForm";
 type Props = {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-} & Omit<ComponentProps<typeof UploadForm>, "onPendingChange">;
+} & Omit<ComponentProps<typeof UploadForm>, "isPending" | "onPendingChange">;
 
 export default function UploadDrawer({ open, onOpenChange, ...uploadFormProps }: Props) {
   const [isPending, setIsPending] = useState(false);
@@ -15,7 +15,7 @@ export default function UploadDrawer({ open, onOpenChange, ...uploadFormProps }:
       {({ Description }) => (
         <>
           <Description hidden>新しい画像を投稿するフォーム</Description>
-          <UploadForm {...uploadFormProps} onPendingChange={setIsPending} />
+          <UploadForm {...uploadFormProps} isPending={isPending} onPendingChange={(state) => setIsPending(state)} />
         </>
       )}
     </Drawer>
