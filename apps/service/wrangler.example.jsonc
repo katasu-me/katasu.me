@@ -52,7 +52,8 @@
    */
   "vars": {
     "BETTER_AUTH_URL": "<DEVELOPMENT_URL>",
-    "R2_PUBLIC_URL": "<DEVELOPMENT_R2_URL>"
+    "R2_PUBLIC_URL": "<DEVELOPMENT_R2_URL>",
+    "IMAGE_OPTIMIZER_URL": "<DEVELOPMENT_IMAGE_OPTIMIZER_URL>"
   },
   /**
    * Note: Use secrets to store sensitive data.
@@ -85,7 +86,8 @@
       },
       "vars": {
         "BETTER_AUTH_URL": "<PRODUCTION_URL>",
-        "R2_PUBLIC_URL": "<PRODUCTION_R2_URL>"
+        "R2_PUBLIC_URL": "<PRODUCTION_R2_URL>",
+        "IMAGE_OPTIMIZER_URL": "<PRODUCTION_IMAGE_OPTIMIZER_URL>"
       },
       "d1_databases": [
         {
