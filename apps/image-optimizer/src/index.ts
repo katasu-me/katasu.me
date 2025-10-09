@@ -33,7 +33,7 @@ const app = new Hono<{ Bindings: Bindings }>()
         originalHeight: originalImageDimensions.height,
       });
 
-      return new Response(avatarImage, {
+      return new Response(avatarImage as BodyInit, {
         headers: {
           "Content-Type": "image/webp",
         },
