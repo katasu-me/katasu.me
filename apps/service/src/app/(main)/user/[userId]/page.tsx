@@ -4,21 +4,21 @@ import type { Metadata } from "next";
 import { unstable_cacheTag as cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { fallback, object, parse, string } from "valibot";
-import { cachedFetchUserById } from "@/actions/user";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import TagLinks from "@/components/Navigation/TagLinks";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
-import { userPageCacheTag, userTagsPageCacheTag } from "@/lib/cache-tags";
+import { tagListCacheTag } from "@/lib/cache-tags";
 import { generateMetadataTitle } from "@/lib/meta";
+import { cachedFetchUserById } from "@/lib/user";
 import UserPageContents from "./_components/UserPageContents";
 
 const cachedFetchTags = async (userId: string) => {
   "use cache";
 
-  cacheTag(userPageCacheTag(userId), userTagsPageCacheTag(userId));
+  cacheTag(tagListCacheTag(userId));
 
   const { env } = getCloudflareContext();
 

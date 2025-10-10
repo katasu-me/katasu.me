@@ -6,7 +6,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { nanoid } from "nanoid";
 import { revalidateTag } from "next/cache";
 import { requireAuth } from "@/lib/auth";
-import { tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
+import { tagListCacheTag, tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 import { convertImageVariants } from "@/lib/image-optimizer";
 import { generateR2Key, uploadImage } from "@/lib/r2";
 import { ERROR_MESSAGES } from "../constants/error-messages";
@@ -94,10 +94,13 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     });
   }
 
-  // 自身のマイページのキャッシュを飛ばす
+  // 自身のマイページ
   revalidateTag(userPageCacheTag(userId));
 
-  // タグページのキャッシュを飛ばす
+  // タグ一覧
+  revalidateTag(tagListCacheTag(userId));
+
+  // それぞれのタグページ
   for (const tag of registerImageResult.data.tags) {
     revalidateTag(tagPageCacheTag(userId, tag.id));
   }
