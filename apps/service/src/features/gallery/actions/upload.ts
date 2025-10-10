@@ -44,8 +44,8 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
 
   try {
     convertResult = await convertImageVariants(
-      env.IMAGE_OPTIMIZER_URL,
-      env.IMAGE_OPTIMIZER_SECRET,
+      process.env.IMAGE_OPTIMIZER_URL,
+      process.env.IMAGE_OPTIMIZER_SECRET,
       submission.value.file,
     );
   } catch (error) {
