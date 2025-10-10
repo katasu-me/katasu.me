@@ -1,6 +1,6 @@
+import { type DialogProps, Drawer as VaulDrawer } from "@arrow2nd/vaul";
 import type { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
-import { type DialogProps, Drawer as VaulDrawer } from "vaul";
 
 type Props = {
   /** タイトル */

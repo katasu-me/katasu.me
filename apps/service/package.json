@@ -27,6 +27,7 @@
     "db:seed:prod": "wrangler d1 execute katasu-me --file=../../packages/service-db/src/seeds/plans.sql"
   },
   "dependencies": {
+    "@arrow2nd/vaul": "^1.1.4",
     "@conform-to/react": "^1.8.2",
     "@conform-to/valibot": "^1.8.2",
     "@katasu.me/service-db": "workspace:*",
@@ -47,8 +48,7 @@
     "react-easy-crop": "^5.5.0",
     "react-use": "^17.6.0",
     "tailwind-merge": "^3.3.1",
-    "valibot": "^1.1.0",
-    "vaul": "^1.1.2"
+    "valibot": "^1.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
