@@ -7,8 +7,8 @@ const DEFAULT_QUALITY = 80;
 /** サムネイルの最大サイズ */
 const THUMBNAIL_MAX_SIZE = 500;
 
-/** 画像の最大サイズ (4K) */
-const IMAGE_MAX_SIZE = 4096;
+/** 画像の最大サイズ (2K) */
+const IMAGE_MAX_SIZE = 2048;
 
 /** アバター画像のサイズ */
 const AVATAR_SIZE = 400;
