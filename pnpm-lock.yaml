@@ -49,8 +49,8 @@ importers:
   apps/service:
     dependencies:
       '@arrow2nd/vaul':
-        specifier: ^1.1.4
-        version: 1.1.4(@types/react-dom@19.1.9(@types/react@19.1.12))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        specifier: ^1.1.5
+        version: 1.1.5(@types/react-dom@19.1.9(@types/react@19.1.12))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@conform-to/react':
         specifier: ^1.8.2
         version: 1.8.2(react@19.1.1)
@@ -244,8 +244,8 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@arrow2nd/vaul@1.1.4':
-    resolution: {integrity: sha512-OQ9CRNl992iYOyWEc3+DmOLqh1mrb9ma9gfw+Gd8D9CEpxugTB18ZiSEAoVdQ5q59bi9Bm0spOyIpIGSkW205w==}
+  '@arrow2nd/vaul@1.1.5':
+    resolution: {integrity: sha512-fjiu5GwqDGFqNMncZ1wciv76Bp4MBPKk8w0WLUssmKQ64/To3T20MNPK3DSEXAAI/IUClwRvLgvLaGHZHdk1xA==}
     peerDependencies:
       react: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
       react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
@@ -7357,7 +7357,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.30
 
-  '@arrow2nd/vaul@1.1.4(@types/react-dom@19.1.9(@types/react@19.1.12))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+  '@arrow2nd/vaul@1.1.5(@types/react-dom@19.1.9(@types/react@19.1.12))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
       '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.1.9(@types/react@19.1.12))(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       react: 19.1.1
