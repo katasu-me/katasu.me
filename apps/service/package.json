@@ -27,7 +27,7 @@
     "db:seed:prod": "wrangler d1 execute katasu-me --file=../../packages/service-db/src/seeds/plans.sql"
   },
   "dependencies": {
-    "@arrow2nd/vaul": "^1.1.5",
+    "@arrow2nd/vaul": "^1.1.7",
     "@conform-to/react": "^1.8.2",
     "@conform-to/valibot": "^1.8.2",
     "@katasu.me/service-db": "workspace:*",
