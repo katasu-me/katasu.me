@@ -35,8 +35,12 @@ export async function fetchUserImageStatus(
 
   const userInfo = await db.query.user.findFirst({
     where: (u) => eq(u.id, userId),
-    columns: {
-      maxPhotos: true,
+    with: {
+      plan: {
+        columns: {
+          maxPhotos: true,
+        },
+      },
     },
   });
 
@@ -51,7 +55,7 @@ export async function fetchUserImageStatus(
   }
 
   return {
-    maxPhotos: userInfo.maxPhotos,
+    maxPhotos: userInfo.plan.maxPhotos,
     uploadedPhotos: uploadedPhotosResult.data,
   };
 }

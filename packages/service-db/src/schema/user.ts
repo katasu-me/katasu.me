@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { plan } from "./plan";
 
@@ -8,12 +8,10 @@ export const user = sqliteTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: integer("emailVerified", { mode: "boolean" }).notNull().default(false),
   image: text("image"),
-  plan: text("plan")
+  planId: text("planId")
     .notNull()
     .references(() => plan.id, { onDelete: "cascade" })
     .default("free"),
-  // FIXME: これはプランに紐づくものでは
-  maxPhotos: integer("maxPhotos").notNull().default(1000),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" })
     .notNull()
@@ -21,6 +19,13 @@ export const user = sqliteTable("user", {
     .$onUpdate(() => new Date()),
   bannedAt: integer("bannedAt", { mode: "timestamp" }),
 });
+
+export const userRelations = relations(user, ({ one }) => ({
+  plan: one(plan, {
+    fields: [user.planId],
+    references: [plan.id],
+  }),
+}));
 
 export type User = typeof user.$inferSelect;
 
