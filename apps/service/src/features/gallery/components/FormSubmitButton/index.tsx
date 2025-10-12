@@ -3,7 +3,12 @@ import { useFormStatus } from "react-dom";
 import IconLoader2 from "@/assets/icons/loader-2.svg";
 import Button from "@/components/Button";
 
-export default function SubmitButton({ disabled }: Pick<ComponentProps<"button">, "disabled">) {
+type Props = Pick<ComponentProps<"button">, "disabled"> & {
+  label: string;
+  pendingLabel: string;
+};
+
+export default function FormSubmitButton({ disabled, label, pendingLabel }: Props) {
   const { pending } = useFormStatus();
 
   return (
@@ -11,10 +16,10 @@ export default function SubmitButton({ disabled }: Pick<ComponentProps<"button">
       {pending ? (
         <span className="flex items-center justify-center gap-2">
           <IconLoader2 className="size-5 animate-spin" />
-          投稿中…
+          {pendingLabel}
         </span>
       ) : (
-        "投稿"
+        label
       )}
     </Button>
   );

@@ -4,6 +4,7 @@ import { getFormProps, getInputProps, type SubmissionResult, useForm } from "@co
 import { parseWithValibot } from "@conform-to/valibot";
 import { useActionState } from "react";
 import Button from "@/components/Button";
+import FormErrorMessage from "@/components/FormErrorMessage";
 import Input from "@/components/Input";
 import { signupAction } from "../../actions/signup";
 import { MAX_USERNAME_LENGTH, signUpFormSchema } from "../../schemas/signup-form";
@@ -17,13 +18,6 @@ const defaultResult: SubmissionResult<string[]> = {
     agreeToPrivacy: ["プライバシーポリシーへの同意が必要です"],
   },
 };
-
-// TODO:
-// - [ ] サーバー側でのバリデーションエラーが表示に反映されるか未確認
-// - [ ] conformの使い方が終わってるので要修正
-// - [ ] クライアント側のバリデーションタイミングを調整
-// - [ ] 送信中表示
-// - [ ] 利用規約、プライバシーポリシーのリンク先を修正
 
 export default function SignUpForm() {
   const [lastResult, action] = useActionState(signupAction, undefined);
@@ -53,6 +47,9 @@ export default function SignUpForm() {
 
   return (
     <form {...getFormProps(form)} action={action} noValidate>
+      {/* フォームのエラー */}
+      {form.errors && form.errors?.length > 0 && <FormErrorMessage className="mb-16" text={form.errors[0]} />}
+
       <div className="flex flex-col gap-6">
         <AvatarUpload
           {...getInputProps(fields.avatar, { type: "file" })}
@@ -63,7 +60,7 @@ export default function SignUpForm() {
         <Input
           {...getInputProps(fields.username, { type: "text" })}
           label="ユーザー名"
-          placeholder="ユーザー名を入力"
+          placeholder="すてきな名前"
           error={fields.username.errors?.[0]}
           maxLength={MAX_USERNAME_LENGTH}
           currentLength={fields.username.value?.length ?? 0}
@@ -101,7 +98,7 @@ export default function SignUpForm() {
         </div>
 
         <Button type="submit" variant="fill" className="w-full" disabled={!isFormValid}>
-          新規登録
+          新規登録する
         </Button>
       </div>
     </form>

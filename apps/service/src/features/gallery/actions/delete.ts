@@ -5,7 +5,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
-import { tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
+import { tagListCacheTag, tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 import { deleteImageFromR2 } from "@/lib/r2";
 
 /**
@@ -52,10 +52,13 @@ export async function deleteImageAction(userId: string, imageId: string): Promis
     return error instanceof Error ? error : new Error("不明なエラーでR2からの削除に失敗しました");
   }
 
-  // 自身のマイページのキャッシュを飛ばす
+  // 画像ページ
   revalidateTag(userPageCacheTag(userId));
 
-  // タグページのキャッシュを飛ばす
+  // タグ一覧
+  revalidateTag(tagListCacheTag(userId));
+
+  // それぞれのタグページ
   for (const tag of prevImageData.tags) {
     revalidateTag(tagPageCacheTag(userId, tag.id));
   }

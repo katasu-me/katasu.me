@@ -3,22 +3,31 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { unstable_cacheTag as cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
-import { cachedFetchUserById } from "@/actions/user";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
+import { Loading } from "@/components/Loading";
 import TagLinks from "@/components/Navigation/TagLinks";
+import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
-import { userPageCacheTag, userTagsPageCacheTag } from "@/lib/cache-tags";
+import { getUserSession } from "@/lib/auth";
+import { tagListCacheTag } from "@/lib/cache-tags";
 import { generateMetadataTitle } from "@/lib/meta";
+import { cachedFetchUserById } from "@/lib/user";
 import UserPageContents from "./_components/UserPageContents";
 
+/**
+ * 使用頻度の高いタグを取得
+ * @params userId ユーザーID
+ * @returns タグ一覧
+ */
 const cachedFetchTags = async (userId: string) => {
   "use cache";
 
-  cacheTag(userPageCacheTag(userId), userTagsPageCacheTag(userId));
+  cacheTag(tagListCacheTag(userId));
 
   const { env } = getCloudflareContext();
 
@@ -29,7 +38,7 @@ const cachedFetchTags = async (userId: string) => {
 };
 
 const searchParamsSchema = object({
-  view: fallback(GalleryViewSchema, "masonry"),
+  view: fallback(GalleryViewSchema, "timeline"),
   page: fallback(string(), "1"),
 });
 
@@ -49,17 +58,22 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 }
 
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userId]">) {
+  // ユーザーページのユーザーを取得
   const { userId } = await params;
-
   const user = await cachedFetchUserById(userId);
 
-  // ユーザーが存在しない場合は404
+  // 存在しない場合は404
   if (!user) {
     notFound();
   }
 
-  const fetchTagsResult = await cachedFetchTags(userId);
+  // ログイン中のユーザーを取得
+  const { env } = getCloudflareContext();
+  const { session } = await getUserSession(env.DB);
+  const isOwner = user.id === session?.user?.id;
 
+  // 上位のタグ一覧を取得
+  const fetchTagsResult = await cachedFetchTags(userId);
   const tags = fetchTagsResult.success ? fetchTagsResult.data : [];
 
   const { view, page: pageStr } = parse(searchParamsSchema, await searchParams);
@@ -83,7 +97,16 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
         {tags.length > 0 && <TagLinks className="col-start-2" tags={tags} userId={userId} />}
-        <UserPageContents user={user} view={view} currentPage={currentPage} />
+
+        {isOwner && (
+          <div className="col-start-2">
+            <ImageDropArea title="あたらしい画像を投稿する" />
+          </div>
+        )}
+
+        <Suspense fallback={<Loading className="col-start-2 py-16" />}>
+          <UserPageContents user={user} view={view} currentPage={currentPage} />
+        </Suspense>
       </div>
     </div>
   );

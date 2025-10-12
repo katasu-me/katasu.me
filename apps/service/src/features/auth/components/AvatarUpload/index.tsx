@@ -1,36 +1,50 @@
 "use client";
 
 import Image from "next/image";
-import { type ChangeEvent, type ComponentPropsWithoutRef, type MouseEvent, useRef, useState } from "react";
+import {
+  type ChangeEvent,
+  type ComponentPropsWithoutRef,
+  type KeyboardEvent,
+  type MouseEvent,
+  useRef,
+  useState,
+} from "react";
 import Cropper, { type Area, type Point } from "react-easy-crop";
 import { twMerge } from "tailwind-merge";
 import IconClose from "@/assets/icons/close.svg";
 import IconPlus from "@/assets/icons/plus.svg";
+import IconReload from "@/assets/icons/reload.svg";
+import IconZoomIn from "@/assets/icons/zoom-in.svg";
+import IconZoomOut from "@/assets/icons/zoom-out.svg";
 import Button from "@/components/Button";
 import Drawer from "@/components/Drawer";
+import FormErrorMessage from "@/components/FormErrorMessage";
 import { getCroppedImg } from "../../lib/cropImage";
 
 type Props = {
-  /** 選択されたファイルが変更された */
   onFileChange?: (file: File | null) => void;
-
-  /** エラーメッセージ */
   error?: string;
-
-  /** 追加のクラス名 */
   className?: string;
 } & Omit<ComponentPropsWithoutRef<"input">, "type" | "accept" | "onChange">;
+
+const DEFAULT_CROP_VALUE = {
+  x: 0,
+  y: 0,
+} as const;
+
+const DEFAULT_ZOOM_VALUE = 1;
 
 export default function AvatarUpload({ onFileChange, error, className, ...props }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
+  const [crop, setCrop] = useState<Point>(DEFAULT_CROP_VALUE);
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       fileInputRef.current?.click();
@@ -40,19 +54,20 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
 
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        setImageSrc(e.target?.result as string);
-        setIsDrawerOpen(true);
-      };
-
-      reader.readAsDataURL(file);
-    } else {
+    if (!file) {
       setPreview(null);
       onFileChange?.(null);
+      return;
     }
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      setImageSrc(e.target?.result as string);
+      setIsDrawerOpen(true);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const handleCropComplete = (_croppedArea: Area, croppedAreaPixels: Area) => {
@@ -91,7 +106,7 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
     }
   };
 
-  const handleRemove = (e: MouseEvent) => {
+  const handleRemoveClick = (e: MouseEvent) => {
     e.stopPropagation();
     setPreview(null);
 
@@ -102,10 +117,15 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
     onFileChange?.(null);
   };
 
+  const handleZoomChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const zoom = Number.parseFloat(e.target.value);
+    setZoom(zoom);
+  };
+
   const resetCrop = () => {
     setImageSrc(null);
-    setCrop({ x: 0, y: 0 });
-    setZoom(1);
+    setCrop(DEFAULT_CROP_VALUE);
+    setZoom(DEFAULT_ZOOM_VALUE);
     setCroppedAreaPixels(null);
   };
 
@@ -120,28 +140,30 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
           type="button"
           onClick={openFilePicker}
           onKeyDown={handleKeyDown}
-          className="group interactive-scale-brightness relative size-32 cursor-pointer overflow-hidden rounded-full border-2 border-warm-black-50 border-dashed bg-warm-white"
+          className="group interactive-scale-brightness relative size-48 cursor-pointer overflow-hidden rounded-full border-2 border-warm-black-50 border-dashed bg-warm-white"
         >
           {preview ? (
             <>
               <Image src={preview} alt="アイコンのプレビュー" fill className="object-cover" />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-400 ease-magnetic group-hover:opacity-100">
-                <span className="text-white text-xs">変更</span>
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 text-white opacity-0 transition-opacity duration-400 ease-magnetic group-hover:opacity-100">
+                <IconReload className="size-5" />
+                <span className="text-sm">やっぱり変える</span>
               </div>
             </>
           ) : (
-            <div className="flex size-full flex-col items-center justify-center gap-1">
-              <IconPlus className="size-4" />
-              <span className="text-warm-black-50 text-xs">アイコン</span>
-            </div>
+            <>
+              <IconPlus className="mx-auto size-5 text-warm-black-50" />
+              <span className="mt-2 block text-sm text-warm-black-50">アイコンを追加</span>
+              <span className="mt-1 block text-warm-black-50 text-xs">(なくてもいいよ)</span>
+            </>
           )}
         </button>
 
         {preview && (
           <button
             type="button"
-            onClick={handleRemove}
-            className="interactive-scale-brightness absolute top-0 right-0 flex size-8 cursor-pointer items-center justify-center rounded-full border border-warm-white bg-warm-black text-white text-xs"
+            onClick={handleRemoveClick}
+            className="interactive-scale-brightness absolute top-2 right-2 flex size-9 cursor-pointer items-center justify-center rounded-full border border-warm-white bg-warm-black text-white text-xs"
           >
             <IconClose className="size-5" />
           </button>
@@ -157,18 +179,18 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
         {...props}
       />
 
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {error && <FormErrorMessage className="w-full" text={error} />}
 
       <Drawer
-        title="アイコンをクロップ"
+        title="アイコンを切り抜く"
         open={isDrawerOpen}
         onOpenChange={setIsDrawerOpen}
         innerClassname="max-w-2xl"
         handleOnly
       >
         {({ Description, Close }) => (
-          <div className="flex flex-col gap-4">
-            <Description hidden>アップロードした画像をクロップしてください</Description>
+          <div className="flex flex-col gap-8">
+            <Description hidden>アップロードした画像を切り抜いてください</Description>
             <div className="relative h-96 w-full overflow-hidden rounded-lg bg-warm-black-50/10">
               {imageSrc && (
                 <Cropper
@@ -185,30 +207,28 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
               )}
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2">
-                <span className="text-sm text-warm-black">ズーム:</span>
-                <input
-                  type="range"
-                  value={zoom}
-                  min={1}
-                  max={3}
-                  step={0.1}
-                  onChange={(e) => setZoom(Number.parseInt(e.target.value, 10))}
-                  className="flex-1 accent-warm-black"
-                />
-                <span className="w-12 text-sm text-warm-black-50">{zoom.toFixed(1)}x</span>
-              </label>
+            <div className="flex items-center gap-3">
+              <IconZoomOut className="size-5" />
+              <input
+                type="range"
+                value={zoom}
+                min={1}
+                max={3}
+                step={0.01}
+                onChange={handleZoomChange}
+                className="flex-1 accent-warm-black"
+              />
+              <IconZoomIn className="size-5" />
             </div>
 
             <div className="flex gap-4">
               <Close asChild>
                 <Button variant="outline" onClick={handleCancel} className="flex-1">
-                  キャンセル
+                  やめる
                 </Button>
               </Close>
               <Button variant="fill" onClick={handleCropConfirm} className="flex-1">
-                完了
+                これでOK
               </Button>
             </div>
           </div>

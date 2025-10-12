@@ -204,6 +204,7 @@ export default function TagInput({
         break;
 
       case " ":
+      case "　": // 全角スペース (U+3000)
         // IMEが入力中なら処理しない
         if (isComposingRef.current) {
           break;

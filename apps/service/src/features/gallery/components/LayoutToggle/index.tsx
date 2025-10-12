@@ -20,14 +20,14 @@ export default function LayoutToggle({ value, className }: Props) {
       aria-label="Layout selection"
     >
       <Link
-        href={{ search: "?view=masonry" }}
+        href={{ search: "?view=timeline" }}
         className={twMerge(
           "flex w-32 items-center justify-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
-          value === "masonry" ? selectedClassname : unselectedClassname,
+          value === "timeline" ? selectedClassname : unselectedClassname,
         )}
         role="tab"
-        aria-selected={value === "masonry"}
-        aria-controls="masonry-layout"
+        aria-selected={value === "timeline"}
+        aria-controls="timeline-layout"
       >
         <MasonryIcon className="h-4 w-4" />
         <span>一覧</span>

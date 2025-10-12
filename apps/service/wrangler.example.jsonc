@@ -45,6 +45,24 @@
       "bucket_name": "katasu-me-dev-images"
     }
   ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "NEXT_CACHE_DO_QUEUE",
+        "class_name": "DOQueueHandler"
+      },
+      {
+        "name": "NEXT_TAG_CACHE_DO_SHARDED",
+        "class_name": "DOShardedTagCache"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"]
+    }
+  ],
 
   /**
    * Environment Variables
@@ -52,7 +70,8 @@
    */
   "vars": {
     "BETTER_AUTH_URL": "<DEVELOPMENT_URL>",
-    "R2_PUBLIC_URL": "<DEVELOPMENT_R2_URL>"
+    "R2_PUBLIC_URL": "<DEVELOPMENT_R2_URL>",
+    "IMAGE_OPTIMIZER_URL": "<DEVELOPMENT_IMAGE_OPTIMIZER_URL>"
   },
   /**
    * Note: Use secrets to store sensitive data.
@@ -85,7 +104,8 @@
       },
       "vars": {
         "BETTER_AUTH_URL": "<PRODUCTION_URL>",
-        "R2_PUBLIC_URL": "<PRODUCTION_R2_URL>"
+        "R2_PUBLIC_URL": "<PRODUCTION_R2_URL>",
+        "IMAGE_OPTIMIZER_URL": "<PRODUCTION_IMAGE_OPTIMIZER_URL>"
       },
       "d1_databases": [
         {
@@ -103,6 +123,24 @@
         {
           "binding": "IMAGES_R2_BUCKET",
           "bucket_name": "katasu-me-prod-images"
+        }
+      ],
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "NEXT_CACHE_DO_QUEUE",
+            "class_name": "DOQueueHandler"
+          },
+          {
+            "name": "NEXT_TAG_CACHE_DO_SHARDED",
+            "class_name": "DOShardedTagCache"
+          }
+        ]
+      },
+      "migrations": [
+        {
+          "tag": "v1",
+          "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"]
         }
       ]
     }

@@ -4,8 +4,8 @@ import { useSearchParams } from "next/navigation";
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Pagination from "@/components/Pagination";
-import { IMAGES_PER_PAGE } from "../../constants/images";
-import FrameImage from "../FrameImage";
+import { IMAGES_PER_PAGE } from "../../../constants/images";
+import FrameImage from "../../FrameImage";
 
 const DEFAULT_COLUMNS = 2;
 
@@ -37,7 +37,7 @@ function getImageColumns(paginatedImages: Props["images"], columns: number) {
   return cols;
 }
 
-export default function MasonryImageLayout({
+export default function Timeline({
   images,
   totalImageCount,
   currentPage = 1,

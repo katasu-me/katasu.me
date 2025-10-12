@@ -1,10 +1,10 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { cachedFetchUserById } from "@/actions/user";
 import Header from "@/components/Header";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
+import { cachedFetchUserById } from "@/lib/user";
 import ImagePageContent from "./_components/ImagePageContent";
 import { DEFAULT_IMAGE_TITLE } from "./_constants/title";
 import { cachedFetchImage } from "./_lib/fetch";
