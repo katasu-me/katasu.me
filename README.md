@@ -1,6 +1,6 @@
 # katasu.me
 
-🪴 インターネットのかたすみにある、ぽつんと画像をおいておける場所。
+🪴 「じぶん」のための、インターネットのかたすみ
 
 ## 開発環境
 
@@ -41,4 +41,4 @@ open http://local.katasu.me:3000
 pnpm install
 pnpm run dev
 ```
-
+    
