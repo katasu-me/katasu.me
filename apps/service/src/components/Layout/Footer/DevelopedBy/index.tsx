@@ -8,12 +8,19 @@ export default function DevelopedBy() {
     <div className="flex flex-col items-center gap-3">
       <div className="text-xs">\ わたしがつくっています /</div>
       <a
-        className="relative block h-12 w-12 overflow-hidden rounded-full border border-warm-black transition-all duration-400 ease-magnetic hover:brightness-90"
+        className="interactive-scale flex items-center gap-2"
         href={AUTHOR_X_URL}
         target="_blank"
         rel="noopener noreferrer"
       >
-        <Image src={ImageNeko.src} alt={`${AUTHOR_NAME}のアイコン`} width={46} height={46} />
+        <Image
+          className="size-7 overflow-hidden rounded-full border border-warm-black"
+          src={ImageNeko.src}
+          alt={`${AUTHOR_NAME}のアイコン`}
+          width={46}
+          height={46}
+        />
+        <span className="tracking-widest">arrow2nd</span>
       </a>
     </div>
   );

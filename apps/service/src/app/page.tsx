@@ -84,7 +84,7 @@ export default function Home() {
         <StartButton className="my-32 mt-8" />
       </section>
 
-      <Footer logoType="developed-by" />
+      <Footer mode="developed-by" />
     </div>
   );
 }

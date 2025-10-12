@@ -14,10 +14,16 @@ export default meta;
 
 type Story = StoryObj<typeof Footer>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    mode: "logged-in-user",
+    userId: "user",
+    username: "name",
+  },
+};
 
 export const WithDevelopedBy: Story = {
   args: {
-    logoType: "developed-by",
+    mode: "developed-by",
   },
 };
