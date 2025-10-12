@@ -3,19 +3,23 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { unstable_cacheTag as cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
+import { Loading } from "@/components/Loading";
+import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
+import { getUserSession } from "@/lib/auth";
 import { tagPageCacheTag } from "@/lib/cache-tags";
 import { generateMetadataTitle } from "@/lib/meta";
 import { cachedFetchUserById } from "@/lib/user";
 import TagPageContents from "./_components/TagPageContents";
 
 const searchParamsSchema = object({
-  view: fallback(GalleryViewSchema, "masonry"),
+  view: fallback(GalleryViewSchema, "timeline"),
   page: fallback(string(), "1"),
 });
 
@@ -69,13 +73,18 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
 
   const tag = fetchTagResult.data;
 
-  // ユーザーを取得
+  // ユーザーページのユーザーを取得
   const user = await cachedFetchUserById(tag.userId);
 
-  // ユーザーが存在しない場合は404
+  // 存在しない場合は404
   if (!user) {
     notFound();
   }
+
+  // ログイン中のユーザーを取得
+  const { env } = getCloudflareContext();
+  const { session } = await getUserSession(env.DB);
+  const isOwner = user.id === session?.user?.id;
 
   const { view, page: pageStr } = parse(searchParamsSchema, await searchParams);
   const currentPage = Number.parseInt(pageStr, 10);
@@ -99,7 +108,15 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
       <h1 className="col-start-2 text-4xl">{`#${tag.name}`}</h1>
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-        <TagPageContents tag={tag} view={view} currentPage={currentPage} />
+        {isOwner && (
+          <div className="col-start-2">
+            <ImageDropArea title="あたらしい画像を投稿する" />
+          </div>
+        )}
+
+        <Suspense fallback={<Loading className="col-start-2 py-16" />}>
+          <TagPageContents tag={tag} view={view} currentPage={currentPage} />
+        </Suspense>
       </div>
     </div>
   );

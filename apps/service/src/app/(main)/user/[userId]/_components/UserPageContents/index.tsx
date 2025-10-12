@@ -12,13 +12,16 @@ import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
 import GalleryView from "@/features/gallery/components/GalleryView";
-import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
 import { userPageCacheTag } from "@/lib/cache-tags";
-import { getUserSession } from "@/lib/auth";
 
+/**
+ * ユーザーの投稿数を取得
+ * @param userId ユーザーID
+ * @return 画像総数
+ */
 const cachedFetchTotalImageCount = async (userId: string) => {
   "use cache";
 
@@ -29,6 +32,12 @@ const cachedFetchTotalImageCount = async (userId: string) => {
   return fetchTotalImageCountByUserId(env.DB, userId);
 };
 
+/**
+ * ユーザーが投稿した画像を取得
+ * @param userId ユーザーID
+ * @param options 取得オプション
+ * @return 画像一覧
+ */
 const cachedFetchImages = async (userId: string, options: FetchImagesOptions) => {
   "use cache";
 
@@ -39,6 +48,11 @@ const cachedFetchImages = async (userId: string, options: FetchImagesOptions) =>
   return fetchImagesByUserId(env.DB, userId, options);
 };
 
+/**
+ * ユーザーが投稿した画像をランダムで取得
+ * @param userId ユーザーID
+ * @return 画像一覧
+ */
 const cachedFetchRandomImages = async (userId: string) => {
   "use cache";
 
@@ -56,6 +70,8 @@ type Props = {
 };
 
 export default async function UserPageContents({ user, view, currentPage = 1 }: Props) {
+  await new Promise((resolve) => setTimeout(resolve, 10000));
+
   // 総画像枚数を取得
   const fetchTotalImageCountResult = await cachedFetchTotalImageCount(user.id);
 
@@ -64,30 +80,16 @@ export default async function UserPageContents({ user, view, currentPage = 1 }: 
     return <Message message="画像の取得に失敗しました" icon="error" />;
   }
 
-  // ログインユーザーのセッションを取得
-  const { env } = getCloudflareContext();
-  const { session } = await getUserSession(env.DB);
-  const isOwner = session?.user?.id === user.id;
-
   // 0枚ならからっぽ
   const totalImageCount = fetchTotalImageCountResult.data;
   if (totalImageCount <= 0) {
-    return (
-      <>
-        {isOwner && (
-          <div className="col-start-2">
-            <ImageDropArea title="あたらしい画像を投稿する" />
-          </div>
-        )}
-        <Message message="からっぽです" />
-      </>
-    );
+    return <Message message="からっぽです" />;
   }
 
   let fetchUserImagesResult: ActionResult<ImageWithTags[]>;
 
   switch (view) {
-    case "masonry": {
+    case "timeline": {
       const offset = IMAGES_PER_PAGE * (currentPage - 1);
 
       // offsetが総画像枚数を超えていたら404
@@ -117,5 +119,5 @@ export default async function UserPageContents({ user, view, currentPage = 1 }: 
 
   const images = fetchUserImagesResult.data.map((image) => toFrameImageProps(image, user.id));
 
-  return <GalleryView view={view} images={images} totalImageCount={totalImageCount} currentPage={currentPage} showUploadArea={isOwner} />;
+  return <GalleryView view={view} images={images} totalImageCount={totalImageCount} currentPage={currentPage} />;
 }

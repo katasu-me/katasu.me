@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
 import type FrameImage from "@/features/gallery/components/FrameImage";
-import MasonryImageLayout from "./index";
+import Timeline from "./index";
 
 const sampleImages: ComponentProps<typeof FrameImage>[] = [
   {
@@ -103,9 +103,9 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
 ];
 
 const meta = {
-  title: "Gallery/MasonryImageLayout",
+  title: "Gallery/GalleryView/Timeline",
   tags: ["autodocs"],
-  component: MasonryImageLayout,
+  component: Timeline,
   parameters: {
     layout: "fullscreen",
   },
@@ -120,7 +120,7 @@ const meta = {
     images: sampleImages,
     totalImageCount: sampleImages.length,
   },
-} satisfies Meta<typeof MasonryImageLayout>;
+} satisfies Meta<typeof Timeline>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

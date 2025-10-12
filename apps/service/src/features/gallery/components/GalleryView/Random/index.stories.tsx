@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import DraggableImages from "./";
+import Random from "./";
 
 const meta = {
   title: "Gallery/DraggableImages",
-  component: DraggableImages,
+  component: Random,
   parameters: {
     layout: "fullscreen",
   },
@@ -14,7 +14,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof DraggableImages>;
+} satisfies Meta<typeof Random>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

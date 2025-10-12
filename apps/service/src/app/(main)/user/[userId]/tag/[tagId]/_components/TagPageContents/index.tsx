@@ -9,12 +9,10 @@ import { unstable_cacheTag as cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
 import GalleryView from "@/features/gallery/components/GalleryView";
-import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
 import { tagPageCacheTag } from "@/lib/cache-tags";
-import { getUserSession } from "@/lib/auth";
 
 const cachedFetchTotalImageCount = async (userId: string, tagId: string) => {
   "use cache";
@@ -51,24 +49,10 @@ export default async function TagPageContents({ tag, view, currentPage = 1 }: Pr
     return <Message message="画像の取得に失敗しました" icon="error" />;
   }
 
-  // ログインユーザーのセッションを取得
-  const { env } = getCloudflareContext();
-  const { session } = await getUserSession(env.DB);
-  const isOwner = session?.user?.id === tag.userId;
-
   // 0枚ならからっぽ
   const totalImageCount = fetchTotalImageCountResult.data;
   if (totalImageCount <= 0) {
-    return (
-      <>
-        {isOwner && (
-          <div className="col-start-2">
-            <ImageDropArea title="あたらしい画像を投稿する" defaultTags={[tag.name]} />
-          </div>
-        )}
-        <Message message="からっぽです" />
-      </>
-    );
+    return <Message message="からっぽです" />;
   }
 
   const offset = IMAGES_PER_PAGE * (currentPage - 1);
@@ -98,7 +82,6 @@ export default async function TagPageContents({ tag, view, currentPage = 1 }: Pr
       totalImageCount={totalImageCount}
       currentPage={currentPage}
       defaultTags={[tag.name]}
-      showUploadArea={isOwner}
     />
   );
 }
