@@ -23,11 +23,18 @@ type Props = {
   className?: string;
 } & Omit<ComponentPropsWithoutRef<"input">, "type" | "accept" | "onChange">;
 
+const DEFAULT_CROP_VALUE = {
+  x: 0,
+  y: 0,
+} as const;
+
+const DEFAULT_ZOOM_VALUE = 1;
+
 export default function AvatarUpload({ onFileChange, error, className, ...props }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
+  const [crop, setCrop] = useState<Point>(DEFAULT_CROP_VALUE);
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -113,8 +120,8 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
 
   const resetCrop = () => {
     setImageSrc(null);
-    setCrop({ x: 0, y: 0 });
-    setZoom(1);
+    setCrop(DEFAULT_CROP_VALUE);
+    setZoom(DEFAULT_ZOOM_VALUE);
     setCroppedAreaPixels(null);
   };
 
