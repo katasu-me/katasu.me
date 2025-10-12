@@ -1,33 +1,33 @@
 /**
- * ユーザーデータのキャッシュタグを生成
+ * ユーザーデータのキャッシュタグ
  */
 export function userDataCacheTag(userId: string): string {
   return `user-${userId}`;
 }
 
 /**
- * ユーザーページのキャッシュタグを生成
+ * ユーザーページのキャッシュタグ
  */
 export function userPageCacheTag(userId: string): string {
   return `/user/${userId}`;
 }
 
 /**
- * ユーザーのタグ一覧ページのキャッシュタグを生成
+ * タグ一覧に関連するキャッシュタグ
  */
-export function userTagsPageCacheTag(userId: string): string {
+export function tagListCacheTag(userId: string): string {
   return `/user/${userId}/tag`;
 }
 
 /**
- * タグページのキャッシュタグを生成
+ * タグページのキャッシュタグ
  */
 export function tagPageCacheTag(userId: string, tagId: string): string {
   return `/user/${userId}/tag/${tagId}`;
 }
 
 /**
- * 画像ページのキャッシュタグを生成
+ * 画像ページのキャッシュタグ
  */
 export function imagePageCacheTag(userId: string, imageId: string): string {
   return `/user/${userId}/image/${imageId}`;

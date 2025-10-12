@@ -1,5 +1,3 @@
-"use server";
-
 import { getUserById, type User } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { unstable_cacheTag as cacheTag } from "next/cache";

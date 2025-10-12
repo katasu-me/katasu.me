@@ -22,6 +22,7 @@
       "dependsOn": ["^test"]
     },
     "dev": {
+      "env": ["R2_PUBLIC_URL", "BETTER_AUTH_*", "GOOGLE_*", "IMAGE_OPTIMIZER_*"],
       "persistent": true,
       "cache": false
     },
@@ -31,3 +32,4 @@
     }
   }
 }
+
