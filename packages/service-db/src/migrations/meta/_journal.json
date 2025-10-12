@@ -78,6 +78,13 @@
       "when": 1760275938473,
       "tag": "0010_typical_the_professor",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1760277727332,
+      "tag": "0011_shiny_bastion",
+      "breakpoints": true
     }
   ]
 }
