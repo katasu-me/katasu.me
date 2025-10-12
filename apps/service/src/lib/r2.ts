@@ -91,7 +91,7 @@ export function getImageUrl(userId: string, imageId: string, variant: "original"
   const bucketPublicUrl = process.env.NEXT_PUBLIC_R2_URL;
 
   if (!bucketPublicUrl) {
-    throw new Error("NEXT_PUBLIC_R2_URLがありません");
+    throw new Error("R2_PUBLIC_URLが設定されていません");
   }
 
   const suffix = variant === "thumbnail" ? "_thumbnail" : "";
