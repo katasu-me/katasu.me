@@ -2,10 +2,10 @@ import { getFormProps, getInputProps, type SubmissionResult, useForm, useInputCo
 import { parseWithValibot } from "@conform-to/valibot";
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
+import FormErrorMessage from "@/components/FormErrorMessage";
 import { editImageAction } from "@/features/gallery/actions/edit";
 import { usePreventFormReset } from "@/features/gallery/hooks/usePreventFormReset";
 import { editImageSchema, MAX_TAG_COUNT, MAX_TAG_TEXT_LENGTH, MAX_TITLE_LENGTH } from "@/features/gallery/schemas/edit";
-import FormErrorMessage from "../../FormErrorMessage";
 import FormInputFields from "../../FormInputFields";
 import FormSubmitButton from "../../FormSubmitButton";
 

@@ -13,10 +13,12 @@ import Cropper, { type Area, type Point } from "react-easy-crop";
 import { twMerge } from "tailwind-merge";
 import IconClose from "@/assets/icons/close.svg";
 import IconPlus from "@/assets/icons/plus.svg";
+import IconReload from "@/assets/icons/reload.svg";
 import IconZoomIn from "@/assets/icons/zoom-in.svg";
 import IconZoomOut from "@/assets/icons/zoom-out.svg";
 import Button from "@/components/Button";
 import Drawer from "@/components/Drawer";
+import FormErrorMessage from "@/components/FormErrorMessage";
 import { getCroppedImg } from "../../lib/cropImage";
 
 type Props = {
@@ -104,7 +106,7 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
     }
   };
 
-  const handleRemove = (e: MouseEvent) => {
+  const handleRemoveClick = (e: MouseEvent) => {
     e.stopPropagation();
     setPreview(null);
 
@@ -143,8 +145,9 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
           {preview ? (
             <>
               <Image src={preview} alt="アイコンのプレビュー" fill className="object-cover" />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-400 ease-magnetic group-hover:opacity-100">
-                <span className="text-white text-xs">変更</span>
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 text-white opacity-0 transition-opacity duration-400 ease-magnetic group-hover:opacity-100">
+                <IconReload className="size-5" />
+                <span className="text-sm">やっぱり変える</span>
               </div>
             </>
           ) : (
@@ -159,8 +162,8 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
         {preview && (
           <button
             type="button"
-            onClick={handleRemove}
-            className="interactive-scale-brightness absolute top-0 right-0 flex size-8 cursor-pointer items-center justify-center rounded-full border border-warm-white bg-warm-black text-white text-xs"
+            onClick={handleRemoveClick}
+            className="interactive-scale-brightness absolute top-2 right-2 flex size-9 cursor-pointer items-center justify-center rounded-full border border-warm-white bg-warm-black text-white text-xs"
           >
             <IconClose className="size-5" />
           </button>
@@ -176,7 +179,7 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
         {...props}
       />
 
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {error && <FormErrorMessage className="w-full" text={error} />}
 
       <Drawer
         title="アイコンを切り抜く"

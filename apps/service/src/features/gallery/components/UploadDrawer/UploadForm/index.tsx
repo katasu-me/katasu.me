@@ -3,6 +3,7 @@ import { parseWithValibot } from "@conform-to/valibot";
 import { motion } from "motion/react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import FormErrorMessage from "@/components/FormErrorMessage";
 import { DEFAULT_TRANSITION } from "@/constants/animation";
 import { uploadAction } from "@/features/gallery/actions/upload";
 import { usePreventFormReset } from "@/features/gallery/hooks/usePreventFormReset";
@@ -12,7 +13,6 @@ import {
   MAX_TITLE_LENGTH,
   uploadImageSchema,
 } from "@/features/gallery/schemas/upload";
-import FormErrorMessage from "../../FormErrorMessage";
 import FormInputFields from "../../FormInputFields";
 import FormSubmitButton from "../../FormSubmitButton";
 import FrameImage from "../../FrameImage";
