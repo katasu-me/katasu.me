@@ -16,7 +16,7 @@ export default function SignInDrawer({ children }: PropsWithChildren) {
       provider: "google",
       callbackURL: "/auth/redirect",
       newUserCallbackURL: "/auth/signup",
-      errorCallbackURL: "/error", // TODO: エラーページを作成
+      errorCallbackURL: "/auth/error",
     });
   };
 
