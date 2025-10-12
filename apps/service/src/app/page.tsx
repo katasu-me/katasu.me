@@ -13,8 +13,9 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center">
           <LogoImage className="pc:w-64 w-48" />
           <h1 className="mt-16 pc:mt-20 text-center font-normal pc:text-2xl text-lg leading-7 pc:leading-9 pc:tracking-[0.2em] tracking-[0.1em]">
-            インターネットのかたすみにある、 <br />
-            ぽつんと画像をおいておける場所。
+            「じぶん」のための、
+            <br />
+            インターネットのかたすみ
           </h1>
           <SignInDrawer>
             <Button className="mt-8 pc:mt-10 w-48">はじめる</Button>
@@ -23,25 +24,36 @@ export default function Home() {
       </section>
 
       <section className="mx-auto text-center">
-        <div className="text-gray-700 leading-[1.6] tracking-[0.04em] [&_p:first-child]:mt-0 [&_p]:mb-6">
+        <div className="flex flex-col gap-6 text-warm-black leading-[1.6] tracking-[0.04em]">
           <p>
-            <BudouX>{`${SITE_NAME}はインターネットのかたすみにある、画像をおいておける場所です。`}</BudouX>
+            <BudouX>{`${SITE_NAME}はインターネットのかたすみにある、ぽつんと画像をおいておける場所です。`}</BudouX>
           </p>
           <p>
             <BudouX>「せっかくだから写真や画像を公開したい」</BudouX>
-            <br />
             <BudouX>「けど、SNSはなんか違うかも……」</BudouX>
           </p>
           <p>
-            <BudouX>みたいなシャイな気持ちから生まれました。</BudouX>
+            <BudouX>みたいな気持ちから生まれました。</BudouX>
           </p>
+
+          <p className="mt-6">
+            <BudouX>じぶんのための空間をつくる。</BudouX>
+          </p>
+
           <p>
-            <BudouX>気になった人がふらっと入って、ふらっと去っていく</BudouX>
-            <br />
-            <BudouX>そんなかたすみの空間をめざしています。</BudouX>
+            <BudouX>気になった人がふらっと入って、ふらっと去っていく。</BudouX>
+          </p>
+
+          <p>
+            <BudouX>そんなかたすみの空間をはじめませんか？</BudouX>
           </p>
         </div>
-        <DemoImages className="mx-auto my-32" />
+
+        <DemoImages className="mx-auto mt-32 mb-16" />
+
+        <SignInDrawer>
+          <Button className="my-32 mt-8 w-48">はじめる</Button>
+        </SignInDrawer>
       </section>
 
       <Footer logoType="developed-by" />
