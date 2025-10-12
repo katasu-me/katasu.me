@@ -106,9 +106,8 @@ export function getUserAvatarUrl(imageKey: string | null): string {
   }
 
   const bucketPublicUrl = getBucketPublicUrl();
-  const safeImageKey = sanitizePathComponent(imageKey);
 
-  return `${bucketPublicUrl}/${safeImageKey}`;
+  return `${bucketPublicUrl}/${imageKey}`;
 }
 
 /**
