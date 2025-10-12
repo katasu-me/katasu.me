@@ -38,7 +38,7 @@ open http://local.katasu.me:3000
 ### 起動
 
 ```sh
-bun install
-bun run dev
+pnpm install
+pnpm run dev
 ```
 
