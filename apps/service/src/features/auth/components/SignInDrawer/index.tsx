@@ -19,7 +19,7 @@ export default function SignInDrawer({ children }: PropsWithChildren) {
   };
 
   return (
-    <Drawer title={greeting} triggerChildren={children} hiddenTitle={isLoading} dismissible={isLoading}>
+    <Drawer title={greeting} triggerChildren={children} hiddenTitle={isLoading} dismissible={!isLoading}>
       {({ Description }) => (
         <>
           <Description className={twJoin("mb-6 text-gray-700 text-sm", isLoading && "sr-only")}>
