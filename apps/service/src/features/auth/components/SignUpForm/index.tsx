@@ -18,13 +18,6 @@ const defaultResult: SubmissionResult<string[]> = {
   },
 };
 
-// TODO:
-// - [ ] サーバー側でのバリデーションエラーが表示に反映されるか未確認
-// - [ ] conformの使い方が終わってるので要修正
-// - [ ] クライアント側のバリデーションタイミングを調整
-// - [ ] 送信中表示
-// - [ ] 利用規約、プライバシーポリシーのリンク先を修正
-
 export default function SignUpForm() {
   const [lastResult, action] = useActionState(signupAction, undefined);
 
@@ -63,7 +56,7 @@ export default function SignUpForm() {
         <Input
           {...getInputProps(fields.username, { type: "text" })}
           label="ユーザー名"
-          placeholder="ユーザー名を入力"
+          placeholder="すてきな名前"
           error={fields.username.errors?.[0]}
           maxLength={MAX_USERNAME_LENGTH}
           currentLength={fields.username.value?.length ?? 0}
@@ -101,7 +94,7 @@ export default function SignUpForm() {
         </div>
 
         <Button type="submit" variant="fill" className="w-full" disabled={!isFormValid}>
-          新規登録
+          登録する
         </Button>
       </div>
     </form>

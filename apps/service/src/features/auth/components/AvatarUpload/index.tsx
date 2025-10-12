@@ -11,13 +11,8 @@ import Drawer from "@/components/Drawer";
 import { getCroppedImg } from "../../lib/cropImage";
 
 type Props = {
-  /** 選択されたファイルが変更された */
   onFileChange?: (file: File | null) => void;
-
-  /** エラーメッセージ */
   error?: string;
-
-  /** 追加のクラス名 */
   className?: string;
 } & Omit<ComponentPropsWithoutRef<"input">, "type" | "accept" | "onChange">;
 
@@ -120,7 +115,7 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
           type="button"
           onClick={openFilePicker}
           onKeyDown={handleKeyDown}
-          className="group interactive-scale-brightness relative size-32 cursor-pointer overflow-hidden rounded-full border-2 border-warm-black-50 border-dashed bg-warm-white"
+          className="group interactive-scale-brightness relative size-48 cursor-pointer overflow-hidden rounded-full border-2 border-warm-black-50 border-dashed bg-warm-white"
         >
           {preview ? (
             <>
@@ -130,10 +125,11 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
               </div>
             </>
           ) : (
-            <div className="flex size-full flex-col items-center justify-center gap-1">
-              <IconPlus className="size-4" />
-              <span className="text-warm-black-50 text-xs">アイコン</span>
-            </div>
+            <>
+              <IconPlus className="mx-auto size-5 text-warm-black-50" />
+              <span className="mt-2 block text-sm text-warm-black-50">アイコンを追加</span>
+              <span className="mt-1 block text-warm-black-50 text-xs">(なくてもいいよ)</span>
+            </>
           )}
         </button>
 
