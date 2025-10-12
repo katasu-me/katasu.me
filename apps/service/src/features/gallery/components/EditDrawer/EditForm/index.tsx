@@ -69,17 +69,19 @@ export default function EditForm({ imageId, defaultTitle = "", defaultTags = [],
       {form.errors && form.errors.length > 0 && <FormErrorMessage text={form.errors[0]} />}
       {fields.imageId.errors?.at(0) && <FormErrorMessage text={fields.imageId.errors[0]} />}
 
-      <FormInputFields
-        fields={{ title: fields.title, tags: fields.tags }}
-        tagInput={tagInput}
-        handleTagChange={handleTagChange}
-        titlePlaceholder="タイトルを入力"
-        tagPlaceholder="タグを追加"
-        maxTitleLength={MAX_TITLE_LENGTH}
-        maxTagCount={MAX_TAG_COUNT}
-        maxTagTextLength={MAX_TAG_TEXT_LENGTH}
-        disabled={pending}
-      />
+      <div className="flex flex-col gap-4">
+        <FormInputFields
+          fields={{ title: fields.title, tags: fields.tags }}
+          tagInput={tagInput}
+          handleTagChange={handleTagChange}
+          titlePlaceholder="タイトルを入力"
+          tagPlaceholder="タグを追加"
+          maxTitleLength={MAX_TITLE_LENGTH}
+          maxTagCount={MAX_TAG_COUNT}
+          maxTagTextLength={MAX_TAG_TEXT_LENGTH}
+          disabled={pending}
+        />
+      </div>
 
       <FormSubmitButton disabled={!isFormValid} label="変更" pendingLabel="変更中…" />
     </form>
