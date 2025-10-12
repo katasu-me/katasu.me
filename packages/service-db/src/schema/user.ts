@@ -12,13 +12,14 @@ export const user = sqliteTable("user", {
     .notNull()
     .references(() => plan.id, { onDelete: "cascade" })
     .default("free"),
+  // FIXME: これはプランに紐づくものでは
   maxPhotos: integer("maxPhotos").notNull().default(1000),
-  isBanned: integer("isBanned", { mode: "boolean" }).notNull().default(false),
   createdAt: integer("createdAt", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   updatedAt: integer("updatedAt", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`)
     .$onUpdate(() => new Date()),
+  bannedAt: integer("bannedAt", { mode: "timestamp" }),
 });
 
 export type User = typeof user.$inferSelect;

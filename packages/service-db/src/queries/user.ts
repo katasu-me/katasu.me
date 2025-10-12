@@ -84,5 +84,12 @@ export async function updateUser(
 export async function banUser(dbInstance: AnyD1Database, userId: string): Promise<User | undefined> {
   const db = getDB(dbInstance);
 
-  return await db.update(user).set({ isBanned: true }).where(eq(user.id, userId)).returning().get();
+  return await db
+    .update(user)
+    .set({
+      bannedAt: new Date(),
+    })
+    .where(eq(user.id, userId))
+    .returning()
+    .get();
 }
