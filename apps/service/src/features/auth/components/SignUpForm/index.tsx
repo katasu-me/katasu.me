@@ -94,7 +94,7 @@ export default function SignUpForm() {
         </div>
 
         <Button type="submit" variant="fill" className="w-full" disabled={!isFormValid}>
-          登録する
+          新規登録する
         </Button>
       </div>
     </form>
