@@ -11,25 +11,18 @@ const meta = {
   argTypes: {
     value: {
       control: "radio",
-      options: ["masonry", "random"],
+      options: ["timeline", "random"],
     },
+  },
+  args: {
+    value: "timeline",
   },
 } satisfies Meta<typeof LayoutToggle>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    value: "masonry",
-  },
-};
-
-export const Masonry: Story = {
-  args: {
-    value: "masonry",
-  },
-};
+export const Default: Story = {};
 
 export const Random: Story = {
   args: {

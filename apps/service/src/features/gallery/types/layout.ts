@@ -1,1 +1,1 @@
-export type ImageLayoutType = "masonry" | "random";
+export type ImageLayoutType = "timeline" | "random";

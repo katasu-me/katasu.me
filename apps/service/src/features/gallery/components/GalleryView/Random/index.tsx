@@ -2,7 +2,7 @@
 
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import type FrameImage from "../FrameImage";
+import type FrameImage from "../../FrameImage";
 import DraggableImage from "./DraggableImage";
 
 type Props = {
@@ -38,7 +38,7 @@ const getRandomPosition = (container?: HTMLDivElement | null): Position => {
   };
 };
 
-export default function DraggableImages({ images, className }: Props) {
+export default function Random({ images, className }: Props) {
   const [positions, setPositions] = useState<Position[]>([]);
 
   const containerRef = useRef<HTMLDivElement>(null);
