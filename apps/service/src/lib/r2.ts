@@ -22,21 +22,6 @@ type UploadToR2Options = {
 };
 
 /**
- * R2バケットのパブリックURLを取得
- * @returns R2バケットのパブリックURL
- * @throws 環境変数が設定されていない場合にエラーをスロー
- */
-function getBucketPublicUrl(): string {
-  const bucketPublicUrl = process.env.R2_PUBLIC_URL;
-
-  if (!bucketPublicUrl) {
-    throw new Error("R2_PUBLIC_URLが設定されていません");
-  }
-
-  return bucketPublicUrl;
-}
-
-/**
  * パスコンポーネントをサニタイズ
  * @param input サニタイズ対象の文字列
  * @returns サニタイズされた文字列
@@ -96,21 +81,6 @@ async function upload(r2: R2Bucket, key: string, options: UploadToR2Options): Pr
 }
 
 /**
- * ユーザーのアバターURLを取得
- * @param imageKey R2のキー
- * @returns アバターURL
- */
-export function getUserAvatarUrl(imageKey: string | null): string {
-  if (!imageKey) {
-    return "/images/default-avatar-icon.avif";
-  }
-
-  const bucketPublicUrl = getBucketPublicUrl();
-
-  return `${bucketPublicUrl}/${imageKey}`;
-}
-
-/**
  * 画像のURLを取得
  * @param userId ユーザーID
  * @param imageId 画像ID
@@ -118,7 +88,12 @@ export function getUserAvatarUrl(imageKey: string | null): string {
  * @returns 画像URL
  */
 export function getImageUrl(userId: string, imageId: string, variant: "original" | "thumbnail" = "thumbnail"): string {
-  const bucketPublicUrl = getBucketPublicUrl();
+  const bucketPublicUrl = process.env.NEXT_PUBLIC_R2_URL;
+
+  if (!bucketPublicUrl) {
+    throw new Error("NEXT_PUBLIC_R2_URLがありません");
+  }
+
   const suffix = variant === "thumbnail" ? "_thumbnail" : "";
   return `${bucketPublicUrl}/images/${userId}/${imageId}${suffix}.webp`;
 }

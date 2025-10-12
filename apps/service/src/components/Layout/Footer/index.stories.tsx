@@ -14,11 +14,9 @@ export default meta;
 
 type Story = StoryObj<typeof Footer>;
 
-export const Default: Story = {
+export const LoggedInUser: Story = {
   args: {
     mode: "logged-in-user",
-    userId: "user",
-    username: "name",
   },
 };
 
