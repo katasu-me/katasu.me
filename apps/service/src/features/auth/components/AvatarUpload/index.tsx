@@ -1,7 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { type ChangeEvent, type ComponentPropsWithoutRef, type MouseEvent, useRef, useState } from "react";
+import {
+  type ChangeEvent,
+  type ComponentPropsWithoutRef,
+  type KeyboardEvent,
+  type MouseEvent,
+  useRef,
+  useState,
+} from "react";
 import Cropper, { type Area, type Point } from "react-easy-crop";
 import { twMerge } from "tailwind-merge";
 import IconClose from "@/assets/icons/close.svg";
@@ -23,9 +30,10 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       fileInputRef.current?.click();
@@ -35,19 +43,20 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
 
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        setImageSrc(e.target?.result as string);
-        setIsDrawerOpen(true);
-      };
-
-      reader.readAsDataURL(file);
-    } else {
+    if (!file) {
       setPreview(null);
       onFileChange?.(null);
+      return;
     }
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      setImageSrc(e.target?.result as string);
+      setIsDrawerOpen(true);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const handleCropComplete = (_croppedArea: Area, croppedAreaPixels: Area) => {
@@ -95,6 +104,11 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
     }
 
     onFileChange?.(null);
+  };
+
+  const handleZoomChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const zoom = Number.parseFloat(e.target.value);
+    setZoom(zoom);
   };
 
   const resetCrop = () => {
@@ -190,7 +204,7 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
                   min={1}
                   max={3}
                   step={0.1}
-                  onChange={(e) => setZoom(Number.parseInt(e.target.value, 10))}
+                  onChange={handleZoomChange}
                   className="flex-1 accent-warm-black"
                 />
                 <span className="w-12 text-sm text-warm-black-50">{zoom.toFixed(1)}x</span>
