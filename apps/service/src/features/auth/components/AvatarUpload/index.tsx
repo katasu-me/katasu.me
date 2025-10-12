@@ -13,6 +13,8 @@ import Cropper, { type Area, type Point } from "react-easy-crop";
 import { twMerge } from "tailwind-merge";
 import IconClose from "@/assets/icons/close.svg";
 import IconPlus from "@/assets/icons/plus.svg";
+import IconZoomIn from "@/assets/icons/zoom-in.svg";
+import IconZoomOut from "@/assets/icons/zoom-out.svg";
 import Button from "@/components/Button";
 import Drawer from "@/components/Drawer";
 import { getCroppedImg } from "../../lib/cropImage";
@@ -177,15 +179,15 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
       {error && <p className="text-red-600 text-sm">{error}</p>}
 
       <Drawer
-        title="アイコンをクロップ"
+        title="アイコンを切り抜く"
         open={isDrawerOpen}
         onOpenChange={setIsDrawerOpen}
         innerClassname="max-w-2xl"
         handleOnly
       >
         {({ Description, Close }) => (
-          <div className="flex flex-col gap-4">
-            <Description hidden>アップロードした画像をクロップしてください</Description>
+          <div className="flex flex-col gap-8">
+            <Description hidden>アップロードした画像を切り抜いてください</Description>
             <div className="relative h-96 w-full overflow-hidden rounded-lg bg-warm-black-50/10">
               {imageSrc && (
                 <Cropper
@@ -202,30 +204,28 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
               )}
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2">
-                <span className="text-sm text-warm-black">ズーム:</span>
-                <input
-                  type="range"
-                  value={zoom}
-                  min={1}
-                  max={3}
-                  step={0.1}
-                  onChange={handleZoomChange}
-                  className="flex-1 accent-warm-black"
-                />
-                <span className="w-12 text-sm text-warm-black-50">{zoom.toFixed(1)}x</span>
-              </label>
+            <div className="flex items-center gap-3">
+              <IconZoomOut className="size-5" />
+              <input
+                type="range"
+                value={zoom}
+                min={1}
+                max={3}
+                step={0.01}
+                onChange={handleZoomChange}
+                className="flex-1 accent-warm-black"
+              />
+              <IconZoomIn className="size-5" />
             </div>
 
             <div className="flex gap-4">
               <Close asChild>
                 <Button variant="outline" onClick={handleCancel} className="flex-1">
-                  キャンセル
+                  やめる
                 </Button>
               </Close>
               <Button variant="fill" onClick={handleCropConfirm} className="flex-1">
-                完了
+                これでOK
               </Button>
             </div>
           </div>
