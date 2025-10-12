@@ -3,9 +3,9 @@
 import { getFormProps, getInputProps, type SubmissionResult, useForm } from "@conform-to/react";
 import { parseWithValibot } from "@conform-to/valibot";
 import { useActionState } from "react";
-import Button from "@/components/Button";
 import FormErrorMessage from "@/components/FormErrorMessage";
 import Input from "@/components/Input";
+import FormSubmitButton from "@/features/gallery/components/FormSubmitButton";
 import { signupAction } from "../../actions/signup";
 import { MAX_USERNAME_LENGTH, signUpFormSchema } from "../../schemas/signup-form";
 import AvatarUpload from "../AvatarUpload";
@@ -97,9 +97,7 @@ export default function SignUpForm() {
           </label>
         </div>
 
-        <Button type="submit" variant="fill" className="w-full" disabled={!isFormValid}>
-          新規登録する
-        </Button>
+        <FormSubmitButton className="w-full" disabled={!isFormValid} label="新規登録する" pendingLabel="登録中…" />
       </div>
     </form>
   );

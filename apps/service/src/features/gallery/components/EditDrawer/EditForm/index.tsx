@@ -83,7 +83,7 @@ export default function EditForm({ imageId, defaultTitle = "", defaultTags = [],
         />
       </div>
 
-      <FormSubmitButton disabled={!isFormValid} label="変更" pendingLabel="変更中…" />
+      <FormSubmitButton className="mt-6 w-full" disabled={!isFormValid} label="変更" pendingLabel="変更中…" />
     </form>
   );
 }

@@ -268,7 +268,7 @@ export default function UploadForm({
         />
       </motion.div>
 
-      <FormSubmitButton disabled={!isFormValid} label="投稿" pendingLabel="投稿中…" />
+      <FormSubmitButton className="mt-6 w-full" disabled={!isFormValid} label="投稿" pendingLabel="投稿中…" />
     </form>
   );
 }
