@@ -110,7 +110,7 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
         {isOwner && (
           <div className="col-start-2">
-            <ImageDropArea title="あたらしい画像を投稿する" />
+            <ImageDropArea title="あたらしい画像を投稿する" defaultTags={[tag.name]} />
           </div>
         )}
 
