@@ -8,7 +8,6 @@ export const user = sqliteTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: integer("emailVerified", { mode: "boolean" }).notNull().default(false),
   image: text("image"),
-  hasAvatar: integer("has_avatar", { mode: "boolean" }).notNull().default(false),
   plan: text("plan")
     .notNull()
     .references(() => plan.id, { onDelete: "cascade" })

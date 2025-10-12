@@ -6,7 +6,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
 import { convertAvatarImage } from "@/lib/image-optimizer";
-import { uploadAvatarImage } from "@/lib/r2";
+import { generateR2Key, uploadAvatarImage } from "@/lib/r2";
 import { signUpFormSchema } from "../schemas/signup-form";
 
 export async function signupAction(_prevState: unknown, formData: FormData) {
@@ -50,13 +50,10 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
 
   try {
     // ユーザー情報を更新
-    const result = await updateUser(env.DB, session.user.id, {
+    await updateUser(env.DB, session.user.id, {
       name: submission.value.username,
-      hasAvatar: !!submission.value.avatar,
+      image: generateR2Key("avatar", session.user.id),
     });
-
-    // TODO: 消す
-    console.log("ユーザー更新結果:", result);
   } catch (error) {
     console.error("新規登録エラー:", error);
 

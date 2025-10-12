@@ -5,11 +5,11 @@ import { getUserAvatarUrl } from "@/lib/r2";
 type Props = {
   userId: string;
   username: string;
-  hasAvatar: boolean;
+  iconImageKey: string | null;
 };
 
-export default function UserIcon({ userId, username, hasAvatar }: Props) {
-  const avatarImageUrl = getUserAvatarUrl(userId, hasAvatar);
+export default function UserIcon({ userId, username, iconImageKey }: Props) {
+  const avatarImageUrl = getUserAvatarUrl(iconImageKey);
   const alt = `${username}さんのアイコン`;
 
   return (

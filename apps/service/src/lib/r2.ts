@@ -67,7 +67,9 @@ export function generateR2Key(
     if (!safeImageId) {
       throw new Error("画像IDが必要です");
     }
+
     const baseKey = `images/${safeUserId}/${safeImageId}`;
+
     return variant === "thumbnail" ? `${baseKey}_thumbnail.webp` : `${baseKey}.webp`;
   }
 
@@ -95,18 +97,18 @@ async function upload(r2: R2Bucket, key: string, options: UploadToR2Options): Pr
 
 /**
  * ユーザーのアバターURLを取得
- * @param userId ユーザーID
- * @param hasAvatar アバターが設定されているかどうか
+ * @param imageKey R2のキー
  * @returns アバターURL
  */
-export function getUserAvatarUrl(userId: string, hasAvatar: boolean): string {
-  const bucketPublicUrl = getBucketPublicUrl();
-
-  if (hasAvatar) {
-    return `${bucketPublicUrl}/avatars/${userId}.webp`;
+export function getUserAvatarUrl(imageKey: string | null): string {
+  if (!imageKey) {
+    return "/images/default-avatar-icon.webp";
   }
 
-  return "/images/default-avatar-icon.webp";
+  const bucketPublicUrl = getBucketPublicUrl();
+  const safeImageKey = sanitizePathComponent(imageKey);
+
+  return `${bucketPublicUrl}/${safeImageKey}`;
 }
 
 /**
