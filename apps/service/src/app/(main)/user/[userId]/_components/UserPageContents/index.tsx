@@ -70,8 +70,6 @@ type Props = {
 };
 
 export default async function UserPageContents({ user, view, currentPage = 1 }: Props) {
-  await new Promise((resolve) => setTimeout(resolve, 10000));
-
   // 総画像枚数を取得
   const fetchTotalImageCountResult = await cachedFetchTotalImageCount(user.id);
 
