@@ -10,8 +10,8 @@ type Props = PropsWithChildren<{
   className?: string;
 }>;
 
-export default function LoginButton({ provider, onLoading, className, children }: Props) {
-  const doSignInWithGoogle = async () => {
+export default function SignInButton({ provider, onLoading, className, children }: Props) {
+  const doSignIn = async () => {
     onLoading();
 
     await signIn.social({
@@ -24,7 +24,7 @@ export default function LoginButton({ provider, onLoading, className, children }
 
   return (
     <div className={twMerge("w-full", className)}>
-      <Button className="flex w-full items-center justify-center gap-2" variant="fill" onClick={doSignInWithGoogle}>
+      <Button className="flex w-full items-center justify-center gap-2" variant="fill" onClick={doSignIn}>
         {children}
       </Button>
     </div>

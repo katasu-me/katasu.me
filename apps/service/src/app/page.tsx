@@ -1,3 +1,7 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import Link from "next/link";
+import { twMerge } from "tailwind-merge";
+import IconPlant from "@/assets/icons/plant.svg";
 import LogoImage from "@/assets/logo.svg";
 import BudouX from "@/components/BudouX";
 import Button from "@/components/Button";
@@ -5,6 +9,34 @@ import DemoImages from "@/components/DemoImages";
 import Footer from "@/components/Layout/Footer";
 import { SITE_NAME } from "@/constants/site";
 import SignInDrawer from "@/features/auth/components/SignInDrawer";
+import { getUserSession } from "@/lib/auth";
+
+async function StartButton({ className }: { className?: string }) {
+  const { env } = getCloudflareContext();
+  const { session } = await getUserSession(env.DB);
+
+  const buttonClassname = twMerge("w-48", className);
+
+  if (session?.user.id) {
+    return (
+      <Button asChild>
+        <Link
+          className={twMerge("mx-auto flex items-center justify-center gap-2", buttonClassname)}
+          href={`/user/${session.user.id}`}
+        >
+          <IconPlant className="size-5" />
+          マイページへ
+        </Link>
+      </Button>
+    );
+  }
+
+  return (
+    <SignInDrawer>
+      <Button className={buttonClassname}>はじめる</Button>
+    </SignInDrawer>
+  );
+}
 
 export default function Home() {
   return (
@@ -17,9 +49,7 @@ export default function Home() {
             <br />
             インターネットのかたすみ
           </h1>
-          <SignInDrawer>
-            <Button className="mt-8 pc:mt-10 w-48">はじめる</Button>
-          </SignInDrawer>
+          <StartButton className="mt-8 pc:mt-10" />
         </div>
       </section>
 
@@ -51,9 +81,7 @@ export default function Home() {
 
         <DemoImages className="mx-auto mt-32 mb-16" />
 
-        <SignInDrawer>
-          <Button className="my-32 mt-8 w-48">はじめる</Button>
-        </SignInDrawer>
+        <StartButton className="my-32 mt-8" />
       </section>
 
       <Footer logoType="developed-by" />
