@@ -72,7 +72,17 @@ export async function convertImageVariants(apiUrl: string | undefined, secret: s
 /**
  * アバター画像をWebP形式に変換
  */
-export async function convertAvatarImage(apiUrl: string, secret: string, imageFile: File) {
+export async function convertAvatarImage(apiUrl: string | undefined, secret: string | undefined, imageFile: File) {
+  if (!apiUrl) {
+    console.error("[image-optimizer] APIのURLが設定されていません");
+    throw new Error(ERROR_MESSAGES.UNKNOWN_ERROR);
+  }
+
+  if (!secret) {
+    console.error("[image-optimizer] APIシークレットが設定されていません");
+    throw new Error(ERROR_MESSAGES.UNKNOWN_ERROR);
+  }
+
   const client = getImageOptimizerClient(apiUrl, secret);
 
   const response = await client.avatar.$post({

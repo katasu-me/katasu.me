@@ -28,8 +28,8 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     try {
       // 画像を変換
       const convertedAvatar = await convertAvatarImage(
-        env.IMAGE_OPTIMIZER_URL,
-        env.IMAGE_OPTIMIZER_SECRET,
+        process.env.IMAGE_OPTIMIZER_URL,
+        process.env.IMAGE_OPTIMIZER_SECRET,
         submission.value.avatar,
       );
 
