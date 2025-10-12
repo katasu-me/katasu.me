@@ -13,7 +13,14 @@ import { getDB } from "./db";
 export async function hideTag(dbInstance: AnyD1Database, tagId: string): Promise<Tag> {
   const db = getDB(dbInstance);
 
-  return await db.update(tag).set({ isHidden: true }).where(eq(tag.id, tagId)).returning().get();
+  return await db
+    .update(tag)
+    .set({
+      hiddenAt: new Date(),
+    })
+    .where(eq(tag.id, tagId))
+    .returning()
+    .get();
 }
 
 /**
@@ -72,8 +79,9 @@ export async function fetchTagsByUserId(
           id: tag.id,
           userId: tag.userId,
           name: tag.name,
-          isHidden: tag.isHidden,
           usageCount: usageCount,
+          createdAt: tag.createdAt,
+          hiddenAt: tag.hiddenAt,
         })
         .from(tag)
         .leftJoin(imageTag, eq(tag.id, imageTag.tagId))

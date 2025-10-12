@@ -83,7 +83,6 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     id: imageId,
     title: submission.value.title ?? null,
     tags: submission.value.tags,
-    isHidden: false,
   });
 
   if (!registerImageResult.success) {

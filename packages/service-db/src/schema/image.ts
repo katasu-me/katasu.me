@@ -18,8 +18,12 @@ export const image = sqliteTable(
     width: integer("width").notNull(),
     height: integer("height").notNull(),
     title: text("title"),
-    isHidden: integer("is_hidden", { mode: "boolean" }).notNull().default(false),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => new Date()),
+    hiddenAt: integer("hidden_at", { mode: "timestamp" }),
   },
   (table) => [index("idx_image_user_id_created_at").on(table.userId, table.createdAt)],
 );
@@ -51,7 +55,8 @@ export const tag = sqliteTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
-    isHidden: integer("is_hidden", { mode: "boolean" }).notNull().default(false),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+    hiddenAt: integer("hidden_at", { mode: "timestamp" }),
   },
   (table) => [unique("unique_user_tag_name").on(table.userId, table.name)],
 );

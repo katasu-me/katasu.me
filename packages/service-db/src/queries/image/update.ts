@@ -15,7 +15,7 @@ import { getDB } from "../db";
 export async function updateImage(
   dbInstance: AnyD1Database,
   imageId: string,
-  imageData: Partial<Pick<ImageFormData, "title" | "tags" | "isHidden">>,
+  imageData: Partial<Pick<ImageFormData, "title" | "tags">>,
 ): Promise<ActionResult<ImageWithTags>> {
   try {
     const db = getDB(dbInstance);
@@ -102,8 +102,9 @@ export async function updateImageHidden(
 ): Promise<ActionResult<Image>> {
   try {
     const db = getDB(dbInstance);
+    const hiddenAt = isHidden ? new Date() : null;
 
-    const result = await db.update(image).set({ isHidden }).where(eq(image.id, imageId)).returning().get();
+    const result = await db.update(image).set({ hiddenAt }).where(eq(image.id, imageId)).returning().get();
 
     if (!result) {
       return {
