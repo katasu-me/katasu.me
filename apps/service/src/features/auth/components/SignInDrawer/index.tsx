@@ -1,36 +1,39 @@
 "use client";
 
-import type { PropsWithChildren } from "react";
+import { type PropsWithChildren, useState } from "react";
+import { twJoin } from "tailwind-merge";
 import IconBrandGoogle from "@/assets/icons/brand-google.svg";
 import BudouX from "@/components/BudouX";
-import Button from "@/components/Button";
 import Drawer from "@/components/Drawer";
-import { signIn } from "@/lib/auth-client";
+import { Loading } from "@/components/Loading";
 import { getGreeting } from "../../lib/get-greeting";
+import SignInButton from "./SignInButton";
 
 export default function SignInDrawer({ children }: PropsWithChildren) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const greeting = getGreeting();
 
-  const doSignIn = async () => {
-    await signIn.social({
-      provider: "google",
-      callbackURL: "/auth/redirect",
-      newUserCallbackURL: "/auth/signup",
-      errorCallbackURL: "/auth/error",
-    });
+  const handleLoading = () => {
+    setIsLoading(true);
   };
 
   return (
-    <Drawer title={greeting} triggerChildren={children}>
+    <Drawer title={greeting} triggerChildren={children} hiddenTitle={isLoading} dismissible={isLoading}>
       {({ Description }) => (
         <>
-          <Description className="mb-6 text-gray-700 text-sm">
+          <Description className={twJoin("mb-6 text-gray-700 text-sm", isLoading && "sr-only")}>
             <BudouX>katasu.me（かたすみ）はインターネットのかたすみに画像をおいておける、画像投稿サービスです。</BudouX>
           </Description>
-          <Button className="flex w-full items-center justify-center gap-2" variant="fill" onClick={() => doSignIn()}>
-            <IconBrandGoogle className="h-5 w-5" />
-            Googleでつづける
-          </Button>
+
+          {isLoading ? (
+            <Loading className="mt-8 mb-2" title="ログインしています…" />
+          ) : (
+            <SignInButton provider="google" onLoading={handleLoading}>
+              <IconBrandGoogle className="h-5 w-5" />
+              Googleでつづける
+            </SignInButton>
+          )}
         </>
       )}
     </Drawer>

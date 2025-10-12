@@ -1,10 +1,11 @@
 import { type DialogProps, Drawer as VaulDrawer } from "@arrow2nd/vaul";
 import type { ReactNode } from "react";
-import { twMerge } from "tailwind-merge";
+import { twJoin, twMerge } from "tailwind-merge";
 
 type Props = {
   /** タイトル */
   title: string;
+  hiddenTitle?: boolean;
 
   /** 内側 */
   children: (components: { Description: typeof VaulDrawer.Description; Close: typeof VaulDrawer.Close }) => ReactNode;
@@ -15,7 +16,14 @@ type Props = {
   innerClassname?: string;
 } & Pick<DialogProps, "open" | "onOpenChange" | "handleOnly" | "dismissible">;
 
-export default function Drawer({ title, children, triggerChildren, innerClassname, ...props }: Props) {
+export default function Drawer({
+  title,
+  hiddenTitle = false,
+  children,
+  triggerChildren,
+  innerClassname,
+  ...props
+}: Props) {
   return (
     <VaulDrawer.Root {...props}>
       {triggerChildren && <VaulDrawer.Trigger asChild>{triggerChildren}</VaulDrawer.Trigger>}
@@ -26,7 +34,9 @@ export default function Drawer({ title, children, triggerChildren, innerClassnam
           <VaulDrawer.Handle />
 
           <div className={twMerge("mx-auto mt-6 max-w-md", innerClassname)}>
-            <VaulDrawer.Title className="mb-6 text-warm-black text-xl">{title}</VaulDrawer.Title>
+            <VaulDrawer.Title className={twJoin("mb-6 text-warm-black text-xl", hiddenTitle && "sr-only")}>
+              {title}
+            </VaulDrawer.Title>
 
             {children({
               Description: VaulDrawer.Description,
