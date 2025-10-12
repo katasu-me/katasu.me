@@ -12,7 +12,12 @@ type Props = {
 function getUserAvatarUrl(imageKey: string | undefined | null): string {
   const bucketPublicUrl = process.env.NEXT_PUBLIC_R2_URL;
 
-  if (!imageKey || !bucketPublicUrl) {
+  if (!bucketPublicUrl) {
+    console.error("R2のパブリックURLが設定されていません");
+    return "/images/default-avatar-icon.avif";
+  }
+
+  if (!imageKey) {
     return "/images/default-avatar-icon.avif";
   }
 
