@@ -3,43 +3,53 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { twMerge } from "tailwind-merge";
+import IconPlant from "@/assets/icons/plant.svg";
 import LogoImage from "@/assets/logo.svg";
+import Button from "@/components/Button";
 import TextLink from "@/components/TextLink";
-import UserIcon from "@/features/auth/components/UserIcon";
-import { signOut, useSession } from "@/lib/auth-client";
+import { signOut } from "@/lib/auth-client";
 import DevelopedBy from "./DevelopedBy";
 
-type Props = {
-  mode: "logged-in-user" | "developed-by";
-  className?: string;
-};
+type Props =
+  | {
+      mode: "logged-in-user";
+      userId?: string;
+      className?: string;
+    }
+  | {
+      mode: "developed-by";
+      className?: string;
+    };
 
-export default function Footer({ mode, className }: Props) {
+export default function Footer({ className, ...props }: Props) {
   const router = useRouter();
-  const { data } = useSession();
+  const showDivider = props.mode === "logged-in-user" ? !!props.userId : true;
 
-  // 表示モードが logged-in-user のときで、データがない場合は表示しない
-  const showDivider = mode === "logged-in-user" ? !!data : true;
-
-  const handleSignOutClick = async () => {
+  const handleSignOut = async () => {
     await signOut();
     router.replace("/");
   };
 
   return (
     <footer className={twMerge("flex flex-col items-center border-warm-black-25 border-t py-32", className)}>
-      {mode === "developed-by" && <DevelopedBy />}
+      {props.mode === "developed-by" && <DevelopedBy />}
 
-      {mode === "logged-in-user" && data && (
-        <>
-          <UserIcon className="size-7" userId={data.user.id} username={data.user.name} iconImageKey={data.user.image} />
+      {props.mode === "logged-in-user" && props.userId && (
+        <div className="flex flex-col items-center gap-6">
+          <Button asChild>
+            <Link className="flex w-48 items-center justify-center gap-2" href={`/user/${props.userId}`}>
+              <IconPlant className="size-5" />
+              マイページへ
+            </Link>
+          </Button>
           <button
-            className="interactive-scale mt-8 cursor-pointer text-sm text-warm-black-50"
-            onClick={handleSignOutClick}
+            className="interactive-scale cursor-pointer text-sm text-warm-black-50 transition-all duration-400 ease-magnetic hover:brightness-90"
+            type="button"
+            onClick={handleSignOut}
           >
             ログアウト
           </button>
-        </>
+        </div>
       )}
 
       {showDivider && (

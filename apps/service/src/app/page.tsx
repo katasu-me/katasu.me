@@ -6,7 +6,7 @@ import LogoImage from "@/assets/logo.svg";
 import BudouX from "@/components/BudouX";
 import Button from "@/components/Button";
 import DemoImages from "@/components/DemoImages";
-import Footer from "@/components/Layout/Footer";
+import Footer from "@/components/Footer";
 import { SITE_NAME } from "@/constants/site";
 import SignInDrawer from "@/features/auth/components/SignInDrawer";
 import { getUserSession } from "@/lib/auth";
