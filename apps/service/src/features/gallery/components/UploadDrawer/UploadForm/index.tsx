@@ -171,6 +171,9 @@ export default function UploadForm({
 
   return (
     <form {...getFormProps(form)} action={action} noValidate>
+      {/* フォームのエラー */}
+      {form.errors && form.errors?.length > 0 && <FormErrorMessage className="mb-4" text={form.errors[0]} />}
+
       <input
         {...getInputProps(fields.file, { type: "file" })}
         ref={setFileInputRef}
@@ -240,8 +243,7 @@ export default function UploadForm({
         </motion.div>
       </button>
 
-      {/* フォームのエラー */}
-      {form.errors && form.errors?.length > 0 && <FormErrorMessage text={form.errors[0]} />}
+      {/* 画像のエラー */}
       {fields.file.errors?.at(0) && <FormErrorMessage text={fields.file.errors[0]} />}
 
       {/* タイトル・タグ入力欄 */}
