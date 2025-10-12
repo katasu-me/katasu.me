@@ -11,18 +11,15 @@ import { SITE_NAME } from "@/constants/site";
 import SignInDrawer from "@/features/auth/components/SignInDrawer";
 import { getUserSession } from "@/lib/auth";
 
-async function StartButton({ className }: { className?: string }) {
-  const { env } = getCloudflareContext();
-  const { session } = await getUserSession(env.DB);
-
+async function StartButton({ userId, className }: { userId: string | undefined; className?: string }) {
   const buttonClassname = twMerge("w-48", className);
 
-  if (session?.user.id) {
+  if (userId) {
     return (
       <Button asChild>
         <Link
           className={twMerge("mx-auto flex items-center justify-center gap-2", buttonClassname)}
-          href={`/user/${session.user.id}`}
+          href={`/user/${userId}`}
         >
           <IconPlant className="size-5" />
           マイページへ
@@ -38,7 +35,13 @@ async function StartButton({ className }: { className?: string }) {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const { env } = await getCloudflareContext({
+    async: true,
+  });
+
+  const { session } = await getUserSession(env.DB);
+
   return (
     <div className="col-start-2">
       <section className="flex h-[calc(100vh-16px)] items-center justify-center">
@@ -49,7 +52,7 @@ export default function Home() {
             <br />
             インターネットのかたすみ
           </h1>
-          <StartButton className="mt-8 pc:mt-10" />
+          <StartButton className="mt-8 pc:mt-10" userId={session?.user.id} />
         </div>
       </section>
 
@@ -81,7 +84,7 @@ export default function Home() {
 
         <DemoImages className="mx-auto mt-32 mb-16" />
 
-        <StartButton className="my-32 mt-8" />
+        <StartButton className="my-32 mt-8" userId={session?.user.id} />
       </section>
 
       <Footer mode="developed-by" />
