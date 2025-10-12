@@ -15,18 +15,18 @@ describe("getUserAvatarUrl", () => {
   });
 
   it("アバターが設定されている場合、R2のURLを返す", () => {
-    const url = getUserAvatarUrl("testuser", true);
+    const url = getUserAvatarUrl("avatars/testuser.webp");
     expect(url).toBe("https://example.com/avatars/testuser.webp");
   });
 
   it("アバターが設定されていない場合、デフォルトのURLを返す", () => {
-    const url = getUserAvatarUrl("testuser", false);
+    const url = getUserAvatarUrl(null);
     expect(url).toBe("/images/default-avatar-icon.webp");
   });
 
   it("R2_PUBLIC_URLが設定されていない場合、エラーをスローする", () => {
     delete process.env.R2_PUBLIC_URL;
-    expect(() => getUserAvatarUrl("testuser", true)).toThrow("R2_PUBLIC_URLが設定されていません");
+    expect(() => getUserAvatarUrl("avatars/testuser.webp")).toThrow("R2_PUBLIC_URLが設定されていません");
   });
 });
 
