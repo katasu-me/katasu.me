@@ -6,8 +6,8 @@ export async function GET() {
   const { env } = getCloudflareContext();
   const { session } = await requireAuth(env.DB);
 
-  // 新規登録前ならサインアップページへリダイレクト
-  if (session.user.name === "" && !session.user.image) {
+  // 新規登録前なら新規登録ページへリダイレクト
+  if (!session.user.name) {
     redirect("/auth/signup");
   }
 
