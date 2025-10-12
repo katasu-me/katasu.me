@@ -102,7 +102,7 @@ async function upload(r2: R2Bucket, key: string, options: UploadToR2Options): Pr
  */
 export function getUserAvatarUrl(imageKey: string | null): string {
   if (!imageKey) {
-    return "/images/default-avatar-icon.webp";
+    return "/images/default-avatar-icon.avif";
   }
 
   const bucketPublicUrl = getBucketPublicUrl();
