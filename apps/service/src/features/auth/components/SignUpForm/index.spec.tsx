@@ -13,7 +13,7 @@ describe("SignUpForm", () => {
   it("初期状態では送信ボタンが無効である", () => {
     render(<SignUpForm />);
 
-    const submitButton = screen.getByRole("button", { name: "新規登録" });
+    const submitButton = screen.getByRole("button", { name: "新規登録する" });
     expect(submitButton).toBeDisabled();
   });
 
@@ -24,7 +24,7 @@ describe("SignUpForm", () => {
     const usernameInput = screen.getByLabelText("ユーザー名");
     const termsCheckbox = screen.getByLabelText(/利用規約に同意します/);
     const privacyCheckbox = screen.getByLabelText(/プライバシーポリシーに同意します/);
-    const submitButton = screen.getByRole("button", { name: "新規登録" });
+    const submitButton = screen.getByRole("button", { name: "新規登録する" });
 
     // 初期状態では送信ボタンが無効
     expect(submitButton).toBeDisabled();
@@ -57,7 +57,7 @@ describe("SignUpForm", () => {
     const usernameInput = screen.getByLabelText("ユーザー名");
     const termsCheckbox = screen.getByLabelText(/利用規約に同意します/);
     const privacyCheckbox = screen.getByLabelText(/プライバシーポリシーに同意します/);
-    const submitButton = screen.getByRole("button", { name: "新規登録" });
+    const submitButton = screen.getByRole("button", { name: "新規登録する" });
 
     // すべての条件を満たして送信ボタンを有効にする
     await user.type(usernameInput, "testuser");
@@ -98,7 +98,7 @@ describe("SignUpForm", () => {
     const usernameInput = screen.getByLabelText("ユーザー名");
     const termsCheckbox = screen.getByLabelText(/利用規約に同意します/);
     const privacyCheckbox = screen.getByLabelText(/プライバシーポリシーに同意します/);
-    const submitButton = screen.getByRole("button", { name: "新規登録" });
+    const submitButton = screen.getByRole("button", { name: "新規登録する" });
 
     // フォームに入力
     await user.type(usernameInput, "testuser123");
