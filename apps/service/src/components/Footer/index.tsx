@@ -67,9 +67,18 @@ export default function Footer({ className, ...props }: Props) {
 
         <nav className="flex flex-col items-center gap-2 text-sm text-warm-black">
           {/* TODO: ページ作ったら差し替える */}
-          <TextLink href="/">お知らせ</TextLink>
-          <TextLink href="/">利用規約</TextLink>
-          <TextLink href="/">プライバシーポリシー</TextLink>
+          <TextLink href="https://docs.katasu.me/info/" target="_blank" rel="noopener">
+            お知らせなど
+          </TextLink>
+          <TextLink href="https://docs.katasu.me/others/terms/" target="_blank" rel="noopener">
+            利用規約
+          </TextLink>
+          <TextLink href="https://docs.katasu.me/others/privacy/" target="_blank" rel="noopener">
+            プライバシーポリシー
+          </TextLink>
+          <TextLink href="https://docs.katasu.me/others/license/" target="_blank" rel="noopener">
+            ライセンス
+          </TextLink>
         </nav>
       </div>
 
