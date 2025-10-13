@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "katasu-me-image-optimizer-dev",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-08-23",
+  "env": {
+    "production": {
+      "name": "katasu-me-image-optimizer"
+    }
+  }
+}

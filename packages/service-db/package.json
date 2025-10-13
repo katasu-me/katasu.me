@@ -1,0 +1,13 @@
+{
+  "name": "@katasu.me/service-db",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "devDependencies": {
+    "drizzle-kit": "^0.31.4"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.44.4",
+    "nanoid": "^5.1.5"
+  }
+}

@@ -1,0 +1,15 @@
+packages:
+  - apps/*
+  - packages/*
+
+onlyBuiltDependencies:
+  - "@tailwindcss/oxide"
+  - better-sqlite3
+  - core-js-pure
+  - edgedriver
+  - esbuild
+  - geckodriver
+  - lefthook
+  - workerd
+
+resolutionMode: time-based

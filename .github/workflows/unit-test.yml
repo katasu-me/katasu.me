@@ -1,0 +1,20 @@
+name: Unit Tests
+
+on:
+  push:
+    branches-ignore: [gh-pages]
+
+jobs:
+  test:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
+
+      - name: Run unit tests
+        run: pnpm test
