@@ -32,9 +32,7 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
  */
 export async function convertImageVariants(apiUrl: string | undefined, secret: string | undefined, imageFile: File) {
   if (!apiUrl || !secret) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[image-optimizer] 環境変数が設定されていません", { apiUrl: !!apiUrl, secret: !!secret });
-    }
+    console.error("[image-optimizer] 環境変数が設定されていません", { apiUrl: !!apiUrl, secret: !!secret });
 
     throw new Error(ERROR_MESSAGES.UNKNOWN_ERROR);
   }
