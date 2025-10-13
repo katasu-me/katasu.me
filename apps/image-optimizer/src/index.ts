@@ -40,8 +40,11 @@ const app = new Hono<{ Bindings: Bindings }>()
       });
     } catch (error) {
       if (error instanceof HTTPException) {
+        console.error("[avatar] HTTPException", error);
         throw error;
       }
+
+      console.error("[avatar]", error);
 
       throw new HTTPException(500, { message: `${error}` });
     }
@@ -63,11 +66,12 @@ const app = new Hono<{ Bindings: Bindings }>()
 
       return c.json(variants);
     } catch (error) {
-      console.log(error);
-
       if (error instanceof HTTPException) {
+        console.error("[image] HTTPException", error);
         throw error;
       }
+
+      console.error("[avatar]", error);
 
       throw new HTTPException(500, { message: `${error}` });
     }
