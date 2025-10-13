@@ -1,29 +1,47 @@
-import { vValidator } from "@hono/valibot-validator";
-import { Hono } from "hono";
-import { bearerAuth } from "hono/bearer-auth";
-import { HTTPException } from "hono/http-exception";
+import { WorkerEntrypoint } from "cloudflare:workers";
 import { generateAvatarImage, generateImageVariants, getImageDimensions } from "./lib/image";
-import { imageFormSchema } from "./schemas/image";
 
-type Bindings = {
-  IMAGE_OPTIMIZER_SECRET: string;
+/**
+ * 画像の次元情報
+ */
+export type ImageDimensions = {
+  width: number;
+  height: number;
 };
 
-const app = new Hono<{ Bindings: Bindings }>()
-  .use(
-    "/*",
-    bearerAuth({
-      verifyToken: (token, c) => {
-        return token === c.env.IMAGE_OPTIMIZER_SECRET;
-      },
-    }),
-  )
+/**
+ * 画像バリアント（オリジナル + サムネイル）
+ */
+export type ImageVariants = {
+  original: {
+    data: ArrayBuffer;
+  };
+  thumbnail: {
+    data: ArrayBuffer;
+  };
+  dimensions: ImageDimensions;
+};
 
-  // アバター画像
-  .post("/avatar", vValidator("form", imageFormSchema), async (c) => {
+/**
+ * 画像最適化Worker
+ * Service Bindings経由で呼び出される
+ */
+export default class ImageOptimizerWorker extends WorkerEntrypoint {
+  /**
+   * fetch handlerは必須だが、Service Bindings経由では使用しない
+   */
+  async fetch() {
+    return new Response(null, { status: 404 });
+  }
+
+  /**
+   * アバター画像を生成
+   * @param imageFile - 画像ファイル
+   * @returns WebP形式のArrayBuffer
+   */
+  async generateAvatar(imageFile: File): Promise<ArrayBuffer> {
     try {
-      const { image } = c.req.valid("form");
-      const arrayBuffer = await image.arrayBuffer();
+      const arrayBuffer = await imageFile.arrayBuffer();
 
       // オリジナル画像の縦横を取得
       const originalImageDimensions = getImageDimensions(arrayBuffer);
@@ -33,28 +51,21 @@ const app = new Hono<{ Bindings: Bindings }>()
         originalHeight: originalImageDimensions.height,
       });
 
-      return new Response(avatarImage as BodyInit, {
-        headers: {
-          "Content-Type": "image/webp",
-        },
-      });
+      return avatarImage.buffer as ArrayBuffer;
     } catch (error) {
-      if (error instanceof HTTPException) {
-        console.error("[avatar] HTTPException", error);
-        throw error;
-      }
-
-      console.error("[avatar]", error);
-
-      throw new HTTPException(500, { message: `${error}` });
+      console.error("[generateAvatar] エラー:", error);
+      throw new Error(`アバター画像の生成に失敗しました: ${error}`);
     }
-  })
+  }
 
-  // 投稿画像
-  .post("/image", vValidator("form", imageFormSchema), async (c) => {
+  /**
+   * 投稿画像のバリアント（オリジナル + サムネイル）を生成
+   * @param imageFile - 画像ファイル
+   * @returns base64エンコードされた画像バリアント
+   */
+  async generateImageVariants(imageFile: File): Promise<ImageVariants> {
     try {
-      const { image } = c.req.valid("form");
-      const arrayBuffer = await image.arrayBuffer();
+      const arrayBuffer = await imageFile.arrayBuffer();
 
       // オリジナル画像の縦横を取得
       const originalImageDimensions = getImageDimensions(arrayBuffer);
@@ -64,19 +75,10 @@ const app = new Hono<{ Bindings: Bindings }>()
         originalHeight: originalImageDimensions.height,
       });
 
-      return c.json(variants);
+      return variants;
     } catch (error) {
-      if (error instanceof HTTPException) {
-        console.error("[image] HTTPException", error);
-        throw error;
-      }
-
-      console.error("[avatar]", error);
-
-      throw new HTTPException(500, { message: `${error}` });
+      console.error("[generateImageVariants] エラー:", error);
+      throw new Error(`画像バリアントの生成に失敗しました: ${error}`);
     }
-  });
-
-export default app;
-
-export type AppType = typeof app;
+  }
+}

@@ -19,7 +19,7 @@
    * Smart Placement
    * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
    */
-  // "placement": { "mode": "smart" },
+  "placement": { "mode": "smart" },
 
   /**
    * Bindings
@@ -70,8 +70,7 @@
    */
   "vars": {
     "BETTER_AUTH_URL": "<DEVELOPMENT_URL>",
-    "NEXT_PUBLIC_R2_URL": "<DEVELOPMENT_R2_URL>",
-    "IMAGE_OPTIMIZER_URL": "<DEVELOPMENT_IMAGE_OPTIMIZER_URL>"
+    "NEXT_PUBLIC_R2_URL": "<DEVELOPMENT_R2_URL>"
   },
   /**
    * Note: Use secrets to store sensitive data.
@@ -88,7 +87,12 @@
    * Service Bindings (communicate between multiple Workers)
    * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
    */
-  // "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
+  "services": [
+    {
+      "binding": "IMAGE_OPTIMIZER",
+      "service": "katasu-me-image-optimizer-dev"
+    }
+  ],
 
   /**
    * 本番環境
@@ -104,9 +108,14 @@
       },
       "vars": {
         "BETTER_AUTH_URL": "<PRODUCTION_URL>",
-        "NEXT_PUBLIC_R2_URL": "<PRODUCTION_R2_URL>",
-        "IMAGE_OPTIMIZER_URL": "<PRODUCTION_IMAGE_OPTIMIZER_URL>"
+        "NEXT_PUBLIC_R2_URL": "<PRODUCTION_R2_URL>"
       },
+      "services": [
+        {
+          "binding": "IMAGE_OPTIMIZER",
+          "service": "katasu-me-image-optimizer"
+        }
+      ],
       "d1_databases": [
         {
           "binding": "DB",

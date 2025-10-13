@@ -3,14 +3,16 @@
   "name": "katasu-me-image-optimizer-dev",
   "main": "src/index.ts",
   "compatibility_date": "2025-08-23",
+  "workers_dev": false,
+  "preview_urls": false,
+  "placement": { "mode": "smart" },
   "env": {
     "production": {
       "name": "katasu-me-image-optimizer",
-      "workers_dev": false,
-      "preview_urls": false,
       "observability": {
         "enabled": true
-      }
+      },
+      "placement": { "mode": "smart" }
     }
   }
 }

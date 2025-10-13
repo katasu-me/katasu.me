@@ -68,20 +68,6 @@ async function convertToWebp(imageData: BufferSource, options?: ConvertWebpOptio
   }
 }
 
-/**
- * Uint8ArrayをBase64エンコード
- */
-function uint8ArrayToBase64(bytes: Uint8Array): string {
-  let binary = "";
-  const len = bytes.byteLength;
-
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-
-  return btoa(binary);
-}
-
 export type ImageDimensionsResult = {
   /** 画像の幅 (orientation考慮済み) */
   width: number;
@@ -112,9 +98,13 @@ export function getImageDimensions(imageData: ArrayBuffer): ImageDimensionsResul
 
 export type ImageVariantResult = {
   /** オリジナル画像 */
-  original: string;
+  original: {
+    data: ArrayBuffer;
+  };
   /** サムネイル画像 */
-  thumbnail: string;
+  thumbnail: {
+    data: ArrayBuffer;
+  };
   /** 画像サイズ情報 */
   dimensions: ImageDimensionsResult;
 };
@@ -150,8 +140,12 @@ export async function generateImageVariants(
   const dimensions = getImageDimensions(imageData);
 
   return {
-    original: uint8ArrayToBase64(original.data),
-    thumbnail: uint8ArrayToBase64(thumbnail.data),
+    original: {
+      data: original.data.buffer as ArrayBuffer,
+    },
+    thumbnail: {
+      data: thumbnail.data.buffer as ArrayBuffer,
+    },
     dimensions,
   };
 }
