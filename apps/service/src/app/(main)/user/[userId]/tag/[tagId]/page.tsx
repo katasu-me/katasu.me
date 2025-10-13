@@ -124,12 +124,14 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
       <Header user={user}>
+        {/* TODO: 検索 */}
         <IconButton title="検索">
-          <IconSearch className="h-6 w-6" />
+          <IconSearch className="h-6 w-6 opacity-25" />
         </IconButton>
 
+        {/* TODO: メニュー */}
         <IconButton title="その他">
-          <IconDots className="h-6 w-6" />
+          <IconDots className="h-6 w-6 opacity-25" />
         </IconButton>
       </Header>
 
