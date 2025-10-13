@@ -3,7 +3,6 @@ import {
   type FetchImagesOptions,
   fetchImagesByUserId,
   fetchRandomImagesByUserId,
-  fetchTotalImageCountByUserId,
   type ImageWithTags,
   type User,
 } from "@katasu.me/service-db";
@@ -16,21 +15,6 @@ import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
 import { userPageCacheTag } from "@/lib/cache-tags";
-
-/**
- * ユーザーの投稿数を取得
- * @param userId ユーザーID
- * @return 画像総数
- */
-const cachedFetchTotalImageCount = async (userId: string) => {
-  "use cache";
-
-  cacheTag(userPageCacheTag(userId));
-
-  const { env } = getCloudflareContext();
-
-  return fetchTotalImageCountByUserId(env.DB, userId);
-};
 
 /**
  * ユーザーが投稿した画像を取得
@@ -66,20 +50,12 @@ const cachedFetchRandomImages = async (userId: string) => {
 type Props = {
   user: User;
   view: ImageLayoutType;
+  totalImageCount: number;
   currentPage?: number;
 };
 
-export default async function UserPageContents({ user, view, currentPage = 1 }: Props) {
-  // 総画像枚数を取得
-  const fetchTotalImageCountResult = await cachedFetchTotalImageCount(user.id);
-
-  if (!fetchTotalImageCountResult.success) {
-    console.error("Failed to fetch total image count:", fetchTotalImageCountResult.error);
-    return <Message message="画像の取得に失敗しました" icon="error" />;
-  }
-
+export default async function UserPageContents({ user, view, totalImageCount, currentPage = 1 }: Props) {
   // 0枚ならからっぽ
-  const totalImageCount = fetchTotalImageCountResult.data;
   if (totalImageCount <= 0) {
     return <Message message="からっぽです" />;
   }

@@ -15,7 +15,7 @@ import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
 import { tagPageCacheTag } from "@/lib/cache-tags";
 import { generateMetadataTitle } from "@/lib/meta";
-import { cachedFetchUserById } from "@/lib/user";
+import { cachedFetchTotalImageCount, cachedFetchUserById } from "@/lib/user";
 import TagPageContents from "./_components/TagPageContents";
 
 const searchParamsSchema = object({
@@ -23,6 +23,12 @@ const searchParamsSchema = object({
   page: fallback(string(), "1"),
 });
 
+/**
+ * タグ情報を取得
+ * @params userId ユーザーIO
+ * @params tagId タグID
+ * @returns タグ情報
+ */
 const cachedFetchTagById = async (userId: string, tagId: string) => {
   "use cache";
 
@@ -73,10 +79,12 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
 
   const tag = fetchTagResult.data;
 
-  // ユーザーページのユーザーを取得
-  const user = await cachedFetchUserById(tag.userId);
+  const [user, totalImageCount] = await Promise.all([
+    cachedFetchUserById(tag.userId),
+    cachedFetchTotalImageCount(userId),
+  ]);
 
-  // 存在しない場合は404
+  // ユーザーが存在しない場合は404
   if (!user) {
     notFound();
   }
@@ -110,7 +118,14 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
         {isOwner && (
           <div className="col-start-2">
-            <ImageDropArea title="あたらしい画像を投稿する" defaultTags={[tag.name]} />
+            <ImageDropArea
+              title="あたらしい画像を投稿する"
+              defaultTags={[tag.name]}
+              counter={{
+                total: totalImageCount,
+                max: user.plan.maxPhotos,
+              }}
+            />
           </div>
         )}
 

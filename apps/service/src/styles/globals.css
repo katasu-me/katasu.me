@@ -2,12 +2,13 @@
 
 @theme {
   /** 色 */
-  --color-warm-black: rgba(72, 48, 48, 1);
+  --color-warm-black: rgb(72, 48, 48);
   --color-warm-black-10: rgb(242, 240, 240);
   --color-warm-black-25: rgb(223, 215, 215);
   --color-warm-black-50: rgb(163, 150, 150);
-  --color-warm-white: rgba(254, 251, 251, 1);
-  --color-peach-foam: rgba(245, 231, 228, 1);
+  --color-warm-white: rgb(254, 251, 251);
+  --color-vivid-yellow: rgb(255, 218, 11);
+  --color-vivid-red: rgb(255, 52, 11);
 
   /** イージング */
   --ease-magnetic: cubic-bezier(0.16, 1, 0.3, 1);

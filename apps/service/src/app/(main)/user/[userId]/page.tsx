@@ -1,7 +1,7 @@
 import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
-import { unstable_cacheTag as cacheTag } from "next/cache";
+import { unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
@@ -16,7 +16,7 @@ import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
 import { tagListCacheTag } from "@/lib/cache-tags";
 import { generateMetadataTitle } from "@/lib/meta";
-import { cachedFetchUserById } from "@/lib/user";
+import { cachedFetchTotalImageCount, cachedFetchUserById } from "@/lib/user";
 import UserPageContents from "./_components/UserPageContents";
 
 /**
@@ -27,14 +27,22 @@ import UserPageContents from "./_components/UserPageContents";
 const cachedFetchTags = async (userId: string) => {
   "use cache";
 
-  cacheTag(tagListCacheTag(userId));
+  const tag = tagListCacheTag(userId);
+  cacheTag(tag);
 
   const { env } = getCloudflareContext();
 
-  return fetchTagsByUserId(env.DB, userId, {
+  const result = await fetchTagsByUserId(env.DB, userId, {
     limit: 4,
     order: "usage",
   });
+
+  if (!result.success) {
+    revalidateTag(tag);
+    return [];
+  }
+
+  return result.data;
 };
 
 const searchParamsSchema = object({
@@ -72,9 +80,8 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
   const { session } = await getUserSession(env.DB);
   const isOwner = user.id === session?.user?.id;
 
-  // 上位のタグ一覧を取得
-  const fetchTagsResult = await cachedFetchTags(userId);
-  const tags = fetchTagsResult.success ? fetchTagsResult.data : [];
+  // 投稿枚数、上位タグを取得
+  const [totalImageCount, tags] = await Promise.all([cachedFetchTotalImageCount(userId), cachedFetchTags(userId)]);
 
   const { view, page: pageStr } = parse(searchParamsSchema, await searchParams);
   const currentPage = Number.parseInt(pageStr, 10);
@@ -100,12 +107,18 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
 
         {isOwner && (
           <div className="col-start-2">
-            <ImageDropArea title="あたらしい画像を投稿する" />
+            <ImageDropArea
+              title="あたらしい画像を投稿する"
+              counter={{
+                total: totalImageCount,
+                max: user.plan.maxPhotos,
+              }}
+            />
           </div>
         )}
 
         <Suspense fallback={<Loading className="col-start-2 py-16" />}>
-          <UserPageContents user={user} view={view} currentPage={currentPage} />
+          <UserPageContents user={user} view={view} totalImageCount={totalImageCount} currentPage={currentPage} />
         </Suspense>
       </div>
     </div>

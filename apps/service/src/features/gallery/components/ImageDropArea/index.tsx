@@ -1,6 +1,6 @@
 "use client";
 
-import { type DragEvent, useState } from "react";
+import { type ComponentProps, type DragEvent, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import IconImagePlus from "@/assets/icons/image-plus.svg";
 import UploadDrawer from "../UploadDrawer";
@@ -9,11 +9,12 @@ const MAX_FILE_COUNT = 1;
 
 type Props = {
   title: string;
+
   defaultTags?: string[];
   className?: string;
-};
+} & Pick<ComponentProps<typeof UploadDrawer>, "counter">;
 
-export default function ImageDropArea({ title, defaultTags, className }: Props) {
+export default function ImageDropArea({ title, counter, defaultTags, className }: Props) {
   const [open, setOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [defaultImageFile, setDefaultImageFile] = useState<File | undefined>();
@@ -61,7 +62,7 @@ export default function ImageDropArea({ title, defaultTags, className }: Props) 
     <>
       <button
         className={twMerge(
-          "interactive-scale-sm flex w-full items-center justify-center rounded-xl border-2 border-warm-black-50 border-dashed bg-warm-white py-6 hover:brightness-90",
+          "interactive-scale-sm flex w-full items-center justify-center gap-8 rounded-xl border-2 border-warm-black-50 border-dashed bg-warm-white py-6 hover:brightness-90",
           isDragging && "scale-[101%] brightness-90",
           className,
         )}
@@ -79,6 +80,7 @@ export default function ImageDropArea({ title, defaultTags, className }: Props) 
       </button>
 
       <UploadDrawer
+        counter={counter}
         open={open}
         onOpenChange={handleOpenChange}
         onSuccess={handleSuccess}
