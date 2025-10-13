@@ -35,7 +35,7 @@ export function middleware(request: NextRequest) {
       isDev && "'unsafe-inline'",
     ],
     "style-src": ["'self'", "'unsafe-inline'"],
-    "img-src": ["'self'", process.env.NEXT_PUBLIC_R2_URL, "data:"],
+    "img-src": ["'self'", process.env.NEXT_PUBLIC_R2_URL, "data:", "blob:"],
     "connect-src": ["'self'", SITE_URL, process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL],
     "font-src": ["'self'"],
     "object-src": ["'none'"],
