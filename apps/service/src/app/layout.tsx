@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { SITE_DESCRIPTION_LONG, SITE_NAME, SITE_URL } from "@/constants/site";
 
 import "../styles/globals.css";
+import Script from "next/script";
 import { DeviceProvider } from "@/contexts/DeviceContext";
 import { generateMetadataTitle } from "@/lib/meta";
 
@@ -52,6 +53,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           fontFamily: `"Reddit Sans", ${ibmPlexSansJP.style.fontFamily}`,
         }}
       >
+        {process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL && process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <Script
+            src={process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL}
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            strategy="lazyOnload"
+          />
+        )}
         <DeviceProvider isDesktop={isDesktop}>{children}</DeviceProvider>
       </body>
     </html>
