@@ -10,10 +10,7 @@ export const metadata: Metadata = generateMetadataTitle({
 });
 
 export default async function SignUpPage() {
-  const { env } = await getCloudflareContext({
-    async: true,
-  });
-
+  const { env } = await getCloudflareContext({ async: true });
   const { session } = await requireAuth(env.DB);
 
   // 新規登録済ならマイページへリダイレクト

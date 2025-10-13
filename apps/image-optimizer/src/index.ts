@@ -14,6 +14,7 @@ const app = new Hono<{ Bindings: Bindings }>()
     "/*",
     bearerAuth({
       verifyToken: (token, c) => {
+        console.log("[debug]", token === c.env.IMAGE_OPTIMIZER_SECRET);
         return token === c.env.IMAGE_OPTIMIZER_SECRET;
       },
     }),
@@ -25,13 +26,19 @@ const app = new Hono<{ Bindings: Bindings }>()
       const { image } = c.req.valid("form");
       const arrayBuffer = await image.arrayBuffer();
 
+      console.log("[avatar] ok");
+
       // オリジナル画像の縦横を取得
       const originalImageDimensions = getImageDimensions(arrayBuffer);
+
+      console.log("[avatar] get image dimensions");
 
       const avatarImage = await generateAvatarImage(arrayBuffer, {
         originalWidth: originalImageDimensions.width,
         originalHeight: originalImageDimensions.height,
       });
+
+      console.log("[avatar] generate");
 
       return new Response(avatarImage as BodyInit, {
         headers: {
