@@ -179,7 +179,7 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
         {...props}
       />
 
-      {error && <FormErrorMessage className="w-full" text={error} />}
+      {error && <FormErrorMessage className="mt-2 w-full" text={error} />}
 
       <Drawer
         title="アイコンを切り抜く"
