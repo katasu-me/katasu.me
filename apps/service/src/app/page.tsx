@@ -13,6 +13,18 @@ import SignInDrawer from "@/features/auth/components/SignInDrawer";
 import { getUserSession } from "@/lib/auth";
 
 async function StartButton({ user, className }: { user: User | undefined; className?: string }) {
+  // TODO: リリース時には外す
+  if (process.env.NODE_ENV === "production") {
+    return (
+      <Button asChild>
+        <Link className={twMerge("mx-auto flex w-fit items-center justify-center gap-2", className)} href="/user/test">
+          <IconPlant className="size-5" />
+          開発者のかたすみをのぞく
+        </Link>
+      </Button>
+    );
+  }
+
   const buttonClassname = twMerge("w-48", className);
 
   if (user?.id && user.name) {
@@ -53,6 +65,12 @@ export default async function Home() {
             <br />
             インターネットのかたすみ
           </h1>
+
+          {/* TODO: リリース時には外す */}
+          <p className="mt-8">
+            準備中。年内リリース予定 <span className="text-xs">(かも)</span>
+          </p>
+
           <StartButton className="mt-8 pc:mt-10" user={session?.user} />
         </div>
       </section>
