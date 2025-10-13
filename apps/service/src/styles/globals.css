@@ -9,9 +9,6 @@
   --color-warm-white: rgba(254, 251, 251, 1);
   --color-peach-foam: rgba(245, 231, 228, 1);
 
-  /** フォント */
-  --font-ibm-plex-sans-jp: var(--font-ibm-plex-sans-jp), sans-serif;
-
   /** イージング */
   --ease-magnetic: cubic-bezier(0.16, 1, 0.3, 1);
 

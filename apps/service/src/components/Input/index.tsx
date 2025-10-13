@@ -22,10 +22,10 @@ export default function Input({ maxLength, currentLength, className, label, erro
       <input
         {...props}
         maxLength={maxLength}
-        className="w-full rounded-md border border-warm-black-50 bg-warm-white py-2 pr-16 pl-3 text-warm-black placeholder:text-warm-black-50 focus:border-warm-black focus:outline-none disabled:cursor-not-allowed disabled:bg-warm-black-10"
+        className="w-full rounded-md border border-warm-black-50 bg-warm-white py-2 pr-17 pl-3 text-warm-black placeholder:text-warm-black-50 focus:border-warm-black focus:outline-none disabled:cursor-not-allowed disabled:bg-warm-black-10"
       />
       {maxLength && (
-        <span className="absolute right-2 bottom-1 text-sm text-warm-black-100">
+        <span className="absolute right-2 bottom-1 text-sm text-warm-black-50">
           {length}/{maxLength}
         </span>
       )}
