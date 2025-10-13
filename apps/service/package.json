@@ -19,12 +19,12 @@
     "db:studio": "dotenv -e .env.local -- drizzle-kit studio",
     "db:migrate": "wrangler d1 migrations apply katasu-me-dev --local",
     "db:migrate:dev": "wrangler d1 migrations apply katasu-me-dev",
-    "db:migrate:prod": "wrangler d1 migrations apply katasu-me",
+    "db:migrate:prod": "wrangler d1 migrations apply katasu-me --env production",
     "db:push": "wrangler d1 execute katasu-me-dev --remote --file=$(ls ../../packages/service-db/src/migrations/*.sql | fzf)",
-    "db:push:prod": "wrangler d1 execute katasu-me --remote --file=$(ls ../../packages/service-db/src/migrations/*.sql | fzf)",
+    "db:push:prod": "wrangler d1 execute katasu-me --remote --file=$(ls ../../packages/service-db/src/migrations/*.sql | fzf) --env production",
     "db:seed": "wrangler d1 execute katasu-me-dev --file=../../packages/service-db/src/seeds/plans.sql --local",
     "db:seed:dev": "wrangler d1 execute katasu-me-dev --file=../../packages/service-db/src/seeds/plans.sql",
-    "db:seed:prod": "wrangler d1 execute katasu-me --file=../../packages/service-db/src/seeds/plans.sql"
+    "db:seed:prod": "wrangler d1 execute katasu-me --file=../../packages/service-db/src/seeds/plans.sql --env production"
   },
   "dependencies": {
     "@arrow2nd/vaul": "^1.1.7",
