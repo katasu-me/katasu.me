@@ -18,30 +18,30 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    totalCount: 5,
+    total: 5,
   },
 };
 
 export const ZeroCount: Story = {
   args: {
-    totalCount: 0,
+    total: 0,
   },
 };
 
 export const OneRemaining: Story = {
   args: {
-    totalCount: 10,
+    total: 10,
   },
 };
 
 export const MidCount: Story = {
   args: {
-    totalCount: 30,
+    total: 30,
   },
 };
 
 export const LargeNumbers: Story = {
   args: {
-    totalCount: 50,
+    total: 50,
   },
 };
