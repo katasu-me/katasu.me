@@ -18,6 +18,8 @@ export const user = sqliteTable("user", {
     .default(sql`(unixepoch())`)
     .$onUpdate(() => new Date()),
   bannedAt: integer("bannedAt", { mode: "timestamp" }),
+  termsAgreedAt: integer("termsAgreedAt", { mode: "timestamp" }),
+  privacyPolicyAgreedAt: integer("privacyPolicyAgreedAt", { mode: "timestamp" }),
 });
 
 export const userRelations = relations(user, ({ one }) => ({

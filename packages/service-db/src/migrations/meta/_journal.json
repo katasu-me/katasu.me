@@ -85,6 +85,13 @@
       "when": 1760277727332,
       "tag": "0011_shiny_bastion",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1760357834975,
+      "tag": "0012_regular_thunderbolts",
+      "breakpoints": true
     }
   ]
 }

@@ -53,6 +53,8 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     await updateUser(env.DB, session.user.id, {
       name: submission.value.username,
       image: generateR2Key("avatar", session.user.id),
+      termsAgreedAt: new Date(),
+      privacyPolicyAgreedAt: new Date(),
     });
   } catch (error) {
     console.error("[auth] ユーザー情報の更新に失敗しました:", error);
