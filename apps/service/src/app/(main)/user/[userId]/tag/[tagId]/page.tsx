@@ -10,11 +10,13 @@ import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
+import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
 import { tagPageCacheTag } from "@/lib/cache-tags";
 import { generateMetadataTitle } from "@/lib/meta";
+import { getUserAvatarUrl } from "@/lib/r2";
 import { cachedFetchTotalImageCount, cachedFetchUserById } from "@/lib/user";
 import TagPageContents from "./_components/TagPageContents";
 
@@ -55,8 +57,15 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
     notFound();
   }
 
+  const user = userResult.data;
+  const avatarUrl = getUserAvatarUrl(user.image);
+
   return generateMetadataTitle({
-    pageTitle: `#${tag.name} - ${userResult.data.name}`,
+    pageTitle: `#${tag.name} - ${user.name}`,
+    description: SITE_DESCRIPTION_LONG,
+    imageUrl: avatarUrl,
+    twitterCard: "summary",
+    path: `/user/${userId}/tag/${tagId}`,
     noindex: true,
   });
 }

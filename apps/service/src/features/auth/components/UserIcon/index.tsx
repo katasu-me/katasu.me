@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
+import { getUserAvatarUrl } from "@/lib/r2";
 
 type Props = {
   userId: string;
@@ -8,21 +9,6 @@ type Props = {
   iconImageKey: string | undefined | null;
   className?: string;
 };
-
-function getUserAvatarUrl(imageKey: string | undefined | null): string {
-  const bucketPublicUrl = process.env.NEXT_PUBLIC_R2_URL;
-
-  if (!bucketPublicUrl) {
-    console.error("R2のパブリックURLが設定されていません");
-    return "/images/default-avatar-icon.avif";
-  }
-
-  if (!imageKey) {
-    return "/images/default-avatar-icon.avif";
-  }
-
-  return `${bucketPublicUrl}/${imageKey}`;
-}
 
 export default function UserIcon({ userId, username, iconImageKey, className }: Props) {
   const avatarImageUrl = getUserAvatarUrl(iconImageKey);

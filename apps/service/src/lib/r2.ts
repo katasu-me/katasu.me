@@ -99,6 +99,21 @@ export function getImageUrl(userId: string, imageId: string, variant: "original"
 }
 
 /**
+ * ユーザーアバター画像のURLを取得
+ * @param imageKey DBに保存されたR2のキー
+ * @returns アバター画像URL、キーがない場合はデフォルト画像
+ */
+export function getUserAvatarUrl(imageKey: string | undefined | null): string {
+  const bucketPublicUrl = process.env.NEXT_PUBLIC_R2_URL;
+
+  if (!bucketPublicUrl || !imageKey) {
+    return "/images/default-avatar-icon.avif";
+  }
+
+  return `${bucketPublicUrl}/${imageKey}`;
+}
+
+/**
  * 変換済みアバター画像をR2にアップロード
  * @param r2 Cloudflare R2バケットインスタンス
  * @param options アップロードオプション

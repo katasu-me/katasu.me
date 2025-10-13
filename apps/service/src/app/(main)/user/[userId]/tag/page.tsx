@@ -6,8 +6,10 @@ import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Message from "@/components/Message";
 import TagLink from "@/components/Navigation/TagLinks/TabLink";
+import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import { tagListCacheTag } from "@/lib/cache-tags";
 import { generateMetadataTitle } from "@/lib/meta";
+import { getUserAvatarUrl } from "@/lib/r2";
 import { cachedFetchUserById } from "@/lib/user";
 
 const cachedFetchAllTags = async (userId: string) => {
@@ -39,8 +41,15 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
     notFound();
   }
 
+  const user = userResult.data;
+  const avatarUrl = getUserAvatarUrl(user.image);
+
   return generateMetadataTitle({
-    pageTitle: `すべてのタグ - ${userResult.data.name}`,
+    pageTitle: `すべてのタグ - ${user.name}`,
+    description: SITE_DESCRIPTION_LONG,
+    imageUrl: avatarUrl,
+    twitterCard: "summary",
+    path: `/user/${userId}/tag`,
     noindex: true,
   });
 }

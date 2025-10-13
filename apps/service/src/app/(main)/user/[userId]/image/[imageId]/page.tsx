@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
+import { getImageUrl } from "@/lib/r2";
 import { cachedFetchUserById } from "@/lib/user";
 import ImagePageContent from "./_components/ImagePageContent";
 import { DEFAULT_IMAGE_TITLE } from "./_constants/title";
@@ -24,10 +25,17 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/ima
     notFound();
   }
 
-  const title = fetchImage.data.title ?? DEFAULT_IMAGE_TITLE;
+  const image = fetchImage.data;
+
+  const title = image.title ?? DEFAULT_IMAGE_TITLE;
+  const description = image.tags.length > 0 ? image.tags.map((tag) => `#${tag.name}`).join(" ") : undefined;
+  const imageUrl = getImageUrl(userId, imageId, "original");
 
   return generateMetadataTitle({
     pageTitle: `${title} - ${userResult.data.name}`,
+    description,
+    imageUrl,
+    path: `/user/${userId}/image/${imageId}`,
     noindex: true,
   });
 }
