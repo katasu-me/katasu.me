@@ -5,7 +5,7 @@ import {
   type Tag,
 } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cacheTag as cacheTag } from "next/cache";
+import { unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
 import GalleryView from "@/features/gallery/components/GalleryView";
@@ -17,21 +17,35 @@ import { tagPageCacheTag } from "@/lib/cache-tags";
 const cachedFetchTotalImageCount = async (userId: string, tagId: string) => {
   "use cache";
 
-  cacheTag(tagPageCacheTag(userId, tagId));
+  const tag = tagPageCacheTag(userId, tagId);
+  cacheTag(tag);
 
   const { env } = getCloudflareContext();
 
-  return fetchTotalImageCountByTagId(env.DB, tagId);
+  const result = await fetchTotalImageCountByTagId(env.DB, tagId);
+
+  if (!result.success) {
+    revalidateTag(tag);
+  }
+
+  return result;
 };
 
 const cachedFetchImages = async (userId: string, tagId: string, options: FetchImagesOptions) => {
   "use cache";
 
-  cacheTag(tagPageCacheTag(userId, tagId));
+  const tag = tagPageCacheTag(userId, tagId);
+  cacheTag(tag);
 
   const { env } = getCloudflareContext();
 
-  return fetchImagesByTagId(env.DB, tagId, options);
+  const result = await fetchImagesByTagId(env.DB, tagId, options);
+
+  if (!result.success) {
+    revalidateTag(tag);
+  }
+
+  return result;
 };
 
 type Props = {

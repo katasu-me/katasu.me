@@ -7,7 +7,7 @@ import {
   type User,
 } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
+import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
 import GalleryView from "@/features/gallery/components/GalleryView";
@@ -25,11 +25,18 @@ import { userPageCacheTag } from "@/lib/cache-tags";
 const cachedFetchImages = async (userId: string, options: FetchImagesOptions) => {
   "use cache";
 
-  cacheTag(userPageCacheTag(userId));
+  const tag = userPageCacheTag(userId);
+  cacheTag(tag);
 
   const { env } = getCloudflareContext();
 
-  return fetchImagesByUserId(env.DB, userId, options);
+  const result = await fetchImagesByUserId(env.DB, userId, options);
+
+  if (!result.success) {
+    revalidateTag(tag);
+  }
+
+  return result;
 };
 
 /**
