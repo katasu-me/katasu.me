@@ -23,7 +23,14 @@ export const Default: Story = {
     return (
       <>
         <Button onClick={() => setOpen(true)}>開く</Button>
-        <UploadDrawer open={open} onOpenChange={setOpen} />
+        <UploadDrawer
+          open={open}
+          onOpenChange={setOpen}
+          counter={{
+            total: 5,
+            max: 100,
+          }}
+        />
       </>
     );
   },

@@ -22,14 +22,23 @@ export async function registerImage(
   const db = getDB(dbInstance);
 
   // ユーザーの画像投稿上限を超えていないか確認
-  const userImageStatus = await fetchUserImageStatus(dbInstance, userId);
+  const userImageStatusResult = await fetchUserImageStatus(dbInstance, userId);
 
-  if (!userImageStatus) {
+  if (!userImageStatusResult.success) {
+    return {
+      success: false,
+      error: userImageStatusResult.error,
+    };
+  }
+
+  if (!userImageStatusResult.data) {
     return {
       success: false,
       error: { message: "ユーザーが見つかりません" },
     };
   }
+
+  const userImageStatus = userImageStatusResult.data;
 
   if (userImageStatus.uploadedPhotos >= userImageStatus.maxPhotos) {
     return {
