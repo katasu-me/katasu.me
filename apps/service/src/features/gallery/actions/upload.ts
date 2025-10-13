@@ -1,7 +1,7 @@
 "use server";
 
 import { parseWithValibot } from "@conform-to/valibot";
-import { registerImage } from "@katasu.me/service-db";
+import { fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { nanoid } from "nanoid";
 import { revalidateTag } from "next/cache";
@@ -24,8 +24,24 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     return submission.reply();
   }
 
-  const imageId = nanoid();
   const userId = session.user.id;
+
+  // 上限チェック
+  const userImageStatusResult = await fetchUserImageStatus(env.DB, userId);
+
+  if (!userImageStatusResult.success || !userImageStatusResult.data) {
+    return submission.reply({
+      formErrors: ["ユーザー情報の取得に失敗しました"],
+    });
+  }
+
+  if (userImageStatusResult.data.uploadedPhotos >= userImageStatusResult.data.maxPhotos) {
+    return submission.reply({
+      formErrors: ["画像の投稿上限に達しています"],
+    });
+  }
+
+  const imageId = nanoid();
 
   // R2キーの重複チェック
   const originalKey = generateR2Key("image", userId, imageId, "original");

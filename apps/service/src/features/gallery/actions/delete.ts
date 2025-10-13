@@ -17,11 +17,6 @@ export async function deleteImageAction(userId: string, imageId: string): Promis
   const { env } = getCloudflareContext();
   const { session } = await requireAuth(env.DB);
 
-  // 自分の画像でない場合はエラー
-  if (session.user.id !== userId) {
-    return new Error("権限がありません");
-  }
-
   // 画像を取得
   const fetchImageResult = await fetchImageById(env.DB, imageId);
 
@@ -33,6 +28,11 @@ export async function deleteImageAction(userId: string, imageId: string): Promis
 
   if (!prevImageData) {
     return new Error("画像が見つかりません");
+  }
+
+  // 編集する権限があるか
+  if (prevImageData.userId !== session.user.id) {
+    return new Error("権限がありません");
   }
 
   // DBから画像を削除

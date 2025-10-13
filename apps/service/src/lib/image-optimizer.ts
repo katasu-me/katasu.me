@@ -31,13 +31,11 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
  * 画像をWebP形式に変換（オリジナル + サムネイル）
  */
 export async function convertImageVariants(apiUrl: string | undefined, secret: string | undefined, imageFile: File) {
-  if (!apiUrl) {
-    console.error("[image-optimizer] APIのURLが設定されていません");
-    throw new Error(ERROR_MESSAGES.UNKNOWN_ERROR);
-  }
+  if (!apiUrl || !secret) {
+    if (process.env.NODE_ENV === "development") {
+      console.error("[image-optimizer] 環境変数が設定されていません", { apiUrl: !!apiUrl, secret: !!secret });
+    }
 
-  if (!secret) {
-    console.error("[image-optimizer] APIシークレットが設定されていません");
     throw new Error(ERROR_MESSAGES.UNKNOWN_ERROR);
   }
 
@@ -52,6 +50,7 @@ export async function convertImageVariants(apiUrl: string | undefined, secret: s
   if (!response.ok) {
     const errorText = await response.text();
     const errorMessage = errorText || ERROR_MESSAGES.UNKNOWN_ERROR;
+
     throw new Error(errorMessage);
   }
 
@@ -73,13 +72,11 @@ export async function convertImageVariants(apiUrl: string | undefined, secret: s
  * アバター画像をWebP形式に変換
  */
 export async function convertAvatarImage(apiUrl: string | undefined, secret: string | undefined, imageFile: File) {
-  if (!apiUrl) {
-    console.error("[image-optimizer] APIのURLが設定されていません");
-    throw new Error(ERROR_MESSAGES.UNKNOWN_ERROR);
-  }
+  if (!apiUrl || !secret) {
+    if (process.env.NODE_ENV === "development") {
+      console.error("[image-optimizer] 環境変数が設定されていません", { apiUrl: !!apiUrl, secret: !!secret });
+    }
 
-  if (!secret) {
-    console.error("[image-optimizer] APIシークレットが設定されていません");
     throw new Error(ERROR_MESSAGES.UNKNOWN_ERROR);
   }
 
@@ -94,6 +91,7 @@ export async function convertAvatarImage(apiUrl: string | undefined, secret: str
   if (!response.ok) {
     const errorText = await response.text();
     const errorMessage = errorText || ERROR_MESSAGES.UNKNOWN_ERROR;
+
     throw new Error(errorMessage);
   }
 

@@ -3,8 +3,12 @@ import { notFound } from "next/navigation";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ key: string[] }> }) {
+  const isDev = process.env.NODE_ENV === "development";
+  const isLocalhost =
+    process.env.BETTER_AUTH_URL?.includes("localhost") || process.env.BETTER_AUTH_URL?.includes("local.katasu.me");
+
   // 本番なら404に
-  if (process.env.NODE_ENV !== "development") {
+  if (!isDev || !isLocalhost) {
     notFound();
   }
 

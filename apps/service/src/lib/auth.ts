@@ -14,6 +14,8 @@ export const getAuth = (db: D1Database) => {
       provider: "sqlite",
     }),
     session: {
+      expiresIn: 60 * 60 * 24 * 7, // 7日間
+      updateAge: 60 * 60 * 24, // 24時間ごとに更新
       cookieCache: {
         enabled: true,
         maxAge: 5 * 60,
