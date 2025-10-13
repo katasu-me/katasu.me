@@ -31,6 +31,18 @@ export const getAuth = (db: D1Database) => {
       user: {
         create: {
           before: async (user) => {
+            // クローズドβテストユーザーのみに制限
+            // TODO: リリース時に削除
+            const allowedEmailsStr = process.env.BETA_ALLOWED_EMAILS;
+
+            if (allowedEmailsStr) {
+              const allowedEmails = allowedEmailsStr.split(",").map((email) => email.trim().toLowerCase());
+
+              if (!allowedEmails.includes(user.email.toLowerCase())) {
+                throw new Error("クローズドβテストへの参加には招待が必要です");
+              }
+            }
+
             // ユーザー名とアイコン画像はユーザーが設定するので空にする
             return {
               data: {
