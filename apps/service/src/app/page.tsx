@@ -1,4 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import type { User } from "better-auth";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import IconPlant from "@/assets/icons/plant.svg";
@@ -11,15 +12,15 @@ import { SITE_NAME } from "@/constants/site";
 import SignInDrawer from "@/features/auth/components/SignInDrawer";
 import { getUserSession } from "@/lib/auth";
 
-async function StartButton({ userId, className }: { userId: string | undefined; className?: string }) {
+async function StartButton({ user, className }: { user: User | undefined; className?: string }) {
   const buttonClassname = twMerge("w-48", className);
 
-  if (userId) {
+  if (user?.id && user.name) {
     return (
       <Button asChild>
         <Link
           className={twMerge("mx-auto flex items-center justify-center gap-2", buttonClassname)}
-          href={`/user/${userId}`}
+          href={`/user/${user.id}`}
         >
           <IconPlant className="size-5" />
           マイページへ
@@ -52,7 +53,7 @@ export default async function Home() {
             <br />
             インターネットのかたすみ
           </h1>
-          <StartButton className="mt-8 pc:mt-10" userId={session?.user.id} />
+          <StartButton className="mt-8 pc:mt-10" user={session?.user} />
         </div>
       </section>
 
@@ -84,7 +85,7 @@ export default async function Home() {
 
         <DemoImages className="mx-auto mt-32 mb-16" />
 
-        <StartButton className="my-32 mt-8" userId={session?.user.id} />
+        <StartButton className="my-32 mt-8" user={session?.user} />
       </section>
 
       <Footer mode="developed-by" />
