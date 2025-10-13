@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import IconFlag from "@/assets/icons/flag.svg";
-import IconShare from "@/assets/icons/share.svg";
 import IconButton from "@/components/IconButton";
 import Message from "@/components/Message";
 import BigImage from "@/features/gallery/components/BigImage";
@@ -11,6 +10,7 @@ import { DEFAULT_IMAGE_TITLE } from "../../_constants/title";
 import { cachedFetchImage } from "../../_lib/fetch";
 import EditButton from "./EditButton";
 import RemoveButton from "./RemoveButton";
+import ShareButton from "./ShareButton";
 
 type Props = {
   authorUserId: string;
@@ -60,9 +60,7 @@ export default async function ImagePageContent({ authorUserId, imageId, canEdit 
         </IconButton>
 
         {/* シェア */}
-        <IconButton>
-          <IconShare className="h-4 w-4" />
-        </IconButton>
+        <ShareButton title={image.title} userId={authorUserId} imageId={imageId} />
       </div>
 
       <div className="mt-7 flex flex-col items-center justify-center gap-6">

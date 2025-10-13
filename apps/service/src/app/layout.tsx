@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_JP, Reddit_Sans } from "next/font/google";
+import { headers } from "next/headers";
 import type { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 
 import "../styles/globals.css";
+import { DeviceProvider } from "@/contexts/DeviceContext";
 import { generateMetadataTitle } from "@/lib/meta";
 
 const ibmPlexSansJP = IBM_Plex_Sans_JP({
@@ -24,7 +26,10 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION_LONG,
 };
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const headersList = await headers();
+  const isDesktop = headersList.get("X-IS-DESKTOP") === "true";
+
   return (
     <html lang="ja">
       <body
@@ -37,7 +42,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           fontFamily: `"Reddit Sans", ${ibmPlexSansJP.style.fontFamily}`,
         }}
       >
-        {children}
+        <DeviceProvider isDesktop={isDesktop}>{children}</DeviceProvider>
       </body>
     </html>
   );

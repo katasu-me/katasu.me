@@ -20,7 +20,7 @@ type Props = ButtonProps | LinkProps;
 
 export default function IconButton({ className, children, title, ...props }: Props) {
   const baseClasses = twMerge(
-    "interactive-scale-brightness flex items-center justify-center rounded-full bg-warm-white p-2 transition-all duration-400 ease-magnetic hover:brightness-90 w-fit",
+    "interactive-scale-brightness flex items-center justify-center rounded-full bg-warm-white p-2 transition-all duration-400 ease-magnetic cursor-pointer hover:brightness-90 w-fit",
     className,
   );
 
