@@ -2,8 +2,13 @@ import { eq } from "drizzle-orm";
 
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { type User, user } from "../schema";
+import type { ActionResult } from "../types/error";
 import { getDB } from "./db";
 import { fetchTotalImageCountByUserId } from "./image/fetch";
+
+export type UserWithMaxPhotos = User & {
+  maxPhotos: number;
+};
 
 /**
  * ユーザーIDからユーザーを取得する
@@ -11,22 +16,48 @@ import { fetchTotalImageCountByUserId } from "./image/fetch";
  * @param userId ユーザーID
  * @returns ユーザー情報、存在しない場合はundefined
  */
-export async function getUserById(dbInstance: AnyD1Database, userId: string) {
-  const db = getDB(dbInstance);
+export async function getUserById(
+  dbInstance: AnyD1Database,
+  userId: string,
+): Promise<ActionResult<UserWithMaxPhotos | undefined>> {
+  try {
+    const db = getDB(dbInstance);
 
-  const user = await db.query.user.findFirst({
-    where: (u) => eq(u.id, userId),
-    with: {
-      plan: {
-        columns: {
-          maxPhotos: true,
+    const result = await db.query.user.findFirst({
+      where: (u) => eq(u.id, userId),
+      with: {
+        plan: {
+          columns: {
+            maxPhotos: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  return user;
+    return {
+      success: true,
+      data: result
+        ? {
+            ...result,
+            maxPhotos: result.plan.maxPhotos,
+          }
+        : undefined,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: "ユーザーの取得に失敗しました",
+        rawError: error,
+      },
+    };
+  }
 }
+
+export type UserImageStatus = {
+  maxPhotos: number;
+  uploadedPhotos: number;
+};
 
 /**
  * ユーザーの画像投稿状況を取得する
@@ -37,34 +68,53 @@ export async function getUserById(dbInstance: AnyD1Database, userId: string) {
 export async function fetchUserImageStatus(
   dbInstance: AnyD1Database,
   userId: string,
-): Promise<{ maxPhotos: number; uploadedPhotos: number } | undefined> {
-  const db = getDB(dbInstance);
+): Promise<ActionResult<UserImageStatus | undefined>> {
+  try {
+    const db = getDB(dbInstance);
 
-  const userInfo = await db.query.user.findFirst({
-    where: (u) => eq(u.id, userId),
-    with: {
-      plan: {
-        columns: {
-          maxPhotos: true,
+    const userInfo = await db.query.user.findFirst({
+      where: (u) => eq(u.id, userId),
+      with: {
+        plan: {
+          columns: {
+            maxPhotos: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  if (!userInfo) {
-    return undefined;
+    if (!userInfo) {
+      return {
+        success: true,
+        data: undefined,
+      };
+    }
+
+    const uploadedPhotosResult = await fetchTotalImageCountByUserId(dbInstance, userId);
+
+    if (!uploadedPhotosResult.success) {
+      return {
+        success: false,
+        error: uploadedPhotosResult.error,
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        maxPhotos: userInfo.plan.maxPhotos,
+        uploadedPhotos: uploadedPhotosResult.data,
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: "ユーザーの画像投稿状況の取得に失敗しました",
+        rawError: error,
+      },
+    };
   }
-
-  const uploadedPhotosResult = await fetchTotalImageCountByUserId(dbInstance, userId);
-
-  if (!uploadedPhotosResult.success) {
-    return undefined;
-  }
-
-  return {
-    maxPhotos: userInfo.plan.maxPhotos,
-    uploadedPhotos: uploadedPhotosResult.data,
-  };
 }
 
 /**
@@ -78,12 +128,25 @@ export async function updateUser(
   dbInstance: AnyD1Database,
   userId: string,
   updateData: Partial<Omit<User, "id">>,
-): Promise<User | undefined> {
-  const db = getDB(dbInstance);
+): Promise<ActionResult<User | undefined>> {
+  try {
+    const db = getDB(dbInstance);
 
-  const updatedUser = await db.update(user).set(updateData).where(eq(user.id, userId)).returning().get();
+    const updatedUser = await db.update(user).set(updateData).where(eq(user.id, userId)).returning().get();
 
-  return updatedUser;
+    return {
+      success: true,
+      data: updatedUser,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: "ユーザー情報の更新に失敗しました",
+        rawError: error,
+      },
+    };
+  }
 }
 
 /**
@@ -92,15 +155,30 @@ export async function updateUser(
  * @param userId ユーザーID
  * @returns 更新後のユーザー情報
  */
-export async function banUser(dbInstance: AnyD1Database, userId: string): Promise<User | undefined> {
-  const db = getDB(dbInstance);
+export async function banUser(dbInstance: AnyD1Database, userId: string): Promise<ActionResult<User | undefined>> {
+  try {
+    const db = getDB(dbInstance);
 
-  return await db
-    .update(user)
-    .set({
-      bannedAt: new Date(),
-    })
-    .where(eq(user.id, userId))
-    .returning()
-    .get();
+    const result = await db
+      .update(user)
+      .set({
+        bannedAt: new Date(),
+      })
+      .where(eq(user.id, userId))
+      .returning()
+      .get();
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: "ユーザーのBAN処理に失敗しました",
+        rawError: error,
+      },
+    };
+  }
 }

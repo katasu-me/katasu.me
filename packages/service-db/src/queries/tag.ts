@@ -10,17 +10,32 @@ import { getDB } from "./db";
  * @param tagId タグID
  * @returns 更新結果
  */
-export async function hideTag(dbInstance: AnyD1Database, tagId: string): Promise<Tag> {
-  const db = getDB(dbInstance);
+export async function hideTag(dbInstance: AnyD1Database, tagId: string): Promise<ActionResult<Tag>> {
+  try {
+    const db = getDB(dbInstance);
 
-  return await db
-    .update(tag)
-    .set({
-      hiddenAt: new Date(),
-    })
-    .where(eq(tag.id, tagId))
-    .returning()
-    .get();
+    const result = await db
+      .update(tag)
+      .set({
+        hiddenAt: new Date(),
+      })
+      .where(eq(tag.id, tagId))
+      .returning()
+      .get();
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: "タグの非表示化に失敗しました",
+        rawError: error,
+      },
+    };
+  }
 }
 
 /**

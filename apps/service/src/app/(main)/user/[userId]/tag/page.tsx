@@ -1,7 +1,7 @@
 import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
-import { unstable_cacheTag as cacheTag } from "next/cache";
+import { unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Message from "@/components/Message";
@@ -13,26 +13,34 @@ import { cachedFetchUserById } from "@/lib/user";
 const cachedFetchAllTags = async (userId: string) => {
   "use cache";
 
-  cacheTag(tagListCacheTag(userId));
+  const tag = tagListCacheTag(userId);
+  cacheTag(tag);
 
   const { env } = getCloudflareContext();
 
-  return fetchTagsByUserId(env.DB, userId, {
+  const result = await fetchTagsByUserId(env.DB, userId, {
     order: "name",
   });
+
+  if (!result.success) {
+    revalidateTag(tag);
+    return [];
+  }
+
+  return result.data;
 };
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag">): Promise<Metadata> {
   const { userId } = await params;
 
-  const user = await cachedFetchUserById(userId);
+  const userResult = await cachedFetchUserById(userId);
 
-  if (!user) {
+  if (!userResult.success || !userResult.data) {
     notFound();
   }
 
   return generateMetadataTitle({
-    pageTitle: `すべてのタグ - ${user.name}`,
+    pageTitle: `すべてのタグ - ${userResult.data.name}`,
     noindex: true,
   });
 }
@@ -40,16 +48,15 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
 export default async function TagListPage({ params }: PageProps<"/user/[userId]/tag">) {
   const { userId } = await params;
 
-  const user = await cachedFetchUserById(userId);
+  const userResult = await cachedFetchUserById(userId);
 
   // ユーザーが存在しない場合は404
-  if (!user) {
+  if (!userResult.success || !userResult.data) {
     notFound();
   }
 
-  const fetchTagsResult = await cachedFetchAllTags(userId);
-
-  const allTags = fetchTagsResult.success ? fetchTagsResult.data : [];
+  const allTags = await cachedFetchAllTags(userId);
+  const user = userResult.data;
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">

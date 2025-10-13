@@ -12,9 +12,9 @@ import { cachedFetchImage } from "./_lib/fetch";
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/image/[imageId]">): Promise<Metadata> {
   const { userId, imageId } = await params;
 
-  const user = await cachedFetchUserById(userId);
+  const userResult = await cachedFetchUserById(userId);
 
-  if (!user) {
+  if (!userResult.success || !userResult.data) {
     notFound();
   }
 
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/ima
   const title = fetchImage.data.title ?? DEFAULT_IMAGE_TITLE;
 
   return generateMetadataTitle({
-    pageTitle: `${title} - ${user.name}`,
+    pageTitle: `${title} - ${userResult.data.name}`,
     noindex: true,
   });
 }
@@ -35,16 +35,17 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/ima
 export default async function ImagesPage({ params }: PageProps<"/user/[userId]/image/[imageId]">) {
   const { userId, imageId } = await params;
 
-  const user = await cachedFetchUserById(userId);
+  const userResult = await cachedFetchUserById(userId);
 
   // ユーザーが存在しない場合は404
-  if (!user) {
+  if (!userResult.success || !userResult.data) {
     notFound();
   }
 
   const { env } = getCloudflareContext();
   const { session } = await getUserSession(env.DB);
 
+  const user = userResult.data;
   const canEdit = session?.user.id === user.id;
 
   return (

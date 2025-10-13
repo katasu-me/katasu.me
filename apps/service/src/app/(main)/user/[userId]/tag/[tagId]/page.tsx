@@ -49,14 +49,14 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
   }
 
   const tag = fetchTagResult.data;
-  const user = await cachedFetchUserById(tag.userId);
+  const userResult = await cachedFetchUserById(tag.userId);
 
-  if (!user) {
+  if (!userResult.success || !userResult.data) {
     notFound();
   }
 
   return generateMetadataTitle({
-    pageTitle: `#${tag.name} - ${user.name}`,
+    pageTitle: `#${tag.name} - ${userResult.data.name}`,
     noindex: true,
   });
 }
@@ -77,21 +77,21 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
     notFound();
   }
 
+  const { env } = getCloudflareContext();
   const tag = fetchTagResult.data;
 
-  const [user, totalImageCount] = await Promise.all([
+  const [userResult, totalImageCount, { session }] = await Promise.all([
     cachedFetchUserById(tag.userId),
     cachedFetchTotalImageCount(userId),
+    getUserSession(env.DB),
   ]);
 
   // ユーザーが存在しない場合は404
-  if (!user) {
+  if (!userResult.success || !userResult.data) {
     notFound();
   }
 
-  // ログイン中のユーザーを取得
-  const { env } = getCloudflareContext();
-  const { session } = await getUserSession(env.DB);
+  const user = userResult.data;
   const isOwner = user.id === session?.user?.id;
 
   const { view, page: pageStr } = parse(searchParamsSchema, await searchParams);
@@ -123,7 +123,7 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
               defaultTags={[tag.name]}
               counter={{
                 total: totalImageCount,
-                max: user.plan.maxPhotos,
+                max: user.maxPhotos,
               }}
             />
           </div>

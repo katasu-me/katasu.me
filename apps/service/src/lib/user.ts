@@ -11,12 +11,17 @@ import { userDataCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 export async function cachedFetchUserById(userId: string) {
   "use cache";
 
-  cacheTag(userDataCacheTag(userId));
+  const tag = userDataCacheTag(userId);
+  cacheTag(tag);
 
   const { env } = getCloudflareContext();
-  const user = await getUserById(env.DB, userId);
+  const result = await getUserById(env.DB, userId);
 
-  return user;
+  if (!result.success) {
+    revalidateTag(tag);
+  }
+
+  return result;
 }
 
 /**

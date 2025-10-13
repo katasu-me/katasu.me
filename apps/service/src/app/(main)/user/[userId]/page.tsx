@@ -53,14 +53,14 @@ const searchParamsSchema = object({
 export async function generateMetadata({ params }: PageProps<"/user/[userId]">): Promise<Metadata> {
   const { userId } = await params;
 
-  const user = await cachedFetchUserById(userId);
+  const userResult = await cachedFetchUserById(userId);
 
-  if (!user) {
+  if (!userResult.success || !userResult.data) {
     notFound();
   }
 
   return generateMetadataTitle({
-    pageTitle: user.name,
+    pageTitle: userResult.data.name,
     noindex: false, // ユーザーページのみインデックスさせる
   });
 }
@@ -68,20 +68,23 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userId]">) {
   // ユーザーページのユーザーを取得
   const { userId } = await params;
-  const user = await cachedFetchUserById(userId);
+  const userResult = await cachedFetchUserById(userId);
 
   // 存在しない場合は404
-  if (!user) {
+  if (!userResult.success || !userResult.data) {
     notFound();
   }
 
-  // ログイン中のユーザーを取得
   const { env } = getCloudflareContext();
-  const { session } = await getUserSession(env.DB);
-  const isOwner = user.id === session?.user?.id;
 
-  // 投稿枚数、上位タグを取得
-  const [totalImageCount, tags] = await Promise.all([cachedFetchTotalImageCount(userId), cachedFetchTags(userId)]);
+  const [{ session }, totalImageCount, tags] = await Promise.all([
+    getUserSession(env.DB),
+    cachedFetchTotalImageCount(userId),
+    cachedFetchTags(userId),
+  ]);
+
+  const user = userResult.data;
+  const isOwner = user.id === session?.user?.id;
 
   const { view, page: pageStr } = parse(searchParamsSchema, await searchParams);
   const currentPage = Number.parseInt(pageStr, 10);
@@ -111,7 +114,7 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
               title="あたらしい画像を投稿する"
               counter={{
                 total: totalImageCount,
-                max: user.plan.maxPhotos,
+                max: user.maxPhotos,
               }}
             />
           </div>
