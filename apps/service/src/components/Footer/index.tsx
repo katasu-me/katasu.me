@@ -7,6 +7,7 @@ import IconPlant from "@/assets/icons/plant.svg";
 import LogoImage from "@/assets/logo.svg";
 import Button from "@/components/Button";
 import TextLink from "@/components/TextLink";
+import { DOCS_INFORMATION, DOCS_LICENSE, DOCS_PRIVACY_POLICY, DOCS_TERMS_OF_SERVICE } from "@/constants/site";
 import { signOut } from "@/lib/auth-client";
 import DevelopedBy from "./DevelopedBy";
 
@@ -66,17 +67,16 @@ export default function Footer({ className, ...props }: Props) {
         </Link>
 
         <nav className="flex flex-col items-center gap-2 text-sm text-warm-black">
-          {/* TODO: ページ作ったら差し替える */}
-          <TextLink href="https://docs.katasu.me/info/" target="_blank" rel="noopener">
+          <TextLink href={DOCS_INFORMATION} target="_blank" rel="noopener">
             お知らせなど
           </TextLink>
-          <TextLink href="https://docs.katasu.me/others/terms/" target="_blank" rel="noopener">
+          <TextLink href={DOCS_TERMS_OF_SERVICE} target="_blank" rel="noopener">
             利用規約
           </TextLink>
-          <TextLink href="https://docs.katasu.me/others/privacy/" target="_blank" rel="noopener">
+          <TextLink href={DOCS_PRIVACY_POLICY} target="_blank" rel="noopener">
             プライバシーポリシー
           </TextLink>
-          <TextLink href="https://docs.katasu.me/others/license/" target="_blank" rel="noopener">
+          <TextLink href={DOCS_LICENSE} target="_blank" rel="noopener">
             ライセンス
           </TextLink>
         </nav>

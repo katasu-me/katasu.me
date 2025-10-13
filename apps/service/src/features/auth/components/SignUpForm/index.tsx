@@ -5,6 +5,7 @@ import { parseWithValibot } from "@conform-to/valibot";
 import { useActionState } from "react";
 import FormErrorMessage from "@/components/FormErrorMessage";
 import Input from "@/components/Input";
+import { DOCS_PRIVACY_POLICY, DOCS_TERMS_OF_SERVICE } from "@/constants/site";
 import FormSubmitButton from "@/features/gallery/components/FormSubmitButton";
 import { signupAction } from "../../actions/signup";
 import { MAX_USERNAME_LENGTH, signUpFormSchema } from "../../schemas/signup-form";
@@ -75,7 +76,7 @@ export default function SignUpForm() {
               required={true}
             />
             <span className="text-sm text-warm-black">
-              <a href="/terms" target="_blank" className="mr-1 font-bold hover:underline" rel="noopener">
+              <a className="mr-1 font-bold hover:underline" href={DOCS_TERMS_OF_SERVICE} target="_blank" rel="noopener">
                 利用規約
               </a>
               に同意します
@@ -89,7 +90,7 @@ export default function SignUpForm() {
               required={true}
             />
             <span className="text-sm text-warm-black">
-              <a href="/privacy" target="_blank" className="mr-1 font-bold hover:underline" rel="noopener">
+              <a className="mr-1 font-bold hover:underline" href={DOCS_PRIVACY_POLICY} target="_blank" rel="noopener">
                 プライバシーポリシー
               </a>
               に同意します
