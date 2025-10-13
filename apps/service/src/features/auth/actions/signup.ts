@@ -40,7 +40,7 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
         userId: session.user.id,
       });
     } catch (error) {
-      console.error("アバター画像の処理エラー:", error);
+      console.error("[auth] アバター画像の処理に失敗しました:", error);
 
       return submission.reply({
         formErrors: ["アバター画像のアップロードに失敗しました"],
@@ -55,7 +55,7 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
       image: generateR2Key("avatar", session.user.id),
     });
   } catch (error) {
-    console.error("新規登録エラー:", error);
+    console.error("[auth] ユーザー情報の更新に失敗しました:", error);
 
     return submission.reply({
       formErrors: ["新規登録中にエラーが発生しました"],

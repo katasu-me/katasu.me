@@ -53,7 +53,7 @@ export async function editImageAction(_prevState: unknown, formData: FormData) {
   });
 
   if (!updateImageResult.success) {
-    console.error("Update image error:", updateImageResult.error);
+    console.error("[gallery] 画像情報の更新に失敗しました:", updateImageResult.error);
 
     return submission.reply({
       formErrors: [updateImageResult.error.message],

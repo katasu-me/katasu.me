@@ -39,7 +39,7 @@ export async function deleteImageAction(userId: string, imageId: string): Promis
   const deleteResult = await deleteImage(env.DB, imageId);
 
   if (!deleteResult.success) {
-    console.error("Delete image error:", deleteResult.error);
+    console.error("[gallery] DBから画像を削除できませんでした:", deleteResult.error);
     return new Error(deleteResult.error.message);
   }
 
@@ -47,7 +47,7 @@ export async function deleteImageAction(userId: string, imageId: string): Promis
   try {
     await deleteImageFromR2(env.IMAGES_R2_BUCKET, userId, imageId);
   } catch (error) {
-    console.error("Delete image from R2 error:", error);
+    console.error("[gallery] R2から画像を削除できませんでした:", error);
 
     return error instanceof Error ? error : new Error("不明なエラーでR2からの削除に失敗しました");
   }

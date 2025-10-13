@@ -94,7 +94,7 @@ export default async function UserPageContents({ user, view, totalImageCount, cu
   }
 
   if (!fetchUserImagesResult.success) {
-    console.error("Failed to fetch images:", fetchUserImagesResult.error);
+    console.error("[page] 画像の取得に失敗しました:", fetchUserImagesResult.error);
     return <Message message="画像の取得に失敗しました" icon="error" />;
   }
 

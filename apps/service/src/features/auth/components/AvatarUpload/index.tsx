@@ -93,7 +93,7 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
       setIsDrawerOpen(false);
       resetCrop();
     } catch (error) {
-      console.error("画像のクロップに失敗しました:", error);
+      console.error("[auth] 画像のクロップに失敗しました:", error);
     }
   };
 

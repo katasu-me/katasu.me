@@ -77,7 +77,7 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
   const fetchTagResult = await cachedFetchTagById(userId, tagId);
 
   if (!fetchTagResult.success) {
-    console.error("Failed to fetch tag:", fetchTagResult.error);
+    console.error("[page] タグの取得に失敗しました:", fetchTagResult.error);
     notFound();
   }
 

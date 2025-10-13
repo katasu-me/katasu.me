@@ -55,12 +55,12 @@ type Props = {
 };
 
 export default async function TagPageContents({ tag, view, currentPage = 1 }: Props) {
-  // 総画像枚数を取得
+  // 投稿枚数を取得
   const fetchTotalImageCountResult = await cachedFetchTotalImageCount(tag.userId, tag.id);
 
   if (!fetchTotalImageCountResult.success) {
-    console.error("Failed to fetch total image count:", fetchTotalImageCountResult.error);
-    return <Message message="画像の取得に失敗しました" icon="error" />;
+    console.error("[page] 投稿枚数の取得に失敗しました:", fetchTotalImageCountResult.error);
+    return <Message message="投稿枚数の取得に失敗しました" icon="error" />;
   }
 
   // 0枚ならからっぽ
@@ -83,7 +83,7 @@ export default async function TagPageContents({ tag, view, currentPage = 1 }: Pr
   });
 
   if (!fetchTagImagesResult.success) {
-    console.error("Failed to fetch images:", fetchTagImagesResult.error);
+    console.error("[page] 画像の取得に失敗しました:", fetchTagImagesResult.error);
     return <Message message="画像の取得に失敗しました" icon="error" />;
   }
 

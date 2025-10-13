@@ -48,7 +48,7 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   const existingOriginal = await env.IMAGES_R2_BUCKET.head(originalKey);
 
   if (existingOriginal) {
-    console.error("画像IDが重複しました", { userId, imageId });
+    console.error("[gallery] 画像IDが重複しました:", { userId, imageId });
 
     return submission.reply({
       formErrors: [ERROR_MESSAGES.IMAGE_ID_DUPLICATE],
@@ -65,7 +65,7 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
       submission.value.file,
     );
   } catch (error) {
-    console.error("Convert image error:", error);
+    console.error("[gallery] 画像の変換に失敗しました:", error);
 
     const errorMessage = error instanceof Error ? error.message : ERROR_MESSAGES.IMAGE_CONVERSION_FAILED;
 
@@ -86,7 +86,7 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
       imageId,
     });
   } catch (error) {
-    console.error("Upload image error:", error);
+    console.error("[gallery] 画像のアップロードに失敗しました:", error);
 
     return submission.reply({
       formErrors: [ERROR_MESSAGES.IMAGE_UPLOAD_FAILED],
@@ -102,7 +102,7 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   });
 
   if (!registerImageResult.success) {
-    console.error("Register image error:", registerImageResult.error);
+    console.error("[gallery] DBへの画像登録に失敗しました:", registerImageResult.error);
 
     return submission.reply({
       formErrors: [ERROR_MESSAGES.IMAGE_REGISTER_FAILED],

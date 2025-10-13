@@ -25,7 +25,7 @@ export default function RemoveButton({ userId, imageId }: Props) {
     const error = await deleteImageAction(userId, imageId);
 
     if (error) {
-      console.error("Delete error:", error);
+      console.error("[gallery] 画像の削除に失敗しました:", error);
       alert("画像の削除に失敗しました");
       setIsDeleting(false);
     }
