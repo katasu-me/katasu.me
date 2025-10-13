@@ -10,6 +10,63 @@ export type UserWithMaxPhotos = User & {
   maxPhotos: number;
 };
 
+export type PublicUserData = Pick<
+  UserWithMaxPhotos,
+  "id" | "name" | "image" | "bannedAt" | "termsAgreedAt" | "privacyPolicyAgreedAt" | "maxPhotos"
+>;
+
+/**
+ * ユーザーIDから公開可能なユーザー情報を取得する
+ * @param dbInstance D1インスタンス
+ * @param userId ユーザーID
+ * @returns ユーザー情報、存在しない場合はundefined
+ */
+export async function getPublicUserDataById(
+  dbInstance: AnyD1Database,
+  userId: string,
+): Promise<ActionResult<PublicUserData | undefined>> {
+  try {
+    const db = getDB(dbInstance);
+
+    const result = await db.query.user.findFirst({
+      where: (u) => eq(u.id, userId),
+      columns: {
+        id: true,
+        name: true,
+        image: true,
+        bannedAt: true,
+        termsAgreedAt: true,
+        privacyPolicyAgreedAt: true,
+      },
+      with: {
+        plan: {
+          columns: {
+            maxPhotos: true,
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      data: result
+        ? {
+            ...result,
+            maxPhotos: result.plan.maxPhotos,
+          }
+        : undefined,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: "ユーザーの取得に失敗しました",
+        rawError: error,
+      },
+    };
+  }
+}
+
 /**
  * ユーザーIDからユーザーを取得する
  * @param dbInstance D1インスタンス

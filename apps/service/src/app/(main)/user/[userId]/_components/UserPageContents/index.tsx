@@ -4,7 +4,7 @@ import {
   fetchImagesByUserId,
   fetchRandomImagesByUserId,
   type ImageWithTags,
-  type User,
+  type PublicUserData,
 } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
@@ -55,7 +55,7 @@ const cachedFetchRandomImages = async (userId: string) => {
 };
 
 type Props = {
-  user: User;
+  user: PublicUserData;
   view: ImageLayoutType;
   totalImageCount: number;
   currentPage?: number;

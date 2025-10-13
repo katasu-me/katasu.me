@@ -1,21 +1,21 @@
-import { fetchTotalImageCountByUserId, getUserById } from "@katasu.me/service-db";
+import { fetchTotalImageCountByUserId, getPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
 import { userDataCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 
 /**
- * ユーザー情報を取得
+ * ユーザーの公開情報を取得
  * @param userId ユーザーID
  * @returns ユーザー情報、存在しない場合はundefined
  */
-export async function cachedFetchUserById(userId: string) {
+export async function cachedFetchPublicUserDataById(userId: string) {
   "use cache";
 
   const tag = userDataCacheTag(userId);
   cacheTag(tag);
 
   const { env } = getCloudflareContext();
-  const result = await getUserById(env.DB, userId);
+  const result = await getPublicUserDataById(env.DB, userId);
 
   if (!result.success) {
     revalidateTag(tag);

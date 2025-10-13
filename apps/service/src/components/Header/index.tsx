@@ -1,9 +1,9 @@
-import type { User } from "@katasu.me/service-db";
+import type { PublicUserData } from "@katasu.me/service-db";
 import type { PropsWithChildren } from "react";
 import UserIcon from "@/features/auth/components/UserIcon";
 
 type Props = PropsWithChildren<{
-  user: User;
+  user: PublicUserData;
 }>;
 
 export default function Header({ user, children }: Props) {

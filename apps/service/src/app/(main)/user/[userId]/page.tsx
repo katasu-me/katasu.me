@@ -18,7 +18,7 @@ import { getUserSession } from "@/lib/auth";
 import { tagListCacheTag } from "@/lib/cache-tags";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
-import { cachedFetchTotalImageCount, cachedFetchUserById } from "@/lib/user";
+import { cachedFetchPublicUserDataById, cachedFetchTotalImageCount } from "@/lib/user";
 import UserPageContents from "./_components/UserPageContents";
 
 /**
@@ -55,9 +55,15 @@ const searchParamsSchema = object({
 export async function generateMetadata({ params }: PageProps<"/user/[userId]">): Promise<Metadata> {
   const { userId } = await params;
 
-  const userResult = await cachedFetchUserById(userId);
+  const userResult = await cachedFetchPublicUserDataById(userId);
 
-  if (!userResult.success || !userResult.data || !userResult.data.name) {
+  // 存在しない、または新規登録が完了していない場合は404
+  if (
+    !userResult.success ||
+    !userResult.data ||
+    !userResult.data.termsAgreedAt ||
+    !userResult.data.privacyPolicyAgreedAt
+  ) {
     notFound();
   }
 
@@ -77,10 +83,15 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userId]">) {
   // ユーザーページのユーザーを取得
   const { userId } = await params;
-  const userResult = await cachedFetchUserById(userId);
+  const userResult = await cachedFetchPublicUserDataById(userId);
 
-  // 存在しない場合は404
-  if (!userResult.success || !userResult.data || !userResult.data.name) {
+  // 存在しない、または新規登録が完了していない場合は404
+  if (
+    !userResult.success ||
+    !userResult.data ||
+    !userResult.data.termsAgreedAt ||
+    !userResult.data.privacyPolicyAgreedAt
+  ) {
     notFound();
   }
 

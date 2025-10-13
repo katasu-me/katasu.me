@@ -1,5 +1,5 @@
+import type { PublicUserData } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import type { User } from "better-auth";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import IconPlant from "@/assets/icons/plant.svg";
@@ -11,8 +11,9 @@ import Footer from "@/components/Footer";
 import { SITE_NAME } from "@/constants/site";
 import SignInDrawer from "@/features/auth/components/SignInDrawer";
 import { getUserSession } from "@/lib/auth";
+import { cachedFetchPublicUserDataById } from "@/lib/user";
 
-async function StartButton({ user, className }: { user: User | undefined; className?: string }) {
+async function StartButton({ user, className }: { user: PublicUserData | undefined; className?: string }) {
   // TODO: リリース時には外す
   if (process.env.NODE_ENV === "production") {
     return (
@@ -27,7 +28,8 @@ async function StartButton({ user, className }: { user: User | undefined; classN
 
   const buttonClassname = twMerge("w-48", className);
 
-  if (user?.id && user.name) {
+  // 登録 & 同意が完了している場合
+  if (user?.id && user.termsAgreedAt && user.privacyPolicyAgreedAt) {
     return (
       <Button asChild>
         <Link
@@ -49,11 +51,18 @@ async function StartButton({ user, className }: { user: User | undefined; classN
 }
 
 export default async function Home() {
-  const { env } = await getCloudflareContext({
-    async: true,
-  });
-
+  const { env } = await getCloudflareContext({ async: true });
   const { session } = await getUserSession(env.DB);
+
+  let user: PublicUserData | undefined;
+
+  if (session?.user) {
+    const result = await cachedFetchPublicUserDataById(session.user.id);
+
+    if (result.success) {
+      user = result.data;
+    }
+  }
 
   return (
     <div className="col-start-2">
@@ -71,7 +80,7 @@ export default async function Home() {
             準備中。年内リリース予定 <span className="text-xs">(かも)</span>
           </p>
 
-          <StartButton className="mt-8 pc:mt-10" user={session?.user} />
+          <StartButton className="mt-8 pc:mt-10" user={user} />
         </div>
       </section>
 
@@ -103,7 +112,7 @@ export default async function Home() {
 
         <DemoImages className="mx-auto mt-32 mb-16" />
 
-        <StartButton className="my-32 mt-8" user={session?.user} />
+        <StartButton className="my-32 mt-8" user={user} />
       </section>
 
       <Footer mode="developed-by" />

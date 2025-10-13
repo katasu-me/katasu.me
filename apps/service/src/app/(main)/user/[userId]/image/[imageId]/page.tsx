@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getImageUrl } from "@/lib/r2";
-import { cachedFetchUserById } from "@/lib/user";
+import { cachedFetchPublicUserDataById } from "@/lib/user";
 import ImagePageContent from "./_components/ImagePageContent";
 import { DEFAULT_IMAGE_TITLE } from "./_constants/title";
 import { cachedFetchImage } from "./_lib/fetch";
@@ -13,9 +13,15 @@ import { cachedFetchImage } from "./_lib/fetch";
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/image/[imageId]">): Promise<Metadata> {
   const { userId, imageId } = await params;
 
-  const userResult = await cachedFetchUserById(userId);
+  const userResult = await cachedFetchPublicUserDataById(userId);
 
-  if (!userResult.success || !userResult.data || !userResult.data.name) {
+  // 存在しない、または新規登録が完了していない場合は404
+  if (
+    !userResult.success ||
+    !userResult.data ||
+    !userResult.data.termsAgreedAt ||
+    !userResult.data.privacyPolicyAgreedAt
+  ) {
     notFound();
   }
 
@@ -43,10 +49,15 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/ima
 export default async function ImagesPage({ params }: PageProps<"/user/[userId]/image/[imageId]">) {
   const { userId, imageId } = await params;
 
-  const userResult = await cachedFetchUserById(userId);
+  const userResult = await cachedFetchPublicUserDataById(userId);
 
-  // ユーザーが存在しない場合は404
-  if (!userResult.success || !userResult.data || !userResult.data.name) {
+  // 存在しない、または新規登録が完了していない場合は404
+  if (
+    !userResult.success ||
+    !userResult.data ||
+    !userResult.data.termsAgreedAt ||
+    !userResult.data.privacyPolicyAgreedAt
+  ) {
     notFound();
   }
 

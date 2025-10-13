@@ -17,7 +17,7 @@ import { getUserSession } from "@/lib/auth";
 import { tagPageCacheTag } from "@/lib/cache-tags";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
-import { cachedFetchTotalImageCount, cachedFetchUserById } from "@/lib/user";
+import { cachedFetchPublicUserDataById, cachedFetchTotalImageCount } from "@/lib/user";
 import TagPageContents from "./_components/TagPageContents";
 
 const searchParamsSchema = object({
@@ -51,9 +51,15 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
   }
 
   const tag = fetchTagResult.data;
-  const userResult = await cachedFetchUserById(tag.userId);
+  const userResult = await cachedFetchPublicUserDataById(tag.userId);
 
-  if (!userResult.success || !userResult.data || !userResult.data.name) {
+  // 存在しない、または新規登録が完了していない場合は404
+  if (
+    !userResult.success ||
+    !userResult.data ||
+    !userResult.data.termsAgreedAt ||
+    !userResult.data.privacyPolicyAgreedAt
+  ) {
     notFound();
   }
 
@@ -90,13 +96,18 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
   const tag = fetchTagResult.data;
 
   const [userResult, totalImageCount, { session }] = await Promise.all([
-    cachedFetchUserById(tag.userId),
+    cachedFetchPublicUserDataById(tag.userId),
     cachedFetchTotalImageCount(userId),
     getUserSession(env.DB),
   ]);
 
-  // ユーザーが存在しない場合は404
-  if (!userResult.success || !userResult.data || !userResult.data.name) {
+  // 存在しない、または新規登録が完了していない場合は404
+  if (
+    !userResult.success ||
+    !userResult.data ||
+    !userResult.data.termsAgreedAt ||
+    !userResult.data.privacyPolicyAgreedAt
+  ) {
     notFound();
   }
 
