@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
   const tag = fetchTagResult.data;
   const userResult = await cachedFetchUserById(tag.userId);
 
-  if (!userResult.success || !userResult.data) {
+  if (!userResult.success || !userResult.data || !userResult.data.name) {
     notFound();
   }
 
@@ -96,7 +96,7 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
   ]);
 
   // ユーザーが存在しない場合は404
-  if (!userResult.success || !userResult.data) {
+  if (!userResult.success || !userResult.data || !userResult.data.name) {
     notFound();
   }
 

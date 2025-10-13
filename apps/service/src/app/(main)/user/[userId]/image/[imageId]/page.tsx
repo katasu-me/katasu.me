@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/ima
 
   const userResult = await cachedFetchUserById(userId);
 
-  if (!userResult.success || !userResult.data) {
+  if (!userResult.success || !userResult.data || !userResult.data.name) {
     notFound();
   }
 
@@ -46,7 +46,7 @@ export default async function ImagesPage({ params }: PageProps<"/user/[userId]/i
   const userResult = await cachedFetchUserById(userId);
 
   // ユーザーが存在しない場合は404
-  if (!userResult.success || !userResult.data) {
+  if (!userResult.success || !userResult.data || !userResult.data.name) {
     notFound();
   }
 

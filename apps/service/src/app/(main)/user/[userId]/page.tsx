@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 
   const userResult = await cachedFetchUserById(userId);
 
-  if (!userResult.success || !userResult.data) {
+  if (!userResult.success || !userResult.data || !userResult.data.name) {
     notFound();
   }
 
@@ -80,7 +80,7 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
   const userResult = await cachedFetchUserById(userId);
 
   // 存在しない場合は404
-  if (!userResult.success || !userResult.data) {
+  if (!userResult.success || !userResult.data || !userResult.data.name) {
     notFound();
   }
 
