@@ -41,7 +41,7 @@ jobs:
           sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.jsonc
           sed -i "s|<PRODUCTION_R2_URL>|${{ vars.PRODUCTION_R2_URL }}|g" wrangler.jsonc
           sed -i "s|<PRODUCTION_IMAGE_OPTIMIZER_URL>|${{ vars.PRODUCTION_IMAGE_OPTIMIZER_URL }}|g" wrangler.jsonc
-          sed -i "s|<UMAMI_SCRIPT_URL>|${{ var.UMAMI_SCRIPT_URL }}|g" wrangler.jsonc
+          sed -i "s|<UMAMI_SCRIPT_URL>|${{ vars.UMAMI_SCRIPT_URL }}|g" wrangler.jsonc
           sed -i "s|<UMAMI_WEBSITE_ID>|${{ secrets.UMAMI_WEBSITE_ID }}|g" wrangler.jsonc
 
           echo "wrangler.jsonc created successfully"
