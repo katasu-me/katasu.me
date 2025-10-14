@@ -12,8 +12,10 @@ export type UserWithMaxPhotos = User & {
 
 export type PublicUserData = Pick<
   UserWithMaxPhotos,
-  "id" | "name" | "image" | "bannedAt" | "termsAgreedAt" | "privacyPolicyAgreedAt" | "maxPhotos"
->;
+  "id" | "name" | "bannedAt" | "termsAgreedAt" | "privacyPolicyAgreedAt" | "maxPhotos"
+> & {
+  hasAvatar: boolean;
+};
 
 /**
  * ユーザーIDから公開可能なユーザー情報を取得する
@@ -33,7 +35,7 @@ export async function getPublicUserDataById(
       columns: {
         id: true,
         name: true,
-        image: true,
+        avatarSetAt: true,
         bannedAt: true,
         termsAgreedAt: true,
         privacyPolicyAgreedAt: true,
@@ -53,6 +55,7 @@ export async function getPublicUserDataById(
         ? {
             ...result,
             maxPhotos: result.plan.maxPhotos,
+            hasAvatar: result.avatarSetAt !== null,
           }
         : undefined,
     };

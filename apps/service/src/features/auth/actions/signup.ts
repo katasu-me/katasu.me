@@ -5,7 +5,7 @@ import { updateUser } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
-import { generateR2Key, uploadAvatarImage } from "@/lib/r2";
+import { uploadAvatarImage } from "@/lib/r2";
 import { signUpFormSchema } from "../schemas/signup-form";
 
 export async function signupAction(_prevState: unknown, formData: FormData) {
@@ -48,7 +48,7 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     // ユーザー情報を更新
     await updateUser(env.DB, session.user.id, {
       name: submission.value.username,
-      image: generateR2Key("avatar", session.user.id),
+      avatarSetAt: submission.value.avatar instanceof File ? new Date() : null,
       termsAgreedAt: new Date(),
       privacyPolicyAgreedAt: new Date(),
     });

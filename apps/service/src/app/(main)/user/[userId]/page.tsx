@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
   }
 
   const user = userResult.data;
-  const avatarUrl = getUserAvatarUrl(user.id, user.image !== null);
+  const avatarUrl = getUserAvatarUrl(user.id, user.hasAvatar);
 
   return generateMetadataTitle({
     pageTitle: user.name,

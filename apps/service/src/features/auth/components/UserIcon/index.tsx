@@ -6,12 +6,12 @@ import { getUserAvatarUrl } from "@/lib/image";
 type Props = {
   userId: string;
   username: string;
-  iconImageKey: string | undefined | null;
+  hasAvatar: boolean;
   className?: string;
 };
 
-export default function UserIcon({ userId, username, iconImageKey, className }: Props) {
-  const avatarImageUrl = getUserAvatarUrl(userId, iconImageKey !== null);
+export default function UserIcon({ userId, username, hasAvatar, className }: Props) {
+  const avatarImageUrl = getUserAvatarUrl(userId, hasAvatar);
   const alt = `${username}さんのアイコン`;
 
   return (

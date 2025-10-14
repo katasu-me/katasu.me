@@ -17,6 +17,7 @@ export const user = sqliteTable("user", {
     .notNull()
     .default(sql`(unixepoch())`)
     .$onUpdate(() => new Date()),
+  avatarSetAt: integer("avatarSetAt", { mode: "timestamp" }),
   bannedAt: integer("bannedAt", { mode: "timestamp" }),
   termsAgreedAt: integer("termsAgreedAt", { mode: "timestamp" }),
   privacyPolicyAgreedAt: integer("privacyPolicyAgreedAt", { mode: "timestamp" }),
