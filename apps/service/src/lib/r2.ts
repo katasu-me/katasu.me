@@ -1,3 +1,5 @@
+import type { ImageVariants } from "image-optimizer";
+
 type UploadAvatarImageOptions = {
   type: "avatar";
   imageBuffer: ArrayBuffer;
@@ -6,10 +8,7 @@ type UploadAvatarImageOptions = {
 
 type UploadImageOptions = {
   type: "image";
-  variants: {
-    original: ArrayBuffer;
-    thumbnail: ArrayBuffer;
-  };
+  variants: Pick<ImageVariants, "original" | "thumbnail">;
   userId: string;
   imageId: string;
 };
@@ -109,12 +108,12 @@ export async function uploadImage(r2: R2Bucket, options: UploadImageOptions): Pr
 
     await Promise.all([
       upload(r2, originalKey, {
-        imageBuffer: options.variants.original,
+        imageBuffer: options.variants.original.data,
         userId: options.userId,
         imageId: options.imageId,
       }),
       upload(r2, thumbnailKey, {
-        imageBuffer: options.variants.thumbnail,
+        imageBuffer: options.variants.thumbnail.data,
         userId: options.userId,
         imageId: options.imageId,
       }),

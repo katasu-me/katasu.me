@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "image-optimizer": ["../image-optimizer/src/index.ts"]
     },
     "types": ["./cloudflare-env.d.ts"]
   },

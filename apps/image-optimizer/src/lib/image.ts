@@ -1,5 +1,6 @@
 import { imageSize } from "image-size";
 import { type OptimizeParams, type OptimizeResult, optimizeImageExt } from "wasm-image-optimization";
+import type { ImageDimensions, ImageVariants } from "../types";
 
 /** WebP変換時のデフォルト画質 */
 const DEFAULT_QUALITY = 80;
@@ -68,19 +69,12 @@ async function convertToWebp(imageData: BufferSource, options?: ConvertWebpOptio
   }
 }
 
-export type ImageDimensionsResult = {
-  /** 画像の幅 (orientation考慮済み) */
-  width: number;
-  /** 画像の高さ (orientation考慮済み) */
-  height: number;
-};
-
 /**
  * 画像サイズと向きを取得
  * @param imageData 画像データ
  * @returns 画像サイズ情報（orientation考慮済み）
  */
-export function getImageDimensions(imageData: ArrayBuffer): ImageDimensionsResult {
+export function getImageDimensions(imageData: ArrayBuffer): ImageDimensions {
   const dimensions = imageSize(new Uint8Array(imageData));
 
   if (!dimensions.width || !dimensions.height) {
@@ -96,19 +90,6 @@ export function getImageDimensions(imageData: ArrayBuffer): ImageDimensionsResul
   return { width, height };
 }
 
-export type ImageVariantResult = {
-  /** オリジナル画像 */
-  original: {
-    data: ArrayBuffer;
-  };
-  /** サムネイル画像 */
-  thumbnail: {
-    data: ArrayBuffer;
-  };
-  /** 画像サイズ情報 */
-  dimensions: ImageDimensionsResult;
-};
-
 /**
  * 圧縮した画像とサムネイル画像を生成
  * @param imageData 画像
@@ -117,7 +98,7 @@ export type ImageVariantResult = {
 export async function generateImageVariants(
   imageData: ArrayBuffer,
   { originalWidth, originalHeight }: GenerateImageOptions,
-): Promise<ImageVariantResult> {
+): Promise<ImageVariants> {
   const [original, thumbnail] = await Promise.all([
     // オリジナル
     convertToWebp(imageData, {
