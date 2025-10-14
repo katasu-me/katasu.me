@@ -5,7 +5,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
-import { tagListCacheTag, tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
+import { imagePageCacheTag, tagListCacheTag, tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 import { deleteImageFromR2 } from "@/lib/r2";
 
 /**
@@ -53,6 +53,9 @@ export async function deleteImageAction(userId: string, imageId: string): Promis
   }
 
   // 画像ページ
+  revalidateTag(imagePageCacheTag(userId, imageId));
+
+  // ユーザーページ
   revalidateTag(userPageCacheTag(userId));
 
   // タグ一覧
