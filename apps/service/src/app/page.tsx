@@ -15,7 +15,7 @@ import { cachedFetchPublicUserDataById } from "@/lib/user";
 
 async function StartButton({ user, className }: { user: PublicUserData | undefined; className?: string }) {
   // TODO: リリース時には外す
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV === "production") {
     return (
       <div className={className}>
         <Button asChild>
