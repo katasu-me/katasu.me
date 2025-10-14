@@ -32,6 +32,19 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<Param
 
   const { env } = getCloudflareContext();
 
+  // レートリミット (100リクエスト/分)
+  const clientIp = _req.headers.get("cf-connecting-ip") || "unknown";
+  const { success } = await env.IMAGE_RATE_LIMITER.limit({ key: `image:${clientIp}` });
+
+  if (!success) {
+    return new NextResponse("Too Many Requests", {
+      status: 429,
+      headers: {
+        "Retry-After": "60",
+      },
+    });
+  }
+
   const kvKey = `image_status:${imageId}`;
   let status: ImageStatus;
 

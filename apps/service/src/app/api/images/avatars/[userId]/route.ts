@@ -13,6 +13,19 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<Param
   const { userId } = await params;
   const { env } = getCloudflareContext();
 
+  // レートリミット (100リクエスト/分)
+  const clientIp = _req.headers.get("cf-connecting-ip") || "unknown";
+  const { success } = await env.IMAGE_RATE_LIMITER.limit({ key: `avatar:${clientIp}` });
+
+  if (!success) {
+    return new NextResponse("Too Many Requests", {
+      status: 429,
+      headers: {
+        "Retry-After": "60",
+      },
+    });
+  }
+
   // R2からアバター取得
   const key = generateR2Key("avatar", userId);
   const object = await env.IMAGES_R2_BUCKET.get(key);
