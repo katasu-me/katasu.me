@@ -22,11 +22,18 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     return submission.reply();
   }
 
+  console.log("[service] called actions");
+
   // アバター画像がある場合
   if (submission.value.avatar instanceof File) {
     try {
-      // 画像を変換（Service Bindings経由）
-      const convertedAvatar = await env.IMAGE_OPTIMIZER.generateAvatar(submission.value.avatar);
+      console.log("exist file");
+
+      // 画像を変換
+      const arrayBuffer = await submission.value.avatar.arrayBuffer();
+      const convertedAvatar = await env.IMAGE_OPTIMIZER.generateAvatar(arrayBuffer);
+
+      console.log("converted", convertedAvatar);
 
       // 変換済み画像をアップロード
       await uploadAvatarImage(env.IMAGES_R2_BUCKET, {
@@ -34,6 +41,8 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
         imageBuffer: convertedAvatar,
         userId: session.user.id,
       });
+
+      console.log("uploaded!");
     } catch (error) {
       console.error("[auth] アバター画像の処理に失敗しました:", error);
 

@@ -36,17 +36,15 @@ export default class ImageOptimizerWorker extends WorkerEntrypoint {
 
   /**
    * アバター画像を生成
-   * @param imageFile - 画像ファイル
+   * @param imageData - 画像データ (ArrayBuffer)
    * @returns WebP形式のArrayBuffer
    */
-  async generateAvatar(imageFile: File): Promise<ArrayBuffer> {
+  async generateAvatar(imageData: ArrayBuffer): Promise<ArrayBuffer> {
     try {
-      const arrayBuffer = await imageFile.arrayBuffer();
-
       // オリジナル画像の縦横を取得
-      const originalImageDimensions = getImageDimensions(arrayBuffer);
+      const originalImageDimensions = getImageDimensions(imageData);
 
-      const avatarImage = await generateAvatarImage(arrayBuffer, {
+      const avatarImage = await generateAvatarImage(imageData, {
         originalWidth: originalImageDimensions.width,
         originalHeight: originalImageDimensions.height,
       });
@@ -60,17 +58,15 @@ export default class ImageOptimizerWorker extends WorkerEntrypoint {
 
   /**
    * 投稿画像のバリアント（オリジナル + サムネイル）を生成
-   * @param imageFile - 画像ファイル
-   * @returns base64エンコードされた画像バリアント
+   * @param imageData - 画像データ (ArrayBuffer)
+   * @returns 画像バリアント
    */
-  async generateImageVariants(imageFile: File): Promise<ImageVariants> {
+  async generateImageVariants(imageData: ArrayBuffer): Promise<ImageVariants> {
     try {
-      const arrayBuffer = await imageFile.arrayBuffer();
-
       // オリジナル画像の縦横を取得
-      const originalImageDimensions = getImageDimensions(arrayBuffer);
+      const originalImageDimensions = getImageDimensions(imageData);
 
-      const variants = await generateImageVariants(arrayBuffer, {
+      const variants = await generateImageVariants(imageData, {
         originalWidth: originalImageDimensions.width,
         originalHeight: originalImageDimensions.height,
       });

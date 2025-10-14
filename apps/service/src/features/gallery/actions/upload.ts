@@ -54,11 +54,12 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     });
   }
 
-  // 画像を変換（Service Bindings経由）
+  // 画像を変換
   let convertResult: Awaited<ReturnType<typeof env.IMAGE_OPTIMIZER.generateImageVariants>>;
 
   try {
-    convertResult = await env.IMAGE_OPTIMIZER.generateImageVariants(submission.value.file);
+    const arrayBuffer = await submission.value.file.arrayBuffer();
+    convertResult = await env.IMAGE_OPTIMIZER.generateImageVariants(arrayBuffer);
   } catch (error) {
     console.error("[gallery] 画像の変換に失敗しました:", error);
 
