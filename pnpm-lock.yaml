@@ -26,18 +26,9 @@ importers:
 
   apps/image-optimizer:
     dependencies:
-      '@hono/valibot-validator':
-        specifier: ^0.5.3
-        version: 0.5.3(hono@4.9.10)(valibot@1.1.0(typescript@5.9.2))
-      hono:
-        specifier: ^4.9.10
-        version: 4.9.10
       image-size:
         specifier: ^2.0.2
         version: 2.0.2
-      valibot:
-        specifier: ^1.1.0
-        version: 1.1.0(typescript@5.9.2)
       wasm-image-optimization:
         specifier: ^1.2.30
         version: 1.2.30
@@ -1789,12 +1780,6 @@ packages:
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
-
-  '@hono/valibot-validator@0.5.3':
-    resolution: {integrity: sha512-91wjmjDvrTdEm2ZcuCyLBghtld78QoLEduzfkqLo1L74n6sqqoVfc0gDfmju1Ar6w1eK8Q0UyIubrtj4KMWVnQ==}
-    peerDependencies:
-      hono: '>=3.9.0'
-      valibot: ^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc
 
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
@@ -9511,11 +9496,6 @@ snapshots:
     optional: true
 
   '@hexagon/base64@1.1.28': {}
-
-  '@hono/valibot-validator@0.5.3(hono@4.9.10)(valibot@1.1.0(typescript@5.9.2))':
-    dependencies:
-      hono: 4.9.10
-      valibot: 1.1.0(typescript@5.9.2)
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:

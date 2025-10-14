@@ -5,7 +5,6 @@ import { updateUser } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
-import { convertAvatarImage } from "@/lib/image-optimizer";
 import { generateR2Key, uploadAvatarImage } from "@/lib/r2";
 import { signUpFormSchema } from "../schemas/signup-form";
 
@@ -27,11 +26,8 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
   if (submission.value.avatar instanceof File) {
     try {
       // 画像を変換
-      const convertedAvatar = await convertAvatarImage(
-        process.env.IMAGE_OPTIMIZER_URL,
-        process.env.IMAGE_OPTIMIZER_SECRET,
-        submission.value.avatar,
-      );
+      const arrayBuffer = await submission.value.avatar.arrayBuffer();
+      const convertedAvatar = await env.IMAGE_OPTIMIZER.generateAvatar(arrayBuffer);
 
       // 変換済み画像をアップロード
       await uploadAvatarImage(env.IMAGES_R2_BUCKET, {

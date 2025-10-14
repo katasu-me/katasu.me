@@ -7,7 +7,6 @@ import { nanoid } from "nanoid";
 import { revalidateTag } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { tagListCacheTag, tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
-import { convertImageVariants } from "@/lib/image-optimizer";
 import { generateR2Key, uploadImage } from "@/lib/r2";
 import { ERROR_MESSAGES } from "../constants/error-messages";
 import { uploadImageSchema } from "../schemas/upload";
@@ -56,14 +55,11 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   }
 
   // 画像を変換
-  let convertResult: Awaited<ReturnType<typeof convertImageVariants>>;
+  let convertResult: Awaited<ReturnType<typeof env.IMAGE_OPTIMIZER.generateImageVariants>>;
 
   try {
-    convertResult = await convertImageVariants(
-      process.env.IMAGE_OPTIMIZER_URL,
-      process.env.IMAGE_OPTIMIZER_SECRET,
-      submission.value.file,
-    );
+    const arrayBuffer = await submission.value.file.arrayBuffer();
+    convertResult = await env.IMAGE_OPTIMIZER.generateImageVariants(arrayBuffer);
   } catch (error) {
     console.error("[gallery] 画像の変換に失敗しました:", error);
 
