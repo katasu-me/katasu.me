@@ -20,9 +20,7 @@ export default async function SignUpPage() {
 
   return (
     <div className="col-span-full grid min-h-[95vh] grid-cols-subgrid gap-y-12 py-16">
-      <main className="col-start-2 flex items-center justify-center">
-        <SignUpForm />
-      </main>
+      <SignUpForm className="col-start-2 flex items-center justify-center" />
     </div>
   );
 }
