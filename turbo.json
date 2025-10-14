@@ -22,7 +22,7 @@
       "dependsOn": ["^test"]
     },
     "dev": {
-      "env": ["NEXT_PUBLIC_R2_URL", "BETTER_AUTH_*", "GOOGLE_*", "IMAGE_OPTIMIZER_*"],
+      "env": ["NEXT_PUBLIC_SITE_URL", "BETTER_AUTH_*", "GOOGLE_*"],
       "persistent": true,
       "cache": false
     },
