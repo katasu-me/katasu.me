@@ -8,8 +8,8 @@ import Message from "@/components/Message";
 import TagLink from "@/components/Navigation/TagLinks/TabLink";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import { tagListCacheTag } from "@/lib/cache-tags";
+import { getUserAvatarUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
-import { getUserAvatarUrl } from "@/lib/r2";
 import { cachedFetchPublicUserDataById } from "@/lib/user";
 
 const cachedFetchAllTags = async (userId: string) => {
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
   }
 
   const user = userResult.data;
-  const avatarUrl = getUserAvatarUrl(user.image);
+  const avatarUrl = getUserAvatarUrl(user.id, user.image !== null);
 
   return generateMetadataTitle({
     pageTitle: `すべてのタグ - ${user.name}`,

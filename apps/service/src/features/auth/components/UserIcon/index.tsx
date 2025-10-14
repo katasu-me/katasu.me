@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
-import { getUserAvatarUrl } from "@/lib/r2";
+import { getUserAvatarUrl } from "@/lib/image";
 
 type Props = {
   userId: string;
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function UserIcon({ userId, username, iconImageKey, className }: Props) {
-  const avatarImageUrl = getUserAvatarUrl(iconImageKey);
+  const avatarImageUrl = getUserAvatarUrl(userId, iconImageKey !== null);
   const alt = `${username}さんのアイコン`;
 
   return (

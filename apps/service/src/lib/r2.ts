@@ -72,45 +72,11 @@ async function upload(r2: R2Bucket, key: string, options: UploadToR2Options): Pr
     await r2.put(key, options.imageBuffer, {
       httpMetadata: {
         contentType: "image/webp",
-        cacheControl: "public, max-age=31536000", // 1年間キャッシュ
       },
     });
   } catch (error) {
     throw new Error(`R2へのアップロードに失敗しました: ${error}`);
   }
-}
-
-/**
- * 画像のURLを取得
- * @param userId ユーザーID
- * @param imageId 画像ID
- * @param variant 画像バリアント（デフォルト: thumbnail）
- * @returns 画像URL
- */
-export function getImageUrl(userId: string, imageId: string, variant: "original" | "thumbnail" = "thumbnail"): string {
-  const bucketPublicUrl = process.env.NEXT_PUBLIC_R2_URL;
-
-  if (!bucketPublicUrl) {
-    throw new Error("R2_PUBLIC_URLが設定されていません");
-  }
-
-  const suffix = variant === "thumbnail" ? "_thumbnail" : "";
-  return `${bucketPublicUrl}/images/${userId}/${imageId}${suffix}.webp`;
-}
-
-/**
- * ユーザーアバター画像のURLを取得
- * @param imageKey DBに保存されたR2のキー
- * @returns アバター画像URL、キーがない場合はデフォルト画像
- */
-export function getUserAvatarUrl(imageKey: string | undefined | null): string {
-  const bucketPublicUrl = process.env.NEXT_PUBLIC_R2_URL;
-
-  if (!bucketPublicUrl || !imageKey) {
-    return "/images/default-avatar-icon.avif";
-  }
-
-  return `${bucketPublicUrl}/${imageKey}`;
 }
 
 /**

@@ -1,7 +1,5 @@
-import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
-import { unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
@@ -10,42 +8,16 @@ import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
-import TagLinks from "@/components/Navigation/TagLinks";
+import TagLinksSkeleton from "@/components/Navigation/TagLinks/Skeleton";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
-import { tagListCacheTag } from "@/lib/cache-tags";
+import { getUserAvatarUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
-import { getUserAvatarUrl } from "@/lib/r2";
 import { cachedFetchPublicUserDataById, cachedFetchTotalImageCount } from "@/lib/user";
 import UserPageContents from "./_components/UserPageContents";
-
-/**
- * 使用頻度の高いタグを取得
- * @params userId ユーザーID
- * @returns タグ一覧
- */
-const cachedFetchTags = async (userId: string) => {
-  "use cache";
-
-  const tag = tagListCacheTag(userId);
-  cacheTag(tag);
-
-  const { env } = getCloudflareContext();
-
-  const result = await fetchTagsByUserId(env.DB, userId, {
-    limit: 4,
-    order: "usage",
-  });
-
-  if (!result.success) {
-    revalidateTag(tag);
-    return [];
-  }
-
-  return result.data;
-};
+import UserTagLinks from "./_components/UserTagLinks";
 
 const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "timeline"),
@@ -68,7 +40,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
   }
 
   const user = userResult.data;
-  const avatarUrl = getUserAvatarUrl(user.image);
+  const avatarUrl = getUserAvatarUrl(user.id, user.image !== null);
 
   return generateMetadataTitle({
     pageTitle: user.name,
@@ -97,10 +69,9 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
 
   const { env } = getCloudflareContext();
 
-  const [{ session }, totalImageCount, tags] = await Promise.all([
+  const [{ session }, totalImageCount] = await Promise.all([
     getUserSession(env.DB),
     cachedFetchTotalImageCount(userId),
-    cachedFetchTags(userId),
   ]);
 
   const user = userResult.data;
@@ -128,7 +99,9 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
       </Header>
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-        {tags.length > 0 && <TagLinks className="col-start-2" tags={tags} userId={userId} />}
+        <Suspense fallback={<TagLinksSkeleton className="col-start-2" />}>
+          <UserTagLinks className="col-start-2" userId={userId} />
+        </Suspense>
 
         {isOwner && (
           <div className="col-start-2">
