@@ -19,6 +19,6 @@ export const Default: Story = {
   args: {
     userId: "user123",
     username: "ユーザー名",
-    iconImageKey: null,
+    hasAvatar: false,
   },
 };
