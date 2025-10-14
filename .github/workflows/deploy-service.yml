@@ -57,7 +57,7 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         run: pnpm build:service
         env:
-          NEXT_PUBLIC_SITE_URL: ${{ secrets.DEVELOPMENT_URL }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.DEVELOPMENT_URL }}
 
       - name: Deploy to development environment
         if: github.ref == 'refs/heads/develop'
@@ -72,7 +72,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: pnpm build:service
         env:
-          NEXT_PUBLIC_SITE_URL: ${{ secrets.PRODUCTION_URL }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.PRODUCTION_URL }}
 
       - name: Deploy to production environment
         if: github.ref == 'refs/heads/main'
