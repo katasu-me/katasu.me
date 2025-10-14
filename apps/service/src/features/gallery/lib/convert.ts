@@ -1,6 +1,6 @@
 import type { ImageWithTags } from "@katasu.me/service-db";
 import type { ComponentProps } from "react";
-import { getImageUrl } from "@/lib/r2";
+import { getImageUrl } from "@/lib/image";
 import type FrameImage from "../components/FrameImage";
 
 /**

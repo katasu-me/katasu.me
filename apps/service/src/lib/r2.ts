@@ -1,3 +1,5 @@
+import type { ImageVariants } from "image-optimizer";
+
 type UploadAvatarImageOptions = {
   type: "avatar";
   imageBuffer: ArrayBuffer;
@@ -6,10 +8,7 @@ type UploadAvatarImageOptions = {
 
 type UploadImageOptions = {
   type: "image";
-  variants: {
-    original: ArrayBuffer;
-    thumbnail: ArrayBuffer;
-  };
+  variants: Pick<ImageVariants, "original" | "thumbnail">;
   userId: string;
   imageId: string;
 };
@@ -72,45 +71,11 @@ async function upload(r2: R2Bucket, key: string, options: UploadToR2Options): Pr
     await r2.put(key, options.imageBuffer, {
       httpMetadata: {
         contentType: "image/webp",
-        cacheControl: "public, max-age=31536000", // 1年間キャッシュ
       },
     });
   } catch (error) {
     throw new Error(`R2へのアップロードに失敗しました: ${error}`);
   }
-}
-
-/**
- * 画像のURLを取得
- * @param userId ユーザーID
- * @param imageId 画像ID
- * @param variant 画像バリアント（デフォルト: thumbnail）
- * @returns 画像URL
- */
-export function getImageUrl(userId: string, imageId: string, variant: "original" | "thumbnail" = "thumbnail"): string {
-  const bucketPublicUrl = process.env.NEXT_PUBLIC_R2_URL;
-
-  if (!bucketPublicUrl) {
-    throw new Error("R2_PUBLIC_URLが設定されていません");
-  }
-
-  const suffix = variant === "thumbnail" ? "_thumbnail" : "";
-  return `${bucketPublicUrl}/images/${userId}/${imageId}${suffix}.webp`;
-}
-
-/**
- * ユーザーアバター画像のURLを取得
- * @param imageKey DBに保存されたR2のキー
- * @returns アバター画像URL、キーがない場合はデフォルト画像
- */
-export function getUserAvatarUrl(imageKey: string | undefined | null): string {
-  const bucketPublicUrl = process.env.NEXT_PUBLIC_R2_URL;
-
-  if (!bucketPublicUrl || !imageKey) {
-    return "/images/default-avatar-icon.avif";
-  }
-
-  return `${bucketPublicUrl}/${imageKey}`;
 }
 
 /**
@@ -143,12 +108,12 @@ export async function uploadImage(r2: R2Bucket, options: UploadImageOptions): Pr
 
     await Promise.all([
       upload(r2, originalKey, {
-        imageBuffer: options.variants.original,
+        imageBuffer: options.variants.original.data,
         userId: options.userId,
         imageId: options.imageId,
       }),
       upload(r2, thumbnailKey, {
-        imageBuffer: options.variants.thumbnail,
+        imageBuffer: options.variants.thumbnail.data,
         userId: options.userId,
         imageId: options.imageId,
       }),

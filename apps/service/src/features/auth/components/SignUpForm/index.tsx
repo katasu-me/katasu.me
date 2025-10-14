@@ -20,7 +20,11 @@ const defaultResult: SubmissionResult<string[]> = {
   },
 };
 
-export default function SignUpForm() {
+type Props = {
+  className?: string;
+};
+
+export default function SignUpForm({ className }: Props) {
   const [lastResult, action] = useActionState(signupAction, undefined);
 
   const [form, fields] = useForm({
@@ -47,11 +51,11 @@ export default function SignUpForm() {
   const isFormValid = !Object.values(form.allErrors).length && fields.username.value?.trim();
 
   return (
-    <form {...getFormProps(form)} action={action} noValidate>
+    <form {...getFormProps(form)} className={className} action={action} noValidate>
       {/* フォームのエラー */}
       {form.errors && form.errors?.length > 0 && <FormErrorMessage className="mb-16" text={form.errors[0]} />}
 
-      <div className="flex flex-col gap-6">
+      <div className="flex pc:w-sm w-full flex-col gap-6">
         <AvatarUpload
           {...getInputProps(fields.avatar, { type: "file" })}
           error={fields.avatar.errors?.[0]}

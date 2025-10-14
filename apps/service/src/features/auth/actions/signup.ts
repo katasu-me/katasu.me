@@ -3,9 +3,11 @@
 import { parseWithValibot } from "@conform-to/valibot";
 import { updateUser } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
-import { generateR2Key, uploadAvatarImage } from "@/lib/r2";
+import { userDataCacheTag, userPageCacheTag } from "@/lib/cache-tags";
+import { uploadAvatarImage } from "@/lib/r2";
 import { signUpFormSchema } from "../schemas/signup-form";
 
 export async function signupAction(_prevState: unknown, formData: FormData) {
@@ -48,7 +50,7 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     // ユーザー情報を更新
     await updateUser(env.DB, session.user.id, {
       name: submission.value.username,
-      image: generateR2Key("avatar", session.user.id),
+      avatarSetAt: submission.value.avatar instanceof File ? new Date() : null,
       termsAgreedAt: new Date(),
       privacyPolicyAgreedAt: new Date(),
     });
@@ -59,6 +61,10 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
       formErrors: ["新規登録中にエラーが発生しました"],
     });
   }
+
+  // 念のためキャッシュ飛ばす
+  revalidateTag(userDataCacheTag(session.user.id));
+  revalidateTag(userPageCacheTag(session.user.id));
 
   // 成功時はユーザーページへリダイレクト
   redirect(`/user/${session.user.id}`);

@@ -74,10 +74,7 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
   try {
     await uploadImage(env.IMAGES_R2_BUCKET, {
       type: "image",
-      variants: {
-        original: convertResult.original.data,
-        thumbnail: convertResult.thumbnail.data,
-      },
+      variants: convertResult,
       userId,
       imageId,
     });

@@ -15,8 +15,8 @@ import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
 import { tagPageCacheTag } from "@/lib/cache-tags";
+import { getUserAvatarUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
-import { getUserAvatarUrl } from "@/lib/r2";
 import { cachedFetchPublicUserDataById, cachedFetchTotalImageCount } from "@/lib/user";
 import TagPageContents from "./_components/TagPageContents";
 
@@ -64,7 +64,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
   }
 
   const user = userResult.data;
-  const avatarUrl = getUserAvatarUrl(user.image);
+  const avatarUrl = getUserAvatarUrl(user.id, user.hasAvatar);
 
   return generateMetadataTitle({
     pageTitle: `#${tag.name} - ${user.name}`,

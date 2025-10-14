@@ -1,31 +1,9 @@
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { generateAvatarImage, generateImageVariants, getImageDimensions } from "./lib/image";
+import type { ImageVariants } from "./types";
 
-/**
- * 画像の次元情報
- */
-export type ImageDimensions = {
-  width: number;
-  height: number;
-};
+export type { ImageDimensions, ImageVariants } from "./types";
 
-/**
- * 画像バリアント（オリジナル + サムネイル）
- */
-export type ImageVariants = {
-  original: {
-    data: ArrayBuffer;
-  };
-  thumbnail: {
-    data: ArrayBuffer;
-  };
-  dimensions: ImageDimensions;
-};
-
-/**
- * 画像最適化Worker
- * Service Bindings経由で呼び出される
- */
 export default class ImageOptimizerWorker extends WorkerEntrypoint {
   /**
    * fetch handlerは必須だが、Service Bindings経由では使用しない
@@ -36,7 +14,7 @@ export default class ImageOptimizerWorker extends WorkerEntrypoint {
 
   /**
    * アバター画像を生成
-   * @param imageData - 画像データ (ArrayBuffer)
+   * @param imageData 画像
    * @returns WebP形式のArrayBuffer
    */
   async generateAvatar(imageData: ArrayBuffer): Promise<ArrayBuffer> {
@@ -58,7 +36,7 @@ export default class ImageOptimizerWorker extends WorkerEntrypoint {
 
   /**
    * 投稿画像のバリアント（オリジナル + サムネイル）を生成
-   * @param imageData - 画像データ (ArrayBuffer)
+   * @param imageData 画像データ
    * @returns 画像バリアント
    */
   async generateImageVariants(imageData: ArrayBuffer): Promise<ImageVariants> {

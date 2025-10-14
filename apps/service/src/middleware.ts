@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse, userAgent } from "next/server";
-import { SITE_URL } from "./constants/site";
+import { BASE_URL } from "./constants/site";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -29,14 +29,14 @@ export function middleware(request: NextRequest) {
     "script-src": [
       "'self'",
       `'nonce-${nonce}'`,
-      SITE_URL,
+      BASE_URL,
       process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL,
       isDev && "'unsafe-eval'",
       isDev && "'unsafe-inline'",
     ],
     "style-src": ["'self'", "'unsafe-inline'"],
-    "img-src": ["'self'", process.env.NEXT_PUBLIC_R2_URL, "data:", "blob:"],
-    "connect-src": ["'self'", SITE_URL, process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL],
+    "img-src": ["'self'", "data:", "blob:"],
+    "connect-src": ["'self'", BASE_URL, process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL],
     "font-src": ["'self'"],
     "object-src": ["'none'"],
     "base-uri": ["'none'"],

@@ -30,18 +30,15 @@ jobs:
           cp wrangler.example.jsonc wrangler.jsonc
 
           # 開発環境の値を置換
-          sed -i "s|<DEVELOPMENT_URL>|${{ secrets.DEVELOPMENT_URL }}|g" wrangler.jsonc
+          sed -i "s|<DEVELOPMENT_URL>|${{ vars.DEVELOPMENT_URL }}|g" wrangler.jsonc
           sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.jsonc
-          sed -i "s|<DEVELOPMENT_R2_URL>|${{ vars.DEVELOPMENT_R2_URL }}|g" wrangler.jsonc
-          sed -i "s|<DEVELOPMENT_IMAGE_OPTIMIZER_URL>|${{ vars.DEVELOPMENT_IMAGE_OPTIMIZER_URL }}|g" wrangler.jsonc
-          # sed -i "s|<FORM_CONTACT_URL>|${{ secrets.FORM_CONTACT_URL }}|g" wrangler.jsonc
+          sed -i "s|<DEVELOPMENT_IMAGE_STATUS_KV_ID>|${{ secrets.DEVELOPMENT_IMAGE_STATUS_KV_ID }}|g" wrangler.jsonc
 
           # 本番環境の値を置換
-          sed -i "s|<PRODUCTION_URL>|${{ secrets.PRODUCTION_URL }}|g" wrangler.jsonc
-          sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.jsonc
-          sed -i "s|<PRODUCTION_R2_URL>|${{ vars.PRODUCTION_R2_URL }}|g" wrangler.jsonc
-          sed -i "s|<PRODUCTION_IMAGE_OPTIMIZER_URL>|${{ vars.PRODUCTION_IMAGE_OPTIMIZER_URL }}|g" wrangler.jsonc
+          sed -i "s|<PRODUCTION_URL>|${{ vars.PRODUCTION_URL }}|g" wrangler.jsonc
           sed -i "s|<UMAMI_SCRIPT_URL>|${{ vars.UMAMI_SCRIPT_URL }}|g" wrangler.jsonc
+          sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.jsonc
+          sed -i "s|<PRODUCTION_IMAGE_STATUS_KV_ID>|${{ secrets.PRODUCTION_IMAGE_STATUS_KV_ID }}|g" wrangler.jsonc
           sed -i "s|<UMAMI_WEBSITE_ID>|${{ secrets.UMAMI_WEBSITE_ID }}|g" wrangler.jsonc
 
           echo "wrangler.jsonc created successfully"
@@ -60,7 +57,7 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         run: pnpm build:service
         env:
-          NEXT_PUBLIC_R2_URL: ${{ vars.DEVELOPMENT_R2_URL }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.DEVELOPMENT_URL }}
 
       - name: Deploy to development environment
         if: github.ref == 'refs/heads/develop'
@@ -71,11 +68,11 @@ jobs:
           command: deploy
           workingDirectory: apps/service
 
-      - name: Develop Build
+      - name: Production Build
         if: github.ref == 'refs/heads/main'
         run: pnpm build:service
         env:
-          NEXT_PUBLIC_R2_URL: ${{ vars.PRODUCTION_R2_URL }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.PRODUCTION_URL }}
 
       - name: Deploy to production environment
         if: github.ref == 'refs/heads/main'

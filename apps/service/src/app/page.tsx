@@ -15,17 +15,19 @@ import { cachedFetchPublicUserDataById } from "@/lib/user";
 
 async function StartButton({ user, className }: { user: PublicUserData | undefined; className?: string }) {
   // TODO: リリース時には外す
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV !== "production") {
     return (
-      <Button asChild>
-        <Link
-          className={twMerge("mx-auto flex w-fit items-center justify-center gap-2", className)}
-          href="/user/8uB8pmZ-pcGqxBfdpnWo6"
-        >
-          <IconPlant className="size-5" />
-          開発者のかたすみをのぞく
+      <div className={className}>
+        <Button asChild>
+          <Link className="mx-auto flex w-fit items-center justify-center gap-2" href="/user/8uB8pmZ-pcGqxBfdpnWo6">
+            <IconPlant className="size-5" />
+            開発者のかたすみをのぞく
+          </Link>
+        </Button>
+        <Link className="mt-4 block text-center text-warm-black-50 text-xs hover:underline" href="/closed-beta">
+          βテスト登録済のかたはこちら
         </Link>
-      </Button>
+      </div>
     );
   }
 

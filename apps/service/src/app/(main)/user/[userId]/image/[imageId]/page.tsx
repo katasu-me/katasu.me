@@ -1,19 +1,24 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import Header from "@/components/Header";
+import { Loading } from "@/components/Loading";
 import { getUserSession } from "@/lib/auth";
+import { getImageUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
-import { getImageUrl } from "@/lib/r2";
 import { cachedFetchPublicUserDataById } from "@/lib/user";
 import ImagePageContent from "./_components/ImagePageContent";
-import { DEFAULT_IMAGE_TITLE } from "./_constants/title";
 import { cachedFetchImage } from "./_lib/fetch";
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/image/[imageId]">): Promise<Metadata> {
   const { userId, imageId } = await params;
 
-  const userResult = await cachedFetchPublicUserDataById(userId);
+  // ユーザー情報と画像情報
+  const [userResult, fetchImage] = await Promise.all([
+    cachedFetchPublicUserDataById(userId),
+    cachedFetchImage(userId, imageId),
+  ]);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -25,20 +30,17 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/ima
     notFound();
   }
 
-  const fetchImage = await cachedFetchImage(userId, imageId);
-
   if (!fetchImage.success || !fetchImage.data) {
     notFound();
   }
 
   const image = fetchImage.data;
 
-  const title = image.title ?? DEFAULT_IMAGE_TITLE;
   const description = image.tags.length > 0 ? image.tags.map((tag) => `#${tag.name}`).join(" ") : undefined;
   const imageUrl = getImageUrl(userId, imageId, "original");
 
   return generateMetadataTitle({
-    pageTitle: `${title} - ${userResult.data.name}`,
+    pageTitle: image.title ? `${image.title} - ${userResult.data.name}` : userResult.data.name,
     description,
     imageUrl,
     path: `/user/${userId}/image/${imageId}`,
@@ -70,7 +72,9 @@ export default async function ImagesPage({ params }: PageProps<"/user/[userId]/i
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
       <Header user={user} />
-      <ImagePageContent authorUserId={userId} imageId={imageId} canEdit={canEdit} />
+      <Suspense fallback={<Loading className="col-start-2 py-16" />}>
+        <ImagePageContent authorUserId={userId} imageId={imageId} canEdit={canEdit} />
+      </Suspense>
     </div>
   );
 }
