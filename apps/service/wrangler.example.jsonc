@@ -48,7 +48,7 @@
   "kv_namespaces": [
     {
       "binding": "IMAGE_STATUS_KV",
-      "id": "<DEVELOPMENT_KV_IMAGE_STATUS>"
+      "id": "<DEVELOPMENT_IMAGE_STATUS_KV_ID>"
     }
   ],
   "durable_objects": {
@@ -145,7 +145,7 @@
       "kv_namespaces": [
         {
           "binding": "IMAGE_STATUS_KV",
-          "id": "<PRODUCTION_KV_IMAGE_STATUS>"
+          "id": "<PRODUCTION_IMAGE_STATUS_KV_ID>"
         }
       ],
       "durable_objects": {
