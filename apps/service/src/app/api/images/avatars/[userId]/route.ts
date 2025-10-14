@@ -2,8 +2,6 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { type NextRequest, NextResponse } from "next/server";
 import { generateR2Key } from "@/lib/r2";
 
-export const runtime = "edge";
-
 type Params = {
   userId: string;
 };
