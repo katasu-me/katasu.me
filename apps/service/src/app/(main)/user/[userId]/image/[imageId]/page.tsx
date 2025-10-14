@@ -9,7 +9,6 @@ import { getImageUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
 import { cachedFetchPublicUserDataById } from "@/lib/user";
 import ImagePageContent from "./_components/ImagePageContent";
-import { DEFAULT_IMAGE_TITLE } from "./_constants/title";
 import { cachedFetchImage } from "./_lib/fetch";
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/image/[imageId]">): Promise<Metadata> {
@@ -37,12 +36,11 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/ima
 
   const image = fetchImage.data;
 
-  const title = image.title ?? DEFAULT_IMAGE_TITLE;
   const description = image.tags.length > 0 ? image.tags.map((tag) => `#${tag.name}`).join(" ") : undefined;
   const imageUrl = getImageUrl(userId, imageId, "original");
 
   return generateMetadataTitle({
-    pageTitle: `${title} - ${userResult.data.name}`,
+    pageTitle: image.title ? `${image.title} - ${userResult.data.name}` : userResult.data.name,
     description,
     imageUrl,
     path: `/user/${userId}/image/${imageId}`,
