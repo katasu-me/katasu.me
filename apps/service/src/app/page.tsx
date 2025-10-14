@@ -18,7 +18,10 @@ async function StartButton({ user, className }: { user: PublicUserData | undefin
   if (process.env.NODE_ENV === "production") {
     return (
       <Button asChild>
-        <Link className={twMerge("mx-auto flex w-fit items-center justify-center gap-2", className)} href="/user/test">
+        <Link
+          className={twMerge("mx-auto flex w-fit items-center justify-center gap-2", className)}
+          href="/user/8uB8pmZ-pcGqxBfdpnWo6"
+        >
           <IconPlant className="size-5" />
           開発者のかたすみをのぞく
         </Link>
