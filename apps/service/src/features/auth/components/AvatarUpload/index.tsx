@@ -82,8 +82,14 @@ export default function AvatarUpload({ onFileChange, error, className, ...props 
     try {
       const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
 
-      if (croppedBlob) {
+      if (croppedBlob && fileInputRef.current) {
         const file = new File([croppedBlob], "avatar.jpg", { type: "image/jpeg" });
+
+        // DataTransfer を使ってinput要素にファイルを設定
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInputRef.current.files = dataTransfer.files;
+
         onFileChange?.(file);
 
         const url = URL.createObjectURL(croppedBlob);
