@@ -75,7 +75,11 @@
   "migrations": [
     {
       "tag": "v1",
-      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache", "BucketCachePurge"]
+      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"]
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": ["BucketCachePurge"]
     }
   ],
 
@@ -192,7 +196,11 @@
       "migrations": [
         {
           "tag": "v1",
-          "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache", "BucketCachePurge"]
+          "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"]
+        },
+        {
+          "tag": "v2",
+          "new_sqlite_classes": ["BucketCachePurge"]
         }
       ]
     }
