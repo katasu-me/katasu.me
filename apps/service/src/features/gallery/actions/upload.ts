@@ -4,7 +4,6 @@ import { parseWithValibot } from "@conform-to/valibot";
 import { fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { nanoid } from "nanoid";
-import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { generateR2Key, uploadImage } from "@/lib/r2";
 import { ERROR_MESSAGES } from "../constants/error-messages";
@@ -101,27 +100,10 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     });
   }
 
-  console.log("\n========================================");
-  console.log("[CACHE] REVALIDATING after image upload");
-  console.log(`[CACHE] User: ${userId}`);
-  console.log(`[CACHE] Timestamp: ${new Date().toISOString()}`);
-  console.log("========================================");
-
+  // TODO: キャッシュの削除
   // 自身のマイページ
-  revalidatePath(`/user/${userId}`, "page");
-  console.log(`[CACHE] ✓ Revalidated: /user/${userId}`);
-
   // タグ一覧
-  revalidatePath(`/user/${userId}/tag`, "page");
-  console.log(`[CACHE] ✓ Revalidated: /user/${userId}/tag`);
-
   // それぞれのタグページ
-  for (const tag of registerImageResult.data.tags) {
-    revalidatePath(`/user/${userId}/tag/${tag.id}`, "page");
-    console.log(`[CACHE] ✓ Revalidated: /user/${userId}/tag/${tag.id}`);
-  }
-
-  console.log("[CACHE] Revalidation complete\n");
 
   return submission.reply();
 }

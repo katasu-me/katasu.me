@@ -3,7 +3,6 @@
 import { parseWithValibot } from "@conform-to/valibot";
 import { fetchImageById, updateImage } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { editImageSchema } from "../schemas/edit";
 
@@ -59,16 +58,11 @@ export async function editImageAction(_prevState: unknown, formData: FormData) {
     });
   }
 
+  // TODO: キャッシュの削除
+
   // 画像ページ
-  revalidatePath(`/user/${userId}/image/${imageId}`, "page");
-
   // タグ一覧
-  revalidatePath(`/user/${userId}/tag`, "page");
-
   // それぞれのタグページ
-  for (const tag of updateImageResult.data.tags) {
-    revalidatePath(`/user/${userId}/tag/${tag.id}`, "page");
-  }
 
   return submission.reply();
 }

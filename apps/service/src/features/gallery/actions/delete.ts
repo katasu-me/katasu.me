@@ -2,7 +2,6 @@
 
 import { deleteImage, fetchImageById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
 import { deleteImageFromR2 } from "@/lib/r2";
@@ -51,19 +50,12 @@ export async function deleteImageAction(userId: string, imageId: string): Promis
     return error instanceof Error ? error : new Error("不明なエラーでR2からの削除に失敗しました");
   }
 
+  // TODO: キャッシュの削除
+
   // 画像ページ
-  revalidatePath(`/user/${userId}/image/${imageId}`, "page");
-
   // ユーザーページ
-  revalidatePath(`/user/${userId}`, "page");
-
   // タグ一覧
-  revalidatePath(`/user/${userId}/tag`, "page");
-
   // それぞれのタグページ
-  for (const tag of prevImageData.tags) {
-    revalidatePath(`/user/${userId}/tag/${tag.id}`, "page");
-  }
 
   // ユーザーページにリダイレクト
   redirect(`/user/${userId}`);
