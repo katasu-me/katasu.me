@@ -25,9 +25,15 @@ const searchParamsSchema = object({
 });
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]">): Promise<Metadata> {
+  const startTime = Date.now();
+  console.log("[DEBUG] generateMetadata - START");
+
   const { userId } = await params;
 
+  console.log("[DEBUG] generateMetadata - cachedFetchPublicUserDataById - START");
+  const userFetchStart = Date.now();
   const userResult = await cachedFetchPublicUserDataById(userId);
+  console.log(`[DEBUG] generateMetadata - cachedFetchPublicUserDataById - END: ${Date.now() - userFetchStart}ms`);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -42,6 +48,8 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
   const user = userResult.data;
   const avatarUrl = getUserAvatarUrl(user.id, user.hasAvatar);
 
+  console.log(`[DEBUG] generateMetadata - END: ${Date.now() - startTime}ms\n`);
+
   return generateMetadataTitle({
     pageTitle: user.name,
     description: SITE_DESCRIPTION_LONG,
@@ -53,9 +61,16 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 }
 
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userId]">) {
+  const pageStartTime = Date.now();
+  console.log("[DEBUG] UserPage - START");
+
   // ユーザーページのユーザーを取得
   const { userId } = await params;
+
+  console.log("[DEBUG] UserPage - cachedFetchPublicUserDataById - START");
+  const userFetchStart = Date.now();
   const userResult = await cachedFetchPublicUserDataById(userId);
+  console.log(`[DEBUG] UserPage - cachedFetchPublicUserDataById - END: ${Date.now() - userFetchStart}ms`);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -69,20 +84,30 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
 
   const { env } = getCloudflareContext();
 
+  console.log("[DEBUG] UserPage - getUserSession + cachedFetchTotalImageCount - START");
+  const parallelFetchStart = Date.now();
   const [{ session }, totalImageCount] = await Promise.all([
     getUserSession(env.DB),
     cachedFetchTotalImageCount(userId),
   ]);
+  console.log(
+    `[DEBUG] UserPage - getUserSession + cachedFetchTotalImageCount - END: ${Date.now() - parallelFetchStart}ms`,
+  );
 
   const user = userResult.data;
   const isOwner = user.id === session?.user?.id;
 
+  console.log("[DEBUG] UserPage - parse searchParams - START");
+  const parseStart = Date.now();
   const { view, page: pageStr } = parse(searchParamsSchema, await searchParams);
   const currentPage = Number.parseInt(pageStr, 10);
 
   if (currentPage <= 0) {
     notFound();
   }
+
+  console.log(`[DEBUG] UserPage - parse searchParams - END: ${Date.now() - parseStart}ms`);
+  console.log(`[DEBUG] UserPage - END (excluding Suspense components): ${Date.now() - pageStartTime}ms\n`);
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
