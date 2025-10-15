@@ -1,22 +1,24 @@
-import { fetchTagsByUserId, getPublicUserDataById } from "@katasu.me/service-db";
+import { fetchPublicUserDataById, fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import Header from "@/components/Header";
 import Message from "@/components/Message";
-import TagLink from "@/components/Navigation/TagLinks/TabLink";
+import TagLink from "@/components/TagLinks/TabLink";
 import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
 
-export const revalidate = 3600; // 1時間
+const cachedFetchPublicUserDataById = cache(async (userId: string) => {
+  const { env } = getCloudflareContext();
+  return fetchPublicUserDataById(env.DB, userId);
+});
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag">): Promise<Metadata> {
   const { userId } = await params;
-  const { env } = getCloudflareContext();
-
-  const userResult = await getPublicUserDataById(env.DB, userId);
+  const userResult = await cachedFetchPublicUserDataById(userId);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -45,7 +47,7 @@ export default async function TagListPage({ params }: PageProps<"/user/[userId]/
   const { userId } = await params;
   const { env } = getCloudflareContext();
 
-  const userResult = await getPublicUserDataById(env.DB, userId);
+  const userResult = await cachedFetchPublicUserDataById(userId);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -61,6 +63,7 @@ export default async function TagListPage({ params }: PageProps<"/user/[userId]/
     order: "name",
   });
   const allTags = allTagsResult.success ? allTagsResult.data : [];
+
   const user = userResult.data;
 
   return (

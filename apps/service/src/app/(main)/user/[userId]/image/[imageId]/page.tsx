@@ -1,33 +1,36 @@
-import { fetchImageById, getPublicUserDataById } from "@katasu.me/service-db";
+import { fetchPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { cache, Suspense } from "react";
 import Header from "@/components/Header";
 import { Loading } from "@/components/Loading";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getImageUrl } from "@/lib/r2";
 import ImagePageContent from "./_components/ImagePageContent";
+import { cachedFetchImageById } from "./_lib/fetch-image-by-id";
 
-export const revalidate = 3600; // 1時間
+const cachedFetchPublicUserDataById = cache(async (userId: string) => {
+  const { env } = getCloudflareContext();
+  return await fetchPublicUserDataById(env.DB, userId);
+});
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/image/[imageId]">): Promise<Metadata> {
   const startTime = Date.now();
   console.log("[DEBUG] generateMetadata (ImagePage) - START");
 
   const { userId, imageId } = await params;
-  const { env } = getCloudflareContext();
 
   // ユーザー情報と画像情報
-  console.log("[DEBUG] generateMetadata (ImagePage) - getPublicUserDataById + fetchImageById - START");
+  console.log("[DEBUG] generateMetadata (ImagePage) - fetchPublicUserDataById + fetchImageById - START");
   const parallelFetchStart = Date.now();
   const [userResult, fetchImage] = await Promise.all([
-    getPublicUserDataById(env.DB, userId),
-    fetchImageById(env.DB, imageId),
+    cachedFetchPublicUserDataById(userId),
+    cachedFetchImageById(imageId),
   ]);
   console.log(
-    `[DEBUG] generateMetadata (ImagePage) - getPublicUserDataById + fetchImageById - END: ${Date.now() - parallelFetchStart}ms`,
+    `[DEBUG] generateMetadata (ImagePage) - fetchPublicUserDataById + fetchImageById - END: ${Date.now() - parallelFetchStart}ms`,
   );
 
   // 存在しない、または新規登録が完了していない場合は404
@@ -67,10 +70,10 @@ export default async function ImagesPage({ params }: PageProps<"/user/[userId]/i
   const { userId, imageId } = await params;
   const { env } = getCloudflareContext();
 
-  console.log("[DEBUG] ImagesPage - getPublicUserDataById - START");
+  console.log("[DEBUG] ImagesPage - fetchPublicUserDataById - START");
   const userFetchStart = Date.now();
-  const userResult = await getPublicUserDataById(env.DB, userId);
-  console.log(`[DEBUG] ImagesPage - getPublicUserDataById - END: ${Date.now() - userFetchStart}ms`);
+  const userResult = await cachedFetchPublicUserDataById(userId);
+  console.log(`[DEBUG] ImagesPage - fetchPublicUserDataById - END: ${Date.now() - userFetchStart}ms`);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (

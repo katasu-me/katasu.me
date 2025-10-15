@@ -1,8 +1,8 @@
-import { fetchTagById, fetchTotalImageCountByUserId, getPublicUserDataById } from "@katasu.me/service-db";
+import { fetchPublicUserDataById, fetchTagById, fetchTotalImageCountByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { cache, Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
@@ -18,23 +18,30 @@ import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
 import TagPageContents from "./_components/TagPageContents";
 
+const cachedFetchTagById = cache(async (tagId: string) => {
+  const { env } = getCloudflareContext();
+  return fetchTagById(env.DB, tagId);
+});
+
+const cachedFetchPublicUserDataById = cache(async (userId: string) => {
+  const { env } = getCloudflareContext();
+  return fetchPublicUserDataById(env.DB, userId);
+});
+
 const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "timeline"),
   page: fallback(string(), "1"),
 });
-
-export const revalidate = 3600; // 1時間
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag/[tagId]">): Promise<Metadata> {
   const startTime = Date.now();
   console.log("[DEBUG] generateMetadata (TagPage) - START");
 
   const { userId, tagId } = await params;
-  const { env } = getCloudflareContext();
 
   console.log("[DEBUG] generateMetadata (TagPage) - fetchTagById - START");
   const tagFetchStart = Date.now();
-  const fetchTagResult = await fetchTagById(env.DB, tagId);
+  const fetchTagResult = await cachedFetchTagById(tagId);
   console.log(`[DEBUG] generateMetadata (TagPage) - fetchTagById - END: ${Date.now() - tagFetchStart}ms`);
 
   if (!fetchTagResult.success || !fetchTagResult.data) {
@@ -43,10 +50,10 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
 
   const tag = fetchTagResult.data;
 
-  console.log("[DEBUG] generateMetadata (TagPage) - getPublicUserDataById - START");
+  console.log("[DEBUG] generateMetadata (TagPage) - fetchPublicUserDataById - START");
   const userFetchStart = Date.now();
-  const userResult = await getPublicUserDataById(env.DB, tag.userId);
-  console.log(`[DEBUG] generateMetadata (TagPage) - getPublicUserDataById - END: ${Date.now() - userFetchStart}ms`);
+  const userResult = await cachedFetchPublicUserDataById(tag.userId);
+  console.log(`[DEBUG] generateMetadata (TagPage) - fetchPublicUserDataById - END: ${Date.now() - userFetchStart}ms`);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -83,7 +90,7 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
   // タグを取得
   console.log("[DEBUG] TagPage - fetchTagById - START");
   const tagFetchStart = Date.now();
-  const fetchTagResult = await fetchTagById(env.DB, tagId);
+  const fetchTagResult = await cachedFetchTagById(tagId);
   console.log(`[DEBUG] TagPage - fetchTagById - END: ${Date.now() - tagFetchStart}ms`);
 
   if (!fetchTagResult.success) {
@@ -98,15 +105,15 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
 
   const tag = fetchTagResult.data;
 
-  console.log("[DEBUG] TagPage - getPublicUserDataById + fetchTotalImageCountByUserId + getUserSession - START");
+  console.log("[DEBUG] TagPage - fetchPublicUserDataById + fetchTotalImageCountByUserId + getUserSession - START");
   const parallelFetchStart = Date.now();
   const [userResult, totalImageCountResult, { session }] = await Promise.all([
-    getPublicUserDataById(env.DB, tag.userId),
+    cachedFetchPublicUserDataById(userId),
     fetchTotalImageCountByUserId(env.DB, userId),
     getUserSession(env.DB),
   ]);
   console.log(
-    `[DEBUG] TagPage - getPublicUserDataById + fetchTotalImageCountByUserId + getUserSession - END: ${Date.now() - parallelFetchStart}ms`,
+    `[DEBUG] TagPage - fetchPublicUserDataById + fetchTotalImageCountByUserId + getUserSession - END: ${Date.now() - parallelFetchStart}ms`,
   );
 
   const totalImageCount = totalImageCountResult.success ? totalImageCountResult.data : 0;

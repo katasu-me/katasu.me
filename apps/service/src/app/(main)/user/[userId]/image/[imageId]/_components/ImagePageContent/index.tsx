@@ -1,5 +1,3 @@
-import { fetchImageById } from "@katasu.me/service-db";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { twMerge } from "tailwind-merge";
@@ -9,6 +7,7 @@ import Message from "@/components/Message";
 import BigImage from "@/features/gallery/components/BigImage";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import { DEFAULT_IMAGE_TITLE } from "../../_constants/title";
+import { cachedFetchImageById } from "../../_lib/fetch-image-by-id";
 import EditButton from "./EditButton";
 import RemoveButton from "./RemoveButton";
 import ShareButton from "./ShareButton";
@@ -20,8 +19,7 @@ type Props = {
 };
 
 export default async function ImagePageContent({ authorUserId, imageId, canEdit = false }: Props) {
-  const { env } = getCloudflareContext();
-  const fetchImage = await fetchImageById(env.DB, imageId);
+  const fetchImage = await cachedFetchImageById(imageId);
 
   if (!fetchImage.success) {
     return <Message message="画像が取得できませんでした" />;

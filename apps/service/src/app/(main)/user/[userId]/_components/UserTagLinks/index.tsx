@@ -1,6 +1,6 @@
 import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import TagLinks from "@/components/Navigation/TagLinks";
+import TagLinks from "@/components/TagLinks";
 
 type Props = {
   userId: string;
@@ -8,7 +8,6 @@ type Props = {
 };
 
 export default async function UserTagLinks({ userId, className }: Props) {
-  console.log(`[CACHE] UserTagLinks RENDER - ${new Date().toISOString()}`);
   const { env } = getCloudflareContext();
   const fetchTagsResult = await fetchTagsByUserId(env.DB, userId);
 

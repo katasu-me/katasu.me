@@ -1,4 +1,4 @@
-import { getPublicUserDataById } from "@katasu.me/service-db";
+import { fetchPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -9,19 +9,20 @@ import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
-import TagLinksSkeleton from "@/components/Navigation/TagLinks/Skeleton";
+import TagLinksSkeleton from "@/components/TagLinks/Skeleton";
 import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
+import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
 import UserImageDropArea from "./_components/UserImageDropArea";
 import UserPageContents from "./_components/UserPageContents";
 import UserTagLinks from "./_components/UserTagLinks";
 
-const fetchPublicUserDataById = cache(async (userId: string) => {
+const cachedFetchPublicUserDataById = cache(async (userId: string) => {
   const { env } = getCloudflareContext();
-  return await getPublicUserDataById(env.DB, userId);
+  return await fetchPublicUserDataById(env.DB, userId);
 });
 
 const searchParamsSchema = object({
@@ -29,13 +30,11 @@ const searchParamsSchema = object({
   page: fallback(string(), "1"),
 });
 
-export const revalidate = 3600; // 1時間
-
 export async function generateMetadata({ params }: PageProps<"/user/[userId]">): Promise<Metadata> {
   const { userId } = await params;
   console.log(`[CACHE] generateMetadata called for user: ${userId} at ${new Date().toISOString()}`);
 
-  const userResult = await fetchPublicUserDataById(userId);
+  const userResult = await cachedFetchPublicUserDataById(userId);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -72,7 +71,9 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
   console.log(`[CACHE] Fetching user data for: ${userId}`);
 
   const userFetchStart = Date.now();
-  const userResult = await fetchPublicUserDataById(userId);
+
+  const { env } = getCloudflareContext();
+  const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(userId), getUserSession(env.DB)]);
   console.log(`[CACHE] User data fetched in ${Date.now() - userFetchStart}ms`);
 
   // 存在しない、または新規登録が完了していない場合は404
@@ -86,6 +87,7 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
   }
 
   const user = userResult.data;
+  const isOwner = userId === session?.user?.id;
 
   console.log("[DEBUG] UserPage - parse searchParams - START");
   const parseStart = Date.now();
@@ -118,9 +120,11 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
           <UserTagLinks className="col-start-2" userId={userId} />
         </Suspense>
 
-        <Suspense>
-          <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
-        </Suspense>
+        {isOwner && (
+          <Suspense>
+            <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
+          </Suspense>
+        )}
 
         <Suspense fallback={<Loading className="col-start-2 py-16" />}>
           <UserPageContents user={user} view={view} currentPage={currentPage} />

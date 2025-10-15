@@ -1,4 +1,4 @@
-import { getPublicUserDataById, type PublicUserData } from "@katasu.me/service-db";
+import { fetchPublicUserDataById, type PublicUserData } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
@@ -61,7 +61,7 @@ export default async function Home() {
   let user: PublicUserData | undefined;
 
   if (session?.user) {
-    const result = await getPublicUserDataById(env.DB, session.user.id);
+    const result = await fetchPublicUserDataById(env.DB, session.user.id);
 
     if (result.success) {
       user = result.data;

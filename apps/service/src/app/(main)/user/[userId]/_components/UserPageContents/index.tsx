@@ -2,7 +2,6 @@ import {
   type ActionResult,
   fetchImagesByUserId,
   fetchRandomImagesByUserId,
-  fetchTotalImageCountByUserId,
   type ImageWithTags,
   type PublicUserData,
 } from "@katasu.me/service-db";
@@ -13,6 +12,7 @@ import GalleryView from "@/features/gallery/components/GalleryView";
 import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
+import { cachedFetchTotalImageCount } from "../../_lib/fetch-total-image-count";
 
 type Props = {
   user: PublicUserData;
@@ -25,7 +25,7 @@ export default async function UserPageContents({ user, view, currentPage = 1 }: 
   const { env } = getCloudflareContext();
 
   // 総画像数を取得
-  const totalImageCountResult = await fetchTotalImageCountByUserId(env.DB, user.id);
+  const totalImageCountResult = await cachedFetchTotalImageCount(user.id);
 
   if (!totalImageCountResult.success) {
     console.error("[page] 画像数の取得に失敗しました:", totalImageCountResult.error);
