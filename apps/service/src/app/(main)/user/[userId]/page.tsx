@@ -1,6 +1,7 @@
 import { fetchPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
+import { unstable_cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
@@ -21,6 +22,11 @@ import UserPageContents from "./_components/UserPageContents";
 import UserTagLinks from "./_components/UserTagLinks";
 
 const cachedFetchPublicUserDataById = cache(async (userId: string) => {
+  "use cache";
+
+  unstable_cacheTag(`userPage:${userId}`);
+  console.log("[DEBUG] called cachedFetchPublicUserDataById");
+
   const { env } = getCloudflareContext();
   return await fetchPublicUserDataById(env.DB, userId);
 });
