@@ -1,5 +1,7 @@
 import { fetchTotalImageCountByUserId, getPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { unstable_cache } from "next/cache";
+import { userDataCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 
 /**
  * ユーザーの公開情報を取得
@@ -7,19 +9,16 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
  * @returns ユーザー情報、存在しない場合はundefined
  */
 export async function cachedFetchPublicUserDataById(userId: string) {
-  // "use cache"; // 一時的に無効化
-
-  // const tag = userDataCacheTag(userId);
-  // cacheTag(tag);
-
-  const { env } = getCloudflareContext();
-  const result = await getPublicUserDataById(env.DB, userId);
-
-  // if (!result.success) {
-  //   revalidateTag(tag);
-  // }
-
-  return result;
+  return unstable_cache(
+    async (userId: string) => {
+      const { env } = getCloudflareContext();
+      return await getPublicUserDataById(env.DB, userId);
+    },
+    [`user-data-${userId}`],
+    {
+      tags: [userDataCacheTag(userId)],
+    },
+  )(userId);
 }
 
 /**
@@ -27,20 +26,21 @@ export async function cachedFetchPublicUserDataById(userId: string) {
  * @param userId ユーザーID
  * @return 画像総数
  */
-export const cachedFetchTotalImageCount = async (userId: string) => {
-  // "use cache"; // 一時的に無効化
+export async function cachedFetchTotalImageCount(userId: string) {
+  return unstable_cache(
+    async (userId: string) => {
+      const { env } = getCloudflareContext();
+      const result = await fetchTotalImageCountByUserId(env.DB, userId);
 
-  // const tag = userPageCacheTag(userId);
-  // cacheTag(tag);
+      if (!result.success) {
+        return 0;
+      }
 
-  const { env } = getCloudflareContext();
-
-  const result = await fetchTotalImageCountByUserId(env.DB, userId);
-
-  if (!result.success) {
-    // revalidateTag(tag);
-    return 0;
-  }
-
-  return result.data;
-};
+      return result.data;
+    },
+    [`user-image-count-${userId}`],
+    {
+      tags: [userPageCacheTag(userId)],
+    },
+  )(userId);
+}

@@ -7,12 +7,14 @@ import {
   type PublicUserData,
 } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
 import GalleryView from "@/features/gallery/components/GalleryView";
 import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
+import { userPageCacheTag } from "@/lib/cache-tags";
 import { cachedFetchTotalImageCount } from "@/lib/user";
 
 /**
@@ -22,20 +24,16 @@ import { cachedFetchTotalImageCount } from "@/lib/user";
  * @return 画像一覧
  */
 const cachedFetchImages = async (userId: string, options: FetchImagesOptions) => {
-  // "use cache"; // 一時的に無効化
-
-  // const tag = userPageCacheTag(userId);
-  // cacheTag(tag);
-
-  const { env } = getCloudflareContext();
-
-  const result = await fetchImagesByUserId(env.DB, userId, options);
-
-  if (!result.success) {
-    // revalidateTag(tag);
-  }
-
-  return result;
+  return unstable_cache(
+    async (userId: string, options: FetchImagesOptions) => {
+      const { env } = getCloudflareContext();
+      return await fetchImagesByUserId(env.DB, userId, options);
+    },
+    [`user-images-${userId}-${options.offset ?? 0}-${options.order ?? "desc"}`],
+    {
+      tags: [userPageCacheTag(userId)],
+    },
+  )(userId, options);
 };
 
 /**
@@ -44,13 +42,17 @@ const cachedFetchImages = async (userId: string, options: FetchImagesOptions) =>
  * @return 画像一覧
  */
 const cachedFetchRandomImages = async (userId: string) => {
-  // "use cache"; // 一時的に無効化
-
-  // cacheLife("seconds");
-
-  const { env } = getCloudflareContext();
-
-  return fetchRandomImagesByUserId(env.DB, userId);
+  return unstable_cache(
+    async (userId: string) => {
+      const { env } = getCloudflareContext();
+      return await fetchRandomImagesByUserId(env.DB, userId);
+    },
+    [`user-random-images-${userId}`],
+    {
+      tags: [userPageCacheTag(userId)],
+      revalidate: 1,
+    },
+  )(userId);
 };
 
 type Props = {
