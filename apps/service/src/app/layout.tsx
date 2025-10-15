@@ -44,7 +44,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html lang="ja">
       <head>
-        <link rel="preconnect" href="https://static.katasu.me" />
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_IMAGE_R2_URL} />
       </head>
       <body
         className={twMerge(
