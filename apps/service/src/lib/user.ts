@@ -9,7 +9,7 @@ import { userDataCacheTag, userPageCacheTag } from "@/lib/cache-tags";
  * @returns ユーザー情報、存在しない場合はundefined
  */
 export async function cachedFetchPublicUserDataById(userId: string) {
-  "use cache";
+  // "use cache"; // 一時的に無効化
 
   const tag = userDataCacheTag(userId);
   cacheTag(tag);
@@ -30,7 +30,7 @@ export async function cachedFetchPublicUserDataById(userId: string) {
  * @return 画像総数
  */
 export const cachedFetchTotalImageCount = async (userId: string) => {
-  "use cache";
+  // "use cache"; // 一時的に無効化
 
   const tag = userPageCacheTag(userId);
   cacheTag(tag);

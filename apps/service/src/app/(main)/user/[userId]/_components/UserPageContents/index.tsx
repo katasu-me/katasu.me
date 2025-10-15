@@ -7,14 +7,13 @@ import {
   type PublicUserData,
 } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
+import { unstable_cacheLife as cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
 import GalleryView from "@/features/gallery/components/GalleryView";
 import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
-import { userPageCacheTag } from "@/lib/cache-tags";
 import { cachedFetchTotalImageCount } from "@/lib/user";
 
 /**
@@ -24,17 +23,17 @@ import { cachedFetchTotalImageCount } from "@/lib/user";
  * @return 画像一覧
  */
 const cachedFetchImages = async (userId: string, options: FetchImagesOptions) => {
-  "use cache";
+  // "use cache"; // 一時的に無効化
 
-  const tag = userPageCacheTag(userId);
-  cacheTag(tag);
+  // const tag = userPageCacheTag(userId);
+  // cacheTag(tag);
 
   const { env } = getCloudflareContext();
 
   const result = await fetchImagesByUserId(env.DB, userId, options);
 
   if (!result.success) {
-    revalidateTag(tag);
+    // revalidateTag(tag);
   }
 
   return result;
@@ -46,7 +45,7 @@ const cachedFetchImages = async (userId: string, options: FetchImagesOptions) =>
  * @return 画像一覧
  */
 const cachedFetchRandomImages = async (userId: string) => {
-  "use cache";
+  // "use cache"; // 一時的に無効化
 
   cacheLife("seconds");
 
