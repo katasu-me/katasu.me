@@ -3,10 +3,9 @@
 import { parseWithValibot } from "@conform-to/valibot";
 import { updateUser } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
-import { userDataCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 import { uploadAvatarImage } from "@/lib/r2";
 import { signUpFormSchema } from "../schemas/signup-form";
 
@@ -62,9 +61,8 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     });
   }
 
-  // 念のためキャッシュ飛ばす
-  revalidateTag(userDataCacheTag(session.user.id));
-  revalidateTag(userPageCacheTag(session.user.id));
+  // ユーザーページのキャッシュを無効化
+  revalidatePath(`/user/${session.user.id}`, "page");
 
   // 成功時はユーザーページへリダイレクト
   redirect(`/user/${session.user.id}`);

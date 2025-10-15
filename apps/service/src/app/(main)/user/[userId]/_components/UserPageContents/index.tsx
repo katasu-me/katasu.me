@@ -21,6 +21,7 @@ type Props = {
 };
 
 export default async function UserPageContents({ user, view, currentPage = 1 }: Props) {
+  console.log(`[CACHE] UserPageContents RENDER - ${new Date().toISOString()}`);
   const { env } = getCloudflareContext();
 
   // 総画像数を取得

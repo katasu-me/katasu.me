@@ -3,9 +3,8 @@
 import { parseWithValibot } from "@conform-to/valibot";
 import { fetchImageById, updateImage } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
-import { imagePageCacheTag, tagListCacheTag, tagPageCacheTag } from "@/lib/cache-tags";
 import { editImageSchema } from "../schemas/edit";
 
 export async function editImageAction(_prevState: unknown, formData: FormData) {
@@ -61,14 +60,14 @@ export async function editImageAction(_prevState: unknown, formData: FormData) {
   }
 
   // 画像ページ
-  revalidateTag(imagePageCacheTag(userId, imageId));
+  revalidatePath(`/user/${userId}/image/${imageId}`, "page");
 
   // タグ一覧
-  revalidateTag(tagListCacheTag(userId));
+  revalidatePath(`/user/${userId}/tag`, "page");
 
   // それぞれのタグページ
   for (const tag of updateImageResult.data.tags) {
-    revalidateTag(tagPageCacheTag(userId, tag.id));
+    revalidatePath(`/user/${userId}/tag/${tag.id}`, "page");
   }
 
   return submission.reply();

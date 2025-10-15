@@ -1,34 +1,6 @@
 import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cache } from "next/cache";
 import TagLinks from "@/components/Navigation/TagLinks";
-import { tagListCacheTag } from "@/lib/cache-tags";
-
-/**
- * 使用頻度の高いタグを取得
- * @params userId ユーザーID
- * @returns タグ一覧
- */
-const cachedFetchTags = unstable_cache(
-  async (userId: string) => {
-    const { env } = getCloudflareContext();
-
-    const result = await fetchTagsByUserId(env.DB, userId, {
-      limit: 4,
-      order: "usage",
-    });
-
-    if (!result.success) {
-      return [];
-    }
-
-    return result.data;
-  },
-  [`top-tags-${userId}`],
-  {
-    tags: [tagListCacheTag(userId)],
-  },
-);
 
 type Props = {
   userId: string;
@@ -36,7 +8,15 @@ type Props = {
 };
 
 export default async function UserTagLinks({ userId, className }: Props) {
-  const tags = await cachedFetchTags(userId);
+  console.log(`[CACHE] UserTagLinks RENDER - ${new Date().toISOString()}`);
+  const { env } = getCloudflareContext();
+  const fetchTagsResult = await fetchTagsByUserId(env.DB, userId);
+
+  if (!fetchTagsResult.success) {
+    return null;
+  }
+
+  const tags = fetchTagsResult.data;
 
   if (tags.length === 0) {
     return null;

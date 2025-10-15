@@ -1,4 +1,4 @@
-import { getPublicUserDataById } from "@katasu.me/service-db";
+import { fetchImageById, getPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -9,7 +9,6 @@ import { getUserSession } from "@/lib/auth";
 import { getImageUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
 import ImagePageContent from "./_components/ImagePageContent";
-import { cachedFetchImage } from "./_lib/fetch";
 
 export const revalidate = 3600; // 1時間
 
@@ -21,14 +20,14 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/ima
   const { env } = getCloudflareContext();
 
   // ユーザー情報と画像情報
-  console.log("[DEBUG] generateMetadata (ImagePage) - getPublicUserDataById + cachedFetchImage - START");
+  console.log("[DEBUG] generateMetadata (ImagePage) - getPublicUserDataById + fetchImageById - START");
   const parallelFetchStart = Date.now();
   const [userResult, fetchImage] = await Promise.all([
     getPublicUserDataById(env.DB, userId),
-    cachedFetchImage(userId, imageId),
+    fetchImageById(env.DB, imageId),
   ]);
   console.log(
-    `[DEBUG] generateMetadata (ImagePage) - getPublicUserDataById + cachedFetchImage - END: ${Date.now() - parallelFetchStart}ms`,
+    `[DEBUG] generateMetadata (ImagePage) - getPublicUserDataById + fetchImageById - END: ${Date.now() - parallelFetchStart}ms`,
   );
 
   // 存在しない、または新規登録が完了していない場合は404

@@ -32,6 +32,7 @@ export const revalidate = 3600; // 1時間
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]">): Promise<Metadata> {
   const { userId } = await params;
+  console.log(`[CACHE] generateMetadata called for user: ${userId} at ${new Date().toISOString()}`);
 
   const userResult = await fetchPublicUserDataById(userId);
 
@@ -60,15 +61,18 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userId]">) {
   const pageStartTime = Date.now();
-  console.log("[DEBUG] UserPage - START");
+  const timestamp = new Date().toISOString();
+  console.log("\n========================================");
+  console.log(`[CACHE] UserPage RENDER - ${timestamp}`);
+  console.log("========================================");
 
   // ユーザーページのユーザーを取得
   const { userId } = await params;
+  console.log(`[CACHE] Fetching user data for: ${userId}`);
 
-  console.log("[DEBUG] UserPage - fetchPublicUserDataById - START");
   const userFetchStart = Date.now();
   const userResult = await fetchPublicUserDataById(userId);
-  console.log(`[DEBUG] UserPage - fetchPublicUserDataById - END: ${Date.now() - userFetchStart}ms`);
+  console.log(`[CACHE] User data fetched in ${Date.now() - userFetchStart}ms`);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -113,9 +117,7 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
           <UserTagLinks className="col-start-2" userId={userId} />
         </Suspense>
 
-        <Suspense>
-          <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
-        </Suspense>
+        <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
 
         <Suspense fallback={<Loading className="col-start-2 py-16" />}>
           <UserPageContents user={user} view={view} currentPage={currentPage} />

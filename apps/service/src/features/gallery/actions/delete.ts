@@ -2,10 +2,9 @@
 
 import { deleteImage, fetchImageById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
-import { imagePageCacheTag, tagListCacheTag, tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 import { deleteImageFromR2 } from "@/lib/r2";
 
 /**
@@ -53,17 +52,17 @@ export async function deleteImageAction(userId: string, imageId: string): Promis
   }
 
   // 画像ページ
-  revalidateTag(imagePageCacheTag(userId, imageId));
+  revalidatePath(`/user/${userId}/image/${imageId}`, "page");
 
   // ユーザーページ
-  revalidateTag(userPageCacheTag(userId));
+  revalidatePath(`/user/${userId}`, "page");
 
   // タグ一覧
-  revalidateTag(tagListCacheTag(userId));
+  revalidatePath(`/user/${userId}/tag`, "page");
 
   // それぞれのタグページ
   for (const tag of prevImageData.tags) {
-    revalidateTag(tagPageCacheTag(userId, tag.id));
+    revalidatePath(`/user/${userId}/tag/${tag.id}`, "page");
   }
 
   // ユーザーページにリダイレクト
