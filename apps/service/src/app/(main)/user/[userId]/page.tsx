@@ -1,8 +1,7 @@
-import { fetchPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { cache, Suspense } from "react";
+import { Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
@@ -16,14 +15,10 @@ import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
+import { cachedFetchPublicUserDataById } from "../_lib/cached-user-data";
 import UserImageDropArea from "./_components/UserImageDropArea";
 import UserPageContents from "./_components/UserPageContents";
 import UserTagLinks from "./_components/UserTagLinks";
-
-const cachedFetchPublicUserDataById = cache(async (userId: string) => {
-  const { env } = getCloudflareContext();
-  return fetchPublicUserDataById(env.DB, userId);
-});
 
 const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "timeline"),

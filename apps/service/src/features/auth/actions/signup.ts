@@ -3,6 +3,7 @@
 import { parseWithValibot } from "@conform-to/valibot";
 import { updateUser } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
 import { uploadAvatarImage } from "@/lib/r2";
@@ -60,7 +61,8 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     });
   }
 
-  // TODO: ユーザーページのキャッシュを無効化
+  // ユーザーページのキャッシュを無効化
+  revalidateTag(`user:${session.user.id}`);
 
   // 成功時はユーザーページへリダイレクト
   redirect(`/user/${session.user.id}`);

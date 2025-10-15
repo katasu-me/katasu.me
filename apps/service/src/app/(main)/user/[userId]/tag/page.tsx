@@ -1,8 +1,7 @@
-import { fetchPublicUserDataById, fetchTagsByUserId } from "@katasu.me/service-db";
+import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { cache } from "react";
 import Header from "@/components/Header";
 import Message from "@/components/Message";
 import TagLink from "@/components/TagLinks/TabLink";
@@ -10,11 +9,7 @@ import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
-
-const cachedFetchPublicUserDataById = cache(async (userId: string) => {
-  const { env } = getCloudflareContext();
-  return fetchPublicUserDataById(env.DB, userId);
-});
+import { cachedFetchPublicUserDataById } from "../../_lib/cached-user-data";
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag">): Promise<Metadata> {
   const { userId } = await params;

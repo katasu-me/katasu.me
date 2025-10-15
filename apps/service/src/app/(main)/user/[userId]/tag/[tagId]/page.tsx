@@ -1,4 +1,4 @@
-import { fetchPublicUserDataById, fetchTagById, fetchTotalImageCountByUserId } from "@katasu.me/service-db";
+import { fetchTagById, fetchTotalImageCountByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -16,16 +16,12 @@ import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
+import { cachedFetchPublicUserDataById } from "../../../_lib/cached-user-data";
 import TagPageContents from "./_components/TagPageContents";
 
 const cachedFetchTagById = cache(async (tagId: string) => {
   const { env } = getCloudflareContext();
   return fetchTagById(env.DB, tagId);
-});
-
-const cachedFetchPublicUserDataById = cache(async (userId: string) => {
-  const { env } = getCloudflareContext();
-  return fetchPublicUserDataById(env.DB, userId);
 });
 
 const searchParamsSchema = object({

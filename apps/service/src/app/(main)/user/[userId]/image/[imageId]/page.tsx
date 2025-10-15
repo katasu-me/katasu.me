@@ -1,20 +1,15 @@
-import { fetchPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { cache, Suspense } from "react";
+import { Suspense } from "react";
 import Header from "@/components/Header";
 import { Loading } from "@/components/Loading";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getImageUrl } from "@/lib/r2";
+import { cachedFetchPublicUserDataById } from "../../../_lib/cached-user-data";
 import ImagePageContent from "./_components/ImagePageContent";
 import { cachedFetchImageById } from "./_lib/fetch-image-by-id";
-
-const cachedFetchPublicUserDataById = cache(async (userId: string) => {
-  const { env } = getCloudflareContext();
-  return await fetchPublicUserDataById(env.DB, userId);
-});
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/image/[imageId]">): Promise<Metadata> {
   const { userId, imageId } = await params;
