@@ -5,7 +5,7 @@ import {
   type Tag,
 } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
 import GalleryView from "@/features/gallery/components/GalleryView";
@@ -15,37 +15,29 @@ import type { ImageLayoutType } from "@/features/gallery/types/layout";
 import { tagPageCacheTag } from "@/lib/cache-tags";
 
 const cachedFetchTotalImageCount = async (userId: string, tagId: string) => {
-  "use cache";
-
-  const tag = tagPageCacheTag(userId, tagId);
-  cacheTag(tag);
-
-  const { env } = getCloudflareContext();
-
-  const result = await fetchTotalImageCountByTagId(env.DB, tagId);
-
-  if (!result.success) {
-    revalidateTag(tag);
-  }
-
-  return result;
+  return unstable_cache(
+    async (userId: string, tagId: string) => {
+      const { env } = getCloudflareContext();
+      return await fetchTotalImageCountByTagId(env.DB, tagId);
+    },
+    [`tag-image-count-${userId}-${tagId}`],
+    {
+      tags: [tagPageCacheTag(userId, tagId)],
+    },
+  )(userId, tagId);
 };
 
 const cachedFetchImages = async (userId: string, tagId: string, options: FetchImagesOptions) => {
-  "use cache";
-
-  const tag = tagPageCacheTag(userId, tagId);
-  cacheTag(tag);
-
-  const { env } = getCloudflareContext();
-
-  const result = await fetchImagesByTagId(env.DB, tagId, options);
-
-  if (!result.success) {
-    revalidateTag(tag);
-  }
-
-  return result;
+  return unstable_cache(
+    async (userId: string, tagId: string, options: FetchImagesOptions) => {
+      const { env } = getCloudflareContext();
+      return await fetchImagesByTagId(env.DB, tagId, options);
+    },
+    [`tag-images-${userId}-${tagId}-${options.offset ?? 0}-${options.order ?? "desc"}`],
+    {
+      tags: [tagPageCacheTag(userId, tagId)],
+    },
+  )(userId, tagId, options);
 };
 
 type Props = {

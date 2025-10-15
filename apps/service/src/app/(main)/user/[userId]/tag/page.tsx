@@ -1,7 +1,7 @@
 import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
-import { unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Message from "@/components/Message";
@@ -13,23 +13,25 @@ import { generateMetadataTitle } from "@/lib/meta";
 import { cachedFetchPublicUserDataById } from "@/lib/user";
 
 const cachedFetchAllTags = async (userId: string) => {
-  "use cache";
+  return unstable_cache(
+    async (userId: string) => {
+      const { env } = getCloudflareContext();
 
-  const tag = tagListCacheTag(userId);
-  cacheTag(tag);
+      const result = await fetchTagsByUserId(env.DB, userId, {
+        order: "name",
+      });
 
-  const { env } = getCloudflareContext();
+      if (!result.success) {
+        return [];
+      }
 
-  const result = await fetchTagsByUserId(env.DB, userId, {
-    order: "name",
-  });
-
-  if (!result.success) {
-    revalidateTag(tag);
-    return [];
-  }
-
-  return result.data;
+      return result.data;
+    },
+    [`all-tags-${userId}`],
+    {
+      tags: [tagListCacheTag(userId)],
+    },
+  )(userId);
 };
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag">): Promise<Metadata> {

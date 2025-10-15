@@ -1,7 +1,7 @@
 import { fetchTagById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
-import { unstable_cacheTag as cacheTag } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
@@ -32,13 +32,16 @@ const searchParamsSchema = object({
  * @returns タグ情報
  */
 const cachedFetchTagById = async (userId: string, tagId: string) => {
-  "use cache";
-
-  cacheTag(tagPageCacheTag(userId, tagId));
-
-  const { env } = getCloudflareContext();
-
-  return fetchTagById(env.DB, tagId);
+  return unstable_cache(
+    async (userId: string, tagId: string) => {
+      const { env } = getCloudflareContext();
+      return await fetchTagById(env.DB, tagId);
+    },
+    [`tag-data-${userId}-${tagId}`],
+    {
+      tags: [tagPageCacheTag(userId, tagId)],
+    },
+  )(userId, tagId);
 };
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag/[tagId]">): Promise<Metadata> {

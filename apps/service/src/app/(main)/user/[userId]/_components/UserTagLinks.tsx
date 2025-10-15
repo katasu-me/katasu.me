@@ -1,6 +1,6 @@
 import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
+import { unstable_cache } from "next/cache";
 import TagLinks from "@/components/Navigation/TagLinks";
 import { tagListCacheTag } from "@/lib/cache-tags";
 
@@ -10,24 +10,26 @@ import { tagListCacheTag } from "@/lib/cache-tags";
  * @returns タグ一覧
  */
 const cachedFetchTags = async (userId: string) => {
-  "use cache";
+  return unstable_cache(
+    async (userId: string) => {
+      const { env } = getCloudflareContext();
 
-  const tag = tagListCacheTag(userId);
-  cacheTag(tag);
+      const result = await fetchTagsByUserId(env.DB, userId, {
+        limit: 4,
+        order: "usage",
+      });
 
-  const { env } = getCloudflareContext();
+      if (!result.success) {
+        return [];
+      }
 
-  const result = await fetchTagsByUserId(env.DB, userId, {
-    limit: 4,
-    order: "usage",
-  });
-
-  if (!result.success) {
-    revalidateTag(tag);
-    return [];
-  }
-
-  return result.data;
+      return result.data;
+    },
+    [`top-tags-${userId}`],
+    {
+      tags: [tagListCacheTag(userId)],
+    },
+  )(userId);
 };
 
 type Props = {
