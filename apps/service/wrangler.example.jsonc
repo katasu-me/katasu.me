@@ -65,13 +65,17 @@
       {
         "name": "NEXT_TAG_CACHE_DO_SHARDED",
         "class_name": "DOShardedTagCache"
+      },
+      {
+        "name": "NEXT_CACHE_DO_PURGE",
+        "class_name": "BucketCachePurge"
       }
     ]
   },
   "migrations": [
     {
       "tag": "v1",
-      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"]
+      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache", "BucketCachePurge"]
     }
   ],
 
@@ -102,6 +106,10 @@
    */
   "services": [
     {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "katasu-me-dev"
+    },
+    {
       "binding": "IMAGE_OPTIMIZER",
       "service": "katasu-me-image-optimizer-dev"
     }
@@ -128,6 +136,10 @@
         "NEXT_PUBLIC_IMAGE_R2_URL": "<PRODUCTION_NEXT_PUBLIC_IMAGE_R2_URL>"
       },
       "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "katasu-me"
+        },
         {
           "binding": "IMAGE_OPTIMIZER",
           "service": "katasu-me-image-optimizer"
@@ -170,13 +182,17 @@
           {
             "name": "NEXT_TAG_CACHE_DO_SHARDED",
             "class_name": "DOShardedTagCache"
+          },
+          {
+            "name": "NEXT_CACHE_DO_PURGE",
+            "class_name": "BucketCachePurge"
           }
         ]
       },
       "migrations": [
         {
           "tag": "v1",
-          "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"]
+          "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache", "BucketCachePurge"]
         }
       ]
     }
