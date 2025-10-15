@@ -9,28 +9,26 @@ import { tagListCacheTag } from "@/lib/cache-tags";
  * @params userId ユーザーID
  * @returns タグ一覧
  */
-const cachedFetchTags = async (userId: string) => {
-  return unstable_cache(
-    async (userId: string) => {
-      const { env } = getCloudflareContext();
+const cachedFetchTags = unstable_cache(
+  async (userId: string) => {
+    const { env } = getCloudflareContext();
 
-      const result = await fetchTagsByUserId(env.DB, userId, {
-        limit: 4,
-        order: "usage",
-      });
+    const result = await fetchTagsByUserId(env.DB, userId, {
+      limit: 4,
+      order: "usage",
+    });
 
-      if (!result.success) {
-        return [];
-      }
+    if (!result.success) {
+      return [];
+    }
 
-      return result.data;
-    },
-    [`top-tags-${userId}`],
-    {
-      tags: [tagListCacheTag(userId)],
-    },
-  )(userId);
-};
+    return result.data;
+  },
+  [`top-tags-${userId}`],
+  {
+    tags: [tagListCacheTag(userId)],
+  },
+);
 
 type Props = {
   userId: string;

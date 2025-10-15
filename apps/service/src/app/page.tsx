@@ -1,4 +1,4 @@
-import type { PublicUserData } from "@katasu.me/service-db";
+import { getPublicUserDataById, type PublicUserData } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
@@ -11,7 +11,6 @@ import Footer from "@/components/Footer";
 import { SITE_NAME } from "@/constants/site";
 import SignInDrawer from "@/features/auth/components/SignInDrawer";
 import { getUserSession } from "@/lib/auth";
-import { cachedFetchPublicUserDataById } from "@/lib/user";
 
 async function StartButton({ user, className }: { user: PublicUserData | undefined; className?: string }) {
   // TODO: リリース時には外す
@@ -62,7 +61,7 @@ export default async function Home() {
   let user: PublicUserData | undefined;
 
   if (session?.user) {
-    const result = await cachedFetchPublicUserDataById(session.user.id);
+    const result = await getPublicUserDataById(env.DB, session.user.id);
 
     if (result.success) {
       user = result.data;

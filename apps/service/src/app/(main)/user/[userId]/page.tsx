@@ -1,3 +1,5 @@
+import { getPublicUserDataById } from "@katasu.me/service-db";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
@@ -12,28 +14,26 @@ import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserAvatarUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
-import { cachedFetchPublicUserDataById as _cachedFetchPublicUserDataById } from "@/lib/user";
 import UserImageDropArea from "./_components/UserImageDropArea";
 import UserPageContents from "./_components/UserPageContents";
 import UserTagLinks from "./_components/UserTagLinks";
 
-const cachedFetchPublicUserDataById = cache(_cachedFetchPublicUserDataById);
+const fetchPublicUserDataById = cache(async (userId: string) => {
+  const { env } = getCloudflareContext();
+  return await getPublicUserDataById(env.DB, userId);
+});
 
 const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "timeline"),
   page: fallback(string(), "1"),
 });
 
-export async function generateMetadata({ params }: PageProps<"/user/[userId]">): Promise<Metadata> {
-  const startTime = Date.now();
-  console.log("[DEBUG] generateMetadata - START");
+export const revalidate = 3600; // 1時間
 
+export async function generateMetadata({ params }: PageProps<"/user/[userId]">): Promise<Metadata> {
   const { userId } = await params;
 
-  console.log("[DEBUG] generateMetadata - cachedFetchPublicUserDataById - START");
-  const userFetchStart = Date.now();
-  const userResult = await cachedFetchPublicUserDataById(userId);
-  console.log(`[DEBUG] generateMetadata - cachedFetchPublicUserDataById - END: ${Date.now() - userFetchStart}ms`);
+  const userResult = await fetchPublicUserDataById(userId);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -47,8 +47,6 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 
   const user = userResult.data;
   const avatarUrl = getUserAvatarUrl(user.id, user.hasAvatar);
-
-  console.log(`[DEBUG] generateMetadata - END: ${Date.now() - startTime}ms\n`);
 
   return generateMetadataTitle({
     pageTitle: user.name,
@@ -67,10 +65,10 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
   // ユーザーページのユーザーを取得
   const { userId } = await params;
 
-  console.log("[DEBUG] UserPage - cachedFetchPublicUserDataById - START");
+  console.log("[DEBUG] UserPage - fetchPublicUserDataById - START");
   const userFetchStart = Date.now();
-  const userResult = await cachedFetchPublicUserDataById(userId);
-  console.log(`[DEBUG] UserPage - cachedFetchPublicUserDataById - END: ${Date.now() - userFetchStart}ms`);
+  const userResult = await fetchPublicUserDataById(userId);
+  console.log(`[DEBUG] UserPage - fetchPublicUserDataById - END: ${Date.now() - userFetchStart}ms`);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (

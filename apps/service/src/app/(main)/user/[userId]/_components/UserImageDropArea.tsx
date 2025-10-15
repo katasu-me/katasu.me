@@ -1,7 +1,7 @@
+import { fetchTotalImageCountByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { getUserSession } from "@/lib/auth";
-import { cachedFetchTotalImageCount } from "@/lib/user";
 
 type Props = {
   userId: string;
@@ -11,10 +11,12 @@ type Props = {
 export default async function UserImageDropArea({ userId, maxPhotos }: Props) {
   const { env } = getCloudflareContext();
 
-  const [{ session }, totalImageCount] = await Promise.all([
+  const [{ session }, totalImageCountResult] = await Promise.all([
     getUserSession(env.DB),
-    cachedFetchTotalImageCount(userId),
+    fetchTotalImageCountByUserId(env.DB, userId),
   ]);
+
+  const totalImageCount = totalImageCountResult.success ? totalImageCountResult.data : 0;
 
   // オーナーでない場合は何も表示しない
   const isOwner = userId === session?.user?.id;

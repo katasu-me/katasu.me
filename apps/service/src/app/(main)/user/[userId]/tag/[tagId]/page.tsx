@@ -1,7 +1,6 @@
-import { fetchTagById } from "@katasu.me/service-db";
+import { fetchTagById, fetchTotalImageCountByUserId, getPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
-import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
@@ -14,10 +13,8 @@ import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
-import { tagPageCacheTag } from "@/lib/cache-tags";
 import { getUserAvatarUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
-import { cachedFetchPublicUserDataById, cachedFetchTotalImageCount } from "@/lib/user";
 import TagPageContents from "./_components/TagPageContents";
 
 const searchParamsSchema = object({
@@ -25,35 +22,19 @@ const searchParamsSchema = object({
   page: fallback(string(), "1"),
 });
 
-/**
- * タグ情報を取得
- * @params userId ユーザーIO
- * @params tagId タグID
- * @returns タグ情報
- */
-const cachedFetchTagById = async (userId: string, tagId: string) => {
-  return unstable_cache(
-    async (_userId: string, tagId: string) => {
-      const { env } = getCloudflareContext();
-      return await fetchTagById(env.DB, tagId);
-    },
-    [`tag-data-${userId}-${tagId}`],
-    {
-      tags: [tagPageCacheTag(userId, tagId)],
-    },
-  )(userId, tagId);
-};
+export const revalidate = 3600; // 1時間
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag/[tagId]">): Promise<Metadata> {
   const startTime = Date.now();
   console.log("[DEBUG] generateMetadata (TagPage) - START");
 
   const { userId, tagId } = await params;
+  const { env } = getCloudflareContext();
 
-  console.log("[DEBUG] generateMetadata (TagPage) - cachedFetchTagById - START");
+  console.log("[DEBUG] generateMetadata (TagPage) - fetchTagById - START");
   const tagFetchStart = Date.now();
-  const fetchTagResult = await cachedFetchTagById(userId, tagId);
-  console.log(`[DEBUG] generateMetadata (TagPage) - cachedFetchTagById - END: ${Date.now() - tagFetchStart}ms`);
+  const fetchTagResult = await fetchTagById(env.DB, tagId);
+  console.log(`[DEBUG] generateMetadata (TagPage) - fetchTagById - END: ${Date.now() - tagFetchStart}ms`);
 
   if (!fetchTagResult.success || !fetchTagResult.data) {
     notFound();
@@ -61,12 +42,10 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
 
   const tag = fetchTagResult.data;
 
-  console.log("[DEBUG] generateMetadata (TagPage) - cachedFetchPublicUserDataById - START");
+  console.log("[DEBUG] generateMetadata (TagPage) - getPublicUserDataById - START");
   const userFetchStart = Date.now();
-  const userResult = await cachedFetchPublicUserDataById(tag.userId);
-  console.log(
-    `[DEBUG] generateMetadata (TagPage) - cachedFetchPublicUserDataById - END: ${Date.now() - userFetchStart}ms`,
-  );
+  const userResult = await getPublicUserDataById(env.DB, tag.userId);
+  console.log(`[DEBUG] generateMetadata (TagPage) - getPublicUserDataById - END: ${Date.now() - userFetchStart}ms`);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -98,12 +77,13 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
   console.log("[DEBUG] TagPage - START");
 
   const { userId, tagId } = await params;
+  const { env } = getCloudflareContext();
 
   // タグを取得
-  console.log("[DEBUG] TagPage - cachedFetchTagById - START");
+  console.log("[DEBUG] TagPage - fetchTagById - START");
   const tagFetchStart = Date.now();
-  const fetchTagResult = await cachedFetchTagById(userId, tagId);
-  console.log(`[DEBUG] TagPage - cachedFetchTagById - END: ${Date.now() - tagFetchStart}ms`);
+  const fetchTagResult = await fetchTagById(env.DB, tagId);
+  console.log(`[DEBUG] TagPage - fetchTagById - END: ${Date.now() - tagFetchStart}ms`);
 
   if (!fetchTagResult.success) {
     console.error("[page] タグの取得に失敗しました:", fetchTagResult.error);
@@ -115,19 +95,20 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
     notFound();
   }
 
-  const { env } = getCloudflareContext();
   const tag = fetchTagResult.data;
 
-  console.log("[DEBUG] TagPage - cachedFetchPublicUserDataById + cachedFetchTotalImageCount + getUserSession - START");
+  console.log("[DEBUG] TagPage - getPublicUserDataById + fetchTotalImageCountByUserId + getUserSession - START");
   const parallelFetchStart = Date.now();
-  const [userResult, totalImageCount, { session }] = await Promise.all([
-    cachedFetchPublicUserDataById(tag.userId),
-    cachedFetchTotalImageCount(userId),
+  const [userResult, totalImageCountResult, { session }] = await Promise.all([
+    getPublicUserDataById(env.DB, tag.userId),
+    fetchTotalImageCountByUserId(env.DB, userId),
     getUserSession(env.DB),
   ]);
   console.log(
-    `[DEBUG] TagPage - cachedFetchPublicUserDataById + cachedFetchTotalImageCount + getUserSession - END: ${Date.now() - parallelFetchStart}ms`,
+    `[DEBUG] TagPage - getPublicUserDataById + fetchTotalImageCountByUserId + getUserSession - END: ${Date.now() - parallelFetchStart}ms`,
   );
+
+  const totalImageCount = totalImageCountResult.success ? totalImageCountResult.data : 0;
 
   // 存在しない、または新規登録が完了していない場合は404
   if (

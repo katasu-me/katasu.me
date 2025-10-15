@@ -1,59 +1,18 @@
 import {
   type ActionResult,
-  type FetchImagesOptions,
   fetchImagesByUserId,
   fetchRandomImagesByUserId,
+  fetchTotalImageCountByUserId,
   type ImageWithTags,
   type PublicUserData,
 } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
 import GalleryView from "@/features/gallery/components/GalleryView";
 import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
-import { userPageCacheTag } from "@/lib/cache-tags";
-import { cachedFetchTotalImageCount } from "@/lib/user";
-
-/**
- * ユーザーが投稿した画像を取得
- * @param userId ユーザーID
- * @param options 取得オプション
- * @return 画像一覧
- */
-const cachedFetchImages = async (userId: string, options: FetchImagesOptions) => {
-  return unstable_cache(
-    async (userId: string, options: FetchImagesOptions) => {
-      const { env } = getCloudflareContext();
-      return await fetchImagesByUserId(env.DB, userId, options);
-    },
-    [`user-images-${userId}-${options.offset ?? 0}-${options.order ?? "desc"}`],
-    {
-      tags: [userPageCacheTag(userId)],
-    },
-  )(userId, options);
-};
-
-/**
- * ユーザーが投稿した画像をランダムで取得
- * @param userId ユーザーID
- * @return 画像一覧
- */
-const cachedFetchRandomImages = async (userId: string) => {
-  return unstable_cache(
-    async (userId: string) => {
-      const { env } = getCloudflareContext();
-      return await fetchRandomImagesByUserId(env.DB, userId);
-    },
-    [`user-random-images-${userId}`],
-    {
-      tags: [userPageCacheTag(userId)],
-      revalidate: 1,
-    },
-  )(userId);
-};
 
 type Props = {
   user: PublicUserData;
@@ -62,8 +21,17 @@ type Props = {
 };
 
 export default async function UserPageContents({ user, view, currentPage = 1 }: Props) {
+  const { env } = getCloudflareContext();
+
   // 総画像数を取得
-  const totalImageCount = await cachedFetchTotalImageCount(user.id);
+  const totalImageCountResult = await fetchTotalImageCountByUserId(env.DB, user.id);
+
+  if (!totalImageCountResult.success) {
+    console.error("[page] 画像数の取得に失敗しました:", totalImageCountResult.error);
+    return <Message message="画像数の取得に失敗しました" icon="error" />;
+  }
+
+  const totalImageCount = totalImageCountResult.data;
 
   // 0枚ならからっぽ
   if (totalImageCount <= 0) {
@@ -82,7 +50,7 @@ export default async function UserPageContents({ user, view, currentPage = 1 }: 
       }
 
       // 画像を取得
-      fetchUserImagesResult = await cachedFetchImages(user.id, {
+      fetchUserImagesResult = await fetchImagesByUserId(env.DB, user.id, {
         offset,
         order: "desc",
       });
@@ -91,7 +59,7 @@ export default async function UserPageContents({ user, view, currentPage = 1 }: 
     }
 
     case "random": {
-      fetchUserImagesResult = await cachedFetchRandomImages(user.id);
+      fetchUserImagesResult = await fetchRandomImagesByUserId(env.DB, user.id);
       break;
     }
   }

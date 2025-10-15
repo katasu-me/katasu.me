@@ -1,43 +1,21 @@
-import { fetchTagsByUserId } from "@katasu.me/service-db";
+import { fetchTagsByUserId, getPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
-import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Message from "@/components/Message";
 import TagLink from "@/components/Navigation/TagLinks/TabLink";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
-import { tagListCacheTag } from "@/lib/cache-tags";
 import { getUserAvatarUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
-import { cachedFetchPublicUserDataById } from "@/lib/user";
 
-const cachedFetchAllTags = async (userId: string) => {
-  return unstable_cache(
-    async (userId: string) => {
-      const { env } = getCloudflareContext();
-
-      const result = await fetchTagsByUserId(env.DB, userId, {
-        order: "name",
-      });
-
-      if (!result.success) {
-        return [];
-      }
-
-      return result.data;
-    },
-    [`all-tags-${userId}`],
-    {
-      tags: [tagListCacheTag(userId)],
-    },
-  )(userId);
-};
+export const revalidate = 3600; // 1時間
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag">): Promise<Metadata> {
   const { userId } = await params;
+  const { env } = getCloudflareContext();
 
-  const userResult = await cachedFetchPublicUserDataById(userId);
+  const userResult = await getPublicUserDataById(env.DB, userId);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -64,8 +42,9 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
 
 export default async function TagListPage({ params }: PageProps<"/user/[userId]/tag">) {
   const { userId } = await params;
+  const { env } = getCloudflareContext();
 
-  const userResult = await cachedFetchPublicUserDataById(userId);
+  const userResult = await getPublicUserDataById(env.DB, userId);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -77,7 +56,10 @@ export default async function TagListPage({ params }: PageProps<"/user/[userId]/
     notFound();
   }
 
-  const allTags = await cachedFetchAllTags(userId);
+  const allTagsResult = await fetchTagsByUserId(env.DB, userId, {
+    order: "name",
+  });
+  const allTags = allTagsResult.success ? allTagsResult.data : [];
   const user = userResult.data;
 
   return (
