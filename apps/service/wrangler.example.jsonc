@@ -86,6 +86,7 @@
    * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
    */
   "vars": {
+    "BETTER_AUTH_TELEMETRY": "0",
     "BETTER_AUTH_URL": "<DEVELOPMENT_URL>",
     "NEXT_PUBLIC_SITE_URL": "<DEVELOPMENT_URL>"
   },
@@ -124,6 +125,7 @@
         "custom_domain": true
       },
       "vars": {
+        "BETTER_AUTH_TELEMETRY": "0",
         "BETTER_AUTH_URL": "<PRODUCTION_URL>",
         "NEXT_PUBLIC_SITE_URL": "<PRODUCTION_URL>",
         "NEXT_PUBLIC_UMAMI_SCRIPT_URL": "<UMAMI_SCRIPT_URL>",
