@@ -58,7 +58,7 @@ export const tag = sqliteTable(
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
     hiddenAt: integer("hidden_at", { mode: "timestamp" }),
   },
-  (table) => [unique("unique_user_tag_name").on(table.userId, table.name)],
+  (table) => [unique("unique_user_tag_name").on(table.userId, table.name), index("idx_tag_user_id").on(table.userId)],
 );
 
 export const tagRelations = relations(tag, ({ one, many }) => ({
@@ -88,7 +88,11 @@ export const imageTag = sqliteTable(
       .notNull()
       .references(() => tag.id, { onDelete: "cascade" }),
   },
-  (table) => [primaryKey({ columns: [table.imageId, table.tagId] })],
+  (table) => [
+    primaryKey({ columns: [table.imageId, table.tagId] }),
+    index("idx_image_tag_tag_id").on(table.tagId),
+    index("idx_image_tag_image_id").on(table.imageId),
+  ],
 );
 
 export const imageTagRelations = relations(imageTag, ({ one }) => ({
