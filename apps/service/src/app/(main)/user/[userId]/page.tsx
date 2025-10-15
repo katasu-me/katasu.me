@@ -32,7 +32,6 @@ const searchParamsSchema = object({
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]">): Promise<Metadata> {
   const { userId } = await params;
-  console.log(`[CACHE] generateMetadata called for user: ${userId} at ${new Date().toISOString()}`);
 
   const userResult = await cachedFetchPublicUserDataById(userId);
 
@@ -60,21 +59,11 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 }
 
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userId]">) {
-  const pageStartTime = Date.now();
-  const timestamp = new Date().toISOString();
-  console.log("\n========================================");
-  console.log(`[CACHE] UserPage RENDER - ${timestamp}`);
-  console.log("========================================");
-
   // ユーザーページのユーザーを取得
   const { userId } = await params;
-  console.log(`[CACHE] Fetching user data for: ${userId}`);
-
-  const userFetchStart = Date.now();
 
   const { env } = getCloudflareContext();
   const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(userId), getUserSession(env.DB)]);
-  console.log(`[CACHE] User data fetched in ${Date.now() - userFetchStart}ms`);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -89,17 +78,12 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
   const user = userResult.data;
   const isOwner = userId === session?.user?.id;
 
-  console.log("[DEBUG] UserPage - parse searchParams - START");
-  const parseStart = Date.now();
   const { view, page: pageStr } = parse(searchParamsSchema, await searchParams);
   const currentPage = Number.parseInt(pageStr, 10);
 
   if (currentPage <= 0) {
     notFound();
   }
-
-  console.log(`[DEBUG] UserPage - parse searchParams - END: ${Date.now() - parseStart}ms`);
-  console.log(`[DEBUG] UserPage - END (excluding Suspense components): ${Date.now() - pageStartTime}ms\n`);
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
