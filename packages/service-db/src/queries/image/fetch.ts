@@ -1,6 +1,6 @@
-import { asc, count, desc, eq, inArray, sql } from "drizzle-orm";
+import { asc, count, desc, eq, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
-import { type ImageWithTags, image, imageTag } from "../../schema";
+import { type ImageWithTags, image, imageTag, tag } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import { getDB } from "../db";
 
@@ -12,6 +12,7 @@ export type FetchImagesOptions = {
 
 export const DEFAULT_FETCH_IMAGES_LIMIT = 24;
 export const DEFAULT_RANDOM_IMAGES_LIMIT = 10;
+export const MAX_TAGS_PER_IMAGE = 10; // 1画像あたりのタグ最大数
 
 /**
  * 画像IDから画像を取得する
@@ -225,54 +226,82 @@ export async function fetchImagesByTagId(
     const db = getDB(dbInstance);
 
     // 指定されたタグIDを持つ画像IDのリストを取得
-    const filteredImageIds = await db
-      .select({ id: image.id })
+    const targetImageIdsSubquery = db
+      .select({ imageId: imageTag.imageId })
       .from(imageTag)
-      .innerJoin(image, eq(imageTag.imageId, image.id))
       .where(eq(imageTag.tagId, tagId))
+      .as("target_images");
+
+    // 画像とそのタグを取得
+    const results = await db
+      .select({
+        imageId: image.id,
+        userId: image.userId,
+        width: image.width,
+        height: image.height,
+        title: image.title,
+        createdAt: image.createdAt,
+        updatedAt: image.updatedAt,
+        hiddenAt: image.hiddenAt,
+        tagId: tag.id,
+        tagName: tag.name,
+        tagCreatedAt: tag.createdAt,
+        tagHiddenAt: tag.hiddenAt,
+      })
+      .from(image)
+      .innerJoin(targetImageIdsSubquery, eq(image.id, targetImageIdsSubquery.imageId))
+      .leftJoin(imageTag, eq(image.id, imageTag.imageId))
+      .leftJoin(tag, eq(imageTag.tagId, tag.id))
       .orderBy(opts.order === "asc" ? asc(image.createdAt) : desc(image.createdAt))
-      .limit(opts.limit ?? DEFAULT_FETCH_IMAGES_LIMIT)
+      .limit((opts.limit ?? DEFAULT_FETCH_IMAGES_LIMIT) * MAX_TAGS_PER_IMAGE) // 1画像あたり最大10タグなので10倍取得
       .offset(opts.offset ?? 0);
 
-    if (filteredImageIds.length === 0) {
+    if (results.length === 0) {
       return {
         success: true,
         data: [],
       };
     }
 
-    const imageIds = filteredImageIds.map((img) => img.id);
+    // 結果を画像ごとにグループ化
+    const imageMap = new Map<string, ImageWithTags>();
 
-    // 取得した画像IDのリストから、各画像の詳細とタグ一覧を取得
-    const images = await db.query.image.findMany({
-      where: inArray(image.id, imageIds),
-      with: {
-        imageTag: {
-          with: {
-            tag: {
-              columns: {
-                userId: false,
-              },
-            },
-          },
-        },
-      },
-    });
+    for (const row of results) {
+      if (!imageMap.has(row.imageId)) {
+        imageMap.set(row.imageId, {
+          id: row.imageId,
+          userId: row.userId,
+          width: row.width,
+          height: row.height,
+          title: row.title,
+          createdAt: row.createdAt,
+          updatedAt: row.updatedAt,
+          hiddenAt: row.hiddenAt,
+          tags: [],
+        });
+      }
 
-    // 元の順序を保つためにソートしなおす
-    const originalImageMap = new Map(images.map((img) => [img.id, img]));
-    const sortedImages = imageIds.map((id) => originalImageMap.get(id)).filter((img) => typeof img !== "undefined");
+      // タグを追加
+      if (row.tagId && row.tagName && row.tagCreatedAt) {
+        const imageData = imageMap.get(row.imageId);
+
+        if (imageData) {
+          imageData.tags.push({
+            id: row.tagId,
+            name: row.tagName,
+            createdAt: row.tagCreatedAt,
+            hiddenAt: row.tagHiddenAt,
+          });
+        }
+      }
+    }
+
+    // limitを適用（タグでグループ化した後）
+    const images = Array.from(imageMap.values()).slice(0, opts.limit ?? DEFAULT_FETCH_IMAGES_LIMIT);
 
     return {
       success: true,
-      data: sortedImages.map((img) => {
-        const { imageTag: imageTags, ...imageData } = img;
-
-        return {
-          ...imageData,
-          tags: imageTags.map((it) => it.tag),
-        };
-      }),
+      data: images,
     };
   } catch (error) {
     return {
