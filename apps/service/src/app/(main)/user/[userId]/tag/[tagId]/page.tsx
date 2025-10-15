@@ -33,7 +33,7 @@ const searchParamsSchema = object({
  */
 const cachedFetchTagById = async (userId: string, tagId: string) => {
   return unstable_cache(
-    async (userId: string, tagId: string) => {
+    async (_userId: string, tagId: string) => {
       const { env } = getCloudflareContext();
       return await fetchTagById(env.DB, tagId);
     },

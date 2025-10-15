@@ -16,7 +16,7 @@ import { tagPageCacheTag } from "@/lib/cache-tags";
 
 const cachedFetchTotalImageCount = async (userId: string, tagId: string) => {
   return unstable_cache(
-    async (userId: string, tagId: string) => {
+    async (_userId: string, tagId: string) => {
       const { env } = getCloudflareContext();
       return await fetchTotalImageCountByTagId(env.DB, tagId);
     },
@@ -29,7 +29,7 @@ const cachedFetchTotalImageCount = async (userId: string, tagId: string) => {
 
 const cachedFetchImages = async (userId: string, tagId: string, options: FetchImagesOptions) => {
   return unstable_cache(
-    async (userId: string, tagId: string, options: FetchImagesOptions) => {
+    async (_userId: string, tagId: string, options: FetchImagesOptions) => {
       const { env } = getCloudflareContext();
       return await fetchImagesByTagId(env.DB, tagId, options);
     },
