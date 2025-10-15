@@ -61,6 +61,39 @@ export function generateR2Key(
 }
 
 /**
+ * 投稿画像のURLを取得
+ * @param userId ユーザーID
+ * @param imageId 画像ID
+ * @param variant 画像バリアント（デフォルト: thumbnail）
+ * @returns 画像URL
+ */
+
+export function getImageUrl(userId: string, imageId: string, variant: "original" | "thumbnail" = "thumbnail"): string {
+  const bucketPublicUrl = process.env.NEXT_PUBLIC_IMAGE_R2_URL;
+
+  if (!bucketPublicUrl) {
+    throw new Error("NEXT_PUBLIC_IMAGE_R2_URLが設定されていません");
+  }
+
+  return `${bucketPublicUrl}/${generateR2Key("image", userId, imageId, variant)}`;
+}
+
+/**
+ * ユーザーアバター画像のURLを取得
+ * @param userId ユーザーID
+ * @returns アバター画像URL
+ */
+export function getUserAvatarUrl(userId: string): string {
+  const bucketPublicUrl = process.env.NEXT_PUBLIC_IMAGE_R2_URL;
+
+  if (!bucketPublicUrl) {
+    throw new Error("NEXT_PUBLIC_IMAGE_R2_URLが設定されていません");
+  }
+
+  return `${bucketPublicUrl}/${generateR2Key("avatar", userId)}`;
+}
+
+/**
  * 画像をR2にアップロード
  * @param r2 Cloudflare R2バケットインスタンス
  * @param key R2のキー

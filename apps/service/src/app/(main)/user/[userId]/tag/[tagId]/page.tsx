@@ -9,12 +9,13 @@ import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
+import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
-import { getUserAvatarUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
+import { getUserAvatarUrl } from "@/lib/r2";
 import TagPageContents from "./_components/TagPageContents";
 
 const searchParamsSchema = object({
@@ -58,7 +59,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
   }
 
   const user = userResult.data;
-  const avatarUrl = getUserAvatarUrl(user.id, user.hasAvatar);
+  const avatarUrl = user.hasAvatar ? getUserAvatarUrl(user.id) : DEFAULT_AVATAR_URL;
 
   console.log(`[DEBUG] generateMetadata (TagPage) - END: ${Date.now() - startTime}ms\n`);
 

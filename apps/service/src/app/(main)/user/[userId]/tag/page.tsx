@@ -5,9 +5,10 @@ import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Message from "@/components/Message";
 import TagLink from "@/components/Navigation/TagLinks/TabLink";
+import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
-import { getUserAvatarUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
+import { getUserAvatarUrl } from "@/lib/r2";
 
 export const revalidate = 3600; // 1時間
 
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
   }
 
   const user = userResult.data;
-  const avatarUrl = getUserAvatarUrl(user.id, user.hasAvatar);
+  const avatarUrl = user.hasAvatar ? getUserAvatarUrl(user.id) : DEFAULT_AVATAR_URL;
 
   return generateMetadataTitle({
     pageTitle: `すべてのタグ - ${user.name}`,

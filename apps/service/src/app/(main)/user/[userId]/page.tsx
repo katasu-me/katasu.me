@@ -10,10 +10,11 @@ import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
 import TagLinksSkeleton from "@/components/Navigation/TagLinks/Skeleton";
+import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
-import { getUserAvatarUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
+import { getUserAvatarUrl } from "@/lib/r2";
 import UserImageDropArea from "./_components/UserImageDropArea";
 import UserPageContents from "./_components/UserPageContents";
 import UserTagLinks from "./_components/UserTagLinks";
@@ -47,7 +48,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
   }
 
   const user = userResult.data;
-  const avatarUrl = getUserAvatarUrl(user.id, user.hasAvatar);
+  const avatarUrl = user.hasAvatar ? getUserAvatarUrl(user.id) : DEFAULT_AVATAR_URL;
 
   return generateMetadataTitle({
     pageTitle: user.name,
@@ -117,7 +118,9 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
           <UserTagLinks className="col-start-2" userId={userId} />
         </Suspense>
 
-        <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
+        <Suspense>
+          <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
+        </Suspense>
 
         <Suspense fallback={<Loading className="col-start-2 py-16" />}>
           <UserPageContents user={user} view={view} currentPage={currentPage} />

@@ -6,8 +6,8 @@ import { Suspense } from "react";
 import Header from "@/components/Header";
 import { Loading } from "@/components/Loading";
 import { getUserSession } from "@/lib/auth";
-import { getImageUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
+import { getImageUrl } from "@/lib/r2";
 import ImagePageContent from "./_components/ImagePageContent";
 
 export const revalidate = 3600; // 1時間

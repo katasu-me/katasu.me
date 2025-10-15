@@ -30,7 +30,7 @@
    */
   "ratelimits": [
     {
-      "name": "IMAGE_RATE_LIMITER",
+      "name": "ACTIONS_RATE_LIMITER",
       "namespace_id": "1001",
       "simple": {
         "limit": 100,
@@ -54,12 +54,6 @@
     {
       "binding": "IMAGES_R2_BUCKET",
       "bucket_name": "katasu-me-dev-images"
-    }
-  ],
-  "kv_namespaces": [
-    {
-      "binding": "IMAGE_STATUS_KV",
-      "id": "<DEVELOPMENT_IMAGE_STATUS_KV_ID>"
     }
   ],
   "durable_objects": {
@@ -88,7 +82,8 @@
   "vars": {
     "BETTER_AUTH_TELEMETRY": "0",
     "BETTER_AUTH_URL": "<DEVELOPMENT_URL>",
-    "NEXT_PUBLIC_SITE_URL": "<DEVELOPMENT_URL>"
+    "NEXT_PUBLIC_SITE_URL": "<DEVELOPMENT_URL>",
+    "NEXT_PUBLIC_IMAGE_R2_URL": "<DEVELOPMENT_PUBLIC_IMAGE_R2_URL>"
   },
   /**
    * Note: Use secrets to store sensitive data.
@@ -129,7 +124,8 @@
         "BETTER_AUTH_URL": "<PRODUCTION_URL>",
         "NEXT_PUBLIC_SITE_URL": "<PRODUCTION_URL>",
         "NEXT_PUBLIC_UMAMI_SCRIPT_URL": "<UMAMI_SCRIPT_URL>",
-        "NEXT_PUBLIC_UMAMI_WEBSITE_ID": "<UMAMI_WEBSITE_ID>"
+        "NEXT_PUBLIC_UMAMI_WEBSITE_ID": "<UMAMI_WEBSITE_ID>",
+        "NEXT_PUBLIC_IMAGE_R2_URL": "<PRODUCTION_PUBLIC_IMAGE_R2_URL>"
       },
       "services": [
         {
@@ -155,15 +151,9 @@
           "bucket_name": "katasu-me-prod-images"
         }
       ],
-      "kv_namespaces": [
-        {
-          "binding": "IMAGE_STATUS_KV",
-          "id": "<PRODUCTION_IMAGE_STATUS_KV_ID>"
-        }
-      ],
       "ratelimits": [
         {
-          "name": "IMAGE_RATE_LIMITER",
+          "name": "ACTIONS_RATE_LIMITER",
           "namespace_id": "1001",
           "simple": {
             "limit": 100,

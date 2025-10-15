@@ -43,6 +43,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
   return (
     <html lang="ja">
+      <head>
+        <link rel="preconnect" href="https://static.katasu.me" />
+      </head>
       <body
         className={twMerge(
           ibmPlexSansJP.className,
