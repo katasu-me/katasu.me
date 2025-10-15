@@ -7,7 +7,6 @@ import {
   type PublicUserData,
 } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cacheLife as cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
 import GalleryView from "@/features/gallery/components/GalleryView";
@@ -47,7 +46,7 @@ const cachedFetchImages = async (userId: string, options: FetchImagesOptions) =>
 const cachedFetchRandomImages = async (userId: string) => {
   // "use cache"; // 一時的に無効化
 
-  cacheLife("seconds");
+  // cacheLife("seconds");
 
   const { env } = getCloudflareContext();
 

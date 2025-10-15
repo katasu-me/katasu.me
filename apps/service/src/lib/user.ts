@@ -1,7 +1,5 @@
 import { fetchTotalImageCountByUserId, getPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
-import { userDataCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 
 /**
  * ユーザーの公開情報を取得
@@ -11,15 +9,15 @@ import { userDataCacheTag, userPageCacheTag } from "@/lib/cache-tags";
 export async function cachedFetchPublicUserDataById(userId: string) {
   // "use cache"; // 一時的に無効化
 
-  const tag = userDataCacheTag(userId);
-  cacheTag(tag);
+  // const tag = userDataCacheTag(userId);
+  // cacheTag(tag);
 
   const { env } = getCloudflareContext();
   const result = await getPublicUserDataById(env.DB, userId);
 
-  if (!result.success) {
-    revalidateTag(tag);
-  }
+  // if (!result.success) {
+  //   revalidateTag(tag);
+  // }
 
   return result;
 }
@@ -32,15 +30,15 @@ export async function cachedFetchPublicUserDataById(userId: string) {
 export const cachedFetchTotalImageCount = async (userId: string) => {
   // "use cache"; // 一時的に無効化
 
-  const tag = userPageCacheTag(userId);
-  cacheTag(tag);
+  // const tag = userPageCacheTag(userId);
+  // cacheTag(tag);
 
   const { env } = getCloudflareContext();
 
   const result = await fetchTotalImageCountByUserId(env.DB, userId);
 
   if (!result.success) {
-    revalidateTag(tag);
+    // revalidateTag(tag);
     return 0;
   }
 
