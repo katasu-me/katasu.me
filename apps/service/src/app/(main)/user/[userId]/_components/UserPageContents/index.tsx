@@ -15,6 +15,7 @@ import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
 import { userPageCacheTag } from "@/lib/cache-tags";
+import { cachedFetchTotalImageCount } from "@/lib/user";
 
 /**
  * ユーザーが投稿した画像を取得
@@ -57,11 +58,13 @@ const cachedFetchRandomImages = async (userId: string) => {
 type Props = {
   user: PublicUserData;
   view: ImageLayoutType;
-  totalImageCount: number;
   currentPage?: number;
 };
 
-export default async function UserPageContents({ user, view, totalImageCount, currentPage = 1 }: Props) {
+export default async function UserPageContents({ user, view, currentPage = 1 }: Props) {
+  // 総画像数を取得
+  const totalImageCount = await cachedFetchTotalImageCount(user.id);
+
   // 0枚ならからっぽ
   if (totalImageCount <= 0) {
     return <Message message="からっぽです" />;

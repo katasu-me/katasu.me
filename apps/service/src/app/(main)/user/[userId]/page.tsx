@@ -1,7 +1,6 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { cache, Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
@@ -10,14 +9,15 @@ import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
 import TagLinksSkeleton from "@/components/Navigation/TagLinks/Skeleton";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
-import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
-import { getUserSession } from "@/lib/auth";
 import { getUserAvatarUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
-import { cachedFetchPublicUserDataById, cachedFetchTotalImageCount } from "@/lib/user";
+import { cachedFetchPublicUserDataById as _cachedFetchPublicUserDataById } from "@/lib/user";
+import UserImageDropArea from "./_components/UserImageDropArea";
 import UserPageContents from "./_components/UserPageContents";
 import UserTagLinks from "./_components/UserTagLinks";
+
+const cachedFetchPublicUserDataById = cache(_cachedFetchPublicUserDataById);
 
 const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "timeline"),
@@ -82,20 +82,7 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
     notFound();
   }
 
-  const { env } = getCloudflareContext();
-
-  console.log("[DEBUG] UserPage - getUserSession + cachedFetchTotalImageCount - START");
-  const parallelFetchStart = Date.now();
-  const [{ session }, totalImageCount] = await Promise.all([
-    getUserSession(env.DB),
-    cachedFetchTotalImageCount(userId),
-  ]);
-  console.log(
-    `[DEBUG] UserPage - getUserSession + cachedFetchTotalImageCount - END: ${Date.now() - parallelFetchStart}ms`,
-  );
-
   const user = userResult.data;
-  const isOwner = user.id === session?.user?.id;
 
   console.log("[DEBUG] UserPage - parse searchParams - START");
   const parseStart = Date.now();
@@ -128,20 +115,12 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
           <UserTagLinks className="col-start-2" userId={userId} />
         </Suspense>
 
-        {isOwner && (
-          <div className="col-start-2">
-            <ImageDropArea
-              title="あたらしい画像を投稿する"
-              counter={{
-                total: totalImageCount,
-                max: user.maxPhotos,
-              }}
-            />
-          </div>
-        )}
+        <Suspense>
+          <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
+        </Suspense>
 
         <Suspense fallback={<Loading className="col-start-2 py-16" />}>
-          <UserPageContents user={user} view={view} totalImageCount={totalImageCount} currentPage={currentPage} />
+          <UserPageContents user={user} view={view} currentPage={currentPage} />
         </Suspense>
       </div>
     </div>
