@@ -38,6 +38,12 @@
       }
     }
   ],
+  "kv_namespaces": [
+    {
+      "binding": "CACHE_KV",
+      "id": "<DEVELOPMENT_CACHE_KV_ID>"
+    }
+  ],
   "d1_databases": [
     {
       "binding": "DB",
@@ -147,6 +153,12 @@
         {
           "binding": "IMAGE_OPTIMIZER",
           "service": "katasu-me-image-optimizer"
+        }
+      ],
+      "kv_namespaces": [
+        {
+          "binding": "CACHE_KV",
+          "id": "<PRODUCTION_CACHE_KV_ID>"
         }
       ],
       "d1_databases": [

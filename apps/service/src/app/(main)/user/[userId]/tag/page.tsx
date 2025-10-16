@@ -7,9 +7,20 @@ import Message from "@/components/Message";
 import TagLink from "@/components/TagLinks/TabLink";
 import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
+import { CACHE_KEYS, getCached } from "@/lib/cache";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
 import { cachedFetchPublicUserDataById } from "../../_lib/cached-user-data";
+
+const cachedFetchTagsByUserId = async (userId: string) => {
+  const { env } = getCloudflareContext();
+
+  return getCached(env.CACHE_KV, CACHE_KEYS.userTagsByName(userId), async () => {
+    return fetchTagsByUserId(env.DB, userId, {
+      order: "name",
+    });
+  });
+};
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag">): Promise<Metadata> {
   const { userId } = await params;
@@ -40,7 +51,6 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
 
 export default async function TagListPage({ params }: PageProps<"/user/[userId]/tag">) {
   const { userId } = await params;
-  const { env } = getCloudflareContext();
 
   const userResult = await cachedFetchPublicUserDataById(userId);
 
@@ -54,9 +64,7 @@ export default async function TagListPage({ params }: PageProps<"/user/[userId]/
     notFound();
   }
 
-  const allTagsResult = await fetchTagsByUserId(env.DB, userId, {
-    order: "name",
-  });
+  const allTagsResult = await cachedFetchTagsByUserId(userId);
   const allTags = allTagsResult.success ? allTagsResult.data : [];
 
   const user = userResult.data;

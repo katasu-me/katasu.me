@@ -1,15 +1,25 @@
 import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import TagLinks from "@/components/TagLinks";
+import { CACHE_KEYS, getCached } from "@/lib/cache";
 
 type Props = {
   userId: string;
   className?: string;
 };
 
-export default async function UserTagLinks({ userId, className }: Props) {
+const cachedFetchTagsByUsage = async (userId: string) => {
   const { env } = getCloudflareContext();
-  const fetchTagsResult = await fetchTagsByUserId(env.DB, userId);
+
+  return getCached(env.CACHE_KV, CACHE_KEYS.userTagsByUsage(userId), async () => {
+    return fetchTagsByUserId(env.DB, userId, {
+      order: "usage",
+    });
+  });
+};
+
+export default async function UserTagLinks({ userId, className }: Props) {
+  const fetchTagsResult = await cachedFetchTagsByUsage(userId);
 
   if (!fetchTagsResult.success) {
     return null;

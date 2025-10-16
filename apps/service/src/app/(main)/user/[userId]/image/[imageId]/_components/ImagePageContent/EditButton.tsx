@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import IconPencil from "@/assets/icons/pencil.svg";
 import Button from "@/components/Button";
@@ -12,7 +13,18 @@ type Props = {
 };
 
 export default function EditButton({ imageId, title, tags }: Props) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleSuccess = () => {
+    // モーダルを閉じる
+    setIsOpen(false);
+
+    // アニメーション完了を待ってからページをリフレッシュ
+    setTimeout(() => {
+      router.refresh();
+    }, 400);
+  };
 
   return (
     <>
@@ -27,9 +39,7 @@ export default function EditButton({ imageId, title, tags }: Props) {
         imageId={imageId}
         defaultTitle={title ?? undefined}
         defaultTags={tags}
-        onSuccess={() => {
-          setIsOpen(false);
-        }}
+        onSuccess={handleSuccess}
       />
     </>
   );

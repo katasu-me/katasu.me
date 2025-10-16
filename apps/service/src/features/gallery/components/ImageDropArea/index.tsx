@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { type ComponentProps, type DragEvent, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import IconImagePlus from "@/assets/icons/image-plus.svg";
@@ -15,6 +16,7 @@ type Props = {
 } & Pick<ComponentProps<typeof UploadDrawer>, "counter">;
 
 export default function ImageDropArea({ title, counter, defaultTags, className }: Props) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [defaultImageFile, setDefaultImageFile] = useState<File | undefined>();
@@ -54,8 +56,14 @@ export default function ImageDropArea({ title, counter, defaultTags, className }
   };
 
   const handleSuccess = () => {
+    // モーダルを閉じる
     setOpen(false);
     setDefaultImageFile(undefined);
+
+    // アニメーション完了を待ってからページをリフレッシュ
+    setTimeout(() => {
+      router.refresh();
+    }, 400);
   };
 
   return (

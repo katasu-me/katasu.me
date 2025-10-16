@@ -1,13 +1,12 @@
 import { fetchPublicUserDataById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cacheTag } from "next/cache";
 import { cache } from "react";
+import { CACHE_KEYS, getCached } from "@/lib/cache";
 
 export const cachedFetchPublicUserDataById = cache(async (userId: string) => {
-  "use cache";
-
-  unstable_cacheTag(`user:${userId}`);
-
   const { env } = getCloudflareContext();
-  return fetchPublicUserDataById(env.DB, userId);
+
+  return getCached(env.CACHE_KV, CACHE_KEYS.user(userId), async () => {
+    return fetchPublicUserDataById(env.DB, userId);
+  });
 });
