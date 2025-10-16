@@ -2,6 +2,7 @@ import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cachedFetchPublicUserDataById } from "@/app/_lib/cached-user-data";
 import Header from "@/components/Header";
 import Message from "@/components/Message";
 import TagLink from "@/components/TagLinks/TabLink";
@@ -10,7 +11,6 @@ import { SITE_DESCRIPTION_LONG } from "@/constants/site";
 import { CACHE_KEYS, getCached } from "@/lib/cache";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
-import { cachedFetchPublicUserDataById } from "../../_lib/cached-user-data";
 
 const cachedFetchTagsByUserId = async (userId: string) => {
   const { env } = getCloudflareContext();

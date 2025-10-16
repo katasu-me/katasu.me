@@ -62,32 +62,6 @@
       "bucket_name": "katasu-me-dev-images"
     }
   ],
-  "durable_objects": {
-    "bindings": [
-      {
-        "name": "NEXT_CACHE_DO_QUEUE",
-        "class_name": "DOQueueHandler"
-      },
-      {
-        "name": "NEXT_TAG_CACHE_DO_SHARDED",
-        "class_name": "DOShardedTagCache"
-      },
-      {
-        "name": "NEXT_CACHE_DO_PURGE",
-        "class_name": "BucketCachePurge"
-      }
-    ]
-  },
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"]
-    },
-    {
-      "tag": "v2",
-      "new_sqlite_classes": ["BucketCachePurge"]
-    }
-  ],
 
   /**
    * Environment Variables
@@ -187,32 +161,6 @@
             "limit": 100,
             "period": 60
           }
-        }
-      ],
-      "durable_objects": {
-        "bindings": [
-          {
-            "name": "NEXT_CACHE_DO_QUEUE",
-            "class_name": "DOQueueHandler"
-          },
-          {
-            "name": "NEXT_TAG_CACHE_DO_SHARDED",
-            "class_name": "DOShardedTagCache"
-          },
-          {
-            "name": "NEXT_CACHE_DO_PURGE",
-            "class_name": "BucketCachePurge"
-          }
-        ]
-      },
-      "migrations": [
-        {
-          "tag": "v1",
-          "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"]
-        },
-        {
-          "tag": "v2",
-          "new_sqlite_classes": ["BucketCachePurge"]
         }
       ]
     }

@@ -7047,7 +7047,7 @@ declare module "cloudflare:email" {
     prototype: EmailMessage;
     new (from: string, to: string, raw: ReadableStream | string): EmailMessage;
   };
-  export type { _EmailMessage as EmailMessage };
+  export { _EmailMessage as EmailMessage };
 }
 /**
  * Hello World binding to serve as an explanatory example. DO NOT USE
@@ -7647,7 +7647,7 @@ interface SecretsStoreSecret {
 }
 declare module "cloudflare:sockets" {
   function _connect(address: string | SocketAddress, options?: SocketOptions): Socket;
-  export type { _connect as connect };
+  export { _connect as connect };
 }
 declare namespace TailStream {
   interface Header {

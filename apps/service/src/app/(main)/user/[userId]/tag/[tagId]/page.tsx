@@ -1,9 +1,10 @@
-import { fetchTagById, fetchTotalImageCountByUserId } from "@katasu.me/service-db";
+import { fetchTagById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
+import { cachedFetchPublicUserDataById } from "@/app/_lib/cached-user-data";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
@@ -11,12 +12,11 @@ import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
 import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
-import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
-import { cachedFetchPublicUserDataById } from "../../../_lib/cached-user-data";
+import UserImageDropArea from "../../_components/UserImageDropArea";
 import TagPageContents from "./_components/TagPageContents";
 
 const cachedFetchTagById = cache(async (tagId: string) => {
@@ -84,13 +84,7 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
 
   const tag = fetchTagResult.data;
 
-  const [userResult, totalImageCountResult, { session }] = await Promise.all([
-    cachedFetchPublicUserDataById(userId),
-    fetchTotalImageCountByUserId(env.DB, userId),
-    getUserSession(env.DB),
-  ]);
-
-  const totalImageCount = totalImageCountResult.success ? totalImageCountResult.data : 0;
+  const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(userId), getUserSession(env.DB)]);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -130,16 +124,9 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
         {isOwner && (
-          <div className="col-start-2">
-            <ImageDropArea
-              title="あたらしい画像を投稿する"
-              defaultTags={[tag.name]}
-              counter={{
-                total: totalImageCount,
-                max: user.maxPhotos,
-              }}
-            />
-          </div>
+          <Suspense>
+            <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
+          </Suspense>
         )}
 
         <Suspense fallback={<Loading className="col-start-2 py-16" />}>

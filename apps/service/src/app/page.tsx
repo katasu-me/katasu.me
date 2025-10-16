@@ -1,74 +1,12 @@
-import type { PublicUserData } from "@katasu.me/service-db";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import Link from "next/link";
-import { twMerge } from "tailwind-merge";
-import IconPlant from "@/assets/icons/plant.svg";
+import { Suspense } from "react";
 import LogoImage from "@/assets/logo.svg";
 import BudouX from "@/components/BudouX";
-import Button from "@/components/Button";
 import DemoImages from "@/components/DemoImages";
 import Footer from "@/components/Footer";
 import { SITE_NAME } from "@/constants/site";
-import SignInDrawer from "@/features/auth/components/SignInDrawer";
-import { getUserSession } from "@/lib/auth";
-import { cachedFetchPublicUserDataById } from "./(main)/user/_lib/cached-user-data";
-
-async function StartButton({ user, className }: { user: PublicUserData | undefined; className?: string }) {
-  // TODO: リリース時には外す
-  if (process.env.NODE_ENV === "production") {
-    return (
-      <div className={className}>
-        <Button asChild>
-          <Link className="mx-auto flex w-fit items-center justify-center gap-2" href="/user/8uB8pmZ-pcGqxBfdpnWo6">
-            <IconPlant className="size-5" />
-            開発者のかたすみをのぞく
-          </Link>
-        </Button>
-        <Link className="mt-4 block text-center text-warm-black-50 text-xs hover:underline" href="/closed-beta">
-          βテスト登録済のかたはこちら
-        </Link>
-      </div>
-    );
-  }
-
-  const buttonClassname = twMerge("w-48", className);
-
-  // 登録 & 同意が完了している場合
-  if (user?.id && user.termsAgreedAt && user.privacyPolicyAgreedAt) {
-    return (
-      <Button asChild>
-        <Link
-          className={twMerge("mx-auto flex items-center justify-center gap-2", buttonClassname)}
-          href={`/user/${user.id}`}
-        >
-          <IconPlant className="size-5" />
-          マイページへ
-        </Link>
-      </Button>
-    );
-  }
-
-  return (
-    <SignInDrawer>
-      <Button className={buttonClassname}>はじめる</Button>
-    </SignInDrawer>
-  );
-}
+import StartButton, { StartButtonFallback } from "./_components/StartButton";
 
 export default async function Home() {
-  const { env } = await getCloudflareContext({ async: true });
-  const { session } = await getUserSession(env.DB);
-
-  let user: PublicUserData | undefined;
-
-  if (session?.user) {
-    const result = await cachedFetchPublicUserDataById(session.user.id);
-
-    if (result.success) {
-      user = result.data;
-    }
-  }
-
   return (
     <div className="col-start-2">
       <section className="flex h-[calc(100vh-16px)] items-center justify-center">
@@ -85,7 +23,9 @@ export default async function Home() {
             準備中。年内リリース予定 <span className="text-xs">(かも)</span>
           </p>
 
-          <StartButton className="mt-8 pc:mt-10" user={user} />
+          <Suspense fallback={<StartButtonFallback className="mt-8 pc:mt-10" />}>
+            <StartButton className="mt-8 pc:mt-10" />
+          </Suspense>
         </div>
       </section>
 
@@ -117,7 +57,9 @@ export default async function Home() {
 
         <DemoImages className="mx-auto mt-32 mb-16" />
 
-        <StartButton className="my-32 mt-8" user={user} />
+        <Suspense fallback={<StartButtonFallback className="my-32 mt-16" />}>
+          <StartButton className="my-32 mt-16" />
+        </Suspense>
       </section>
 
       <Footer mode="developed-by" />
