@@ -11,6 +11,13 @@ type CacheOptions = {
   ttl?: number; // デフォルト: 600秒
 };
 
+/**
+ * ActionResult型かどうかを判定する型ガード
+ */
+function isActionResult(value: unknown): value is { success: boolean } {
+  return typeof value === "object" && value !== null && "success" in value && typeof value.success === "boolean";
+}
+
 export const CACHE_KEYS = {
   /** ユーザーの公開データ */
   user: (userId: string) => `cache:user:${userId}`,
@@ -76,6 +83,16 @@ export async function getCached<T>(
 
     // キャッシュミスならDBから取得
     const freshData = await fetchFn();
+
+    // ActionResult型でsuccess: falseの場合はキャッシュしない
+    if (isActionResult(freshData) && !freshData.success) {
+      if (isDev) {
+        console.log(`Cache SKIP (error result): ${key}`);
+      }
+
+      return freshData;
+    }
+
     const version = expectedVersion || Date.now().toString();
 
     const cacheData: CachedData<T> = {
