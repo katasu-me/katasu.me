@@ -2,12 +2,12 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { cachedFetchPublicUserDataById } from "@/app/_lib/cached-user-data";
 import Header from "@/components/Header";
 import { Loading } from "@/components/Loading";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getImageUrl } from "@/lib/r2";
-import { cachedFetchPublicUserDataById } from "../../../_lib/cached-user-data";
 import ImagePageContent from "./_components/ImagePageContent";
 import { cachedFetchImageById } from "./_lib/fetch-image-by-id";
 
@@ -52,7 +52,7 @@ export default async function ImagesPage({ params }: PageProps<"/user/[userId]/i
   const { userId, imageId } = await params;
   const { env } = getCloudflareContext();
 
-  const userResult = await cachedFetchPublicUserDataById(userId);
+  const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(userId), getUserSession(env.DB)]);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -63,8 +63,6 @@ export default async function ImagesPage({ params }: PageProps<"/user/[userId]/i
   ) {
     notFound();
   }
-
-  const { session } = await getUserSession(env.DB);
 
   const user = userResult.data;
   const canEdit = session?.user.id === user.id;

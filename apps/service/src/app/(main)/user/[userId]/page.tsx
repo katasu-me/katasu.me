@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
+import { cachedFetchPublicUserDataById } from "@/app/_lib/cached-user-data";
 import IconDots from "@/assets/icons/dots.svg";
 import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
@@ -15,7 +16,6 @@ import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
-import { cachedFetchPublicUserDataById } from "../_lib/cached-user-data";
 import UserImageDropArea from "./_components/UserImageDropArea";
 import UserPageContents from "./_components/UserPageContents";
 import UserTagLinks from "./_components/UserTagLinks";
@@ -54,10 +54,9 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 }
 
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userId]">) {
-  // ユーザーページのユーザーを取得
   const { userId } = await params;
-
   const { env } = getCloudflareContext();
+
   const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(userId), getUserSession(env.DB)]);
 
   // 存在しない、または新規登録が完了していない場合は404

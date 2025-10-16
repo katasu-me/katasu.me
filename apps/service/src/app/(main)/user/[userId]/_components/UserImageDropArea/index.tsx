@@ -1,5 +1,5 @@
 import ImageDropArea from "@/features/gallery/components/ImageDropArea";
-import { cachedFetchTotalImageCount } from "../_lib/fetch-total-image-count";
+import { cachedFetchTotalImageCount } from "../../_lib/fetch-total-image-count";
 
 type Props = {
   userId: string;
