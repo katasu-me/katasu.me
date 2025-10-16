@@ -8,14 +8,15 @@ import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
 import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
-import TagLinksSkeleton from "@/components/Navigation/TagLinks/Skeleton";
+import TagLinksSkeleton from "@/components/TagLinks/Skeleton";
+import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
-import ImageDropArea from "@/features/gallery/components/ImageDropArea";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
-import { getUserAvatarUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
-import { cachedFetchPublicUserDataById, cachedFetchTotalImageCount } from "@/lib/user";
+import { getUserAvatarUrl } from "@/lib/r2";
+import { cachedFetchPublicUserDataById } from "../_lib/cached-user-data";
+import UserImageDropArea from "./_components/UserImageDropArea";
 import UserPageContents from "./_components/UserPageContents";
 import UserTagLinks from "./_components/UserTagLinks";
 
@@ -40,7 +41,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
   }
 
   const user = userResult.data;
-  const avatarUrl = getUserAvatarUrl(user.id, user.hasAvatar);
+  const avatarUrl = user.hasAvatar ? getUserAvatarUrl(user.id) : DEFAULT_AVATAR_URL;
 
   return generateMetadataTitle({
     pageTitle: user.name,
@@ -55,7 +56,9 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userId]">) {
   // ユーザーページのユーザーを取得
   const { userId } = await params;
-  const userResult = await cachedFetchPublicUserDataById(userId);
+
+  const { env } = getCloudflareContext();
+  const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(userId), getUserSession(env.DB)]);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -67,15 +70,8 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
     notFound();
   }
 
-  const { env } = getCloudflareContext();
-
-  const [{ session }, totalImageCount] = await Promise.all([
-    getUserSession(env.DB),
-    cachedFetchTotalImageCount(userId),
-  ]);
-
   const user = userResult.data;
-  const isOwner = user.id === session?.user?.id;
+  const isOwner = userId === session?.user?.id;
 
   const { view, page: pageStr } = parse(searchParamsSchema, await searchParams);
   const currentPage = Number.parseInt(pageStr, 10);
@@ -104,19 +100,13 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
         </Suspense>
 
         {isOwner && (
-          <div className="col-start-2">
-            <ImageDropArea
-              title="あたらしい画像を投稿する"
-              counter={{
-                total: totalImageCount,
-                max: user.maxPhotos,
-              }}
-            />
-          </div>
+          <Suspense>
+            <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
+          </Suspense>
         )}
 
         <Suspense fallback={<Loading className="col-start-2 py-16" />}>
-          <UserPageContents user={user} view={view} totalImageCount={totalImageCount} currentPage={currentPage} />
+          <UserPageContents user={user} view={view} currentPage={currentPage} />
         </Suspense>
       </div>
     </div>

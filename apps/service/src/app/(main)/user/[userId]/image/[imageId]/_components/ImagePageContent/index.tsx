@@ -7,7 +7,7 @@ import Message from "@/components/Message";
 import BigImage from "@/features/gallery/components/BigImage";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import { DEFAULT_IMAGE_TITLE } from "../../_constants/title";
-import { cachedFetchImage } from "../../_lib/fetch";
+import { cachedFetchImageById } from "../../_lib/fetch-image-by-id";
 import EditButton from "./EditButton";
 import RemoveButton from "./RemoveButton";
 import ShareButton from "./ShareButton";
@@ -19,7 +19,7 @@ type Props = {
 };
 
 export default async function ImagePageContent({ authorUserId, imageId, canEdit = false }: Props) {
-  const fetchImage = await cachedFetchImage(authorUserId, imageId);
+  const fetchImage = await cachedFetchImageById(imageId);
 
   if (!fetchImage.success) {
     return <Message message="画像が取得できませんでした" />;

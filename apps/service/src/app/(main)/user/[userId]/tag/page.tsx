@@ -1,40 +1,29 @@
 import { fetchTagsByUserId } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
-import { unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Message from "@/components/Message";
-import TagLink from "@/components/Navigation/TagLinks/TabLink";
+import TagLink from "@/components/TagLinks/TabLink";
+import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
-import { tagListCacheTag } from "@/lib/cache-tags";
-import { getUserAvatarUrl } from "@/lib/image";
+import { CACHE_KEYS, getCached } from "@/lib/cache";
 import { generateMetadataTitle } from "@/lib/meta";
-import { cachedFetchPublicUserDataById } from "@/lib/user";
+import { getUserAvatarUrl } from "@/lib/r2";
+import { cachedFetchPublicUserDataById } from "../../_lib/cached-user-data";
 
-const cachedFetchAllTags = async (userId: string) => {
-  "use cache";
-
-  const tag = tagListCacheTag(userId);
-  cacheTag(tag);
-
+const cachedFetchTagsByUserId = async (userId: string) => {
   const { env } = getCloudflareContext();
 
-  const result = await fetchTagsByUserId(env.DB, userId, {
-    order: "name",
+  return getCached(env.CACHE_KV, CACHE_KEYS.userTagsByName(userId), async () => {
+    return fetchTagsByUserId(env.DB, userId, {
+      order: "name",
+    });
   });
-
-  if (!result.success) {
-    revalidateTag(tag);
-    return [];
-  }
-
-  return result.data;
 };
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag">): Promise<Metadata> {
   const { userId } = await params;
-
   const userResult = await cachedFetchPublicUserDataById(userId);
 
   // 存在しない、または新規登録が完了していない場合は404
@@ -48,7 +37,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
   }
 
   const user = userResult.data;
-  const avatarUrl = getUserAvatarUrl(user.id, user.hasAvatar);
+  const avatarUrl = user.hasAvatar ? getUserAvatarUrl(user.id) : DEFAULT_AVATAR_URL;
 
   return generateMetadataTitle({
     pageTitle: `すべてのタグ - ${user.name}`,
@@ -75,7 +64,9 @@ export default async function TagListPage({ params }: PageProps<"/user/[userId]/
     notFound();
   }
 
-  const allTags = await cachedFetchAllTags(userId);
+  const allTagsResult = await cachedFetchTagsByUserId(userId);
+  const allTags = allTagsResult.success ? allTagsResult.data : [];
+
   const user = userResult.data;
 
   return (

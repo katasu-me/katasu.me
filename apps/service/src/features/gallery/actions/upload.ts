@@ -4,9 +4,8 @@ import { parseWithValibot } from "@conform-to/valibot";
 import { fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { nanoid } from "nanoid";
-import { revalidateTag } from "next/cache";
 import { requireAuth } from "@/lib/auth";
-import { tagListCacheTag, tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
+import { CACHE_KEYS, invalidateCaches } from "@/lib/cache";
 import { generateR2Key, uploadImage } from "@/lib/r2";
 import { ERROR_MESSAGES } from "../constants/error-messages";
 import { uploadImageSchema } from "../schemas/upload";
@@ -102,16 +101,24 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     });
   }
 
-  // 自身のマイページ
-  revalidateTag(userPageCacheTag(userId));
+  // キャッシュを無効化
+  const keysToInvalidate = [
+    CACHE_KEYS.userImages(userId), // ユーザーの画像一覧
+    CACHE_KEYS.userImageCount(userId), // ユーザーの総画像数
+  ];
 
-  // タグ一覧
-  revalidateTag(tagListCacheTag(userId));
+  // タグがある場合
+  if (registerImageResult.data?.tags) {
+    // タグ一覧
+    keysToInvalidate.push(CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId));
 
-  // それぞれのタグページ
-  for (const tag of registerImageResult.data.tags) {
-    revalidateTag(tagPageCacheTag(userId, tag.id));
+    // タグ別画像一覧
+    for (const tag of registerImageResult.data.tags) {
+      keysToInvalidate.push(CACHE_KEYS.tagImages(tag.id));
+    }
   }
+
+  await invalidateCaches(env.CACHE_KV, keysToInvalidate);
 
   return submission.reply();
 }

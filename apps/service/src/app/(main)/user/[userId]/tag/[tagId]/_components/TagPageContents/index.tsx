@@ -1,52 +1,11 @@
-import {
-  type FetchImagesOptions,
-  fetchImagesByTagId,
-  fetchTotalImageCountByTagId,
-  type Tag,
-} from "@katasu.me/service-db";
+import { fetchImagesByTagId, fetchTotalImageCountByTagId, type Tag } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { unstable_cacheTag as cacheTag, revalidateTag } from "next/cache";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
 import GalleryView from "@/features/gallery/components/GalleryView";
 import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
 import { toFrameImageProps } from "@/features/gallery/lib/convert";
 import type { ImageLayoutType } from "@/features/gallery/types/layout";
-import { tagPageCacheTag } from "@/lib/cache-tags";
-
-const cachedFetchTotalImageCount = async (userId: string, tagId: string) => {
-  "use cache";
-
-  const tag = tagPageCacheTag(userId, tagId);
-  cacheTag(tag);
-
-  const { env } = getCloudflareContext();
-
-  const result = await fetchTotalImageCountByTagId(env.DB, tagId);
-
-  if (!result.success) {
-    revalidateTag(tag);
-  }
-
-  return result;
-};
-
-const cachedFetchImages = async (userId: string, tagId: string, options: FetchImagesOptions) => {
-  "use cache";
-
-  const tag = tagPageCacheTag(userId, tagId);
-  cacheTag(tag);
-
-  const { env } = getCloudflareContext();
-
-  const result = await fetchImagesByTagId(env.DB, tagId, options);
-
-  if (!result.success) {
-    revalidateTag(tag);
-  }
-
-  return result;
-};
 
 type Props = {
   tag: Tag;
@@ -55,8 +14,10 @@ type Props = {
 };
 
 export default async function TagPageContents({ tag, view, currentPage = 1 }: Props) {
+  const { env } = getCloudflareContext();
+
   // 投稿枚数を取得
-  const fetchTotalImageCountResult = await cachedFetchTotalImageCount(tag.userId, tag.id);
+  const fetchTotalImageCountResult = await fetchTotalImageCountByTagId(env.DB, tag.id);
 
   if (!fetchTotalImageCountResult.success) {
     console.error("[page] 投稿枚数の取得に失敗しました:", fetchTotalImageCountResult.error);
@@ -77,7 +38,7 @@ export default async function TagPageContents({ tag, view, currentPage = 1 }: Pr
   }
 
   // 画像を取得
-  const fetchTagImagesResult = await cachedFetchImages(tag.userId, tag.id, {
+  const fetchTagImagesResult = await fetchImagesByTagId(env.DB, tag.id, {
     offset,
     order: "desc",
   });

@@ -2,10 +2,9 @@
 
 import { deleteImage, fetchImageById } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
-import { imagePageCacheTag, tagListCacheTag, tagPageCacheTag, userPageCacheTag } from "@/lib/cache-tags";
+import { CACHE_KEYS, invalidateCaches } from "@/lib/cache";
 import { deleteImageFromR2 } from "@/lib/r2";
 
 /**
@@ -52,20 +51,25 @@ export async function deleteImageAction(userId: string, imageId: string): Promis
     return error instanceof Error ? error : new Error("不明なエラーでR2からの削除に失敗しました");
   }
 
-  // 画像ページ
-  revalidateTag(imagePageCacheTag(userId, imageId));
+  // キャッシュを無効化
+  const keysToInvalidate = [
+    CACHE_KEYS.imageDetail(imageId), // 画像詳細
+    CACHE_KEYS.userImages(userId), // ユーザーの画像一覧
+    CACHE_KEYS.userImageCount(userId), // ユーザーの総画像数
+  ];
 
-  // ユーザーページ
-  revalidateTag(userPageCacheTag(userId));
+  // タグに変更がある場合
+  if (prevImageData.tags.length !== 0) {
+    // タグ一覧
+    keysToInvalidate.push(CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId));
 
-  // タグ一覧
-  revalidateTag(tagListCacheTag(userId));
-
-  // それぞれのタグページ
-  for (const tag of prevImageData.tags) {
-    revalidateTag(tagPageCacheTag(userId, tag.id));
+    // 削除された画像のタグ別画像一覧
+    for (const tag of prevImageData.tags) {
+      keysToInvalidate.push(CACHE_KEYS.tagImages(tag.id));
+    }
   }
 
-  // ユーザーページにリダイレクト
+  await invalidateCaches(env.CACHE_KV, keysToInvalidate);
+
   redirect(`/user/${userId}`);
 }

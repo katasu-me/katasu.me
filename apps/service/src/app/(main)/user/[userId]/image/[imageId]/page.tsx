@@ -5,11 +5,11 @@ import { Suspense } from "react";
 import Header from "@/components/Header";
 import { Loading } from "@/components/Loading";
 import { getUserSession } from "@/lib/auth";
-import { getImageUrl } from "@/lib/image";
 import { generateMetadataTitle } from "@/lib/meta";
-import { cachedFetchPublicUserDataById } from "@/lib/user";
+import { getImageUrl } from "@/lib/r2";
+import { cachedFetchPublicUserDataById } from "../../../_lib/cached-user-data";
 import ImagePageContent from "./_components/ImagePageContent";
-import { cachedFetchImage } from "./_lib/fetch";
+import { cachedFetchImageById } from "./_lib/fetch-image-by-id";
 
 export async function generateMetadata({ params }: PageProps<"/user/[userId]/image/[imageId]">): Promise<Metadata> {
   const { userId, imageId } = await params;
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/ima
   // ユーザー情報と画像情報
   const [userResult, fetchImage] = await Promise.all([
     cachedFetchPublicUserDataById(userId),
-    cachedFetchImage(userId, imageId),
+    cachedFetchImageById(imageId),
   ]);
 
   // 存在しない、または新規登録が完了していない場合は404
@@ -50,6 +50,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/ima
 
 export default async function ImagesPage({ params }: PageProps<"/user/[userId]/image/[imageId]">) {
   const { userId, imageId } = await params;
+  const { env } = getCloudflareContext();
 
   const userResult = await cachedFetchPublicUserDataById(userId);
 
@@ -63,7 +64,6 @@ export default async function ImagesPage({ params }: PageProps<"/user/[userId]/i
     notFound();
   }
 
-  const { env } = getCloudflareContext();
   const { session } = await getUserSession(env.DB);
 
   const user = userResult.data;

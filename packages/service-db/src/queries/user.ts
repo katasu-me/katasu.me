@@ -23,7 +23,7 @@ export type PublicUserData = Pick<
  * @param userId ユーザーID
  * @returns ユーザー情報、存在しない場合はundefined
  */
-export async function getPublicUserDataById(
+export async function fetchPublicUserDataById(
   dbInstance: AnyD1Database,
   userId: string,
 ): Promise<ActionResult<PublicUserData | undefined>> {
@@ -76,7 +76,7 @@ export async function getPublicUserDataById(
  * @param userId ユーザーID
  * @returns ユーザー情報、存在しない場合はundefined
  */
-export async function getUserById(
+export async function fetchUserById(
   dbInstance: AnyD1Database,
   userId: string,
 ): Promise<ActionResult<UserWithMaxPhotos | undefined>> {

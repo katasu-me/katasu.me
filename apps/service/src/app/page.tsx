@@ -11,7 +11,7 @@ import Footer from "@/components/Footer";
 import { SITE_NAME } from "@/constants/site";
 import SignInDrawer from "@/features/auth/components/SignInDrawer";
 import { getUserSession } from "@/lib/auth";
-import { cachedFetchPublicUserDataById } from "@/lib/user";
+import { cachedFetchPublicUserDataById } from "./(main)/user/_lib/cached-user-data";
 
 async function StartButton({ user, className }: { user: PublicUserData | undefined; className?: string }) {
   // TODO: リリース時には外す
