@@ -36,7 +36,7 @@ export function middleware(request: NextRequest) {
     ],
     "style-src": ["'self'", "'unsafe-inline'"],
     "img-src": ["'self'", "data:", "blob:", process.env.NEXT_PUBLIC_IMAGE_R2_URL],
-    "connect-src": ["'self'", BASE_URL, process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL],
+    "connect-src": ["'self'", BASE_URL, "https://umami.arrow2nd.com"],
     "font-src": ["'self'"],
     "object-src": ["'none'"],
     "base-uri": ["'none'"],
