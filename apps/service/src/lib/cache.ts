@@ -104,7 +104,7 @@ export async function getCached<T>(
     // キャッシュとバージョンを書き込む
     await Promise.all([
       kv.put(key, JSON.stringify(cacheData), { expirationTtl: ttl }),
-      expectedVersion ? Promise.resolve() : kv.put(vKey, version),
+      expectedVersion ? Promise.resolve() : kv.put(vKey, version, { expirationTtl: ttl * 2 }),
     ]);
 
     return freshData;
