@@ -14,7 +14,7 @@ export type UserWithMaxPhotos = User & {
 
 export type PublicUserData = Pick<
   UserWithMaxPhotos,
-  "id" | "name" | "bannedAt" | "termsAgreedAt" | "privacyPolicyAgreedAt" | "maxPhotos"
+  "id" | "name" | "bannedAt" | "termsAgreedAt" | "privacyPolicyAgreedAt" | "plan"
 > & {
   hasAvatar: boolean;
 };
@@ -32,7 +32,7 @@ export async function fetchPublicUserDataById(
   try {
     const db = getDB(dbInstance);
 
-    const result = await db.query.user.findFirst({
+    const rawResult = await db.query.user.findFirst({
       where: (u) => eq(u.id, userId),
       columns: {
         id: true,
@@ -53,11 +53,10 @@ export async function fetchPublicUserDataById(
 
     return {
       success: true,
-      data: result
+      data: rawResult
         ? {
-            ...result,
-            maxPhotos: result.plan.maxPhotos,
-            hasAvatar: result.avatarSetAt !== null,
+            ...rawResult,
+            hasAvatar: rawResult.avatarSetAt !== null,
           }
         : undefined,
     };
@@ -98,12 +97,7 @@ export async function fetchUserById(
 
     return {
       success: true,
-      data: result
-        ? {
-            ...result,
-            maxPhotos: result.plan.maxPhotos,
-          }
-        : undefined,
+      data: result,
     };
   } catch (error) {
     return {

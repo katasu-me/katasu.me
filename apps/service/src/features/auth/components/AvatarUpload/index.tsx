@@ -22,6 +22,7 @@ import FormErrorMessage from "@/components/FormErrorMessage";
 import { getCroppedImg } from "../../lib/cropImage";
 
 type Props = {
+  defaultAvatarUrl?: string;
   onFileChange?: (file: File | null) => void;
   error?: string;
   className?: string;
@@ -34,8 +35,8 @@ const DEFAULT_CROP_VALUE = {
 
 const DEFAULT_ZOOM_VALUE = 1;
 
-export default function AvatarUpload({ onFileChange, error, className, ...props }: Props) {
-  const [preview, setPreview] = useState<string | null>(null);
+export default function AvatarUpload({ onFileChange, error, className, defaultAvatarUrl, ...props }: Props) {
+  const [preview, setPreview] = useState<string | null>(defaultAvatarUrl ?? null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState<Point>(DEFAULT_CROP_VALUE);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
