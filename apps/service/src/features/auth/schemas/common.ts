@@ -20,7 +20,7 @@ export const usernameSchema = v.pipe(
 
 export const avatarSchema = v.pipe(
   v.file(),
-  v.check((file) => file.size === 0 || file.size <= MAX_IMAGE_FILE_SIZE, AVATAR_FILE_SIZE_MESSAGE),
+  v.maxSize(MAX_IMAGE_FILE_SIZE, AVATAR_FILE_SIZE_MESSAGE),
   v.check(
     (file) =>
       file.size === 0 || ALLOWED_AVATAR_FILE_TYPES.includes(file.type as (typeof ALLOWED_AVATAR_FILE_TYPES)[number]),
