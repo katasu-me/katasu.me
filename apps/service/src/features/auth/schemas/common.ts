@@ -18,13 +18,15 @@ export const usernameSchema = v.pipe(
   v.regex(/^[^\p{Cc}\p{Cf}]+$/u, USERNAME_INVALID_MESSAGE),
 );
 
-export const avatarSchema = v.pipe(
-  v.file(),
-  v.maxSize(MAX_IMAGE_FILE_SIZE, AVATAR_FILE_SIZE_MESSAGE),
-  v.check(
-    (file) =>
-      file.size === 0 || ALLOWED_AVATAR_FILE_TYPES.includes(file.type as (typeof ALLOWED_AVATAR_FILE_TYPES)[number]),
-    AVATAR_FILE_TYPE_MESSAGE,
+export const avatarSchema = v.optional(
+  v.pipe(
+    v.file(),
+    v.maxSize(MAX_IMAGE_FILE_SIZE, AVATAR_FILE_SIZE_MESSAGE),
+    v.check(
+      (file) =>
+        file.size === 0 || ALLOWED_AVATAR_FILE_TYPES.includes(file.type as (typeof ALLOWED_AVATAR_FILE_TYPES)[number]),
+      AVATAR_FILE_TYPE_MESSAGE,
+    ),
+    v.transform((file) => (file.size === 0 ? undefined : file)),
   ),
-  v.transform((file) => (file.size === 0 ? undefined : file)),
 );

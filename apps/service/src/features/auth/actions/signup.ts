@@ -3,9 +3,9 @@
 import { parseWithValibot } from "@conform-to/valibot";
 import { updateUser } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
+import { CACHE_KEYS, invalidateCache } from "@/lib/cache";
 import { uploadAvatarImage } from "@/lib/r2";
 import { signUpFormSchema } from "../schemas/signup-form";
 
@@ -18,13 +18,12 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     schema: signUpFormSchema,
   });
 
-  // エラーならフォームにエラーを返す
   if (submission.status !== "success") {
     return submission.reply();
   }
 
   // アバター画像がある場合
-  if (submission.value.avatar instanceof File) {
+  if (submission.value.avatar instanceof File && submission.value.avatar.size > 0) {
     try {
       // 画像を変換
       const arrayBuffer = await submission.value.avatar.arrayBuffer();
@@ -61,8 +60,8 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     });
   }
 
-  // ユーザーページのキャッシュを無効化
-  revalidateTag(`user:${session.user.id}`);
+  // ユーザーデータのキャッシュを飛ばす
+  invalidateCache(env.CACHE_KV, CACHE_KEYS.user(session.user.id));
 
   // 成功時はユーザーページへリダイレクト
   redirect(`/user/${session.user.id}`);
