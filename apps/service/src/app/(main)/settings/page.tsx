@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import UserSettingsForm from "@/features/auth/components/UserSettingsForm";
 import { requireAuth } from "@/lib/auth";
 import { getUserAvatarUrl } from "@/lib/r2";
+import SeeyouSoonDrawer from "./_components/SeeyouSoonDrawer";
 
 export default async function Settings() {
   const { env } = getCloudflareContext();
@@ -53,9 +54,14 @@ export default async function Settings() {
               <span className="block">アカウントを削除</span>
               <span className="block text-sm text-warm-black-50">ユーザー情報や投稿した画像をすべて削除します</span>
             </div>
-            <Button className="pc:w-fit w-full" variant="danger">
-              削除する
-            </Button>
+
+            <SeeyouSoonDrawer
+              triggerChildren={
+                <Button className="pc:w-fit w-full" variant="danger">
+                  削除する
+                </Button>
+              }
+            />
           </div>
         </div>
       </div>

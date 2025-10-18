@@ -168,3 +168,21 @@ export async function deleteImageFromR2(r2: R2Bucket, userId: string, imageId: s
 
   await Promise.all([r2.delete(originalKey), r2.delete(thumbnailKey)]);
 }
+
+/**
+ * R2からユーザーの全データを削除
+ * @param r2 R2バケットインスタンス
+ * @param userId ユーザーID
+ */
+export async function deleteUserDataFromR2(r2: R2Bucket, userId: string): Promise<void> {
+  const safeUserId = sanitizePathComponent(userId);
+
+  const avatarKey = `avatars/${safeUserId}`;
+  const imagesPrefix = `images/${safeUserId}/`;
+
+  const [, imagesList] = await Promise.all([r2.delete(avatarKey), r2.list({ prefix: imagesPrefix })]);
+
+  if (imagesList.objects.length > 0) {
+    return r2.delete(imagesList.objects.map(({ key }) => key));
+  }
+}

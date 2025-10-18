@@ -15,6 +15,7 @@ export default async function SignUpPage() {
 
   // 新規登録済ならマイページへリダイレクト
   if (session.user.name) {
+    // FIXME: カスコード
     redirect(`/user/${session.user.id}`);
   }
 

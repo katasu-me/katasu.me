@@ -238,3 +238,30 @@ export async function banUser(dbInstance: AnyD1Database, userId: string): Promis
     };
   }
 }
+
+/**
+ * ユーザーを削除する
+ * @param dbInstance D1インスタンス
+ * @param userId ユーザーID
+ * @returns 削除結果
+ */
+export async function deleteUser(dbInstance: AnyD1Database, userId: string): Promise<ActionResult<void>> {
+  try {
+    const db = getDB(dbInstance);
+
+    await db.delete(user).where(eq(user.id, userId));
+
+    return {
+      success: true,
+      data: undefined,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: "ユーザーの削除に失敗しました",
+        rawError: error,
+      },
+    };
+  }
+}

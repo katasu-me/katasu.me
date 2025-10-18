@@ -31,7 +31,7 @@ export default function Input({ maxLength, currentLength, className, label, erro
       )}
       {error && (
         <div className="mt-1 flex items-center justify-end">
-          {error && <p className="flex-1 text-red-600 text-sm">{error}</p>}
+          {error && <p className="flex-1 text-sm text-vivid-red">{error}</p>}
         </div>
       )}
     </div>
