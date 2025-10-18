@@ -31,7 +31,7 @@ export async function updateUserSettingsAction(_prevState: unknown, formData: Fo
     updateData.avatarSetAt = null;
   }
   // アバター画像を変更
-  else if (submission.value.avatar instanceof File) {
+  else if (submission.value.avatar instanceof File && submission.value.avatar.size > 0) {
     try {
       const arrayBuffer = await submission.value.avatar.arrayBuffer();
       const convertedAvatar = await env.IMAGE_OPTIMIZER.generateAvatar(arrayBuffer);
