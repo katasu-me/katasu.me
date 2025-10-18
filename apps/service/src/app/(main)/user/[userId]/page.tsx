@@ -100,7 +100,7 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
 
         {isOwner && (
           <Suspense>
-            <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
+            <UserImageDropArea userId={userId} maxPhotos={user.plan.maxPhotos} />
           </Suspense>
         )}
 

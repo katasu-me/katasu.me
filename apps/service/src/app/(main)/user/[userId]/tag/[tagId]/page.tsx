@@ -125,7 +125,7 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
         {isOwner && (
           <Suspense>
-            <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
+            <UserImageDropArea userId={userId} maxPhotos={user.plan.maxPhotos} />
           </Suspense>
         )}
 

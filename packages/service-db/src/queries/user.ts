@@ -7,7 +7,9 @@ import { getDB } from "./db";
 import { fetchTotalImageCountByUserId } from "./image/fetch";
 
 export type UserWithMaxPhotos = User & {
-  maxPhotos: number;
+  plan: {
+    maxPhotos: number;
+  };
 };
 
 export type PublicUserData = Pick<
