@@ -33,6 +33,7 @@
     "@conform-to/valibot": "^1.8.2",
     "@katasu.me/service-db": "workspace:*",
     "@opennextjs/cloudflare": "^1.7.0",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.2.6",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",

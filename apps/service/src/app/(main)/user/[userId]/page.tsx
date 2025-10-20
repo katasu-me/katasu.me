@@ -4,10 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
 import { cachedFetchPublicUserDataById } from "@/app/_lib/cached-user-data";
-import IconDots from "@/assets/icons/dots.svg";
-import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
-import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
 import TagLinksSkeleton from "@/components/TagLinks/Skeleton";
 import { DEFAULT_AVATAR_URL } from "@/constants/image";
@@ -81,17 +78,7 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header user={user}>
-        {/* TODO: 検索 */}
-        <IconButton title="検索">
-          <IconSearch className="h-6 w-6 opacity-25" />
-        </IconButton>
-
-        {/* TODO: メニュー */}
-        <IconButton title="その他">
-          <IconDots className="h-6 w-6 opacity-25" />
-        </IconButton>
-      </Header>
+      <Header user={user} showRightMenu isOwnerPage={isOwner} />
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
         <Suspense fallback={<TagLinksSkeleton className="col-start-2" />}>

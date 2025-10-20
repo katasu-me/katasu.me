@@ -5,10 +5,7 @@ import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
 import { cachedFetchPublicUserDataById } from "@/app/_lib/cached-user-data";
-import IconDots from "@/assets/icons/dots.svg";
-import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
-import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
 import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
@@ -108,17 +105,7 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header user={user}>
-        {/* TODO: 検索 */}
-        <IconButton title="検索">
-          <IconSearch className="h-6 w-6 opacity-25" />
-        </IconButton>
-
-        {/* TODO: メニュー */}
-        <IconButton title="その他">
-          <IconDots className="h-6 w-6 opacity-25" />
-        </IconButton>
-      </Header>
+      <Header user={user} showRightMenu isOwnerPage={isOwner} />
 
       <h1 className="col-start-2 text-4xl">{`#${tag.name}`}</h1>
 
