@@ -93,12 +93,10 @@ export function getUserAvatarUrl(userId: string, avatarSetAt?: Date | null): str
 
   const baseUrl = `${bucketPublicUrl}/${generateR2Key("avatar", userId)}`;
 
-  console.log("[DEBUG]", avatarSetAt);
-  const timestamp = avatarSetAt?.getTime();
-
   // アイコン変更時に即時反映されるようにする目的
-  if (timestamp) {
-    return `${baseUrl}?v=${timestamp}`;
+  // NOTE: new Date()で再度Dateインスタンスを作っているのは TypeError: b2.getTime is not a function がでたため (調査してない)
+  if (avatarSetAt) {
+    return `${baseUrl}?v=${new Date(avatarSetAt).getTime()}`;
   }
 
   return baseUrl;
