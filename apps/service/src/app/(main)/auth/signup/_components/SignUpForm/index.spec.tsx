@@ -2,10 +2,10 @@ import { parseWithValibot } from "@conform-to/valibot";
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { signUpFormSchema } from "../../schemas/signup-form";
+import { signUpFormSchema } from "../../_schemas/signup";
 import SignUpForm from "./index";
 
-vi.mock("../../actions/signup", () => ({
+vi.mock("../../_actions/signup", () => ({
   signupAction: vi.fn(),
 }));
 
@@ -91,7 +91,7 @@ describe("SignUpForm", () => {
 
   it("signupActionに送られるformDataの内容が正しい", async () => {
     const user = userEvent.setup();
-    const { signupAction } = await import("../../actions/signup");
+    const { signupAction } = await import("../../_actions/signup");
 
     render(<SignUpForm />);
 
