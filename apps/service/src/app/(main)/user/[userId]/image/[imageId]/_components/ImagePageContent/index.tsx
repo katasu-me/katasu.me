@@ -4,11 +4,11 @@ import { twMerge } from "tailwind-merge";
 import IconFlag from "@/assets/icons/flag.svg";
 import IconButton from "@/components/IconButton";
 import Message from "@/components/Message";
-import BigImage from "@/features/gallery/components/BigImage";
-import { toFrameImageProps } from "@/features/gallery/lib/convert";
+import { toFrameImageProps } from "../../../../_lib/convert";
 import { DEFAULT_IMAGE_TITLE } from "../../_constants/title";
 import { cachedFetchImageById } from "../../_lib/fetch-image-by-id";
-import EditButton from "./EditButton";
+import EditButton from "../EditButton";
+import BigImage from "./BigImage";
 import RemoveButton from "./RemoveButton";
 import ShareButton from "./ShareButton";
 

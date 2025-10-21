@@ -3,7 +3,7 @@ import { type ComponentProps, useState } from "react";
 import TagInput from ".";
 
 const meta = {
-  title: "shared/TagInput",
+  title: "Components/TagInput",
   component: TagInput,
   parameters: {
     layout: "centered",

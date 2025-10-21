@@ -1,0 +1,110 @@
+"use client";
+
+import { getFormProps, getInputProps, type SubmissionResult, useForm } from "@conform-to/react";
+import { parseWithValibot } from "@conform-to/valibot";
+import { useActionState } from "react";
+import AvatarUpload from "@/components/AvatarUpload";
+import FormErrorMessage from "@/components/FormErrorMessage";
+import FormSubmitButton from "@/components/FormSubmitButton";
+import Input from "@/components/Input";
+import { DOCS_PRIVACY_POLICY, DOCS_TERMS_OF_SERVICE } from "@/constants/site";
+import { MAX_USERNAME_LENGTH } from "@/schemas/user";
+import { signupAction } from "../../_actions/signup";
+import { signUpFormSchema } from "../../_schemas/signup";
+
+// MEMO: 初期状態でエラーの状態にしておくことで先に進めないようにする
+const defaultResult: SubmissionResult<string[]> = {
+  status: "error",
+  error: {
+    agreeToTerms: ["利用規約への同意が必要です"],
+    agreeToPrivacy: ["プライバシーポリシーへの同意が必要です"],
+  },
+};
+
+type Props = {
+  className?: string;
+};
+
+export default function SignUpForm({ className }: Props) {
+  const [lastResult, action] = useActionState(signupAction, undefined);
+
+  const [form, fields] = useForm({
+    lastResult: lastResult || defaultResult,
+    shouldValidate: "onBlur",
+    shouldRevalidate: "onInput",
+    onValidate({ formData }) {
+      return parseWithValibot(formData, {
+        schema: signUpFormSchema,
+      });
+    },
+  });
+
+  /**
+   * 挿入されたファイルを検証させる関数
+   * - AvatarUploadでonChangeを乗っ取っているためgetInputPropsのonChangeが効かない。
+   * - なので、onFileChangeでvalidateを呼び出すようにする。
+   */
+  const handleAvatarChange = () => {
+    form.validate({ name: fields.avatar.name });
+  };
+
+  // MEMO: trim()剥がしたかったけどisDirtyが実装されるまでは無理そう
+  const isFormValid = !Object.values(form.allErrors).length && fields.username.value?.trim();
+
+  return (
+    <form {...getFormProps(form)} className={className} action={action} noValidate>
+      {/* フォームのエラー */}
+      {form.errors && form.errors?.length > 0 && <FormErrorMessage className="mb-16" text={form.errors[0]} />}
+
+      <div className="flex pc:w-sm w-full flex-col gap-6">
+        <AvatarUpload
+          {...getInputProps(fields.avatar, { type: "file" })}
+          error={fields.avatar.errors?.[0]}
+          onFileChange={handleAvatarChange}
+        />
+
+        <Input
+          {...getInputProps(fields.username, { type: "text" })}
+          label="ユーザー名"
+          placeholder="すてきな名前"
+          error={fields.username.errors?.[0]}
+          maxLength={MAX_USERNAME_LENGTH}
+          currentLength={fields.username.value?.length ?? 0}
+          autoComplete="off"
+        />
+
+        <div className="space-y-3">
+          <label className="flex items-center gap-3">
+            <input
+              {...getInputProps(fields.agreeToTerms, { type: "checkbox" })}
+              className="size-4 cursor-pointer accent-warm-black"
+              required={true}
+            />
+            <span className="text-sm text-warm-black">
+              <a className="mr-1 font-bold hover:underline" href={DOCS_TERMS_OF_SERVICE} target="_blank" rel="noopener">
+                利用規約
+              </a>
+              に同意します
+            </span>
+          </label>
+
+          <label className="flex items-center gap-3">
+            <input
+              {...getInputProps(fields.agreeToPrivacy, { type: "checkbox" })}
+              className="size-4 cursor-pointer accent-warm-black"
+              required={true}
+            />
+            <span className="text-sm text-warm-black">
+              <a className="mr-1 font-bold hover:underline" href={DOCS_PRIVACY_POLICY} target="_blank" rel="noopener">
+                プライバシーポリシー
+              </a>
+              に同意します
+            </span>
+          </label>
+        </div>
+
+        <FormSubmitButton className="w-full" disabled={!isFormValid} label="新規登録する" pendingLabel="登録中…" />
+      </div>
+    </form>
+  );
+}

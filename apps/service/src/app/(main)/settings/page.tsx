@@ -5,10 +5,10 @@ import IconMoodMrrr from "@/assets/icons/mood-wrrr.svg";
 import IconUser from "@/assets/icons/user.svg";
 import Button from "@/components/Button";
 import Header from "@/components/Header";
-import UserSettingsForm from "@/features/auth/components/UserSettingsForm";
 import { requireAuth } from "@/lib/auth";
 import { getUserAvatarUrl } from "@/lib/r2";
 import SeeyouSoonDrawer from "./_components/SeeyouSoonDrawer";
+import UserSettingsForm from "./_components/UserSettingsForm";
 
 export default async function Settings() {
   const { env } = getCloudflareContext();

@@ -8,11 +8,11 @@ import {
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
-import GalleryView from "@/features/gallery/components/GalleryView";
-import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
-import { toFrameImageProps } from "@/features/gallery/lib/convert";
-import type { ImageLayoutType } from "@/features/gallery/types/layout";
+import { IMAGES_PER_PAGE } from "../../_constants/images";
+import { toFrameImageProps } from "../../_lib/convert";
 import { cachedFetchTotalImageCount } from "../../_lib/fetch-total-image-count";
+import type { ImageLayoutType } from "../../_types/layout";
+import GalleryView from "../GalleryView";
 
 type Props = {
   user: PublicUserData;

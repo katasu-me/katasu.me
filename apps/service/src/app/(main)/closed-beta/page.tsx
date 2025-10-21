@@ -1,6 +1,6 @@
+import SignInDrawer from "@/app/_components/SignInDrawer";
 import Button from "@/components/Button";
 import MessagePage from "@/components/MessagePage";
-import SignInDrawer from "@/features/auth/components/SignInDrawer";
 
 export default function ClosedBetaPage() {
   return (

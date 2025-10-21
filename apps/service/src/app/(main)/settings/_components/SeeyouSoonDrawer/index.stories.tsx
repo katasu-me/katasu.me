@@ -4,10 +4,16 @@ import Button from "@/components/Button";
 import SeeyouSoonDrawer from "./";
 
 const meta = {
-  title: "Settings/SeeyouSoonDrawer",
+  title: "SettingsPage/SeeyouSoonDrawer",
   component: SeeyouSoonDrawer,
   parameters: {
     layout: "padded",
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        push: () => {},
+      },
+    },
   },
   tags: ["autodocs"],
 } satisfies Meta<typeof SeeyouSoonDrawer>;

@@ -6,8 +6,8 @@ import IconSearch from "@/assets/icons/search.svg";
 import IconSettings from "@/assets/icons/settings.svg";
 import DropdownMenu from "@/components/DropdownMenu";
 import IconButton from "@/components/IconButton";
-import UserIcon from "@/features/auth/components/UserIcon";
 import { getUserAvatarUrl } from "@/lib/r2";
+import UserIcon from "./UserIcon";
 
 type Props = {
   user: PublicUserData;

@@ -1,9 +1,9 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import SignUpForm from "@/features/auth/components/SignUpForm";
 import { requireAuth } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
+import SignUpForm from "./_components/SignUpForm";
 
 export const metadata: Metadata = generateMetadataTitle({
   pageTitle: "新規登録",

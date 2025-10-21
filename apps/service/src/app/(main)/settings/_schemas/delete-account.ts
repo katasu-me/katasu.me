@@ -1,7 +1,6 @@
 import * as v from "valibot";
 
-const ERROR_CONFIRMATION_TEXT_EMPTY = "確認テキストを入力してください";
-
+export const ERROR_CONFIRMATION_TEXT_EMPTY = "確認テキストを入力してください";
 export const CONFIRMATION_TEXT = "またね";
 
 export const deleteAccountSchema = v.object({

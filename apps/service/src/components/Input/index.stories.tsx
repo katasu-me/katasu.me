@@ -4,7 +4,7 @@ import { useState } from "react";
 import Input from ".";
 
 const meta = {
-  title: "Shared/Input",
+  title: "Components/Input",
   component: Input,
   parameters: {
     layout: "centered",

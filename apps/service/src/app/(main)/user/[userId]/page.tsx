@@ -9,13 +9,13 @@ import { Loading } from "@/components/Loading";
 import TagLinksSkeleton from "@/components/TagLinks/Skeleton";
 import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
-import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
 import UserImageDropArea from "./_components/UserImageDropArea";
 import UserPageContents from "./_components/UserPageContents";
 import UserTagLinks from "./_components/UserTagLinks";
+import { GalleryViewSchema } from "./_schemas/view";
 
 const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "timeline"),

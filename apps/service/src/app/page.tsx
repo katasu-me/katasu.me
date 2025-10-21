@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import LogoImage from "@/assets/logo.svg";
 import BudouX from "@/components/BudouX";
-import DemoImages from "@/components/DemoImages";
 import Footer from "@/components/Footer";
 import { SITE_NAME } from "@/constants/site";
+import DemoImages from "./_components/DemoImages";
 import StartButton, { StartButtonFallback } from "./_components/StartButton";
 
 export default async function Home() {
