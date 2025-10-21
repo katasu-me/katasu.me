@@ -81,16 +81,25 @@ export function getImageUrl(userId: string, imageId: string, variant: "original"
 /**
  * ユーザーアバター画像のURLを取得
  * @param userId ユーザーID
+ * @param avatarSetAt アバター画像の更新日時
  * @returns アバター画像URL
  */
-export function getUserAvatarUrl(userId: string): string {
+export function getUserAvatarUrl(userId: string, avatarSetAt?: Date | null): string {
   const bucketPublicUrl = process.env.NEXT_PUBLIC_IMAGE_R2_URL;
 
   if (!bucketPublicUrl) {
     throw new Error("NEXT_PUBLIC_IMAGE_R2_URLが設定されていません");
   }
 
-  return `${bucketPublicUrl}/${generateR2Key("avatar", userId)}`;
+  const baseUrl = `${bucketPublicUrl}/${generateR2Key("avatar", userId)}`;
+
+  // avatarSetAtがあるならタイムスタンプを追加
+  // アイコン変更時に即時反映されるようにする目的
+  if (avatarSetAt) {
+    return `${baseUrl}?v=${avatarSetAt.getTime()}`;
+  }
+
+  return baseUrl;
 }
 
 /**

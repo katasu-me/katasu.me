@@ -14,7 +14,7 @@ export type UserWithMaxPhotos = User & {
 
 export type PublicUserData = Pick<
   UserWithMaxPhotos,
-  "id" | "name" | "bannedAt" | "termsAgreedAt" | "privacyPolicyAgreedAt" | "plan"
+  "id" | "name" | "avatarSetAt" | "bannedAt" | "termsAgreedAt" | "privacyPolicyAgreedAt" | "plan"
 > & {
   hasAvatar: boolean;
 };

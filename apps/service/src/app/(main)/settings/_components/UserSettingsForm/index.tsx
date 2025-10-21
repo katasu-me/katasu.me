@@ -2,6 +2,7 @@
 
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithValibot } from "@conform-to/valibot";
+import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";
 import AvatarUpload from "@/components/AvatarUpload";
 import FormErrorMessage from "@/components/FormErrorMessage";
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export default function UserSettingsForm({ className, defaultUsername, defaultUserAvatar }: Props) {
+  const router = useRouter();
   const [lastResult, action] = useActionState(updateUserSettingsAction, undefined);
   const hasAvatarChange = useRef(false);
   const [removeAvatar, setRemoveAvatar] = useState(false);
@@ -56,14 +58,14 @@ export default function UserSettingsForm({ className, defaultUsername, defaultUs
     form.validate({ name: fields.avatar.name });
   };
 
-  // 更新成功時にメッセージを表示
+  // 更新できたら画面を更新
   useEffect(() => {
     if (lastResult?.status === "success") {
       hasAvatarChange.current = false;
       setRemoveAvatar(false);
-      window.location.reload(); // FIXME: ここカス
+      router.refresh();
     }
-  }, [lastResult]);
+  }, [lastResult, router]);
 
   // 変更があるかチェック
   const hasUsernameChange = fields.username.value?.trim() !== defaultUsername;

@@ -35,7 +35,7 @@ export default function Header({ user, showRightMenu = false, isOwnerPage = fals
       <UserIcon
         userId={user.id}
         username={user.name}
-        iconImage={user.hasAvatar ? getUserAvatarUrl(user.id) : undefined}
+        iconImage={user.hasAvatar ? getUserAvatarUrl(user.id, user.avatarSetAt) : undefined}
       />
 
       {showRightMenu && (

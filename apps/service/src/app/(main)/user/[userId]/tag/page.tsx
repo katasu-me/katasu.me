@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
   }
 
   const user = userResult.data;
-  const avatarUrl = user.hasAvatar ? getUserAvatarUrl(user.id) : DEFAULT_AVATAR_URL;
+  const avatarUrl = user.hasAvatar ? getUserAvatarUrl(user.id, user.avatarSetAt) : DEFAULT_AVATAR_URL;
 
   return generateMetadataTitle({
     pageTitle: `すべてのタグ - ${user.name}`,
