@@ -93,8 +93,8 @@ export function getUserAvatarUrl(userId: string, avatarSetAt?: Date | null): str
 
   const baseUrl = `${bucketPublicUrl}/${generateR2Key("avatar", userId)}`;
 
+  console.log("[DEBUG]", avatarSetAt);
   const timestamp = avatarSetAt?.getTime();
-  console.log("[DEBUG]", timestamp);
 
   // アイコン変更時に即時反映されるようにする目的
   if (timestamp) {
