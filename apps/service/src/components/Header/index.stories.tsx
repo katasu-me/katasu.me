@@ -10,6 +10,7 @@ const mockUser: PublicUserData = {
     maxPhotos: 1000,
   },
   bannedAt: null,
+  avatarSetAt: null,
   termsAgreedAt: new Date(),
   privacyPolicyAgreedAt: new Date(),
 };
@@ -22,6 +23,7 @@ const mockUserWithAvatar: PublicUserData = {
     maxPhotos: 1000,
   },
   bannedAt: null,
+  avatarSetAt: new Date(),
   termsAgreedAt: new Date(),
   privacyPolicyAgreedAt: new Date(),
 };
