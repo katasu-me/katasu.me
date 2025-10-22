@@ -6,6 +6,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { nanoid } from "nanoid";
 import { requireAuth } from "@/lib/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/lib/cache";
+import { checkImageModeration } from "@/lib/moderation";
 import { generateR2Key, uploadImage } from "@/lib/r2";
 import { ERROR_MESSAGES } from "../_constants/error-messages";
 import { uploadImageSchema } from "../_schemas/upload";
@@ -66,6 +67,17 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
 
     return submission.reply({
       formErrors: [errorMessage],
+    });
+  }
+
+  // モデレーションチェック
+  const isFlagged = await checkImageModeration(env.OPENAI_API_KEY, convertResult.original.data);
+
+  if (isFlagged) {
+    console.warn("[gallery] 不適切な画像が検出されました:", { userId, imageId });
+
+    return submission.reply({
+      formErrors: [ERROR_MESSAGES.IMAGE_MODERATION_FLAGGED],
     });
   }
 

@@ -45,6 +45,7 @@
     "motion": "^12.23.12",
     "nanoid": "^5.1.5",
     "next": "15.5.2",
+    "openai": "^6.6.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "react-easy-crop": "^5.5.0",
