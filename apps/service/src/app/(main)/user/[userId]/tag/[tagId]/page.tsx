@@ -105,7 +105,7 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header user={user} showRightMenu isOwnerPage={isOwner} />
+      <Header user={user} rightMenu={session?.user?.id ? { loggedInUserId: session.user.id } : undefined} />
 
       <h1 className="col-start-2 text-4xl">{`#${tag.name}`}</h1>
 

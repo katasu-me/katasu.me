@@ -36,13 +36,9 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    showRightMenu: {
-      control: "boolean",
-      description: "右側のメニューを表示するか",
-    },
-    isOwnerPage: {
-      control: "boolean",
-      description: "オーナーのページかどうか",
+    rightMenu: {
+      control: "object",
+      description: "右側のメニュー設定（loggedInUserIdを含む）",
     },
   },
   decorators: [
@@ -66,30 +62,35 @@ export const Default: Story = {
 export const WithRightMenu: Story = {
   args: {
     user: mockUser,
-    showRightMenu: true,
+    rightMenu: {
+      loggedInUserId: "logged-in-user",
+    },
   },
 };
 
 export const OwnerPage: Story = {
   args: {
     user: mockUser,
-    showRightMenu: true,
-    isOwnerPage: true,
+    rightMenu: {
+      loggedInUserId: "user123", // mockUser.idと同じ
+    },
   },
 };
 
 export const WithAvatar: Story = {
   args: {
     user: mockUserWithAvatar,
-    showRightMenu: true,
-    isOwnerPage: true,
+    rightMenu: {
+      loggedInUserId: "user456", // mockUserWithAvatar.idと同じ
+    },
   },
 };
 
 export const VisitorView: Story = {
   args: {
     user: mockUserWithAvatar,
-    showRightMenu: true,
-    isOwnerPage: false,
+    rightMenu: {
+      loggedInUserId: "other-user", // 異なるユーザーID
+    },
   },
 };

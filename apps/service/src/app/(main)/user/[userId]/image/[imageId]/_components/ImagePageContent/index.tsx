@@ -15,10 +15,10 @@ import ShareButton from "./ShareButton";
 type Props = {
   authorUserId: string;
   imageId: string;
-  canEdit?: boolean;
+  loggedInUserId?: string;
 };
 
-export default async function ImagePageContent({ authorUserId, imageId, canEdit = false }: Props) {
+export default async function ImagePageContent({ authorUserId, imageId, loggedInUserId }: Props) {
   const fetchImage = await cachedFetchImageById(imageId);
 
   if (!fetchImage.success) {
@@ -30,6 +30,8 @@ export default async function ImagePageContent({ authorUserId, imageId, canEdit 
   if (!image) {
     notFound();
   }
+
+  const canEdit = authorUserId === loggedInUserId;
 
   return (
     <div className="col-start-2 mx-auto w-full text-center">
@@ -55,9 +57,19 @@ export default async function ImagePageContent({ authorUserId, imageId, canEdit 
 
       <div className="mt-4 flex items-center justify-center gap-2">
         {/* 通報 */}
-        <IconButton>
-          <IconFlag className="h-4 w-4" />
-        </IconButton>
+        {!canEdit && (
+          <IconButton
+            as="link"
+            href={{
+              pathname: "/report/image",
+              search: `reporterUserId=${loggedInUserId}&imageId=${imageId}`,
+            }}
+            target="_blank"
+            rel="noopener"
+          >
+            <IconFlag className="h-4 w-4" />
+          </IconButton>
+        )}
 
         {/* シェア */}
         <ShareButton title={image.title} userId={authorUserId} imageId={imageId} />

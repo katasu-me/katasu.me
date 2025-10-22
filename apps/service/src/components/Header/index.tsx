@@ -11,17 +11,29 @@ import UserIcon from "./UserIcon";
 
 type Props = {
   user: PublicUserData;
-  showRightMenu?: boolean;
-  isOwnerPage?: boolean;
+  rightMenu?: {
+    loggedInUserId: string;
+  };
 };
 
-export default function Header({ user, showRightMenu = false, isOwnerPage = false }: Props) {
+export default function Header({ user, rightMenu }: Props) {
+  const isOwnerPage = rightMenu?.loggedInUserId === user.id;
+
   const menuItems = [
-    // TODO: 報告のフォームに遷移
-    <Link key="flag" href="/settings">
-      <IconFlag className="size-4" />
-      <span>このユーザーを報告</span>
-    </Link>,
+    !isOwnerPage && rightMenu && (
+      <Link
+        key="flag"
+        href={{
+          pathname: "/report/user",
+          search: `reportedUserId=${user.id}&reporterUserId=${rightMenu.loggedInUserId}`,
+        }}
+        target="_blank"
+        rel="noopener"
+      >
+        <IconFlag className="size-4" />
+        <span>このユーザーを報告</span>
+      </Link>
+    ),
     isOwnerPage && (
       <Link key="settings" href="/settings">
         <IconSettings className="size-4" />
@@ -38,7 +50,7 @@ export default function Header({ user, showRightMenu = false, isOwnerPage = fals
         iconImage={user.hasAvatar ? getUserAvatarUrl(user.id, user.avatarSetAt) : undefined}
       />
 
-      {showRightMenu && (
+      {rightMenu && (
         <div className="flex items-center gap-2">
           {/* TODO: 検索機能 */}
           <IconButton title="検索">

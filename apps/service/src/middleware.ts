@@ -29,6 +29,7 @@ export function middleware(request: NextRequest) {
     "script-src": [
       "'self'",
       `'nonce-${nonce}'`,
+      "https://tally.so",
       BASE_URL,
       process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL,
       isDev && "'unsafe-eval'",

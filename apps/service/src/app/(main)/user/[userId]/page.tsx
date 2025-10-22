@@ -51,10 +51,13 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]">):
 }
 
 export default async function UserPage({ params, searchParams }: PageProps<"/user/[userId]">) {
-  const { userId } = await params;
+  const { userId: pageUserId } = await params;
   const { env } = getCloudflareContext();
 
-  const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(userId), getUserSession(env.DB)]);
+  const [userResult, { session }] = await Promise.all([
+    cachedFetchPublicUserDataById(pageUserId),
+    getUserSession(env.DB),
+  ]);
 
   // 存在しない、または新規登録が完了していない場合は404
   if (
@@ -67,7 +70,7 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
   }
 
   const user = userResult.data;
-  const isOwner = userId === session?.user?.id;
+  const isOwner = pageUserId === session?.user?.id;
 
   const { view, page: pageStr } = parse(searchParamsSchema, await searchParams);
   const currentPage = Number.parseInt(pageStr, 10);
@@ -78,16 +81,16 @@ export default async function UserPage({ params, searchParams }: PageProps<"/use
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header user={user} showRightMenu isOwnerPage={isOwner} />
+      <Header user={user} rightMenu={session?.user?.id ? { loggedInUserId: session.user.id } : undefined} />
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
         <Suspense fallback={<TagLinksSkeleton className="col-start-2" />}>
-          <UserTagLinks className="col-start-2" userId={userId} />
+          <UserTagLinks className="col-start-2" userId={pageUserId} />
         </Suspense>
 
         {isOwner && (
           <Suspense>
-            <UserImageDropArea userId={userId} maxPhotos={user.plan.maxPhotos} />
+            <UserImageDropArea userId={pageUserId} maxPhotos={user.plan.maxPhotos} />
           </Suspense>
         )}
 
