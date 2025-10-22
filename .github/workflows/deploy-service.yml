@@ -33,8 +33,8 @@ jobs:
           # 開発環境の値を置換
           sed -i "s|<DEVELOPMENT_URL>|${{ vars.DEVELOPMENT_URL }}|g" wrangler.jsonc
           sed -i "s|<DEVELOPMENT_NEXT_PUBLIC_IMAGE_R2_URL>|${{ vars.DEVELOPMENT_NEXT_PUBLIC_IMAGE_R2_URL }}|g" wrangler.jsonc
-          sed -i "s|<NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID>|${{ vars.DEVELOPMENT_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID }}|g" wrangler.jsonc
-          sed -i "s|<NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID>|${{ vars.DEVELOPMENT_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID }}|g" wrangler.jsonc
+          sed -i "s|<DEVELOPMENT_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID>|${{ vars.DEVELOPMENT_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID }}|g" wrangler.jsonc
+          sed -i "s|<DEVELOPMENT_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID>|${{ vars.DEVELOPMENT_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID }}|g" wrangler.jsonc
           sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.jsonc
           sed -i "s|<DEVELOPMENT_CACHE_KV_ID>|${{ secrets.DEVELOPMENT_CACHE_KV_ID }}|g" wrangler.jsonc
 
@@ -42,8 +42,8 @@ jobs:
           sed -i "s|<PRODUCTION_URL>|${{ vars.PRODUCTION_URL }}|g" wrangler.jsonc
           sed -i "s|<UMAMI_SCRIPT_URL>|${{ vars.UMAMI_SCRIPT_URL }}|g" wrangler.jsonc
           sed -i "s|<PRODUCTION_NEXT_PUBLIC_IMAGE_R2_URL>|${{ vars.PRODUCTION_NEXT_PUBLIC_IMAGE_R2_URL }}|g" wrangler.jsonc
-          sed -i "s|<NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID>|${{ vars.PRODUCTION_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID }}|g" wrangler.jsonc
-          sed -i "s|<NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID>|${{ vars.PRODUCTION_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID }}|g" wrangler.jsonc
+          sed -i "s|<PRODUCTION_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID>|${{ vars.PRODUCTION_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID }}|g" wrangler.jsonc
+          sed -i "s|<PRODUCTION_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID>|${{ vars.PRODUCTION_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID }}|g" wrangler.jsonc
           sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.jsonc
           sed -i "s|<PRODUCTION_CACHE_KV_ID>|${{ secrets.PRODUCTION_CACHE_KV_ID }}|g" wrangler.jsonc
           sed -i "s|<UMAMI_WEBSITE_ID>|${{ secrets.UMAMI_WEBSITE_ID }}|g" wrangler.jsonc
