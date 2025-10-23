@@ -17,20 +17,17 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 /**
  * 画像がモデレーションに違反しているかチェックする
  * @param apiKey OpenAI APIキー
- * @param imageBuffer 画像データ（WebP形式）
+ * @param imageBuffer 画像データ
  * @returns 違反している場合true
  */
 export async function checkImageModeration(apiKey: string, imageBuffer: ArrayBuffer): Promise<boolean> {
-  const openai = new OpenAI({
-    apiKey,
-  });
+  const openai = new OpenAI({ apiKey });
 
   // ArrayBufferをbase64エンコード
   const base64Image = arrayBufferToBase64(imageBuffer);
   const dataUrl = `data:image/webp;base64,${base64Image}`;
 
   try {
-    // モデレーションAPIを呼び出し
     const response = await openai.moderations.create({
       model: "omni-moderation-latest",
       input: [
@@ -43,10 +40,11 @@ export async function checkImageModeration(apiKey: string, imageBuffer: ArrayBuf
       ],
     });
 
-    const result = response.results[0];
+    const result = response.results.at(0);
 
     if (!result) {
       console.error("[moderation] モデレーション結果が取得できませんでした");
+      // TODO: Slackへ通知
       return false;
     }
 
@@ -59,7 +57,7 @@ export async function checkImageModeration(apiKey: string, imageBuffer: ArrayBuf
     return false;
   } catch (error) {
     console.error("[moderation] モデレーションAPIの呼び出しに失敗しました:", error);
-    // エラーが発生した場合は拒否 (安全側に倒す)
-    return true;
+    // TODO: Slackへ通知
+    return false;
   }
 }

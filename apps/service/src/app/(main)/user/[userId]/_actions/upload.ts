@@ -6,9 +6,9 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { nanoid } from "nanoid";
 import { requireAuth } from "@/lib/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/lib/cache";
-import { checkImageModeration } from "@/lib/moderation";
 import { generateR2Key, uploadImage } from "@/lib/r2";
 import { ERROR_MESSAGES } from "../_constants/error-messages";
+import { checkImageModeration } from "../_lib/moderation";
 import { uploadImageSchema } from "../_schemas/upload";
 
 export async function uploadAction(_prevState: unknown, formData: FormData) {
