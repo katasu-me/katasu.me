@@ -19,6 +19,7 @@ import IconZoomOut from "@/assets/icons/zoom-out.svg";
 import Button from "@/components/Button";
 import Drawer from "@/components/Drawer";
 import FormErrorMessage from "@/components/FormErrorMessage";
+import { normalizeFile } from "@/lib/file";
 import { getCroppedImg } from "./cropImage";
 
 type Props = {
@@ -52,15 +53,16 @@ export default function AvatarUpload({ onFileChange, error, className, defaultAv
     }
   };
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const originalFile = event.target.files?.[0] || null;
 
-    if (!file) {
+    if (!originalFile) {
       setPreview(null);
       onFileChange?.(null);
       return;
     }
 
+    const file = await normalizeFile(originalFile);
     const reader = new FileReader();
 
     reader.onload = (e) => {
@@ -86,9 +88,10 @@ export default function AvatarUpload({ onFileChange, error, className, defaultAv
       if (croppedBlob && fileInputRef.current) {
         const file = new File([croppedBlob], "avatar.jpg", { type: "image/jpeg" });
 
-        // DataTransfer を使ってinput要素にファイルを設定
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
+
+        // フォームのinputに設定
         fileInputRef.current.files = dataTransfer.files;
 
         onFileChange?.(file);

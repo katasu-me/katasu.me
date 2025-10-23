@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 import FormErrorMessage from "@/components/FormErrorMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
 import { DEFAULT_TRANSITION } from "@/constants/animation";
+import { normalizeFile } from "@/lib/file";
 import { uploadAction } from "../../../_actions/upload";
 import { usePreventFormReset } from "../../../_hooks/usePreventFormReset";
 import { MAX_TAG_COUNT, MAX_TAG_TEXT_LENGTH, MAX_TITLE_LENGTH, uploadImageSchema } from "../../../_schemas/upload";
@@ -32,16 +33,6 @@ const defaultResult: SubmissionResult<string[]> = {
   error: {
     file: [""],
   },
-};
-
-// Android ChromeでGoogle Driveから選択した場合のワークアラウンド
-// https://stackoverflow.com/questions/62714319/attached-from-google-drivecloud-storage-in-android-file-gives-err-upload-file
-const normalizeFile = async (originalFile: File): Promise<File> => {
-  const blob = new Blob([await originalFile.arrayBuffer()], {
-    type: originalFile.type,
-  });
-
-  return new File([blob], originalFile.name, { type: blob.type });
 };
 
 export default function UploadForm({
@@ -130,8 +121,7 @@ export default function UploadForm({
 
     // DnDで渡された画像ファイルがあればセット
     if (!isDnDFileSet.current && input && defaultImageFile) {
-      (async () => {
-        const file = await normalizeFile(defaultImageFile);
+      normalizeFile(defaultImageFile).then((file) => {
         const dt = new DataTransfer();
 
         dt.items.add(file);
@@ -140,7 +130,7 @@ export default function UploadForm({
         form.validate({ name: fields.file.name });
 
         isDnDFileSet.current = true;
-      })();
+      });
     }
   };
 

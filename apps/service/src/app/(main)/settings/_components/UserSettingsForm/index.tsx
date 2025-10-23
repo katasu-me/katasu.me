@@ -42,13 +42,13 @@ export default function UserSettingsForm({ className, defaultUsername, defaultUs
    * - なので、onFileChangeでvalidateを呼び出すようにする。
    */
   const handleAvatarChange = (file: File | null) => {
+    // バツボタンで削除された場合
     if (file === null) {
-      console.log("OK");
-      // バツボタンで削除された場合
       hasAvatarChange.current = true;
       setRemoveAvatar(true);
-    } else {
-      // アイコン画像が変更された場合
+    }
+    // アイコン画像が変更された場合
+    else {
       hasAvatarChange.current = true;
       setRemoveAvatar(false);
     }
@@ -61,7 +61,7 @@ export default function UserSettingsForm({ className, defaultUsername, defaultUs
     if (lastResult?.status === "success") {
       hasAvatarChange.current = false;
       setRemoveAvatar(false);
-      window.location.reload();
+      window.location.reload(); // FIXME: 効いてないので、フォームのkeyを更新して破棄するようにする。ヘッダーはまぁいいんじゃないかな
     }
   }, [lastResult]);
 
