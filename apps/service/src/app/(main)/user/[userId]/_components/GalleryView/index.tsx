@@ -1,9 +1,7 @@
 "use client";
 
-import type { ComponentProps } from "react";
+import { type ComponentProps, useState } from "react";
 import type { InferOutput } from "valibot";
-import IconReload from "@/assets/icons/reload.svg";
-import Button from "@/components/Button";
 import type { GalleryViewSchema } from "../../_schemas/view";
 import type FrameImage from "../FrameImage";
 import LayoutToggle from "./LayoutToggle";
@@ -18,26 +16,28 @@ type Props = {
   defaultTags?: string[];
 };
 
+const getRandomViewId = () => Math.floor(Date.now() / 1000).toString();
+
 export default function GalleryView({ view, images, totalImageCount, currentPage }: Props) {
+  const [randomViewId, setRandomViewId] = useState(getRandomViewId());
+
   const handleSwapClick = () => {
-    window.location.reload();
+    setRandomViewId(getRandomViewId());
   };
 
   return (
     <>
       {view === "random" ? (
-        <>
-          <Random className="col-span-full" images={images} />
-          <Button className="col-start-2 mx-auto flex items-center gap-2" onClick={handleSwapClick}>
-            <IconReload className="h-4 w-4" />
-            画像をいれかえる
-          </Button>
-        </>
+        <Random key={randomViewId} className="col-span-full" images={images} />
       ) : (
         <Timeline className="col-start-2" images={images} totalImageCount={totalImageCount} currentPage={currentPage} />
       )}
 
-      <LayoutToggle className="-translate-x-1/2 fixed bottom-6 left-1/2 z-[calc(infinity)]" value={view || "masonry"} />
+      <LayoutToggle
+        className="-translate-x-1/2 fixed bottom-6 left-1/2 z-[calc(infinity)]"
+        value={view || "masonry"}
+        onRandomClick={handleSwapClick}
+      />
     </>
   );
 }

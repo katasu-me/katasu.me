@@ -16,6 +16,7 @@ const meta = {
   },
   args: {
     value: "timeline",
+    onRandomClick: () => {},
   },
 } satisfies Meta<typeof LayoutToggle>;
 

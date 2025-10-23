@@ -1,17 +1,19 @@
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
+import { twJoin, twMerge } from "tailwind-merge";
 import ShuffleIcon from "@/assets/icons/arrows-shuffle.svg";
 import MasonryIcon from "@/assets/icons/masonry.svg";
 import type { ImageLayoutType } from "../../../_types/layout";
 
 type Props = {
   value: ImageLayoutType;
+  onRandomClick: () => void;
   className?: string;
 };
 
-export default function LayoutToggle({ value, className }: Props) {
+export default function LayoutToggle({ value, onRandomClick, className }: Props) {
   const selectedClassname = "interactive-base bg-warm-black text-warm-white shadow-sm";
   const unselectedClassname = "interactive-scale-brightness text-warm-black-50 hover:text-warm-black";
+  const randomButtonClassname = "flex w-32 items-center justify-center gap-2 rounded-md px-4 py-2 font-medium text-sm";
 
   return (
     <div
@@ -32,19 +34,29 @@ export default function LayoutToggle({ value, className }: Props) {
         <MasonryIcon className="h-4 w-4" />
         <span>一覧</span>
       </Link>
-      <Link
-        href={{ search: "?view=random" }}
-        className={twMerge(
-          "flex w-32 items-center justify-center gap-2 rounded-md px-4 py-2 font-medium text-sm",
-          value === "random" ? selectedClassname : unselectedClassname,
-        )}
-        role="tab"
-        aria-selected={value === "random"}
-        aria-controls="random-layout"
-      >
-        <ShuffleIcon className="h-4 w-4" />
-        <span>シャッフル</span>
-      </Link>
+
+      {value === "random" ? (
+        <button
+          className={twJoin(
+            "interactive-scale-brightness cursor-pointer bg-warm-black text-warm-white shadow-sm",
+            randomButtonClassname,
+          )}
+          onClick={onRandomClick}
+        >
+          <ShuffleIcon className="h-4 w-4" />
+          <span>シャッフル</span>
+        </button>
+      ) : (
+        <Link
+          href={{ search: "?view=random" }}
+          className={twJoin(randomButtonClassname, unselectedClassname)}
+          role="tab"
+          aria-controls="random-layout"
+        >
+          <ShuffleIcon className="h-4 w-4" />
+          <span>シャッフル</span>
+        </Link>
+      )}
     </div>
   );
 }
