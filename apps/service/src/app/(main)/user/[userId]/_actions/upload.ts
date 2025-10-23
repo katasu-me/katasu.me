@@ -23,6 +23,17 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
     return submission.reply();
   }
 
+  // レートリミット
+  const { success } = await env.ACTIONS_RATE_LIMITER.limit({
+    key: `upload:${session.user.id}`,
+  });
+
+  if (!success) {
+    return submission.reply({
+      formErrors: [ERROR_MESSAGES.RATE_LIMIT_EXCEEDED],
+    });
+  }
+
   const userId = session.user.id;
 
   // 上限チェック
@@ -30,13 +41,13 @@ export async function uploadAction(_prevState: unknown, formData: FormData) {
 
   if (!userImageStatusResult.success || !userImageStatusResult.data) {
     return submission.reply({
-      formErrors: ["ユーザー情報の取得に失敗しました"],
+      formErrors: [ERROR_MESSAGES.USER_UNAUTHORIZED],
     });
   }
 
   if (userImageStatusResult.data.uploadedPhotos >= userImageStatusResult.data.maxPhotos) {
     return submission.reply({
-      formErrors: ["画像の投稿上限に達しています"],
+      formErrors: [ERROR_MESSAGES.IMAGE_UPLOAD_LIMIT_EXCEEDED],
     });
   }
 
