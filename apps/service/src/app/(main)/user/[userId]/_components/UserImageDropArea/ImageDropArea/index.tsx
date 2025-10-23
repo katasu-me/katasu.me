@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { type ComponentProps, type DragEvent, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import IconImagePlus from "@/assets/icons/image-plus.svg";
-import UploadDrawer from "../UploadDrawer";
+import UploadDrawer from "../../UploadDrawer";
 
 const MAX_FILE_COUNT = 1;
 

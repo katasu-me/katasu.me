@@ -6,11 +6,11 @@ import { twMerge } from "tailwind-merge";
 import FormErrorMessage from "@/components/FormErrorMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
 import { DEFAULT_TRANSITION } from "@/constants/animation";
-import { uploadAction } from "../../../../_actions/upload";
-import { usePreventFormReset } from "../../../../_hooks/usePreventFormReset";
-import { MAX_TAG_COUNT, MAX_TAG_TEXT_LENGTH, MAX_TITLE_LENGTH, uploadImageSchema } from "../../../../_schemas/upload";
-import FormInputFields from "../../../FormInputFields";
-import FrameImage from "../../../FrameImage";
+import { uploadAction } from "../../../_actions/upload";
+import { usePreventFormReset } from "../../../_hooks/usePreventFormReset";
+import { MAX_TAG_COUNT, MAX_TAG_TEXT_LENGTH, MAX_TITLE_LENGTH, uploadImageSchema } from "../../../_schemas/upload";
+import FormInputFields from "../../FormInputFields";
+import FrameImage from "../../FrameImage";
 import ImagePlaceholder from "./ImagePlaceholder";
 
 type Props = {
@@ -32,6 +32,16 @@ const defaultResult: SubmissionResult<string[]> = {
   error: {
     file: [""],
   },
+};
+
+// Android ChromeでGoogle Driveから選択した場合のワークアラウンド
+// https://stackoverflow.com/questions/62714319/attached-from-google-drivecloud-storage-in-android-file-gives-err-upload-file
+const normalizeFile = async (originalFile: File): Promise<File> => {
+  const blob = new Blob([await originalFile.arrayBuffer()], {
+    type: originalFile.type,
+  });
+
+  return new File([blob], originalFile.name, { type: blob.type });
 };
 
 export default function UploadForm({
@@ -89,7 +99,11 @@ export default function UploadForm({
 
   // DnDで渡された画像ファイルがあればプレビューにセット
   useEffect(() => {
-    if (defaultImageFile) {
+    if (!defaultImageFile) {
+      return;
+    }
+
+    normalizeFile(defaultImageFile).then((file) => {
       const reader = new FileReader();
 
       reader.onload = (e) => {
@@ -107,8 +121,8 @@ export default function UploadForm({
         img.src = imageSrc;
       };
 
-      reader.readAsDataURL(defaultImageFile);
-    }
+      reader.readAsDataURL(file);
+    });
   }, [defaultImageFile]);
 
   const setFileInputRef = (input: HTMLInputElement | null) => {
@@ -116,24 +130,36 @@ export default function UploadForm({
 
     // DnDで渡された画像ファイルがあればセット
     if (!isDnDFileSet.current && input && defaultImageFile) {
-      const dt = new DataTransfer();
+      (async () => {
+        const file = await normalizeFile(defaultImageFile);
+        const dt = new DataTransfer();
 
-      dt.items.add(defaultImageFile);
-      input.files = dt.files;
+        dt.items.add(file);
+        input.files = dt.files;
 
-      form.validate({ name: fields.file.name });
+        form.validate({ name: fields.file.name });
 
-      isDnDFileSet.current = true;
+        isDnDFileSet.current = true;
+      })();
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const originalFile = event.target.files?.[0] || null;
 
     // 画像が選択されなかった場合はリセット
-    if (!file) {
+    if (!originalFile) {
       setPreviewImage(null);
       return;
+    }
+
+    const file = await normalizeFile(originalFile);
+
+    // input.filesを更新
+    if (fileInputRef.current) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      fileInputRef.current.files = dt.files;
     }
 
     const reader = new FileReader();

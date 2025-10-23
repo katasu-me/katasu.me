@@ -17,9 +17,6 @@ type Props = {
   disabled?: boolean;
 };
 
-/**
- * タイトルとタグの入力フィールドを提供する共通コンポーネント
- */
 export default function FormInputFields({
   fields,
   tagInput,
