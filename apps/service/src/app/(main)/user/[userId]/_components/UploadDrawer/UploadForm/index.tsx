@@ -3,7 +3,7 @@ import { parseWithValibot } from "@conform-to/valibot";
 import { motion } from "motion/react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import FormErrorMessage from "@/components/FormErrorMessage";
+import FormMessage from "@/components/FormMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
 import { DEFAULT_TRANSITION } from "@/constants/animation";
 import { usePreventFormReset } from "@/hooks/usePreventFormReset";
@@ -183,7 +183,7 @@ export default function UploadForm({
   return (
     <form {...getFormProps(form)} action={action} noValidate>
       {/* フォームのエラー */}
-      {form.errors && form.errors?.length > 0 && <FormErrorMessage className="mb-4" text={form.errors[0]} />}
+      {form.errors && form.errors?.length > 0 && <FormMessage type="error" className="mb-4" text={form.errors[0]} />}
 
       <input
         {...getInputProps(fields.file, { type: "file" })}
@@ -255,7 +255,7 @@ export default function UploadForm({
       </button>
 
       {/* 画像のエラー */}
-      {fields.file.errors?.at(0) && <FormErrorMessage text={fields.file.errors[0]} />}
+      {fields.file.errors?.at(0) && <FormMessage type="error" text={fields.file.errors[0]} />}
 
       {/* タイトル・タグ入力欄 */}
       <motion.div

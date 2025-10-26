@@ -5,7 +5,7 @@ import { parseWithValibot } from "@conform-to/valibot";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";
 import AvatarUpload from "@/components/AvatarUpload";
-import FormErrorMessage from "@/components/FormErrorMessage";
+import FormMessage from "@/components/FormMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
 import Input from "@/components/Input";
 import { usePreventFormReset } from "@/hooks/usePreventFormReset";
@@ -24,6 +24,7 @@ export default function UserSettingsForm({ className, defaultUsername, defaultUs
   const [lastResult, action] = useActionState(updateUserSettingsAction, undefined);
   const hasAvatarChange = useRef(false);
   const [removeAvatar, setRemoveAvatar] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const [form, fields] = useForm({
     lastResult,
@@ -61,6 +62,7 @@ export default function UserSettingsForm({ className, defaultUsername, defaultUs
     if (lastResult?.status === "success") {
       hasAvatarChange.current = false;
       setRemoveAvatar(false);
+      setShowSuccessMessage(true);
       router.refresh();
     }
   }, [lastResult, router]);
@@ -73,8 +75,17 @@ export default function UserSettingsForm({ className, defaultUsername, defaultUs
 
   return (
     <form {...getFormProps(form)} className={className} action={action} noValidate>
+      {showSuccessMessage && (
+        <FormMessage
+          type="success"
+          className="mb-16"
+          text="変更しました！"
+          caption="表示に反映されない場合は、ブラウザを再読み込みしてみてね"
+        />
+      )}
+
       {/* フォームのエラー */}
-      {form.errors && form.errors?.length > 0 && <FormErrorMessage className="mb-16" text={form.errors[0]} />}
+      {form.errors && form.errors?.length > 0 && <FormMessage type="error" className="mb-16" text={form.errors[0]} />}
 
       <div className="flex pc:w-sm w-full flex-col gap-6">
         <AvatarUpload
@@ -96,7 +107,7 @@ export default function UserSettingsForm({ className, defaultUsername, defaultUs
 
         <input type="hidden" name="removeAvatar" value={removeAvatar.toString()} />
 
-        <FormSubmitButton className="w-full" disabled={!isFormValid} label="更新する" pendingLabel="更新中…" />
+        <FormSubmitButton className="w-full" disabled={!isFormValid} label="変更する" pendingLabel="変更中…" />
       </div>
     </form>
   );

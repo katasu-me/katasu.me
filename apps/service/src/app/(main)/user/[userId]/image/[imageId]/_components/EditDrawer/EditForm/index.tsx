@@ -3,7 +3,7 @@ import { parseWithValibot } from "@conform-to/valibot";
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import FormInputFields from "@/app/(main)/user/[userId]/_components/FormInputFields";
-import FormErrorMessage from "@/components/FormErrorMessage";
+import FormMessage from "@/components/FormMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
 import { usePreventFormReset } from "@/hooks/usePreventFormReset";
 import { editImageAction } from "../../../_actions/edit";
@@ -66,8 +66,8 @@ export default function EditForm({ imageId, defaultTitle = "", defaultTags = [],
       <input {...getInputProps(fields.imageId, { type: "hidden" })} />
 
       {/* フォーム全体のエラー */}
-      {form.errors && form.errors.length > 0 && <FormErrorMessage text={form.errors[0]} />}
-      {fields.imageId.errors?.at(0) && <FormErrorMessage text={fields.imageId.errors[0]} />}
+      {form.errors && form.errors.length > 0 && <FormMessage type="error" text={form.errors[0]} />}
+      {fields.imageId.errors?.at(0) && <FormMessage type="error" text={fields.imageId.errors[0]} />}
 
       <div className="flex flex-col gap-4">
         <FormInputFields

@@ -18,7 +18,7 @@ import IconZoomIn from "@/assets/icons/zoom-in.svg";
 import IconZoomOut from "@/assets/icons/zoom-out.svg";
 import Button from "@/components/Button";
 import Drawer from "@/components/Drawer";
-import FormErrorMessage from "@/components/FormErrorMessage";
+import FormMessage from "@/components/FormMessage";
 import { normalizeFile } from "@/lib/file";
 import { getCroppedImg } from "./cropImage";
 
@@ -189,7 +189,7 @@ export default function AvatarUpload({ onFileChange, error, className, defaultAv
         {...props}
       />
 
-      {error && <FormErrorMessage className="mt-2 w-full" text={error} />}
+      {error && <FormMessage type="error" className="mt-2 w-full" text={error} />}
 
       <Drawer
         title="アイコンを切り抜く"

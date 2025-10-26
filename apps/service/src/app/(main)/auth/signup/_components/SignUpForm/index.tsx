@@ -4,7 +4,7 @@ import { getFormProps, getInputProps, type SubmissionResult, useForm } from "@co
 import { parseWithValibot } from "@conform-to/valibot";
 import { useActionState } from "react";
 import AvatarUpload from "@/components/AvatarUpload";
-import FormErrorMessage from "@/components/FormErrorMessage";
+import FormMessage from "@/components/FormMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
 import Input from "@/components/Input";
 import { DOCS_PRIVACY_POLICY, DOCS_TERMS_OF_SERVICE } from "@/constants/site";
@@ -54,7 +54,7 @@ export default function SignUpForm({ className }: Props) {
   return (
     <form {...getFormProps(form)} className={className} action={action} noValidate>
       {/* フォームのエラー */}
-      {form.errors && form.errors?.length > 0 && <FormErrorMessage className="mb-16" text={form.errors[0]} />}
+      {form.errors && form.errors?.length > 0 && <FormMessage type="error" className="mb-16" text={form.errors[0]} />}
 
       <div className="flex pc:w-sm w-full flex-col gap-6">
         <AvatarUpload

@@ -5,7 +5,7 @@ import { parseWithValibot } from "@conform-to/valibot";
 import { useRouter } from "next/navigation";
 import { type ComponentProps, useActionState, useEffect } from "react";
 import Drawer from "@/components/Drawer";
-import FormErrorMessage from "@/components/FormErrorMessage";
+import FormMessage from "@/components/FormMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
 import Input from "@/components/Input";
 import { signOut } from "@/lib/auth-client";
@@ -54,7 +54,9 @@ export default function SeeyouSoonDrawer(props: Props) {
           </Description>
 
           <form {...getFormProps(form)} className="mt-4" action={action} noValidate>
-            {form.errors && form.errors?.length > 0 && <FormErrorMessage className="mb-4" text={form.errors[0]} />}
+            {form.errors && form.errors?.length > 0 && (
+              <FormMessage type="error" className="mb-4" text={form.errors[0]} />
+            )}
 
             <Input
               {...getInputProps(fields.confirmation, { type: "text" })}
