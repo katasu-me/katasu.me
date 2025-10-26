@@ -15,7 +15,7 @@ export default function FormMessage({ type, text, caption, className }: Props) {
   return (
     <div
       className={twMerge(
-        "mb-4 flex items-center gap-2 rounded-lg border bg-warm-white p-4",
+        "mb-4 flex items-center gap-2 rounded-xl border bg-warm-white p-4",
         isError ? "border-vivid-red" : "border-warm-green",
         className,
       )}
