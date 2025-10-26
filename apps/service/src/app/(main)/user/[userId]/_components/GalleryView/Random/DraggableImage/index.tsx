@@ -3,6 +3,8 @@ import Link from "next/link";
 import { type ComponentProps, type RefObject, useRef, useState } from "react";
 import { useClickAway } from "react-use";
 import { twMerge } from "tailwind-merge";
+import IconPhoto from "@/assets/icons/photo.svg";
+import Button from "@/components/Button";
 import FrameImage from "../../../FrameImage";
 
 type Props = {
@@ -94,12 +96,15 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
       <FrameImage src={item.src} alt={item.alt} width={item.width} height={item.height} hasBlur={isOpenOverlay} />
       {item.linkParams && isOpenOverlay && (
         <div className={twMerge("absolute inset-0 z-1 flex items-center justify-center")} ref={overlayRef}>
-          <Link
-            className="w-fit py-6 text-center text-warm-white hover:underline"
-            href={`/user/${item.linkParams.userId}/image/${item.linkParams.imageId}`}
-          >
-            この画像をみる
-          </Link>
+          <Button asChild>
+            <Link
+              className="flex items-center gap-1"
+              href={`/user/${item.linkParams.userId}/image/${item.linkParams.imageId}`}
+            >
+              <IconPhoto className="size-4" />
+              <span>この画像をみる</span>
+            </Link>
+          </Button>
         </div>
       )}
     </motion.div>
