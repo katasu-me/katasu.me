@@ -36,7 +36,6 @@ export default async function Settings() {
 
         <div className="flex w-full justify-center rounded-xl bg-warm-black-10 p-8">
           <UserSettingsForm
-            key={user.name} // ユーザー名が変わったら再マウントして変更を反映
             defaultUsername={user.name}
             defaultUserAvatar={user.hasAvatar ? getUserAvatarUrl(user.id, user.avatarSetAt) : undefined}
           />

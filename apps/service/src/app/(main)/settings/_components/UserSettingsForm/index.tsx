@@ -7,6 +7,7 @@ import AvatarUpload from "@/components/AvatarUpload";
 import FormErrorMessage from "@/components/FormErrorMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
 import Input from "@/components/Input";
+import { usePreventFormReset } from "@/hooks/usePreventFormReset";
 import { MAX_USERNAME_LENGTH } from "@/schemas/user";
 import { updateUserSettingsAction } from "../../_actions/update-user-settings";
 import { userSettingsFormSchema } from "../../_schemas/user-settings";
@@ -35,6 +36,8 @@ export default function UserSettingsForm({ className, defaultUsername, defaultUs
       });
     },
   });
+
+  usePreventFormReset(form.id);
 
   /**
    * 挿入されたファイルを検証させる関数

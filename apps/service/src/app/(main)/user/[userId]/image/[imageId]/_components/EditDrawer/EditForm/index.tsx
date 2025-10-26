@@ -3,9 +3,9 @@ import { parseWithValibot } from "@conform-to/valibot";
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import FormInputFields from "@/app/(main)/user/[userId]/_components/FormInputFields";
-import { usePreventFormReset } from "@/app/(main)/user/[userId]/_hooks/usePreventFormReset";
 import FormErrorMessage from "@/components/FormErrorMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
+import { usePreventFormReset } from "@/hooks/usePreventFormReset";
 import { editImageAction } from "../../../_actions/edit";
 import { editImageSchema, MAX_TAG_COUNT, MAX_TAG_TEXT_LENGTH, MAX_TITLE_LENGTH } from "../../../_schemas/edit";
 
