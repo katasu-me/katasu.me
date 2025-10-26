@@ -2,6 +2,7 @@
 
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { parseWithValibot } from "@conform-to/valibot";
+import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";
 import AvatarUpload from "@/components/AvatarUpload";
 import FormErrorMessage from "@/components/FormErrorMessage";
@@ -19,6 +20,7 @@ type Props = {
 };
 
 export default function UserSettingsForm({ className, defaultUsername, defaultUserAvatar }: Props) {
+  const router = useRouter();
   const [lastResult, action] = useActionState(updateUserSettingsAction, undefined);
   const hasAvatarChange = useRef(false);
   const [removeAvatar, setRemoveAvatar] = useState(false);
@@ -39,11 +41,6 @@ export default function UserSettingsForm({ className, defaultUsername, defaultUs
 
   usePreventFormReset(form.id);
 
-  /**
-   * 挿入されたファイルを検証させる関数
-   * - AvatarUploadでonChangeを乗っ取っているためgetInputPropsのonChangeが効かない。
-   * - なので、onFileChangeでvalidateを呼び出すようにする。
-   */
   const handleAvatarChange = (file: File | null) => {
     // バツボタンで削除された場合
     if (file === null) {
@@ -59,14 +56,14 @@ export default function UserSettingsForm({ className, defaultUsername, defaultUs
     form.validate({ name: fields.avatar.name });
   };
 
-  // 更新できたら画面を更新
+  // 更新できたらフォームをリセットして画面を更新
   useEffect(() => {
     if (lastResult?.status === "success") {
       hasAvatarChange.current = false;
       setRemoveAvatar(false);
-      window.location.reload(); // FIXME: 効いてないので、フォームのkeyを更新して破棄するようにする。ヘッダーはまぁいいんじゃないかな
+      router.refresh();
     }
-  }, [lastResult]);
+  }, [lastResult, router]);
 
   // 変更があるかチェック
   const hasUsernameChange = fields.username.value?.trim() !== defaultUsername;
