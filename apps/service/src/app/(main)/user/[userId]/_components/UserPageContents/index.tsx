@@ -1,10 +1,4 @@
-import {
-  type ActionResult,
-  fetchImagesByUserId,
-  fetchRandomImagesByUserId,
-  type ImageWithTags,
-  type PublicUserData,
-} from "@katasu.me/service-db";
+import { fetchImagesByUserId, type PublicUserData } from "@katasu.me/service-db";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
@@ -12,7 +6,8 @@ import { IMAGES_PER_PAGE } from "../../_constants/images";
 import { toFrameImageProps } from "../../_lib/convert";
 import { cachedFetchTotalImageCount } from "../../_lib/fetch-total-image-count";
 import type { ImageLayoutType } from "../../_types/layout";
-import GalleryView from "../GalleryView";
+import GalleryMasonry from "../GalleryMasonry";
+import GalleryRandom from "../GalleryRandom";
 
 type Props = {
   user: PublicUserData;
@@ -38,31 +33,29 @@ export default async function UserPageContents({ user, view, currentPage = 1 }: 
     return <Message message="からっぽです" />;
   }
 
-  let fetchUserImagesResult: ActionResult<ImageWithTags[]>;
-
-  switch (view) {
-    case "timeline": {
-      const offset = IMAGES_PER_PAGE * (currentPage - 1);
-
-      // offsetが総画像枚数を超えていたら404
-      if (totalImageCount < offset) {
-        notFound();
-      }
-
-      // 画像を取得
-      fetchUserImagesResult = await fetchImagesByUserId(env.DB, user.id, {
-        offset,
-        order: "desc",
-      });
-
-      break;
-    }
-
-    case "random": {
-      fetchUserImagesResult = await fetchRandomImagesByUserId(env.DB, user.id);
-      break;
-    }
+  if (view === "random") {
+    return (
+      <GalleryRandom
+        fetchRandomOptions={{
+          type: "user",
+          userId: user.id,
+        }}
+      />
+    );
   }
+
+  const offset = IMAGES_PER_PAGE * (currentPage - 1);
+
+  // offsetが総画像枚数を超えていたら404
+  if (totalImageCount < offset) {
+    notFound();
+  }
+
+  // 画像を取得
+  const fetchUserImagesResult = await fetchImagesByUserId(env.DB, user.id, {
+    offset,
+    order: "desc",
+  });
 
   if (!fetchUserImagesResult.success) {
     console.error("[page] 画像の取得に失敗しました:", fetchUserImagesResult.error);
@@ -71,5 +64,12 @@ export default async function UserPageContents({ user, view, currentPage = 1 }: 
 
   const images = fetchUserImagesResult.data.map((image) => toFrameImageProps(image, user.id));
 
-  return <GalleryView view={view} images={images} totalImageCount={totalImageCount} currentPage={currentPage} />;
+  return (
+    <GalleryMasonry
+      className="col-start-2"
+      images={images}
+      totalImageCount={totalImageCount}
+      currentPage={currentPage}
+    />
+  );
 }

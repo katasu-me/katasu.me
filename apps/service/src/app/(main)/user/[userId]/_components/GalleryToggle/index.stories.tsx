@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import LayoutToggle from "./index";
+import GalleryToggle from "./index";
 
 const meta = {
-  title: "UserPage/GalleryView/LayoutToggle",
-  component: LayoutToggle,
+  title: "UserPage/GalleryToggle",
+  component: GalleryToggle,
   parameters: {
     layout: "centered",
   },
@@ -18,7 +18,7 @@ const meta = {
     value: "timeline",
     onRandomClick: () => {},
   },
-} satisfies Meta<typeof LayoutToggle>;
+} satisfies Meta<typeof GalleryToggle>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

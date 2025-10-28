@@ -2,7 +2,7 @@ import Link from "next/link";
 import { twJoin, twMerge } from "tailwind-merge";
 import ShuffleIcon from "@/assets/icons/arrows-shuffle.svg";
 import MasonryIcon from "@/assets/icons/masonry.svg";
-import type { ImageLayoutType } from "../../../_types/layout";
+import type { ImageLayoutType } from "../../_types/layout";
 
 type Props = {
   value: ImageLayoutType;
@@ -10,7 +10,7 @@ type Props = {
   className?: string;
 };
 
-export default function LayoutToggle({ value, onRandomClick, className }: Props) {
+export default function GalleryToggle({ value, onRandomClick, className }: Props) {
   const selectedClassname = "interactive-base bg-warm-black text-warm-white shadow-sm";
   const unselectedClassname = "interactive-scale-brightness text-warm-black-50 hover:text-warm-black";
   const randomButtonClassname = "flex w-32 items-center justify-center gap-2 rounded-md px-4 py-2 font-medium text-sm";

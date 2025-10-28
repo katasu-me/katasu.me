@@ -1,4 +1,4 @@
-import { asc, count, desc, eq, sql } from "drizzle-orm";
+import { asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { type ImageWithTags, image, imageTag, tag } from "../../schema";
 import type { ActionResult } from "../../types/error";
@@ -131,6 +131,7 @@ export async function fetchImagesByUserId(
  * ユーザーIDからランダムに10件の画像を取得する
  * @param dbInstance D1インスタンス
  * @param userId ユーザーID
+ * @param limit 取得件数（デフォルト: DEFAULT_RANDOM_IMAGES_LIMIT）
  * @returns ランダムに取得した画像一覧
  */
 export async function fetchRandomImagesByUserId(
@@ -143,7 +144,7 @@ export async function fetchRandomImagesByUserId(
 
     const results = await db.query.image.findMany({
       where: eq(image.userId, userId),
-      orderBy: [sql`RANDOM()`], // TODO: 要検証
+      orderBy: [sql`RANDOM()`],
       limit,
       with: {
         imageTag: {
@@ -308,6 +309,78 @@ export async function fetchImagesByTagId(
       success: false,
       error: {
         message: "タグIDからの画像一覧の取得に失敗しました",
+        rawError: error,
+      },
+    };
+  }
+}
+
+/**
+ * タグIDからランダムに画像を取得する
+ * @param dbInstance D1インスタンス
+ * @param tagId タグID
+ * @param limit 取得件数（デフォルト: DEFAULT_RANDOM_IMAGES_LIMIT）
+ * @returns ランダムに取得した画像一覧
+ */
+export async function fetchRandomImagesByTagId(
+  dbInstance: AnyD1Database,
+  tagId: string,
+  limit = DEFAULT_RANDOM_IMAGES_LIMIT,
+): Promise<ActionResult<ImageWithTags[]>> {
+  try {
+    const db = getDB(dbInstance);
+
+    // 1. タグIDに紐づく画像IDをランダムに取得
+    const imageIdResults = await db
+      .select({
+        imageId: imageTag.imageId,
+      })
+      .from(imageTag)
+      .where(eq(imageTag.tagId, tagId))
+      .orderBy(sql`RANDOM()`)
+      .limit(limit);
+
+    if (imageIdResults.length === 0) {
+      return {
+        success: true,
+        data: [],
+      };
+    }
+
+    const imageIds = imageIdResults.map((r) => r.imageId);
+
+    // 2. 画像IDを使って完全な画像データとタグを取得
+    const results = await db.query.image.findMany({
+      where: inArray(image.id, imageIds),
+      with: {
+        imageTag: {
+          with: {
+            tag: {
+              columns: {
+                userId: false,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      data: results.map((result) => {
+        const { imageTag, ...imageData } = result;
+
+        return {
+          ...imageData,
+          tags: imageTag.map((it) => it.tag),
+        };
+      }),
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: "タグIDからのランダム画像一覧の取得に失敗しました",
         rawError: error,
       },
     };

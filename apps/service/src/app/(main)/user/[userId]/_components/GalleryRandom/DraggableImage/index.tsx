@@ -5,7 +5,7 @@ import { useClickAway } from "react-use";
 import { twMerge } from "tailwind-merge";
 import IconPhoto from "@/assets/icons/photo.svg";
 import Button from "@/components/Button";
-import FrameImage from "../../../FrameImage";
+import FrameImage from "../../FrameImage";
 
 type Props = {
   item: ComponentProps<typeof FrameImage>;

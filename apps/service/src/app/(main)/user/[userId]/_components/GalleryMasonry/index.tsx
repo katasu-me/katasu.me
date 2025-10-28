@@ -4,8 +4,9 @@ import { useSearchParams } from "next/navigation";
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import Pagination from "@/components/Pagination";
-import { IMAGES_PER_PAGE } from "../../../_constants/images";
-import FrameImage from "../../FrameImage";
+import { IMAGES_PER_PAGE } from "../../_constants/images";
+import FrameImage from "../FrameImage";
+import GalleryToggle from "../GalleryToggle";
 
 const DEFAULT_COLUMNS = 2;
 
@@ -37,7 +38,7 @@ function getImageColumns(paginatedImages: Props["images"], columns: number) {
   return cols;
 }
 
-export default function Timeline({
+export default function GalleryMasonry({
   images,
   totalImageCount,
   currentPage = 1,
@@ -88,25 +89,33 @@ export default function Timeline({
   const imageColumns = getImageColumns(images, columns);
 
   return (
-    <div className={twMerge("flex flex-col gap-6", className)}>
-      <div
-        ref={containerRef}
-        className={twMerge(
-          "flex w-full gap-3 transition-opacity duration-400 ease-magnetic",
-          isReady ? "opacity-100" : "opacity-0",
+    <>
+      <div className={twMerge("flex flex-col gap-6", className)}>
+        <div
+          ref={containerRef}
+          className={twMerge(
+            "flex w-full gap-3 transition-opacity duration-400 ease-magnetic",
+            isReady ? "opacity-100" : "opacity-0",
+          )}
+        >
+          {imageColumns.map((column, colIndex) => (
+            <div key={colIndex.toString()} className="flex flex-1 flex-col gap-3">
+              {column.map((image) => (
+                <FrameImage key={image.id} className="h-auto w-full" {...image} />
+              ))}
+            </div>
+          ))}
+        </div>
+        {totalPages > 1 && (
+          <Pagination currentPage={currentPage} totalPages={totalPages} searchParams={searchParams} className="mt-4" />
         )}
-      >
-        {imageColumns.map((column, colIndex) => (
-          <div key={colIndex.toString()} className="flex flex-1 flex-col gap-3">
-            {column.map((image) => (
-              <FrameImage key={image.id} className="h-auto w-full" {...image} />
-            ))}
-          </div>
-        ))}
       </div>
-      {totalPages > 1 && (
-        <Pagination currentPage={currentPage} totalPages={totalPages} searchParams={searchParams} className="mt-4" />
-      )}
-    </div>
+
+      <GalleryToggle
+        className="-translate-x-1/2 fixed bottom-6 left-1/2 z-[calc(infinity)]"
+        value="timeline"
+        onRandomClick={() => {}}
+      />
+    </>
   );
 }
