@@ -67,6 +67,7 @@ jobs:
         run: pnpm build:service
         env:
           NEXT_PUBLIC_SITE_URL: ${{ vars.DEVELOPMENT_URL }}
+          NEXT_PUBLIC_IMAGE_R2_URL: ${{ vars.DEVELOPMENT_NEXT_PUBLIC_IMAGE_R2_URL }}
 
       - name: Deploy to development environment
         if: github.ref == 'refs/heads/develop'
@@ -82,6 +83,7 @@ jobs:
         run: pnpm build:service
         env:
           NEXT_PUBLIC_SITE_URL: ${{ vars.PRODUCTION_URL }}
+          NEXT_PUBLIC_IMAGE_R2_URL: ${{ vars.PRODUCTION_NEXT_PUBLIC_IMAGE_R2_URL }}
 
       - name: Deploy to production environment
         if: github.ref == 'refs/heads/main'
