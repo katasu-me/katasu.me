@@ -94,12 +94,12 @@ export default function GalleryMasonry({
         <div
           ref={containerRef}
           className={twMerge(
-            "flex w-full gap-3 transition-opacity duration-400 ease-magnetic",
+            "flex w-full gap-2 pc:gap-3 transition-opacity duration-400 ease-magnetic",
             isReady ? "opacity-100" : "opacity-0",
           )}
         >
           {imageColumns.map((column, colIndex) => (
-            <div key={colIndex.toString()} className="flex flex-1 flex-col gap-3">
+            <div key={colIndex.toString()} className="flex flex-1 flex-col gap-2 pc:gap-3">
               {column.map((image) => (
                 <FrameImage key={image.id} className="h-auto w-full" {...image} />
               ))}

@@ -2,6 +2,7 @@ import { motion, useMotionValue, useTransform } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { type ComponentProps, type RefObject, useState } from "react";
+import { useDevice } from "@/contexts/DeviceContext";
 import { DEFAULT_IMAGE_TITLE } from "../../../image/[imageId]/_constants/title";
 
 type Item = {
@@ -27,12 +28,10 @@ type Props = {
   delay: number;
 };
 
-const HOROZONTAL_MAX_WIDTH = 400;
-const VERTICAL_MAX_WIDTH = 250;
-
 export default function DraggableImage({ item, initialPosition, containerRef, maxZIndex, delay }: Props) {
   const [zIndex, setZIndex] = useState(2);
 
+  const { isDesktop } = useDevice();
   const x = useMotionValue(initialPosition.x);
   const y = useMotionValue(initialPosition.y);
   const scale = useMotionValue(1);
@@ -54,14 +53,17 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
     setZIndex(nextZIndex);
   };
 
+  const horozontalMaxWidth = isDesktop ? 400 : 300;
+  const verticalMaxWidth = isDesktop ? 250 : 200;
+
   return (
     <motion.div
-      className="absolute touch-none select-none rounded-sm bg-white p-3 pb-6 shadow-lg hover:cursor-grab active:cursor-grabbing"
+      className="absolute touch-none select-none rounded-sm bg-white p-3 pb-4 pc:pb-6 shadow-lg hover:cursor-grab active:cursor-grabbing"
       style={{
         x,
         y,
         zIndex,
-        width: item.width > item.height ? HOROZONTAL_MAX_WIDTH : VERTICAL_MAX_WIDTH,
+        width: item.width > item.height ? horozontalMaxWidth : verticalMaxWidth,
         rotateY,
         rotateZ,
         scale,
@@ -100,7 +102,7 @@ export default function DraggableImage({ item, initialPosition, containerRef, ma
       </div>
       {item.linkParams && (
         <Link
-          className="mx-auto mt-4 line-clamp-1 w-fit px-1 text-sm text-warm-black-50 underline decoration-warm-black-50 decoration-dashed underline-offset-4 transition-colors duration-400 ease-magnetic hover:text-warm-black hover:decoration-warm-black"
+          className="mx-auto mt-3 pc:mt-4 line-clamp-1 w-fit px-1 pb-1 pc:pb-0 pc:text-sm text-warm-black-50 text-xs underline decoration-warm-black-50 decoration-dashed pc:underline-offset-4 underline-offset-5 transition-colors duration-400 ease-magnetic hover:text-warm-black hover:decoration-warm-black"
           href={`/user/${item.linkParams.userId}/image/${item.linkParams.imageId}`}
         >
           {item.alt || DEFAULT_IMAGE_TITLE}
