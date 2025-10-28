@@ -9,36 +9,6 @@ const meta = {
   parameters: {
     layout: "centered",
   },
-  argTypes: {
-    src: {
-      control: "text",
-      description: "画像のソース",
-    },
-    alt: {
-      control: "text",
-      description: "画像の代替テキスト",
-    },
-    width: {
-      control: "number",
-      description: "画像の幅",
-    },
-    height: {
-      control: "number",
-      description: "画像の高さ",
-    },
-    linkParams: {
-      control: "text",
-      description: "画像をクリックしたときのリンク先",
-    },
-    hasBlur: {
-      control: "boolean",
-      description: "ぼかしを適用するかどうか",
-    },
-    disableHoverEffect: {
-      control: "boolean",
-      description: "ホバーエフェクトを無効にするかどうか",
-    },
-  },
   args: {
     src: dummyImageDataUrl,
     alt: "サンプル画像",
