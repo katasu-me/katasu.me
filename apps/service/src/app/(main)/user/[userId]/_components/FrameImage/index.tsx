@@ -10,7 +10,6 @@ type FrameImageProps = {
     userId: string;
     imageId: string;
   };
-  hasBlur?: boolean;
   disableHoverEffect?: boolean;
 } & Omit<ComponentProps<typeof Image>, "width" | "height">;
 
@@ -19,7 +18,6 @@ export default function FrameImage({
   width,
   height,
   linkParams,
-  hasBlur = false,
   disableHoverEffect = false,
   ...props
 }: FrameImageProps) {
@@ -42,7 +40,6 @@ export default function FrameImage({
         className={twMerge(
           "pointer-events-none object-cover transition-all",
           !disableHoverEffect && "group-hover:brightness-90",
-          hasBlur && "blur-sm",
         )}
         fill
         {...props}

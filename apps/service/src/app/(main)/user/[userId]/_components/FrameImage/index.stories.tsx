@@ -97,15 +97,6 @@ export const WithLink: Story = {
   },
 };
 
-export const WithBlur: Story = {
-  args: {
-    alt: "ぼかし付きの画像",
-    hasBlur: true,
-    width: 300,
-    height: 200,
-  },
-};
-
 export const WithoutHoverEffect: Story = {
   args: {
     alt: "ホバーエフェクトなしの画像",
