@@ -35,6 +35,71 @@ mkcert local.katasu.me
 open http://local.katasu.me:3000
 ```
 
+### 初期環境構築
+
+#### 1. Cloudflareへのログイン
+
+```bash
+pnpm wrangler login
+```
+
+#### 2. wrangler設定ファイルの作成
+
+```bash
+cd apps/service
+cp wrangler.example.jsonc wrangler.jsonc
+```
+
+#### 3. D1データベースの作成
+
+```bash
+# 開発環境用D1データベース作成
+pnpm wrangler d1 create katasu-me-dev
+```
+
+出力された `database_id` を `wrangler.jsonc` の `d1_databases` セクションに記入します。
+
+#### 4. KV Namespaceの作成
+
+```bash
+# キャッシュ用KV作成
+pnpm wrangler kv namespace create CACHE_KV
+```
+
+出力された `id` を `wrangler.jsonc` の `kv_namespaces` セクションに記入します。
+
+#### 5. R2バケットの作成
+
+```bash
+# Next.js インクリメンタルキャッシュ用
+pnpm wrangler r2 bucket create katasu-me-dev-inc-cache
+
+# 画像保存用
+pnpm wrangler r2 bucket create katasu-me-dev-images
+```
+
+#### 6. 環境変数の設定
+
+```bash
+cp .env.example .env.local
+```
+
+Google OAuth、OpenAI APIキーなど、必要な環境変数を `.env.local` に設定します。
+
+
+#### 7. データベースマイグレーション
+
+```bash
+# apps/service ディレクトリで実行
+pnpm db:migrate
+```
+
+#### 8. シードデータの投入
+
+```bash
+pnpm db:seed
+```
+
 ### 起動
 
 ```sh
