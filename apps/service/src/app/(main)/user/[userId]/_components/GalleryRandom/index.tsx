@@ -1,66 +1,31 @@
 "use client";
 
-import { type ComponentProps, useCallback, useEffect, useRef, useState } from "react";
-import { twMerge } from "tailwind-merge";
-import Message from "@/components/Message";
+import { type ComponentProps, useCallback, useEffect, useState } from "react";
 import { useDevice } from "@/contexts/DeviceContext";
 import { fetchRandomImages } from "../../_actions/fetch-random-images";
 import { toFrameImageProps } from "../../_lib/convert";
 import type { FetchRandomImagesOptions } from "../../_types/fetch-random-images";
 import type FrameImage from "../FrameImage";
 import GalleryToggle from "../GalleryToggle";
-import DraggableImage from "./DraggableImage";
+import DraggableImages from "./DraggableImages";
 
 type Props = {
-  className?: string;
   fetchRandomOptions: FetchRandomImagesOptions;
 };
 
 const SHAKE_THRESHOLD = 15;
 const SHAKE_COOLDOWN = 500;
 
-type Position = {
-  x: number;
-  y: number;
-  rotation: number;
-};
-
-const DEFAULT_POSITION: Position = {
-  x: 0,
-  y: 0,
-  rotation: 0,
-};
-
-const getRandomPosition = (container?: HTMLDivElement | null): Position => {
-  const margin = 200; // 画像の半分程度のマージン
-
-  const containerWidth = container?.clientWidth ?? window.innerWidth;
-  const containerHeight = container?.clientHeight ?? window.innerHeight;
-
-  const maxX = (containerWidth - margin * 2) / 2;
-  const maxY = (containerHeight - margin * 2) / 2;
-
-  return {
-    x: -maxX + Math.random() * maxX * 2,
-    y: -maxY + Math.random() * maxY * 2,
-    rotation: -45 + Math.random() * 90,
-  };
-};
-
-export default function GalleryRandom({ className, fetchRandomOptions }: Props) {
+export default function GalleryRandom({ fetchRandomOptions }: Props) {
   const [images, setImages] = useState<ComponentProps<typeof FrameImage>[]>([]);
-  const [positions, setPositions] = useState<Position[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string>();
   const { isDesktop } = useDevice();
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const maxZIndex = useRef(2);
 
   // ランダム表示を更新
   const fetchImages = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
+    setError(undefined);
 
     const result = await fetchRandomImages(fetchRandomOptions);
 
@@ -72,10 +37,6 @@ export default function GalleryRandom({ className, fetchRandomOptions }: Props) 
 
     const imageProps = result.data.map((image) => toFrameImageProps(image, image.userId));
     setImages(imageProps);
-
-    if (containerRef.current) {
-      setPositions(imageProps.map(() => getRandomPosition(containerRef.current)));
-    }
 
     setIsLoading(false);
   }, [fetchRandomOptions]);
@@ -148,32 +109,9 @@ export default function GalleryRandom({ className, fetchRandomOptions }: Props) 
     };
   }, [isDesktop, fetchImages]);
 
-  if (error) {
-    return <Message message={error} icon="error" />;
-  }
-
   return (
     <>
-      <div
-        ref={containerRef}
-        className={twMerge(
-          // FIXME: タブレットくらいのサイズで若干の横スクロールが発生する
-          "relative col-span-full flex h-[80vh] w-full items-center justify-center overflow-x-clip",
-          className,
-        )}
-      >
-        {!isLoading &&
-          images.map((item, i) => (
-            <DraggableImage
-              key={i.toString()}
-              item={item}
-              initialPosition={positions.at(i) ?? DEFAULT_POSITION}
-              containerRef={containerRef}
-              maxZIndex={maxZIndex}
-              delay={i * 0.05}
-            />
-          ))}
-      </div>
+      <DraggableImages images={images} isLoading={isLoading} error={error} />
 
       <GalleryToggle
         className="-translate-x-1/2 fixed bottom-6 left-1/2 z-[calc(infinity)]"

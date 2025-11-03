@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useRef } from "react";
-import DraggableImage from "./";
+import DraggableImageStack from "./";
 
 const meta = {
   title: "UserPage/GalleryView/Random/DraggableImage",
-  component: DraggableImage,
+  component: DraggableImageStack,
   parameters: {
     layout: "fullscreen",
   },
@@ -40,11 +40,11 @@ const meta = {
           justifyContent: "center",
         }}
       >
-        <DraggableImage {...args} containerRef={containerRef} maxZIndex={maxZIndex} />
+        <DraggableImageStack {...args} containerRef={containerRef} maxZIndex={maxZIndex} />
       </div>
     );
   },
-} satisfies Meta<typeof DraggableImage>;
+} satisfies Meta<typeof DraggableImageStack>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
