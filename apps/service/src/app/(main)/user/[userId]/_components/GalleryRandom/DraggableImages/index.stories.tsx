@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useRef } from "react";
 import DraggableImageStack from "./";
 
 const meta = {
@@ -9,87 +8,110 @@ const meta = {
     layout: "fullscreen",
   },
   args: {
-    item: {
-      src: "https://placehold.jp/400x600.png",
-      alt: "ドラッグ可能な画像",
-      width: 400,
-      height: 600,
-      linkParams: {
-        userId: "test",
-        imageId: "1",
+    images: [
+      {
+        id: "1",
+        src: "https://placehold.jp/400x600.png",
+        alt: "ドラッグ可能な画像",
+        width: 400,
+        height: 600,
+        linkParams: {
+          userId: "test",
+          imageId: "1",
+        },
       },
-    },
-    initialPosition: { x: 0, y: 0, rotation: 0 },
-    delay: 0,
-    containerRef: { current: null },
-    maxZIndex: { current: 2 },
-  },
-  render: (args) => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const maxZIndex = useRef(2);
-
-    return (
-      <div
-        ref={containerRef}
-        style={{
-          width: "100vw",
-          height: "100vh",
-          position: "relative",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <DraggableImageStack {...args} containerRef={containerRef} maxZIndex={maxZIndex} />
-      </div>
-    );
+    ],
+    isLoading: false,
   },
 } satisfies Meta<typeof DraggableImageStack>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    initialPosition: { x: 0, y: 0, rotation: 0 },
-    delay: 0,
-  },
-};
+export const Default: Story = {};
 
-export const WithRotation: Story = {
+export const MultipleImages: Story = {
   args: {
-    initialPosition: { x: 0, y: 0, rotation: 45 },
-    delay: 0,
-  },
-};
-
-export const OffsetPosition: Story = {
-  args: {
-    initialPosition: { x: -200, y: -100, rotation: -15 },
-    delay: 0,
+    images: [
+      {
+        id: "1",
+        src: "https://placehold.jp/400x600.png",
+        alt: "縦長の画像1",
+        width: 400,
+        height: 600,
+        linkParams: {
+          userId: "test",
+          imageId: "1",
+        },
+      },
+      {
+        id: "2",
+        src: "https://placehold.jp/600x400.png",
+        alt: "横長の画像1",
+        width: 600,
+        height: 400,
+        linkParams: {
+          userId: "test",
+          imageId: "2",
+        },
+      },
+      {
+        id: "3",
+        src: "https://placehold.jp/400x600.png",
+        alt: "縦長の画像2",
+        width: 400,
+        height: 600,
+        linkParams: {
+          userId: "test",
+          imageId: "3",
+        },
+      },
+    ],
   },
 };
 
 export const HorizontalImage: Story = {
   args: {
-    item: {
-      src: "https://placehold.jp/600x400.png",
-      alt: "横長の画像",
-      width: 600,
-      height: 400,
-      linkParams: {
-        userId: "test",
-        imageId: "2",
+    images: [
+      {
+        id: "1",
+        src: "https://placehold.jp/600x400.png",
+        alt: "横長の画像",
+        width: 600,
+        height: 400,
+        linkParams: {
+          userId: "test",
+          imageId: "1",
+        },
       },
-    },
-    initialPosition: { x: 0, y: 0, rotation: 0 },
-    delay: 0,
+    ],
   },
 };
 
-export const WithDelay: Story = {
+export const WithoutLink: Story = {
   args: {
-    initialPosition: { x: 0, y: 0, rotation: 0 },
-    delay: 1,
+    images: [
+      {
+        id: "1",
+        src: "https://placehold.jp/400x600.png",
+        alt: "リンクなし画像",
+        width: 400,
+        height: 600,
+      },
+    ],
+  },
+};
+
+export const WithLoading: Story = {
+  args: {
+    images: [],
+    isLoading: true,
+  },
+};
+
+export const WithError: Story = {
+  args: {
+    images: [],
+    error: "画像の読み込みに失敗しました",
   },
 };
