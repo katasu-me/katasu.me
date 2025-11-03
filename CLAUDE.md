@@ -56,55 +56,30 @@ katasu.me は「インターネットのかたすみにある、ぽつんと画�
 
 ### ディレクトリ構成
 
+**コンポーネント配置の詳細なガイドラインは @docs/directory-structure.md を参照してください。**
+
 #### apps/service
-featuresベースの構成を採用し、機能単位でコンポーネントを整理しています。
+ページ単位でコンポーネントを整理し、関連するファイルを近くに配置する構成を採用しています。
 
 ```
 src/
-├── app/                    # Next.js App Router（ページとレイアウト）
-├── components/             # プロジェクト全体で共有される汎用UIコンポーネント
-│   ├── Button/            # 基本UIコンポーネント（直接配置）
-│   ├── Input/
-│   ├── Layout/            # レイアウト関連コンポーネント
-│   ├── Navigation/        # ナビゲーション関連コンポーネント
-│   ├── constants/         # 定数定義
-│   └── types/            # 型定義
-├── features/              # ビジネスロジック単位で機能を分割
-│   ├── auth/             # 認証・ユーザー管理
-│   │   ├── components/   # 認証専用コンポーネント
-│   │   ├── actions/      # Server Actions
-│   │   ├── schemas/      # バリデーションスキーマ
-│   │   └── lib/         # 認証関連ユーティリティ
-│   └── gallery/         # 画像ギャラリー機能
-│       ├── components/  # ギャラリー専用コンポーネント
-│       └── types/       # ギャラリー関連型定義
-├── assets/               # 画像、SVGなどの静的リソース
-├── styles/               # グローバルスタイルとCSS変数
-├── lib/                  # プロジェクト全体で使用されるユーティリティ関数
-└── db.ts                 # Drizzle ORMのDB接続設定
+├── app/                           # Next.js App Router（ページとレイアウト）
+│   ├── _components/              # app/配下で共通使用
+│   ├── (main)/
+│   │   └── user/[userId]/
+│   │       ├── page.tsx          # ページ本体
+│   │       ├── _components/      # このページ配下で共通使用
+│   │       ├── _actions/         # Server Actions
+│   │       ├── _schemas/         # バリデーションスキーマ
+│   │       ├── _lib/             # ユーティリティ関数
+│   │       ├── _types/           # 型定義
+│   │       └── _constants/       # 定数定義
+├── components/                    # プロジェクト全体で共有される汎用UIコンポーネント
+├── assets/                        # 画像、SVGなどの静的リソース
+├── styles/                        # グローバルスタイルとCSS変数
+├── lib/                           # プロジェクト全体で使用されるユーティリティ関数
+└── db.ts                          # Drizzle ORMのDB接続設定
 ```
-
-#### ディレクトリ配置のルール
-
-**components/ ディレクトリ**
-- 複数のfeatureや全体で使用される汎用的なUIコンポーネント・定数・型を配置
-- 基本UIコンポーネントは `components/` 直下に配置（`components/Button/`）
-- 関連するコンポーネントはグループ化（`components/Layout/`、`components/Navigation/`）
-
-**features/ ディレクトリ**
-- ビジネスロジック単位で機能を分割
-- 各feature内では以下の構成を基本とする：
-  - `components/` - その機能専用のコンポーネント
-  - `actions/` - Server Actions（必要に応じて）
-  - `schemas/` - バリデーションスキーマ（必要に応じて）
-  - `lib/` - その機能専用のユーティリティ
-  - `types/` - その機能専用の型定義
-- 他のfeatureに依存しすぎない適度な独立性を保つ
-
-**lib/ ディレクトリ**
-- プロジェクト全体で使用される共通のユーティリティ関数
-- 外部サービスとの連携（Cloudflare R2、画像処理など）
-- 複数のfeatureで共有される可能性が高い機能
 
 各コンポーネントには対応する`.stories.tsx`ファイルが付属し、Storybookで動作確認できます。
 

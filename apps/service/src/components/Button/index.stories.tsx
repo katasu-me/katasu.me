@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import Button from ".";
 
 const meta = {
-  title: "shared/Button",
+  title: "Components/Button",
   component: Button,
   parameters: {
     layout: "centered",

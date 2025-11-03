@@ -24,7 +24,7 @@ export default function Button({ variant = "outline", asChild, className, childr
     ],
     [
       "danger",
-      "bg-warm-white border border-red-700 text-red-700 hover:bg-red-700 hover:text-warm-white hover:shadow-lg active:brightness-90 disabled:bg-red-300 disabled:hover:brightness-100 disabled:shadow-none",
+      "bg-warm-white border border-red-700 text-red-700 hover:bg-red-700 hover:text-white hover:shadow-lg active:brightness-90 disabled:bg-red-300 disabled:brightness-90 disabled:border-red-300 disabled:text-white disabled:shadow-none",
     ],
   ]);
 

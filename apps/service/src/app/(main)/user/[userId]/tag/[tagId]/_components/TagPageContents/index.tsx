@@ -2,10 +2,11 @@ import { fetchImagesByTagId, fetchTotalImageCountByTagId, type Tag } from "@kata
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { notFound } from "next/navigation";
 import Message from "@/components/Message";
-import GalleryView from "@/features/gallery/components/GalleryView";
-import { IMAGES_PER_PAGE } from "@/features/gallery/constants/images";
-import { toFrameImageProps } from "@/features/gallery/lib/convert";
-import type { ImageLayoutType } from "@/features/gallery/types/layout";
+import GalleryMasonry from "../../../../_components/GalleryMasonry";
+import GalleryRandom from "../../../../_components/GalleryRandom";
+import { IMAGES_PER_PAGE } from "../../../../_constants/images";
+import { toFrameImageProps } from "../../../../_lib/convert";
+import type { ImageLayoutType } from "../../../../_types/layout";
 
 type Props = {
   tag: Tag;
@@ -30,6 +31,17 @@ export default async function TagPageContents({ tag, view, currentPage = 1 }: Pr
     return <Message message="からっぽです" />;
   }
 
+  if (view === "random") {
+    return (
+      <GalleryRandom
+        fetchRandomOptions={{
+          type: "tag",
+          tagId: tag.id,
+        }}
+      />
+    );
+  }
+
   const offset = IMAGES_PER_PAGE * (currentPage - 1);
 
   // offsetが総画像枚数を超えていたら404
@@ -51,12 +63,11 @@ export default async function TagPageContents({ tag, view, currentPage = 1 }: Pr
   const images = fetchTagImagesResult.data.map((image) => toFrameImageProps(image, tag.userId));
 
   return (
-    <GalleryView
-      view={view}
+    <GalleryMasonry
+      className="col-start-2"
       images={images}
       totalImageCount={totalImageCount}
       currentPage={currentPage}
-      defaultTags={[tag.name]}
     />
   );
 }

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import TextLink from ".";
 
 const meta: Meta<typeof TextLink> = {
-  title: "Shared/Link",
+  title: "Components/TextLink",
   component: TextLink,
   parameters: {
     layout: "centered",

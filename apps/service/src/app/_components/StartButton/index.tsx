@@ -6,8 +6,8 @@ import { cachedFetchPublicUserDataById } from "@/app/_lib/cached-user-data";
 import IconLoader2 from "@/assets/icons/loader-2.svg";
 import IconPlant from "@/assets/icons/plant.svg";
 import Button from "@/components/Button";
-import SignInDrawer from "@/features/auth/components/SignInDrawer";
 import { getUserSession } from "@/lib/auth";
+import SignInDrawer from "../SignInDrawer";
 
 type Props = {
   className?: string;

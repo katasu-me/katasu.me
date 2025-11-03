@@ -22,7 +22,7 @@
       "dependsOn": ["^test"]
     },
     "dev": {
-      "env": ["NEXT_PUBLIC_SITE_URL", "BETTER_AUTH_*", "GOOGLE_*"],
+      "env": ["NEXT_PUBLIC_SITE_URL", "BETTER_AUTH_*", "GOOGLE_*", "OPENAI_API_KEY"],
       "persistent": true,
       "cache": false
     },

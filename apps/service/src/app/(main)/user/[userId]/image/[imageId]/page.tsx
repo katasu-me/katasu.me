@@ -54,24 +54,18 @@ export default async function ImagesPage({ params }: PageProps<"/user/[userId]/i
 
   const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(userId), getUserSession(env.DB)]);
 
-  // 存在しない、または新規登録が完了していない場合は404
-  if (
-    !userResult.success ||
-    !userResult.data ||
-    !userResult.data.termsAgreedAt ||
-    !userResult.data.privacyPolicyAgreedAt
-  ) {
+  // ユーザーが存在しない
+  if (!userResult.success || !userResult.data) {
     notFound();
   }
 
-  const user = userResult.data;
-  const canEdit = session?.user.id === user.id;
+  const authorUser = userResult.data;
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header user={user} />
+      <Header user={authorUser} />
       <Suspense fallback={<Loading className="col-start-2 py-16" />}>
-        <ImagePageContent authorUserId={userId} imageId={imageId} canEdit={canEdit} />
+        <ImagePageContent loggedInUserId={session?.user.id} authorUserId={userId} imageId={imageId} />
       </Suspense>
     </div>
   );

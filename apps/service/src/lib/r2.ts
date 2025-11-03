@@ -81,16 +81,25 @@ export function getImageUrl(userId: string, imageId: string, variant: "original"
 /**
  * ユーザーアバター画像のURLを取得
  * @param userId ユーザーID
+ * @param avatarSetAt アバター画像の更新日時
  * @returns アバター画像URL
  */
-export function getUserAvatarUrl(userId: string): string {
+export function getUserAvatarUrl(userId: string, avatarSetAt?: Date | null): string {
   const bucketPublicUrl = process.env.NEXT_PUBLIC_IMAGE_R2_URL;
 
   if (!bucketPublicUrl) {
     throw new Error("NEXT_PUBLIC_IMAGE_R2_URLが設定されていません");
   }
 
-  return `${bucketPublicUrl}/${generateR2Key("avatar", userId)}`;
+  const baseUrl = `${bucketPublicUrl}/${generateR2Key("avatar", userId)}`;
+
+  // アイコン変更時に即時反映されるようにする目的
+  // NOTE: new Date()で再度Dateインスタンスを作っているのは TypeError: b2.getTime is not a function がでたため (調査してない)
+  if (avatarSetAt) {
+    return `${baseUrl}?v=${new Date(avatarSetAt).getTime()}`;
+  }
+
+  return baseUrl;
 }
 
 /**
@@ -167,4 +176,22 @@ export async function deleteImageFromR2(r2: R2Bucket, userId: string, imageId: s
   const thumbnailKey = generateR2Key("image", userId, imageId, "thumbnail");
 
   await Promise.all([r2.delete(originalKey), r2.delete(thumbnailKey)]);
+}
+
+/**
+ * R2からユーザーの全データを削除
+ * @param r2 R2バケットインスタンス
+ * @param userId ユーザーID
+ */
+export async function deleteUserDataFromR2(r2: R2Bucket, userId: string): Promise<void> {
+  const safeUserId = sanitizePathComponent(userId);
+
+  const avatarKey = `avatars/${safeUserId}`;
+  const imagesPrefix = `images/${safeUserId}/`;
+
+  const [, imagesList] = await Promise.all([r2.delete(avatarKey), r2.list({ prefix: imagesPrefix })]);
+
+  if (imagesList.objects.length > 0) {
+    return r2.delete(imagesList.objects.map(({ key }) => key));
+  }
 }

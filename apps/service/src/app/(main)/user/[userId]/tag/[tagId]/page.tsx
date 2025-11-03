@@ -5,18 +5,15 @@ import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
 import { fallback, object, parse, string } from "valibot";
 import { cachedFetchPublicUserDataById } from "@/app/_lib/cached-user-data";
-import IconDots from "@/assets/icons/dots.svg";
-import IconSearch from "@/assets/icons/search.svg";
 import Header from "@/components/Header";
-import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
 import { DEFAULT_AVATAR_URL } from "@/constants/image";
 import { SITE_DESCRIPTION_LONG } from "@/constants/site";
-import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { getUserSession } from "@/lib/auth";
 import { generateMetadataTitle } from "@/lib/meta";
 import { getUserAvatarUrl } from "@/lib/r2";
 import UserImageDropArea from "../../_components/UserImageDropArea";
+import { GalleryViewSchema } from "../../_schemas/view";
 import TagPageContents from "./_components/TagPageContents";
 
 const cachedFetchTagById = cache(async (tagId: string) => {
@@ -53,7 +50,7 @@ export async function generateMetadata({ params }: PageProps<"/user/[userId]/tag
   }
 
   const user = userResult.data;
-  const avatarUrl = user.hasAvatar ? getUserAvatarUrl(user.id) : DEFAULT_AVATAR_URL;
+  const avatarUrl = user.hasAvatar ? getUserAvatarUrl(user.id, user.avatarSetAt) : DEFAULT_AVATAR_URL;
 
   return generateMetadataTitle({
     pageTitle: `#${tag.name} - ${user.name}`,
@@ -108,24 +105,14 @@ export default async function TagPage({ params, searchParams }: PageProps<"/user
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header user={user}>
-        {/* TODO: 検索 */}
-        <IconButton title="検索">
-          <IconSearch className="h-6 w-6 opacity-25" />
-        </IconButton>
-
-        {/* TODO: メニュー */}
-        <IconButton title="その他">
-          <IconDots className="h-6 w-6 opacity-25" />
-        </IconButton>
-      </Header>
+      <Header user={user} rightMenu={session?.user?.id ? { loggedInUserId: session.user.id } : undefined} />
 
       <h1 className="col-start-2 text-4xl">{`#${tag.name}`}</h1>
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
         {isOwner && (
           <Suspense>
-            <UserImageDropArea userId={userId} maxPhotos={user.maxPhotos} />
+            <UserImageDropArea userId={userId} maxPhotos={user.plan.maxPhotos} />
           </Suspense>
         )}
 

@@ -7,12 +7,14 @@ import { getDB } from "./db";
 import { fetchTotalImageCountByUserId } from "./image/fetch";
 
 export type UserWithMaxPhotos = User & {
-  maxPhotos: number;
+  plan: {
+    maxPhotos: number;
+  };
 };
 
 export type PublicUserData = Pick<
   UserWithMaxPhotos,
-  "id" | "name" | "bannedAt" | "termsAgreedAt" | "privacyPolicyAgreedAt" | "maxPhotos"
+  "id" | "name" | "avatarSetAt" | "bannedAt" | "termsAgreedAt" | "privacyPolicyAgreedAt" | "plan"
 > & {
   hasAvatar: boolean;
 };
@@ -30,7 +32,7 @@ export async function fetchPublicUserDataById(
   try {
     const db = getDB(dbInstance);
 
-    const result = await db.query.user.findFirst({
+    const rawResult = await db.query.user.findFirst({
       where: (u) => eq(u.id, userId),
       columns: {
         id: true,
@@ -51,11 +53,10 @@ export async function fetchPublicUserDataById(
 
     return {
       success: true,
-      data: result
+      data: rawResult
         ? {
-            ...result,
-            maxPhotos: result.plan.maxPhotos,
-            hasAvatar: result.avatarSetAt !== null,
+            ...rawResult,
+            hasAvatar: rawResult.avatarSetAt !== null,
           }
         : undefined,
     };
@@ -96,12 +97,7 @@ export async function fetchUserById(
 
     return {
       success: true,
-      data: result
-        ? {
-            ...result,
-            maxPhotos: result.plan.maxPhotos,
-          }
-        : undefined,
+      data: result,
     };
   } catch (error) {
     return {
@@ -237,6 +233,33 @@ export async function banUser(dbInstance: AnyD1Database, userId: string): Promis
       success: false,
       error: {
         message: "ユーザーのBAN処理に失敗しました",
+        rawError: error,
+      },
+    };
+  }
+}
+
+/**
+ * ユーザーを削除する
+ * @param dbInstance D1インスタンス
+ * @param userId ユーザーID
+ * @returns 削除結果
+ */
+export async function deleteUser(dbInstance: AnyD1Database, userId: string): Promise<ActionResult<void>> {
+  try {
+    const db = getDB(dbInstance);
+
+    await db.delete(user).where(eq(user.id, userId));
+
+    return {
+      success: true,
+      data: undefined,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: "ユーザーの削除に失敗しました",
         rawError: error,
       },
     };

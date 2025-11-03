@@ -5,7 +5,7 @@ import Button from "../Button";
 import Drawer from "./index";
 
 const meta: Meta<typeof Drawer> = {
-  title: "Shared/Drawer",
+  title: "Components/Drawer",
   component: Drawer,
   parameters: {
     layout: "centered",

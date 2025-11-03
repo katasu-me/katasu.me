@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import Pagination from ".";
 
 const meta = {
-  title: "Shared/Pagination",
+  title: "Components/Pagination",
   component: Pagination,
   parameters: {
     layout: "centered",

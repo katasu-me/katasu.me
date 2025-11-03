@@ -1,0 +1,96 @@
+import type { PublicUserData } from "@katasu.me/service-db";
+import type { Meta, StoryObj } from "@storybook/react";
+import Header from ".";
+
+const mockUser: PublicUserData = {
+  id: "user123",
+  name: "テストユーザー",
+  hasAvatar: false,
+  plan: {
+    maxPhotos: 1000,
+  },
+  bannedAt: null,
+  avatarSetAt: null,
+  termsAgreedAt: new Date(),
+  privacyPolicyAgreedAt: new Date(),
+};
+
+const mockUserWithAvatar: PublicUserData = {
+  id: "user456",
+  name: "アバター付きユーザー",
+  hasAvatar: true,
+  plan: {
+    maxPhotos: 1000,
+  },
+  bannedAt: null,
+  avatarSetAt: new Date(),
+  termsAgreedAt: new Date(),
+  privacyPolicyAgreedAt: new Date(),
+};
+
+const meta = {
+  title: "Components/Header",
+  component: Header,
+  parameters: {
+    layout: "padded",
+  },
+  tags: ["autodocs"],
+  argTypes: {
+    rightMenu: {
+      control: "object",
+      description: "右側のメニュー設定（loggedInUserIdを含む）",
+    },
+  },
+  decorators: [
+    (Story) => (
+      <div className="max-w-screen-lg">
+        <Story />
+      </div>
+    ),
+  ],
+} satisfies Meta<typeof Header>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  args: {
+    user: mockUser,
+  },
+};
+
+export const WithRightMenu: Story = {
+  args: {
+    user: mockUser,
+    rightMenu: {
+      loggedInUserId: "logged-in-user",
+    },
+  },
+};
+
+export const OwnerPage: Story = {
+  args: {
+    user: mockUser,
+    rightMenu: {
+      loggedInUserId: "user123", // mockUser.idと同じ
+    },
+  },
+};
+
+export const WithAvatar: Story = {
+  args: {
+    user: mockUserWithAvatar,
+    rightMenu: {
+      loggedInUserId: "user456", // mockUserWithAvatar.idと同じ
+    },
+  },
+};
+
+export const VisitorView: Story = {
+  args: {
+    user: mockUserWithAvatar,
+    rightMenu: {
+      loggedInUserId: "other-user", // 異なるユーザーID
+    },
+  },
+};
