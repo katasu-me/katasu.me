@@ -26,7 +26,7 @@ export default function DraggableImage({
   image: { src, alt, width, height, linkParams },
   initialPosition,
   delay,
-  containerRef,
+  containerRef: _r,
   maxZIndex,
   horizontalMaxWidth,
   verticalMaxWidth,
@@ -85,7 +85,7 @@ export default function DraggableImage({
         damping: 100,
       }}
       drag
-      dragConstraints={containerRef}
+      // dragConstraints={containerRef}
       onDragStart={updateZIndex}
     >
       <div className="relative w-full overflow-hidden bg-warm-black-25" style={{ aspectRatio: `${width} / ${height}` }}>
