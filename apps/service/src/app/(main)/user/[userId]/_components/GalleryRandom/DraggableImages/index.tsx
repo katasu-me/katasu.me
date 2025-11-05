@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import Message from "@/components/Message";
 import { useDevice } from "@/contexts/DeviceContext";
@@ -49,7 +50,7 @@ export default function DraggableImages({ images, isLoading = false, error }: Pr
   const verticalMaxWidth = isDesktop ? 250 : 200;
 
   return (
-    <div
+    <motion.div
       ref={containerRef}
       className="relative col-span-full flex h-[80vh] w-full items-center justify-center overflow-x-clip"
     >
@@ -71,6 +72,6 @@ export default function DraggableImages({ images, isLoading = false, error }: Pr
             />
           );
         })}
-    </div>
+    </motion.div>
   );
 }
