@@ -75,8 +75,8 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
+  reactCompiler: true,
   experimental: {
-    reactCompiler: true,
     serverActions: {
       bodySizeLimit: "10mb",
     },
