@@ -61,7 +61,7 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
   }
 
   // ユーザーデータのキャッシュを飛ばす
-  invalidateCache(env.CACHE_KV, CACHE_KEYS.user(session.user.id));
+  await invalidateCache(env.CACHE_KV, CACHE_KEYS.user(session.user.id));
 
   // 成功時はユーザーページへリダイレクト
   redirect(`/user/${session.user.id}`);

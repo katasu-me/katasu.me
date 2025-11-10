@@ -64,7 +64,7 @@ export async function updateUserSettingsAction(_prevState: unknown, formData: Fo
   }
 
   // ユーザーデータのキャッシュを飛ばす
-  invalidateCache(env.CACHE_KV, CACHE_KEYS.user(session.user.id));
+  await invalidateCache(env.CACHE_KV, CACHE_KEYS.user(session.user.id));
 
   return submission.reply();
 }
