@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.4/schema.json",
   "files": {
     "includes": ["**", "!**/.next", "!**/.vercel", "!**/.wrangler", "!**/node_modules"]
   },
@@ -67,12 +67,6 @@
       "indentWidth": 2,
       "lineWidth": 120,
       "quoteStyle": "double"
-    },
-    "linter": {
-      "enabled": false
-    },
-    "parser": {
-      "cssModules": true
     }
   }
 }
