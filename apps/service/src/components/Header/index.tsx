@@ -53,13 +53,13 @@ export default function Header({ user, rightMenu }: Props) {
       {rightMenu && (
         <div className="flex items-center gap-2">
           {/* TODO: 検索機能 */}
-          <IconButton title="検索">
+          <IconButton>
             <IconSearch className="h-6 w-6 opacity-25" />
           </IconButton>
 
           <DropdownMenu
             trigger={
-              <IconButton title="その他">
+              <IconButton>
                 <IconDots className="h-6 w-6" />
               </IconButton>
             }

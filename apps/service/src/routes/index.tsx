@@ -1,5 +1,5 @@
 import type { PublicUserData } from "@katasu.me/service-db";
-import { createFileRoute } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import LogoImage from "@/assets/logo.svg?react";
 import BudouX from "@/components/BudouX";
@@ -82,7 +82,9 @@ function App() {
           </p>
         </div>
 
-        <DemoImages className="mx-auto mt-32 mb-16" />
+        <ClientOnly>
+          <DemoImages className="mx-auto mt-32 mb-16" />
+        </ClientOnly>
 
         <StartButton className="my-32 mt-16" user={user} />
       </section>
