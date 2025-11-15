@@ -8,141 +8,156 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$";
-import { Route as ApiR2SplatRouteImport } from "./routes/api/r2/$";
-import { Route as ClosedBetaIndexRouteImport } from "./routes/closed-beta/index";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as UserUserIdRouteImport } from "./routes/user/$userId";
-import { Route as UserUserIdIndexRouteImport } from "./routes/user/$userId/index";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as ClosedBetaIndexRouteImport } from './routes/closed-beta/index'
+import { Route as UserUserIdRouteImport } from './routes/user/$userId'
+import { Route as UserUserIdIndexRouteImport } from './routes/user/$userId/index'
+import { Route as ApiR2SplatRouteImport } from './routes/api/r2/$'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ClosedBetaIndexRoute = ClosedBetaIndexRouteImport.update({
-  id: "/closed-beta/",
-  path: "/closed-beta/",
+  id: '/closed-beta/',
+  path: '/closed-beta/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const UserUserIdRoute = UserUserIdRouteImport.update({
-  id: "/user/$userId",
-  path: "/user/$userId",
+  id: '/user/$userId',
+  path: '/user/$userId',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const UserUserIdIndexRoute = UserUserIdIndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => UserUserIdRoute,
-} as any);
+} as any)
 const ApiR2SplatRoute = ApiR2SplatRouteImport.update({
-  id: "/api/r2/$",
-  path: "/api/r2/$",
+  id: '/api/r2/$',
+  path: '/api/r2/$',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: "/api/auth/$",
-  path: "/api/auth/$",
+  id: '/api/auth/$',
+  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/user/$userId": typeof UserUserIdRouteWithChildren;
-  "/closed-beta": typeof ClosedBetaIndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
-  "/api/r2/$": typeof ApiR2SplatRoute;
-  "/user/$userId/": typeof UserUserIdIndexRoute;
+  '/': typeof IndexRoute
+  '/user/$userId': typeof UserUserIdRouteWithChildren
+  '/closed-beta': typeof ClosedBetaIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/r2/$': typeof ApiR2SplatRoute
+  '/user/$userId/': typeof UserUserIdIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/closed-beta": typeof ClosedBetaIndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
-  "/api/r2/$": typeof ApiR2SplatRoute;
-  "/user/$userId": typeof UserUserIdIndexRoute;
+  '/': typeof IndexRoute
+  '/closed-beta': typeof ClosedBetaIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/r2/$': typeof ApiR2SplatRoute
+  '/user/$userId': typeof UserUserIdIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/user/$userId": typeof UserUserIdRouteWithChildren;
-  "/closed-beta/": typeof ClosedBetaIndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
-  "/api/r2/$": typeof ApiR2SplatRoute;
-  "/user/$userId/": typeof UserUserIdIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/user/$userId': typeof UserUserIdRouteWithChildren
+  '/closed-beta/': typeof ClosedBetaIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/r2/$': typeof ApiR2SplatRoute
+  '/user/$userId/': typeof UserUserIdIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/user/$userId" | "/closed-beta" | "/api/auth/$" | "/api/r2/$" | "/user/$userId/";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/closed-beta" | "/api/auth/$" | "/api/r2/$" | "/user/$userId";
-  id: "__root__" | "/" | "/user/$userId" | "/closed-beta/" | "/api/auth/$" | "/api/r2/$" | "/user/$userId/";
-  fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/user/$userId'
+    | '/closed-beta'
+    | '/api/auth/$'
+    | '/api/r2/$'
+    | '/user/$userId/'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/closed-beta' | '/api/auth/$' | '/api/r2/$' | '/user/$userId'
+  id:
+    | '__root__'
+    | '/'
+    | '/user/$userId'
+    | '/closed-beta/'
+    | '/api/auth/$'
+    | '/api/r2/$'
+    | '/user/$userId/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  UserUserIdRoute: typeof UserUserIdRouteWithChildren;
-  ClosedBetaIndexRoute: typeof ClosedBetaIndexRoute;
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
-  ApiR2SplatRoute: typeof ApiR2SplatRoute;
+  IndexRoute: typeof IndexRoute
+  UserUserIdRoute: typeof UserUserIdRouteWithChildren
+  ClosedBetaIndexRoute: typeof ClosedBetaIndexRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiR2SplatRoute: typeof ApiR2SplatRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/closed-beta/": {
-      id: "/closed-beta/";
-      path: "/closed-beta";
-      fullPath: "/closed-beta";
-      preLoaderRoute: typeof ClosedBetaIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/user/$userId": {
-      id: "/user/$userId";
-      path: "/user/$userId";
-      fullPath: "/user/$userId";
-      preLoaderRoute: typeof UserUserIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/user/$userId/": {
-      id: "/user/$userId/";
-      path: "/";
-      fullPath: "/user/$userId/";
-      preLoaderRoute: typeof UserUserIdIndexRouteImport;
-      parentRoute: typeof UserUserIdRoute;
-    };
-    "/api/r2/$": {
-      id: "/api/r2/$";
-      path: "/api/r2/$";
-      fullPath: "/api/r2/$";
-      preLoaderRoute: typeof ApiR2SplatRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/api/auth/$": {
-      id: "/api/auth/$";
-      path: "/api/auth/$";
-      fullPath: "/api/auth/$";
-      preLoaderRoute: typeof ApiAuthSplatRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/closed-beta/': {
+      id: '/closed-beta/'
+      path: '/closed-beta'
+      fullPath: '/closed-beta'
+      preLoaderRoute: typeof ClosedBetaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user/$userId': {
+      id: '/user/$userId'
+      path: '/user/$userId'
+      fullPath: '/user/$userId'
+      preLoaderRoute: typeof UserUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user/$userId/': {
+      id: '/user/$userId/'
+      path: '/'
+      fullPath: '/user/$userId/'
+      preLoaderRoute: typeof UserUserIdIndexRouteImport
+      parentRoute: typeof UserUserIdRoute
+    }
+    '/api/r2/$': {
+      id: '/api/r2/$'
+      path: '/api/r2/$'
+      fullPath: '/api/r2/$'
+      preLoaderRoute: typeof ApiR2SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface UserUserIdRouteChildren {
-  UserUserIdIndexRoute: typeof UserUserIdIndexRoute;
+  UserUserIdIndexRoute: typeof UserUserIdIndexRoute
 }
 
 const UserUserIdRouteChildren: UserUserIdRouteChildren = {
   UserUserIdIndexRoute: UserUserIdIndexRoute,
-};
+}
 
-const UserUserIdRouteWithChildren = UserUserIdRoute._addFileChildren(UserUserIdRouteChildren);
+const UserUserIdRouteWithChildren = UserUserIdRoute._addFileChildren(
+  UserUserIdRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -150,14 +165,16 @@ const rootRouteChildren: RootRouteChildren = {
   ClosedBetaIndexRoute: ClosedBetaIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiR2SplatRoute: ApiR2SplatRoute,
-};
-export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
+}
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from "./router.tsx";
-
-declare module "@tanstack/react-start" {
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
   interface Register {
-    ssr: true;
-    router: Awaited<ReturnType<typeof getRouter>>;
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
   }
 }

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import TextLink from ".";
+import ExternalLink from ".";
 
-const meta: Meta<typeof TextLink> = {
-  title: "Components/TextLink",
-  component: TextLink,
+const meta: Meta<typeof ExternalLink> = {
+  title: "Components/ExternalLink",
+  component: ExternalLink,
   parameters: {
     layout: "centered",
   },
@@ -18,13 +18,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {
-    href: "/",
-    children: "リンクテキスト",
-  },
-};
-
-export const ExternalLink: Story = {
   args: {
     href: "https://example.com",
     children: "外部リンク",
