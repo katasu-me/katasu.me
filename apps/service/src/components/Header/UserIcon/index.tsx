@@ -1,5 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
+import { Image } from "@unpic/react";
 import { twMerge } from "tailwind-merge";
 import { DEFAULT_AVATAR_URL } from "@/constants/image";
 
@@ -15,7 +15,7 @@ export default function UserIcon({ userId, username, iconImage, className }: Pro
   const alt = `${username}さんのアイコン`;
 
   return (
-    <Link className="interactive-scale flex items-center gap-3" href={`/user/${userId}`}>
+    <Link className="interactive-scale flex items-center gap-3" to={`/user/${userId}`}>
       <Image
         className={twMerge("size-10 overflow-hidden rounded-full border border-warm-black-50", className)}
         src={avatarImageUrl}

@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from "react";
 import { twMerge } from "tailwind-merge";
-import IconExclamationCircle from "@/assets/icons/exclamation-circle.svg";
-import IconPlant from "@/assets/icons/plant.svg";
+import IconExclamationCircle from "@/assets/icons/exclamation-circle.svg?react";
+import IconPlant from "@/assets/icons/plant.svg?react";
 
 const ICON_LIST = {
   plant: IconPlant,

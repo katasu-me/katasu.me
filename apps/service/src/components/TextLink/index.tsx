@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import type { ComponentProps, PropsWithChildren } from "react";
 import { twMerge } from "tailwind-merge";
 
