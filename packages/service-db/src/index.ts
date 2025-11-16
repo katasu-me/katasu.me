@@ -1,5 +1,3 @@
-export * from "./lib/isDBAcrionError";
-
 export * from "./queries/avatar";
 export * from "./queries/db";
 export * from "./queries/image";

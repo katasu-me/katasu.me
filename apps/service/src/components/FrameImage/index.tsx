@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { Image } from "@unpic/react";
 import type { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -11,7 +10,7 @@ type FrameImageProps = {
     imageId: string;
   };
   disableHoverEffect?: boolean;
-} & Omit<ComponentProps<typeof Image>, "width" | "height" | "layout">;
+} & Omit<ComponentProps<"img">, "width" | "height">;
 
 export default function FrameImage({
   className,
@@ -19,6 +18,7 @@ export default function FrameImage({
   height,
   linkParams,
   disableHoverEffect = false,
+  alt,
   ...props
 }: FrameImageProps) {
   return (
@@ -31,17 +31,24 @@ export default function FrameImage({
       style={{ aspectRatio: `${width} / ${height}` }}
     >
       {linkParams && (
-        <Link className="focus:outline-none" to={`/user/${linkParams.userId}/image/${linkParams.imageId}`}>
-          {props.alt}
+        <Link
+          className="focus:outline-none"
+          to="/user/$userId/image/$imageId"
+          params={{
+            userId: linkParams.userId,
+            imageId: linkParams.imageId,
+          }}
+        >
+          {alt}
           <span className="absolute inset-0 z-1" />
         </Link>
       )}
-      <Image
+      <img
         className={twMerge(
-          "pointer-events-none object-cover transition-all",
+          "pointer-events-none absolute top-0 left-0 h-full w-full object-cover transition-all",
           !disableHoverEffect && "group-hover:brightness-90",
         )}
-        layout="fullWidth"
+        alt={alt}
         {...props}
       />
     </div>

@@ -1,17 +1,4 @@
-type ImageDimensions = {
-  width: number;
-  height: number;
-};
-
-type ImageVariants = {
-  original: {
-    data: ArrayBuffer;
-  };
-  thumbnail: {
-    data: ArrayBuffer;
-  };
-  dimensions: ImageDimensions;
-};
+import type { ImageVariants } from "@/types/image";
 
 type UploadAvatarImageOptions = {
   type: "avatar";

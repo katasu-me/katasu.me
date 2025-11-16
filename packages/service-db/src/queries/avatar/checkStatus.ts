@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
+import { createDBActionError } from "../../lib/error";
 import { user } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import { getDB } from "../db";
@@ -52,12 +53,6 @@ export async function checkAvatarStatus(
       },
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "アバターの状態チェックに失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("アバターの状態チェックに失敗しました", error);
   }
 }

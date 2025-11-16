@@ -1,26 +1,6 @@
 import { imageSize } from "image-size";
 import { type OptimizeParams, type OptimizeResult, optimizeImageExt } from "wasm-image-optimization";
-
-/**
- * 画像の次元情報
- */
-export type ImageDimensions = {
-  width: number;
-  height: number;
-};
-
-/**
- * 画像バリアント（オリジナル + サムネイル）
- */
-export type ImageVariants = {
-  original: {
-    data: ArrayBuffer;
-  };
-  thumbnail: {
-    data: ArrayBuffer;
-  };
-  dimensions: ImageDimensions;
-};
+import type { ImageDimensions, ImageVariants } from "@/types/image";
 
 /** WebP変換時のデフォルト画質 */
 const DEFAULT_QUALITY = 80;

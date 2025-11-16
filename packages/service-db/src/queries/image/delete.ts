@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
+import { createDBActionError } from "../../lib/error";
 import { image, imageTag } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import { getDB } from "../db";
@@ -31,12 +32,7 @@ export async function deleteImage(dbInstance: AnyD1Database, imageId: string): P
       data: undefined,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: error instanceof Error ? error.message : "画像の削除に失敗しました",
-        rawError: error,
-      },
-    };
+    const message = error instanceof Error ? error.message : "画像の削除に失敗しました";
+    return createDBActionError(message, error);
   }
 }
