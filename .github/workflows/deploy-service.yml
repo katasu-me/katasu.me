@@ -9,7 +9,6 @@ on:
       - main
     paths:
       - "apps/service/**"
-      - "apps/image-optimizer/**"
       - "packages/**"
       - "pnpm-lock.yaml"
       - ".github/workflows/deploy-service.yml"

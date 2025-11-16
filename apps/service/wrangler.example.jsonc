@@ -54,10 +54,6 @@
   ],
   "r2_buckets": [
     {
-      "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "katasu-me-dev-inc-cache"
-    },
-    {
       "binding": "IMAGES_R2_BUCKET",
       "bucket_name": "katasu-me-dev-images"
     }
@@ -77,30 +73,10 @@
     "OPENAI_API_KEY": "<DEVELOPMENT_OPENAI_API_KEY>"
   },
   /**
-   * Note: Use secrets to store sensitive data.
-   * https://developers.cloudflare.com/workers/configuration/secrets/
-   */
-
-  /**
    * Static Assets
    * https://developers.cloudflare.com/workers/static-assets/binding/
    */
   // "assets": { "directory": "./public/", "binding": "ASSETS" },
-
-  /**
-   * Service Bindings (communicate between multiple Workers)
-   * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
-   */
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "katasu-me-dev"
-    },
-    {
-      "binding": "IMAGE_OPTIMIZER",
-      "service": "katasu-me-image-optimizer-dev"
-    }
-  ],
 
   /**
    * 本番環境
@@ -125,16 +101,6 @@
         "VITE_REPORT_USER_TILLY_EMBED_ID": "<PRODUCTION_VITE_REPORT_USER_TILLY_EMBED_ID>",
         "OPENAI_API_KEY": "<PRODUCTION_OPENAI_API_KEY>"
       },
-      "services": [
-        {
-          "binding": "WORKER_SELF_REFERENCE",
-          "service": "katasu-me"
-        },
-        {
-          "binding": "IMAGE_OPTIMIZER",
-          "service": "katasu-me-image-optimizer"
-        }
-      ],
       "kv_namespaces": [
         {
           "binding": "CACHE_KV",
@@ -150,10 +116,6 @@
         }
       ],
       "r2_buckets": [
-        {
-          "binding": "NEXT_INC_CACHE_R2_BUCKET",
-          "bucket_name": "katasu-me-prod-inc-cache"
-        },
         {
           "binding": "IMAGES_R2_BUCKET",
           "bucket_name": "katasu-me-prod-images"

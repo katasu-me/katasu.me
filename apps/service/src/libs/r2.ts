@@ -1,4 +1,17 @@
-import type { ImageVariants } from "image-optimizer";
+type ImageDimensions = {
+  width: number;
+  height: number;
+};
+
+type ImageVariants = {
+  original: {
+    data: ArrayBuffer;
+  };
+  thumbnail: {
+    data: ArrayBuffer;
+  };
+  dimensions: ImageDimensions;
+};
 
 type UploadAvatarImageOptions = {
   type: "avatar";

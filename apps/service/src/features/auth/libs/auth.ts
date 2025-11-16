@@ -89,12 +89,15 @@ export async function getUserSession() {
  * @param db D1Database
  * @return BetterAuthインスタンス, セッション情報
  */
-export async function requireAuth() {
+export async function requireAuth(): Promise<{
+  auth: ReturnType<typeof getAuth>;
+  session: NonNullable<Awaited<ReturnType<ReturnType<typeof getAuth>["api"]["getSession"]>>>;
+}> {
   const { auth, session } = await getUserSession();
 
   // アカウントが存在しない場合はトップへリダイレクト
   if (!session || !session.user?.id) {
-    redirect({
+    throw redirect({
       to: "/",
     });
   }
