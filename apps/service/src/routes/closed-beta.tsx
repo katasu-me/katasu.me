@@ -3,7 +3,7 @@ import Button from "@/components/Button";
 import MessagePage from "@/components/MessagePage";
 import SignInDrawer from "@/features/auth/components/SignInDrawer";
 
-export const Route = createFileRoute("/closed-beta/")({
+export const Route = createFileRoute("/closed-beta")({
   component: RouteComponent,
 });
 

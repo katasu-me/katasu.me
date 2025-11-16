@@ -9,21 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ClosedBetaRouteImport } from './routes/closed-beta'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ClosedBetaIndexRouteImport } from './routes/closed-beta/index'
+import { Route as AuthSignupRouteImport } from './routes/auth/signup'
+import { Route as AuthErrorRouteImport } from './routes/auth/error'
 import { Route as UserLayoutUserIdRouteImport } from './routes/user/_layout.$userId'
 import { Route as ApiR2SplatRouteImport } from './routes/api/r2/$'
+import { Route as ApiAuthRedirectRouteImport } from './routes/api/auth/redirect'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as UserLayoutUserIdIndexRouteImport } from './routes/user/_layout.$userId/index'
 
+const ClosedBetaRoute = ClosedBetaRouteImport.update({
+  id: '/closed-beta',
+  path: '/closed-beta',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ClosedBetaIndexRoute = ClosedBetaIndexRouteImport.update({
-  id: '/closed-beta/',
-  path: '/closed-beta/',
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/auth/signup',
+  path: '/auth/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthErrorRoute = AuthErrorRouteImport.update({
+  id: '/auth/error',
+  path: '/auth/error',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UserLayoutUserIdRoute = UserLayoutUserIdRouteImport.update({
@@ -34,6 +47,11 @@ const UserLayoutUserIdRoute = UserLayoutUserIdRouteImport.update({
 const ApiR2SplatRoute = ApiR2SplatRouteImport.update({
   id: '/api/r2/$',
   path: '/api/r2/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthRedirectRoute = ApiAuthRedirectRouteImport.update({
+  id: '/api/auth/redirect',
+  path: '/api/auth/redirect',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -49,24 +67,33 @@ const UserLayoutUserIdIndexRoute = UserLayoutUserIdIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/closed-beta': typeof ClosedBetaIndexRoute
+  '/closed-beta': typeof ClosedBetaRoute
+  '/auth/error': typeof AuthErrorRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/redirect': typeof ApiAuthRedirectRoute
   '/api/r2/$': typeof ApiR2SplatRoute
   '/user/$userId': typeof UserLayoutUserIdRouteWithChildren
   '/user/$userId/': typeof UserLayoutUserIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/closed-beta': typeof ClosedBetaIndexRoute
+  '/closed-beta': typeof ClosedBetaRoute
+  '/auth/error': typeof AuthErrorRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/redirect': typeof ApiAuthRedirectRoute
   '/api/r2/$': typeof ApiR2SplatRoute
   '/user/$userId': typeof UserLayoutUserIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/closed-beta/': typeof ClosedBetaIndexRoute
+  '/closed-beta': typeof ClosedBetaRoute
+  '/auth/error': typeof AuthErrorRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/redirect': typeof ApiAuthRedirectRoute
   '/api/r2/$': typeof ApiR2SplatRoute
   '/user/_layout/$userId': typeof UserLayoutUserIdRouteWithChildren
   '/user/_layout/$userId/': typeof UserLayoutUserIdIndexRoute
@@ -76,17 +103,31 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/closed-beta'
+    | '/auth/error'
+    | '/auth/signup'
     | '/api/auth/$'
+    | '/api/auth/redirect'
     | '/api/r2/$'
     | '/user/$userId'
     | '/user/$userId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/closed-beta' | '/api/auth/$' | '/api/r2/$' | '/user/$userId'
+  to:
+    | '/'
+    | '/closed-beta'
+    | '/auth/error'
+    | '/auth/signup'
+    | '/api/auth/$'
+    | '/api/auth/redirect'
+    | '/api/r2/$'
+    | '/user/$userId'
   id:
     | '__root__'
     | '/'
-    | '/closed-beta/'
+    | '/closed-beta'
+    | '/auth/error'
+    | '/auth/signup'
     | '/api/auth/$'
+    | '/api/auth/redirect'
     | '/api/r2/$'
     | '/user/_layout/$userId'
     | '/user/_layout/$userId/'
@@ -94,14 +135,24 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ClosedBetaIndexRoute: typeof ClosedBetaIndexRoute
+  ClosedBetaRoute: typeof ClosedBetaRoute
+  AuthErrorRoute: typeof AuthErrorRoute
+  AuthSignupRoute: typeof AuthSignupRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiAuthRedirectRoute: typeof ApiAuthRedirectRoute
   ApiR2SplatRoute: typeof ApiR2SplatRoute
   UserLayoutUserIdRoute: typeof UserLayoutUserIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/closed-beta': {
+      id: '/closed-beta'
+      path: '/closed-beta'
+      fullPath: '/closed-beta'
+      preLoaderRoute: typeof ClosedBetaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -109,11 +160,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/closed-beta/': {
-      id: '/closed-beta/'
-      path: '/closed-beta'
-      fullPath: '/closed-beta'
-      preLoaderRoute: typeof ClosedBetaIndexRouteImport
+    '/auth/signup': {
+      id: '/auth/signup'
+      path: '/auth/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/error': {
+      id: '/auth/error'
+      path: '/auth/error'
+      fullPath: '/auth/error'
+      preLoaderRoute: typeof AuthErrorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/user/_layout/$userId': {
@@ -128,6 +186,13 @@ declare module '@tanstack/react-router' {
       path: '/api/r2/$'
       fullPath: '/api/r2/$'
       preLoaderRoute: typeof ApiR2SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/redirect': {
+      id: '/api/auth/redirect'
+      path: '/api/auth/redirect'
+      fullPath: '/api/auth/redirect'
+      preLoaderRoute: typeof ApiAuthRedirectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -160,8 +225,11 @@ const UserLayoutUserIdRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ClosedBetaIndexRoute: ClosedBetaIndexRoute,
+  ClosedBetaRoute: ClosedBetaRoute,
+  AuthErrorRoute: AuthErrorRoute,
+  AuthSignupRoute: AuthSignupRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiAuthRedirectRoute: ApiAuthRedirectRoute,
   ApiR2SplatRoute: ApiR2SplatRoute,
   UserLayoutUserIdRoute: UserLayoutUserIdRouteWithChildren,
 }

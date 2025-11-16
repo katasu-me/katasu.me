@@ -16,7 +16,7 @@ export default function SignInButton({ provider, onLoading, className, children 
 
     await signIn.social({
       provider,
-      callbackURL: "/auth/redirect",
+      callbackURL: "/api/auth/redirect",
       newUserCallbackURL: "/auth/signup",
       errorCallbackURL: "/auth/error",
     });
