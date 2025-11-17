@@ -1,13 +1,17 @@
 import { env } from "cloudflare:workers";
 import { fetchImagesByUserId, fetchTagsByUserId } from "@katasu.me/service-db";
-import { createFileRoute, useLoaderData, useRouteContext } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute, useLoaderData, useRouteContext, useSearch } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { number, object, string } from "valibot";
 import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
 import TagLinks from "@/components/TagLinks";
 import GalleryMasonry from "@/features/gallery/components/GalleryMasonry";
+import GalleryRandom from "@/features/gallery/components/GalleryRandom";
 import { GALLERY_PAGE_SIZE } from "@/features/gallery/constants/page";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
+import { GalleryViewSchema } from "@/features/gallery/schemas/view";
+import { fetchRandomImages } from "@/features/gallery/server-fn/fetch-random";
 import ImageDropArea from "@/features/upload/components/ImageDropArea";
 import { CACHE_KEYS, getCached } from "@/libs/cache";
 
@@ -38,12 +42,22 @@ const cachedFetchImagesByUserId = async (userId: string, offset: number) => {
   });
 };
 
+const LoaderFnInputSchema = object({
+  userId: string(),
+  offset: number(),
+  view: GalleryViewSchema,
+});
+
 const loaderFn = createServerFn()
-  .inputValidator((data: { userId: string; offset: number }) => data)
+  .inputValidator(LoaderFnInputSchema)
   .handler(async ({ data }) => {
+    const { userId, offset } = data;
+
     const [tags, imagesResult] = await Promise.all([
-      cachedFetchTagsByUsage(data.userId),
-      cachedFetchImagesByUserId(data.userId, data.offset), // TODO: random対応
+      cachedFetchTagsByUsage(userId),
+      data.view === "timeline"
+        ? cachedFetchImagesByUserId(userId, offset)
+        : fetchRandomImages({ type: "user", userId }),
     ]);
 
     if (!imagesResult.success) {
@@ -69,6 +83,7 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
       data: {
         userId: params.userId,
         offset: context.userTotalImageCount < rawOffset ? 0 : rawOffset,
+        view: deps.view,
       },
     });
   },
@@ -76,6 +91,8 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
 
 function RouteComponent() {
   const { session, user, userTotalImageCount } = useRouteContext({ from: "/user/_layout/$userId" });
+  const { view } = useSearch({ from: "/user/_layout/$userId" });
+
   const { tags, images } = useLoaderData({ from: "/user/_layout/$userId/" });
 
   const isOwner = session?.user.id === user.id;
@@ -97,7 +114,13 @@ function RouteComponent() {
         </div>
       )}
 
-      <GalleryMasonry images={frameImages} className="col-start-2" totalImageCount={userTotalImageCount} />
+      {view === "timeline" ? (
+        <GalleryMasonry images={frameImages} className="col-start-2" totalImageCount={userTotalImageCount} />
+      ) : (
+        <ClientOnly>
+          <GalleryRandom images={frameImages} />
+        </ClientOnly>
+      )}
     </div>
   );
 }
