@@ -4,6 +4,9 @@
   "packageManager": "pnpm@10.15.1",
   "scripts": {
     "dev": "turbo dev",
+    "build": "turbo build",
+    "build:service": "turbo build --filter=@katasu.me/service",
+    "preview": "turbo preview",
     "lint": "turbo lint",
     "format": "turbo format",
     "check": "turbo check",

@@ -1,5 +1,5 @@
 {
-  "name": "service",
+  "name": "@katasu.me/service",
   "private": true,
   "type": "module",
   "scripts": {
