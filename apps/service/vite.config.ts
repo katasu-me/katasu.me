@@ -8,7 +8,7 @@ import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
-const config = defineConfig({
+const config = defineConfig(({ command }) => ({
   plugins: [
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     // this is the plugin that enables path aliases
@@ -20,16 +20,17 @@ const config = defineConfig({
     viteReact(),
     svgr(),
   ],
-  server: import.meta.env.DEV
-    ? {
-        host: "local.katasu.me",
-        port: 3000,
-        https: {
-          key: fs.readFileSync(path.resolve(__dirname, "certificates/localhost-key.pem")),
-          cert: fs.readFileSync(path.resolve(__dirname, "certificates/localhost.pem")),
-        },
-      }
-    : undefined,
-});
+  server:
+    command === "serve"
+      ? {
+          host: "local.katasu.me",
+          port: 3000,
+          https: {
+            key: fs.readFileSync(path.resolve(__dirname, "certificates/localhost-key.pem")),
+            cert: fs.readFileSync(path.resolve(__dirname, "certificates/localhost.pem")),
+          },
+        }
+      : undefined,
+}));
 
 export default config;
