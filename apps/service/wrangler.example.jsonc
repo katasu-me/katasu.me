@@ -5,13 +5,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "katasu-me-dev",
-  "main": ".open-next/worker.js",
-  "compatibility_date": "2025-03-01",
+  "main": "@tanstack/react-start/server-entry",
+  "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat_v2", "global_fetch_strictly_public"],
-  "assets": {
-    "binding": "ASSETS",
-    "directory": ".open-next/assets"
-  },
   "observability": {
     "enabled": true
   },
