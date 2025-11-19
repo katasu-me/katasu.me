@@ -63,7 +63,7 @@ jobs:
 
       - name: Develop Build
         if: github.ref == 'refs/heads/develop'
-        run: pnpm build:service
+        run: pnpm build
         env:
           VITE_SITE_URL: ${{ vars.DEVELOPMENT_URL }}
           VITE_IMAGE_R2_URL: ${{ vars.DEVELOPMENT_VITE_IMAGE_R2_URL }}
@@ -79,7 +79,7 @@ jobs:
 
       - name: Production Build
         if: github.ref == 'refs/heads/main'
-        run: pnpm build:service
+        run: pnpm build
         env:
           VITE_SITE_URL: ${{ vars.PRODUCTION_URL }}
           VITE_IMAGE_R2_URL: ${{ vars.PRODUCTION_VITE_IMAGE_R2_URL }}
