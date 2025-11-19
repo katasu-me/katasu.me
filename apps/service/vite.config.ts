@@ -28,6 +28,11 @@ const config = defineConfig({
       cert: fs.readFileSync(path.resolve(__dirname, "certificates/localhost.pem")),
     },
   },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: "./vitest.setup.ts",
+  },
 });
 
 export default config;
