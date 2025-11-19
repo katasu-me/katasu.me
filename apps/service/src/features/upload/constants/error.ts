@@ -1,4 +1,4 @@
-export const ERROR_MESSAGES = {
+export const ERROR_MESSAGE = {
   RATE_LIMIT_EXCEEDED: "リクエストが多すぎます。しばらく待ってから再度お試しください",
   USER_UNAUTHORIZED: "ユーザー情報の取得に失敗しました",
   IMAGE_UPLOAD_LIMIT_EXCEEDED: "画像のアップロード上限に達しました",

@@ -1,89 +1,31 @@
-import { env } from "cloudflare:workers";
-import { fetchImagesByUserId, fetchTagsByUserId } from "@katasu.me/service-db";
 import { ClientOnly, createFileRoute, useLoaderData, useRouteContext, useSearch } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { number, object, string } from "valibot";
 import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
 import TagLinks from "@/components/TagLinks";
 import GalleryMasonry from "@/features/gallery/components/GalleryMasonry";
 import GalleryRandom from "@/features/gallery/components/GalleryRandom";
-import { GALLERY_PAGE_SIZE } from "@/features/gallery/constants/page";
+import { ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
-import { GalleryViewSchema } from "@/features/gallery/schemas/view";
-import { fetchRandomImages } from "@/features/gallery/server-fn/fetch-random";
+import { userPageLoaderFn } from "@/features/gallery/server-fn/user-page";
 import ImageDropArea from "@/features/upload/components/ImageDropArea";
-import { CACHE_KEYS, getCached } from "@/libs/cache";
-
-const cachedFetchTagsByUsage = async (userId: string) => {
-  const key = CACHE_KEYS.userTagsByUsage(userId);
-
-  const result = await getCached(env.CACHE_KV, key, async () => {
-    return fetchTagsByUserId(env.DB, userId, {
-      order: "usage",
-    });
-  });
-
-  if (!result.success || result.data.length <= 0) {
-    return;
-  }
-
-  return result.data;
-};
-
-const cachedFetchImagesByUserId = async (userId: string, offset: number) => {
-  const key = CACHE_KEYS.userImages(userId);
-
-  return getCached(env.CACHE_KV, key, async () => {
-    return fetchImagesByUserId(env.DB, userId, {
-      offset,
-      order: "desc",
-    });
-  });
-};
-
-const LoaderFnInputSchema = object({
-  userId: string(),
-  offset: number(),
-  view: GalleryViewSchema,
-});
-
-const loaderFn = createServerFn()
-  .inputValidator(LoaderFnInputSchema)
-  .handler(async ({ data }) => {
-    const { userId, offset } = data;
-
-    const [tags, imagesResult] = await Promise.all([
-      cachedFetchTagsByUsage(userId),
-      data.view === "timeline"
-        ? cachedFetchImagesByUserId(userId, offset)
-        : fetchRandomImages({ type: "user", userId }),
-    ]);
-
-    if (!imagesResult.success) {
-      console.error("[user/_layout.$userId] 画像の取得に失敗しました:", imagesResult.error);
-      throw imagesResult.error;
-    }
-
-    return {
-      tags,
-      images: imagesResult.data,
-    };
-  });
 
 export const Route = createFileRoute("/user/_layout/$userId/")({
   component: RouteComponent,
-  pendingComponent: () => <Loading className="col-start-2 py-16" />, // TODO: 仮
-  errorComponent: () => <Message message="画像の取得に失敗しました" icon="error" />,
+  pendingComponent: () => {
+    // TODO: 仮
+    return <Loading className="col-start-2 py-16" />;
+  },
+  errorComponent: ({ error }) => {
+    return <Message message={error.message ?? ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
+  },
   loaderDeps: ({ search: { view, page } }) => ({ view, page }),
   loader: async ({ params, deps, context }) => {
-    const rawOffset = GALLERY_PAGE_SIZE * (deps.page - 1);
-
-    return loaderFn({
+    return userPageLoaderFn({
       data: {
-        userId: params.userId,
-        offset: context.userTotalImageCount < rawOffset ? 0 : rawOffset,
         view: deps.view,
+        userId: params.userId,
+        page: deps.page,
+        userTotalImageCount: context.userTotalImageCount,
       },
     });
   },
@@ -96,7 +38,7 @@ function RouteComponent() {
   const { tags, images } = useLoaderData({ from: "/user/_layout/$userId/" });
 
   const isOwner = session?.user.id === user.id;
-  const frameImages = images.map((image) => toFrameImageProps(image, user.id));
+  const frameImages = images ? images.map((image) => toFrameImageProps(image, user.id)) : [];
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-8">
@@ -118,7 +60,7 @@ function RouteComponent() {
         <GalleryMasonry images={frameImages} className="col-start-2" totalImageCount={userTotalImageCount} />
       ) : (
         <ClientOnly>
-          <GalleryRandom images={frameImages} />
+          <GalleryRandom userId={user.id} initialImages={frameImages} />
         </ClientOnly>
       )}
     </div>

@@ -6,7 +6,7 @@ import * as v from "valibot";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
 import { generateR2Key, uploadImage } from "@/libs/r2";
-import { ERROR_MESSAGES } from "../constants/error-messages";
+import { ERROR_MESSAGE } from "../constants/error";
 import { generateImageVariants, getImageDimensions } from "../libs/image";
 import { checkImageModeration } from "../libs/moderation";
 import { uploadImageSchema } from "../schemas/upload";
@@ -56,7 +56,7 @@ export const uploadFn = createServerFn({ method: "POST" })
     if (!success) {
       return {
         success: false,
-        error: ERROR_MESSAGES.RATE_LIMIT_EXCEEDED,
+        error: ERROR_MESSAGE.RATE_LIMIT_EXCEEDED,
       };
     }
 
@@ -67,14 +67,14 @@ export const uploadFn = createServerFn({ method: "POST" })
     if (!userImageStatusResult.success || !userImageStatusResult.data) {
       return {
         success: false,
-        error: ERROR_MESSAGES.USER_UNAUTHORIZED,
+        error: ERROR_MESSAGE.USER_UNAUTHORIZED,
       };
     }
 
     if (userImageStatusResult.data.uploadedPhotos >= userImageStatusResult.data.maxPhotos) {
       return {
         success: false,
-        error: ERROR_MESSAGES.IMAGE_UPLOAD_LIMIT_EXCEEDED,
+        error: ERROR_MESSAGE.IMAGE_UPLOAD_LIMIT_EXCEEDED,
       };
     }
 
@@ -88,14 +88,14 @@ export const uploadFn = createServerFn({ method: "POST" })
 
       return {
         success: false,
-        error: ERROR_MESSAGES.IMAGE_ID_DUPLICATE,
+        error: ERROR_MESSAGE.IMAGE_ID_DUPLICATE,
       };
     }
 
     if (!data.file) {
       return {
         success: false,
-        error: ERROR_MESSAGES.EMPTY_IMAGE,
+        error: ERROR_MESSAGE.EMPTY_IMAGE,
       };
     }
 
@@ -112,7 +112,7 @@ export const uploadFn = createServerFn({ method: "POST" })
     } catch (error) {
       console.error("[gallery] Image conversion failed:", error);
 
-      const errorMessage = error instanceof Error ? error.message : ERROR_MESSAGES.IMAGE_CONVERSION_FAILED;
+      const errorMessage = error instanceof Error ? error.message : ERROR_MESSAGE.IMAGE_CONVERSION_FAILED;
 
       return {
         success: false,
@@ -127,7 +127,7 @@ export const uploadFn = createServerFn({ method: "POST" })
 
       return {
         success: false,
-        error: ERROR_MESSAGES.IMAGE_MODERATION_FLAGGED,
+        error: ERROR_MESSAGE.IMAGE_MODERATION_FLAGGED,
       };
     }
 
@@ -143,7 +143,7 @@ export const uploadFn = createServerFn({ method: "POST" })
 
       return {
         success: false,
-        error: ERROR_MESSAGES.IMAGE_UPLOAD_FAILED,
+        error: ERROR_MESSAGE.IMAGE_UPLOAD_FAILED,
       };
     }
 
@@ -159,7 +159,7 @@ export const uploadFn = createServerFn({ method: "POST" })
 
       return {
         success: false,
-        error: ERROR_MESSAGES.IMAGE_REGISTER_FAILED,
+        error: ERROR_MESSAGE.IMAGE_REGISTER_FAILED,
       };
     }
 

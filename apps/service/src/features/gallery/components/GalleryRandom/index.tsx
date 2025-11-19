@@ -1,41 +1,53 @@
-import { useRouter } from "@tanstack/react-router";
 import { type ComponentProps, useCallback, useEffect, useState } from "react";
 import type FrameImage from "@/components/FrameImage";
 import { useDevice } from "@/hooks/useDevice";
+import { toFrameImageProps } from "../../libs/convert";
+import { fetchRandomImagesFn } from "../../server-fn/fetch-random";
 import GalleryToggle from "../GalleryToggle";
 import DraggableImages from "./DraggableImages";
 
 type Props = {
-  images: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
+  userId: string;
+  initialImages: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
 };
 
 const SHAKE_THRESHOLD = 15;
 const SHAKE_COOLDOWN = 500;
 
-export default function GalleryRandom({ images }: Props) {
-  const router = useRouter();
+export default function GalleryRandom({ userId, initialImages }: Props) {
   const { isDesktop } = useDevice();
+  const [images, setImages] = useState(initialImages);
   const [isScattering, setIsScattering] = useState(false);
-  const [galleryKey, setGalleryKey] = useState(0);
+  const [imagesKey, setImagesKey] = useState(0);
 
-  // 再シャッフル
-  const handleScatterComplete = useCallback(() => {
-    router.invalidate();
-    setIsScattering(false);
-    setGalleryKey((prev) => prev + 1);
-  }, [router]);
+  // ランダム画像を取得
+  const fetchImages = useCallback(async () => {
+    const images = await fetchRandomImagesFn({ data: { type: "user", userId } });
+    const frameImages = images.map((image) => toFrameImageProps(image, userId));
 
-  // 画像取得
+    setImages(frameImages);
+  }, [userId]);
+
+  // 初期表示時に画像を取得
   useEffect(() => {
     const preventDefault = (e: Event) => e.preventDefault();
     document.addEventListener("gesturestart", preventDefault);
     document.addEventListener("gesturechange", preventDefault);
 
+    fetchImages();
+
     return () => {
       document.removeEventListener("gesturestart", preventDefault);
       document.removeEventListener("gesturechange", preventDefault);
     };
-  }, []);
+  }, [fetchImages]);
+
+  // 再シャッフル
+  const handleScatterComplete = useCallback(async () => {
+    await fetchImages();
+    setImagesKey((prev) => prev + 1);
+    setIsScattering(false);
+  }, [fetchImages]);
 
   // シェイク検知
   useEffect(() => {
@@ -94,7 +106,7 @@ export default function GalleryRandom({ images }: Props) {
   return (
     <>
       <DraggableImages
-        key={galleryKey}
+        key={imagesKey}
         images={images}
         isScattering={isScattering}
         onScatterComplete={handleScatterComplete}

@@ -1,51 +1,41 @@
 import { env } from "cloudflare:workers";
-import {
-  type ActionResult,
-  createDBActionError,
-  fetchRandomImagesByTagId,
-  fetchRandomImagesByUserId,
-  type ImageWithTags,
-} from "@katasu.me/service-db";
+import { fetchRandomImagesByTagId, fetchRandomImagesByUserId } from "@katasu.me/service-db";
+import { createServerFn } from "@tanstack/react-start";
+import { literal, object, string, union } from "valibot";
 import { ERROR_MESSAGE } from "../constants/error";
 
-export type FetchRandomImagesOptions =
-  | {
-      type: "user";
-      userId: string;
+const FetchRandomImagesInputSchema = union([
+  object({
+    type: literal("user"),
+    userId: string(),
+  }),
+  object({
+    type: literal("tag"),
+    tagId: string(),
+  }),
+]);
+
+export const fetchRandomImagesFn = createServerFn({ method: "GET" })
+  .inputValidator(FetchRandomImagesInputSchema)
+  .handler(async ({ data }) => {
+    // レートリミット
+    const rateLimiterKey = data.type === "user" ? data.userId : data.tagId;
+    const { success } = await env.ACTIONS_RATE_LIMITER.limit({
+      key: `fetchRandomImages:${rateLimiterKey}`,
+    });
+
+    if (!success) {
+      throw new Error(ERROR_MESSAGE.RATE_LIMIT_EXCEEDED);
     }
-  | {
-      type: "tag";
-      tagId: string;
-    };
 
-/**
- * ランダムな画像を取得
- * @param options 取得オプション
- * @returns 取得結果
- */
-export async function fetchRandomImages(options: FetchRandomImagesOptions): Promise<ActionResult<ImageWithTags[]>> {
-  // レートリミット
-  const rateLimiterKey = options.type === "user" ? options.userId : options.tagId;
-  const { success } = await env.ACTIONS_RATE_LIMITER.limit({
-    key: `fetchRandomImages:${rateLimiterKey}`,
-  });
-
-  if (!success) {
-    return createDBActionError(ERROR_MESSAGE.RATE_LIMIT_EXCEEDED);
-  }
-
-  try {
     const result =
-      options.type === "user"
-        ? await fetchRandomImagesByUserId(env.DB, options.userId)
-        : await fetchRandomImagesByTagId(env.DB, options.tagId);
+      data.type === "user"
+        ? await fetchRandomImagesByUserId(env.DB, data.userId)
+        : await fetchRandomImagesByTagId(env.DB, data.tagId);
 
     if (!result.success) {
-      return result;
+      throw new Error(result.error.message);
     }
 
-    return result;
-  } catch (error) {
-    return createDBActionError(ERROR_MESSAGE.IMAGE_FETCH_FAILED, error);
-  }
-}
+    return result.data;
+  });
