@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useTransform } from "motion/react";
-import { type ComponentProps, type RefObject, useMemo } from "react";
+import type { ComponentProps, RefObject } from "react";
 import { twJoin } from "tailwind-merge";
 import type FrameImage from "@/components/FrameImage";
 import { DEFAULT_IMAGE_TITLE } from "@/features/gallery/constants/page";
@@ -54,19 +54,6 @@ export default function DraggableImage({
     zIndex.set(maxZIndex.current);
   };
 
-  // 再シャッフル時の移動方向
-  const scatterOffset = useMemo(() => {
-    const isLeft = Math.random() < 0.5;
-    const xOffset = Math.random() * 150;
-    const yOffset = Math.random() * 150;
-
-    return {
-      x: isLeft ? -xOffset : xOffset,
-      y: yOffset,
-      rotation: isLeft ? -30 - Math.random() * 15 : 30 + Math.random() * 15,
-    };
-  }, []);
-
   return (
     <motion.div
       className="absolute touch-none select-none rounded-sm bg-white p-3 pb-4 pc:pb-6 shadow-lg hover:cursor-grab active:cursor-grabbing"
@@ -89,12 +76,9 @@ export default function DraggableImage({
       animate={
         isScattering
           ? {
-              x: initialPosition.x + scatterOffset.x,
-              y: initialPosition.y + scatterOffset.y,
               opacity: 0,
               scale: 1,
               filter: "blur(16px)",
-              rotateZ: scatterOffset.rotation,
             }
           : {
               x: initialPosition.x,
