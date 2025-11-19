@@ -16,5 +16,8 @@ jobs:
       - name: Setup pnpm
         uses: ./.github/actions/setup-pnpm
 
+      - name: Setup Wrangler Config
+        uses: ./.github/actions/setup-wrangler-config
+
       - name: Build
         run: pnpm build

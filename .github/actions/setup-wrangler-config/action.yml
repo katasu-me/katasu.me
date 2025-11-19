@@ -1,0 +1,39 @@
+name: Setup Wrangler Config
+description: Create wrangler.jsonc from template with environment variables
+
+inputs:
+  working-directory:
+    description: Working directory where wrangler.example.jsonc is located
+    required: false
+    default: apps/service
+
+runs:
+  using: composite
+  steps:
+    - name: Create wrangler.jsonc from template
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        cp wrangler.example.jsonc wrangler.jsonc
+
+        # 開発環境の値を置換
+        sed -i "s|<DEVELOPMENT_URL>|${{ vars.DEVELOPMENT_URL }}|g" wrangler.jsonc
+        sed -i "s|<DEVELOPMENT_VITE_IMAGE_R2_URL>|${{ vars.DEVELOPMENT_VITE_IMAGE_R2_URL }}|g" wrangler.jsonc
+        sed -i "s|<DEVELOPMENT_VITE_REPORT_IMAGE_TILLY_EMBED_ID>|${{ vars.DEVELOPMENT_VITE_REPORT_IMAGE_TILLY_EMBED_ID }}|g" wrangler.jsonc
+        sed -i "s|<DEVELOPMENT_VITE_REPORT_USER_TILLY_EMBED_ID>|${{ vars.DEVELOPMENT_VITE_REPORT_USER_TILLY_EMBED_ID }}|g" wrangler.jsonc
+        sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.jsonc
+        sed -i "s|<DEVELOPMENT_CACHE_KV_ID>|${{ secrets.DEVELOPMENT_CACHE_KV_ID }}|g" wrangler.jsonc
+        sed -i "s|<DEVELOPMENT_OPENAI_API_KEY>|${{ secrets.DEVELOPMENT_OPENAI_API_KEY }}|g" wrangler.jsonc
+
+        # 本番環境の値を置換
+        sed -i "s|<PRODUCTION_URL>|${{ vars.PRODUCTION_URL }}|g" wrangler.jsonc
+        sed -i "s|<UMAMI_SCRIPT_URL>|${{ vars.UMAMI_SCRIPT_URL }}|g" wrangler.jsonc
+        sed -i "s|<PRODUCTION_VITE_IMAGE_R2_URL>|${{ vars.PRODUCTION_VITE_IMAGE_R2_URL }}|g" wrangler.jsonc
+        sed -i "s|<PRODUCTION_VITE_REPORT_IMAGE_TILLY_EMBED_ID>|${{ vars.PRODUCTION_VITE_REPORT_IMAGE_TILLY_EMBED_ID }}|g" wrangler.jsonc
+        sed -i "s|<PRODUCTION_VITE_REPORT_USER_TILLY_EMBED_ID>|${{ vars.PRODUCTION_VITE_REPORT_USER_TILLY_EMBED_ID }}|g" wrangler.jsonc
+        sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.jsonc
+        sed -i "s|<PRODUCTION_CACHE_KV_ID>|${{ secrets.PRODUCTION_CACHE_KV_ID }}|g" wrangler.jsonc
+        sed -i "s|<PRODUCTION_OPENAI_API_KEY>|${{ secrets.PRODUCTION_OPENAI_API_KEY }}|g" wrangler.jsonc
+        sed -i "s|<UMAMI_WEBSITE_ID>|${{ secrets.UMAMI_WEBSITE_ID }}|g" wrangler.jsonc
+
+        echo "wrangler.jsonc created successfully"
