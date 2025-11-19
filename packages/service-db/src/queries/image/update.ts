@@ -1,5 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
+import { createDBActionError } from "../../lib/error";
 import { type Image, type ImageWithTags, image, imageTag, tag } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import type { ImageFormData } from "../../types/image";
@@ -79,13 +80,7 @@ export async function updateImage(
       },
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "画像情報の更新に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("画像情報の更新に失敗しました", error);
   }
 }
 
@@ -118,12 +113,6 @@ export async function updateImageHidden(
       data: result,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "画像の表示・非表示の更新に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("画像の表示・非表示の更新に失敗しました", error);
   }
 }

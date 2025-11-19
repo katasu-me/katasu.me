@@ -1,6 +1,6 @@
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
-import LogoImage from "@/assets/logo.svg";
+import LogoImage from "@/assets/logo.svg?react";
 import Button from "@/components/Button";
 
 type Props = PropsWithChildren<{
@@ -16,7 +16,7 @@ export default function MessagePage({ title, children, showBackButton = false }:
         <h1 className="mt-8 font-normal pc:text-3xl text-2xl text-warm-black">{title}</h1>
         <div className="mt-4 text-warm-black">{children}</div>
         {showBackButton && (
-          <Link href="/" className="mt-8">
+          <Link to="/" className="mt-8">
             <Button>トップページに戻る</Button>
           </Link>
         )}

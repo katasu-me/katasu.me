@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 
 import type { AnyD1Database } from "drizzle-orm/d1";
+import { createDBActionError } from "../lib/error";
 import { type User, user } from "../schema";
 import type { ActionResult } from "../types/error";
 import { getDB } from "./db";
@@ -61,13 +62,7 @@ export async function fetchPublicUserDataById(
         : undefined,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "ユーザーの取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("ユーザーの取得に失敗しました", error);
   }
 }
 
@@ -100,13 +95,7 @@ export async function fetchUserById(
       data: result,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "ユーザーの取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("ユーザーの取得に失敗しました", error);
   }
 }
 
@@ -163,13 +152,7 @@ export async function fetchUserImageStatus(
       },
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "ユーザーの画像投稿状況の取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("ユーザーの画像投稿状況の取得に失敗しました", error);
   }
 }
 
@@ -195,13 +178,7 @@ export async function updateUser(
       data: updatedUser,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "ユーザー情報の更新に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("ユーザー情報の更新に失敗しました", error);
   }
 }
 
@@ -229,13 +206,7 @@ export async function banUser(dbInstance: AnyD1Database, userId: string): Promis
       data: result,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "ユーザーのBAN処理に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("ユーザーのBAN処理に失敗しました", error);
   }
 }
 
@@ -256,12 +227,6 @@ export async function deleteUser(dbInstance: AnyD1Database, userId: string): Pro
       data: undefined,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "ユーザーの削除に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("ユーザーの削除に失敗しました", error);
   }
 }

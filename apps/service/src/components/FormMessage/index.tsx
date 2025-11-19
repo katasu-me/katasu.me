@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
-import IconCircleCheck from "@/assets/icons/circle-check.svg";
-import IconExclamationCircle from "@/assets/icons/exclamation-circle.svg";
+import IconCircleCheck from "@/assets/icons/circle-check.svg?react";
+import IconExclamationCircle from "@/assets/icons/exclamation-circle.svg?react";
 
 type Props = {
   type: "success" | "error";

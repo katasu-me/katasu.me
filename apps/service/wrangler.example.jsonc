@@ -5,13 +5,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "katasu-me-dev",
-  "main": ".open-next/worker.js",
-  "compatibility_date": "2025-03-01",
+  "main": "@tanstack/react-start/server-entry",
+  "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat_v2", "global_fetch_strictly_public"],
-  "assets": {
-    "binding": "ASSETS",
-    "directory": ".open-next/assets"
-  },
   "observability": {
     "enabled": true
   },
@@ -54,10 +50,6 @@
   ],
   "r2_buckets": [
     {
-      "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "katasu-me-dev-inc-cache"
-    },
-    {
       "binding": "IMAGES_R2_BUCKET",
       "bucket_name": "katasu-me-dev-images"
     }
@@ -70,37 +62,17 @@
   "vars": {
     "BETTER_AUTH_TELEMETRY": "0",
     "BETTER_AUTH_URL": "<DEVELOPMENT_URL>",
-    "NEXT_PUBLIC_SITE_URL": "<DEVELOPMENT_URL>",
-    "NEXT_PUBLIC_IMAGE_R2_URL": "<DEVELOPMENT_NEXT_PUBLIC_IMAGE_R2_URL>",
-    "NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID": "<DEVELOPMENT_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID>",
-    "NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID": "<DEVELOPMENT_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID>",
+    "VITE_SITE_URL": "<DEVELOPMENT_URL>",
+    "VITE_IMAGE_R2_URL": "<DEVELOPMENT_VITE_IMAGE_R2_URL>",
+    "VITE_REPORT_IMAGE_TILLY_EMBED_ID": "<DEVELOPMENT_VITE_REPORT_IMAGE_TILLY_EMBED_ID>",
+    "VITE_REPORT_USER_TILLY_EMBED_ID": "<DEVELOPMENT_VITE_REPORT_USER_TILLY_EMBED_ID>",
     "OPENAI_API_KEY": "<DEVELOPMENT_OPENAI_API_KEY>"
   },
-  /**
-   * Note: Use secrets to store sensitive data.
-   * https://developers.cloudflare.com/workers/configuration/secrets/
-   */
-
   /**
    * Static Assets
    * https://developers.cloudflare.com/workers/static-assets/binding/
    */
   // "assets": { "directory": "./public/", "binding": "ASSETS" },
-
-  /**
-   * Service Bindings (communicate between multiple Workers)
-   * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
-   */
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "katasu-me-dev"
-    },
-    {
-      "binding": "IMAGE_OPTIMIZER",
-      "service": "katasu-me-image-optimizer-dev"
-    }
-  ],
 
   /**
    * 本番環境
@@ -117,24 +89,14 @@
       "vars": {
         "BETTER_AUTH_TELEMETRY": "0",
         "BETTER_AUTH_URL": "<PRODUCTION_URL>",
-        "NEXT_PUBLIC_SITE_URL": "<PRODUCTION_URL>",
-        "NEXT_PUBLIC_UMAMI_SCRIPT_URL": "<UMAMI_SCRIPT_URL>",
-        "NEXT_PUBLIC_UMAMI_WEBSITE_ID": "<UMAMI_WEBSITE_ID>",
-        "NEXT_PUBLIC_IMAGE_R2_URL": "<PRODUCTION_NEXT_PUBLIC_IMAGE_R2_URL>",
-        "NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID": "<PRODUCTION_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID>",
-        "NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID": "<PRODUCTION_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID>",
+        "VITE_SITE_URL": "<PRODUCTION_URL>",
+        "VITE_UMAMI_SCRIPT_URL": "<UMAMI_SCRIPT_URL>",
+        "VITE_UMAMI_WEBSITE_ID": "<UMAMI_WEBSITE_ID>",
+        "VITE_IMAGE_R2_URL": "<PRODUCTION_VITE_IMAGE_R2_URL>",
+        "VITE_REPORT_IMAGE_TILLY_EMBED_ID": "<PRODUCTION_VITE_REPORT_IMAGE_TILLY_EMBED_ID>",
+        "VITE_REPORT_USER_TILLY_EMBED_ID": "<PRODUCTION_VITE_REPORT_USER_TILLY_EMBED_ID>",
         "OPENAI_API_KEY": "<PRODUCTION_OPENAI_API_KEY>"
       },
-      "services": [
-        {
-          "binding": "WORKER_SELF_REFERENCE",
-          "service": "katasu-me"
-        },
-        {
-          "binding": "IMAGE_OPTIMIZER",
-          "service": "katasu-me-image-optimizer"
-        }
-      ],
       "kv_namespaces": [
         {
           "binding": "CACHE_KV",
@@ -150,10 +112,6 @@
         }
       ],
       "r2_buckets": [
-        {
-          "binding": "NEXT_INC_CACHE_R2_BUCKET",
-          "bucket_name": "katasu-me-prod-inc-cache"
-        },
         {
           "binding": "IMAGES_R2_BUCKET",
           "bucket_name": "katasu-me-prod-images"

@@ -1,5 +1,6 @@
 import { asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
+import { createDBActionError } from "../../lib/error";
 import { type ImageWithTags, image, imageTag, tag } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import { getDB } from "../db";
@@ -63,13 +64,7 @@ export async function fetchImageById(
       },
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "画像の取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("画像の取得に失敗しました", error);
   }
 }
 
@@ -117,13 +112,7 @@ export async function fetchImagesByUserId(
       }),
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "画像一覧の取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("画像一覧の取得に失敗しました", error);
   }
 }
 
@@ -171,13 +160,7 @@ export async function fetchRandomImagesByUserId(
       }),
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "ランダム画像の取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("ランダム画像の取得に失敗しました", error);
   }
 }
 
@@ -201,13 +184,7 @@ export async function fetchTotalImageCountByUserId(
       data: result.at(0)?.count ?? 0,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "総投稿画像数の取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("総投稿画像数の取得に失敗しました", error);
   }
 }
 
@@ -305,13 +282,7 @@ export async function fetchImagesByTagId(
       data: images,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "タグIDからの画像一覧の取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("タグIDからの画像一覧の取得に失敗しました", error);
   }
 }
 
@@ -377,13 +348,7 @@ export async function fetchRandomImagesByTagId(
       }),
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "タグIDからのランダム画像一覧の取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("タグIDからのランダム画像一覧の取得に失敗しました", error);
   }
 }
 
@@ -407,12 +372,6 @@ export async function fetchTotalImageCountByTagId(
       data: result.at(0)?.count ?? 0,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "タグIDからの総投稿画像数の取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("タグIDからの総投稿画像数の取得に失敗しました", error);
   }
 }

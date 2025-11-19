@@ -1,0 +1,15 @@
+import { createFileRoute } from "@tanstack/react-router";
+import MessagePage from "@/components/MessagePage";
+
+export const Route = createFileRoute("/auth/error")({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  return (
+    <MessagePage title="Error" showBackButton>
+      <p>認証に失敗しました</p>
+      <p>しばらく時間をおいて、再度お試しください 🙇</p>
+    </MessagePage>
+  );
+}

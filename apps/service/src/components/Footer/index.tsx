@@ -1,14 +1,11 @@
-"use client";
-
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { twMerge } from "tailwind-merge";
-import IconPlant from "@/assets/icons/plant.svg";
-import LogoImage from "@/assets/logo.svg";
+import IconPlant from "@/assets/icons/plant.svg?react";
+import LogoImage from "@/assets/logo.svg?react";
 import Button from "@/components/Button";
-import TextLink from "@/components/TextLink";
+import ExternalLink from "@/components/ExternalLink";
 import { DOCS_INFORMATION, DOCS_LICENSE, DOCS_PRIVACY_POLICY, DOCS_TERMS_OF_SERVICE } from "@/constants/site";
-import { signOut } from "@/lib/auth-client";
+import { signOut } from "@/features/auth/libs/auth-client";
 import DevelopedBy from "./DevelopedBy";
 
 type Props =
@@ -23,12 +20,12 @@ type Props =
     };
 
 export default function Footer({ className, ...props }: Props) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const showDivider = props.mode === "logged-in-user" ? !!props.userId : true;
 
   const handleSignOut = async () => {
     await signOut();
-    router.replace("/");
+    navigate({ to: "/" });
   };
 
   return (
@@ -38,7 +35,7 @@ export default function Footer({ className, ...props }: Props) {
       {props.mode === "logged-in-user" && props.userId && (
         <div className="flex flex-col items-center gap-6">
           <Button asChild>
-            <Link className="flex w-48 items-center justify-center gap-2" href={`/user/${props.userId}`}>
+            <Link className="flex w-48 items-center justify-center gap-2" to={`/user/${props.userId}`}>
               <IconPlant className="size-5" />
               マイページへ
             </Link>
@@ -62,23 +59,21 @@ export default function Footer({ className, ...props }: Props) {
       )}
 
       <div className="flex flex-col items-center justify-center gap-10">
-        <Link className="interactive-scale-brightness" href="/">
+        <Link className="interactive-scale-brightness" to="/">
           <LogoImage className="h-16 w-16" />
         </Link>
 
         <nav className="flex flex-col items-center gap-2 text-sm text-warm-black">
-          <TextLink href={DOCS_INFORMATION} target="_blank" rel="noopener">
-            お知らせなど
-          </TextLink>
-          <TextLink href={DOCS_TERMS_OF_SERVICE} target="_blank" rel="noopener">
+          <ExternalLink href={DOCS_INFORMATION}>お知らせなど</ExternalLink>
+          <ExternalLink href={DOCS_TERMS_OF_SERVICE} target="_blank" rel="noopener">
             利用規約
-          </TextLink>
-          <TextLink href={DOCS_PRIVACY_POLICY} target="_blank" rel="noopener">
+          </ExternalLink>
+          <ExternalLink href={DOCS_PRIVACY_POLICY} target="_blank" rel="noopener">
             プライバシーポリシー
-          </TextLink>
-          <TextLink href={DOCS_LICENSE} target="_blank" rel="noopener">
+          </ExternalLink>
+          <ExternalLink href={DOCS_LICENSE} target="_blank" rel="noopener">
             ライセンス
-          </TextLink>
+          </ExternalLink>
         </nav>
       </div>
 

@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import { useFormStatus } from "react-dom";
-import IconLoader2 from "@/assets/icons/loader-2.svg";
+import IconLoader2 from "@/assets/icons/loader-2.svg?react";
 import Button from "@/components/Button";
 
 type Props = Pick<ComponentProps<"button">, "className" | "disabled"> & {

@@ -1,39 +1,9 @@
-import type { StorybookConfig } from "@storybook/nextjs";
+import type { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: ["@storybook/addon-links", "storybook-addon-pseudo-states", "@storybook/addon-docs"],
-
-  framework: {
-    name: "@storybook/nextjs",
-    options: {},
-  },
+  framework: "@storybook/react-vite",
   staticDirs: ["../public"],
-  webpackFinal: async (config) => {
-    const fileLoaderRule = config.module?.rules?.find(
-      (rule) => (rule as { test?: RegExp })?.test?.test(".svg"),
-      // biome-ignore lint/suspicious/noExplicitAny: Stoybookなので許容
-    ) as { [key: string]: any };
-
-    config.module?.rules?.push(
-      {
-        ...fileLoaderRule,
-        test: /\.svg$/i,
-        resourceQuery: /url/, // *.svg?url
-      },
-      {
-        test: /\.svg$/i,
-        issuer: fileLoaderRule.issuer,
-        resourceQuery: {
-          not: [...(fileLoaderRule?.resourceQuery?.not || []), /url/],
-        }, // exclude if *.svg?url
-        use: ["@svgr/webpack"],
-      },
-    );
-
-    fileLoaderRule.exclude = /\.svg$/i;
-
-    return config;
-  },
 };
 export default config;

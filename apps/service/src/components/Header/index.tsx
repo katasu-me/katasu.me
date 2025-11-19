@@ -1,12 +1,12 @@
 import type { PublicUserData } from "@katasu.me/service-db";
-import Link from "next/link";
-import IconDots from "@/assets/icons/dots.svg";
-import IconFlag from "@/assets/icons/flag.svg";
-import IconSearch from "@/assets/icons/search.svg";
-import IconSettings from "@/assets/icons/settings.svg";
+import { Link } from "@tanstack/react-router";
+import IconDots from "@/assets/icons/dots.svg?react";
+import IconFlag from "@/assets/icons/flag.svg?react";
+import IconSearch from "@/assets/icons/search.svg?react";
+import IconSettings from "@/assets/icons/settings.svg?react";
 import DropdownMenu from "@/components/DropdownMenu";
 import IconButton from "@/components/IconButton";
-import { getUserAvatarUrl } from "@/lib/r2";
+import { getUserAvatarUrl } from "@/libs/r2";
 import UserIcon from "./UserIcon";
 
 type Props = {
@@ -23,7 +23,7 @@ export default function Header({ user, rightMenu }: Props) {
     !isOwnerPage && rightMenu && (
       <Link
         key="flag"
-        href={{
+        to={{
           pathname: "/report/user",
           search: `reportedUserId=${user.id}&reporterUserId=${rightMenu.loggedInUserId}`,
         }}
@@ -35,7 +35,7 @@ export default function Header({ user, rightMenu }: Props) {
       </Link>
     ),
     isOwnerPage && (
-      <Link key="settings" href="/settings">
+      <Link key="settings" to="/settings">
         <IconSettings className="size-4" />
         <span>設定</span>
       </Link>
@@ -53,13 +53,13 @@ export default function Header({ user, rightMenu }: Props) {
       {rightMenu && (
         <div className="flex items-center gap-2">
           {/* TODO: 検索機能 */}
-          <IconButton title="検索">
+          <IconButton>
             <IconSearch className="h-6 w-6 opacity-25" />
           </IconButton>
 
           <DropdownMenu
             trigger={
-              <IconButton title="その他">
+              <IconButton>
                 <IconDots className="h-6 w-6" />
               </IconButton>
             }

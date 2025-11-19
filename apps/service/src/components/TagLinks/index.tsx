@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 import TagLink from "./TabLink";
@@ -17,7 +17,7 @@ export default function TagLinks({ tags, userId, className }: Props) {
       ))}
       <Link
         className="interactive-scale-brightness relative flex h-8 shrink-0 items-center justify-center overflow-hidden rounded-md border border-warm-black bg-warm-white px-4 py-2 text-center text-warm-black text-xs"
-        href={`/user/${userId}/tag`}
+        to={`/user/${userId}/tag`}
       >
         もっとみる
       </Link>

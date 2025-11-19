@@ -1,5 +1,6 @@
 import { count, desc, eq } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
+import { createDBActionError } from "../lib/error";
 import { imageTag, type Tag, tag } from "../schema/image";
 import type { ActionResult } from "../types/error";
 import { getDB } from "./db";
@@ -28,13 +29,7 @@ export async function hideTag(dbInstance: AnyD1Database, tagId: string): Promise
       data: result,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "タグの非表示化に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("タグの非表示化に失敗しました", error);
   }
 }
 
@@ -55,13 +50,7 @@ export async function fetchTagById(dbInstance: AnyD1Database, tagId: string): Pr
       data: result,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "タグの取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("タグの取得に失敗しました", error);
   }
 }
 
@@ -132,12 +121,6 @@ export async function fetchTagsByUserId(
       data: results,
     };
   } catch (error) {
-    return {
-      success: false,
-      error: {
-        message: "タグの取得に失敗しました",
-        rawError: error,
-      },
-    };
+    return createDBActionError("タグの取得に失敗しました", error);
   }
 }
