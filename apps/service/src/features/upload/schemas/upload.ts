@@ -17,7 +17,7 @@ const TITLE_INVALID_MESSAGE = "タイトルに使用できない文字が含ま�
 const TAG_MAX_COUNT_MESSAGE = `タグは${MAX_TAG_COUNT}個以内で入力してください`;
 const TAG_TEXT_MAX_LENGTH_MESSAGE = `タグは${MAX_TAG_TEXT_LENGTH}文字以内で入力してください`;
 
-const INVALID_CHAR_REGEX = /^[^\p{Cc}\p{Cf}]+$/u;
+const INVALID_CHAR_REGEX = /^[^\p{Cc}\p{Cf}]*$/u;
 
 export const uploadImageSchema = v.object({
   file: v.nullish(

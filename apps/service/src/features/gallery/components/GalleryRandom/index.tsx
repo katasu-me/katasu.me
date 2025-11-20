@@ -2,19 +2,19 @@ import { type ComponentProps, useCallback, useEffect, useState } from "react";
 import type FrameImage from "@/components/FrameImage";
 import { useDevice } from "@/hooks/useDevice";
 import { toFrameImageProps } from "../../libs/convert";
-import { fetchRandomImagesFn } from "../../server-fn/fetch-random";
+import { type FetchRandomImagesInput, fetchRandomImagesFn } from "../../server-fn/fetch-random";
 import GalleryToggle from "../GalleryToggle";
 import DraggableImages from "./DraggableImages";
 
 type Props = {
-  userId: string;
   initialImages: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
+  fetchOptions: FetchRandomImagesInput;
 };
 
 const SHAKE_THRESHOLD = 15;
 const SHAKE_COOLDOWN = 500;
 
-export default function GalleryRandom({ userId, initialImages }: Props) {
+export default function GalleryRandom({ initialImages, fetchOptions }: Props) {
   const { isDesktop } = useDevice();
   const [images, setImages] = useState(initialImages);
   const [isScattering, setIsScattering] = useState(false);
@@ -22,11 +22,11 @@ export default function GalleryRandom({ userId, initialImages }: Props) {
 
   // ランダム画像を取得
   const fetchImages = useCallback(async () => {
-    const images = await fetchRandomImagesFn({ data: { type: "user", userId } });
-    const frameImages = images.map((image) => toFrameImageProps(image, userId));
+    const images = await fetchRandomImagesFn({ data: fetchOptions });
+    const frameImages = images.map((image) => toFrameImageProps(image));
 
     setImages(frameImages);
-  }, [userId]);
+  }, [fetchOptions]);
 
   // 初期表示時に画像を取得
   useEffect(() => {

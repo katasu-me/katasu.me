@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { fetchRandomImagesByTagId, fetchRandomImagesByUserId } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
-import { literal, object, string, union } from "valibot";
+import { type InferOutput, literal, object, string, union } from "valibot";
 import { ERROR_MESSAGE } from "../constants/error";
 
 const FetchRandomImagesInputSchema = union([
@@ -14,6 +14,8 @@ const FetchRandomImagesInputSchema = union([
     tagId: string(),
   }),
 ]);
+
+export type FetchRandomImagesInput = InferOutput<typeof FetchRandomImagesInputSchema>;
 
 export const fetchRandomImagesFn = createServerFn({ method: "GET" })
   .inputValidator(FetchRandomImagesInputSchema)

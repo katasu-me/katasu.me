@@ -34,7 +34,7 @@ function RouteComponent() {
   const { tags, images } = useLoaderData({ from: "/user/_layout/$userId/" });
 
   const isOwner = session?.user.id === user.id;
-  const frameImages = images ? images.map((image) => toFrameImageProps(image, user.id)) : [];
+  const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-8">
@@ -56,7 +56,13 @@ function RouteComponent() {
         <GalleryMasonry images={frameImages} className="col-start-2" totalImageCount={userTotalImageCount} />
       ) : (
         <ClientOnly fallback={<Loading className="col-start-2 h-[50vh]" />}>
-          <GalleryRandom userId={user.id} initialImages={frameImages} />
+          <GalleryRandom
+            initialImages={frameImages}
+            fetchOptions={{
+              type: "user",
+              userId: user.id,
+            }}
+          />
         </ClientOnly>
       )}
     </div>

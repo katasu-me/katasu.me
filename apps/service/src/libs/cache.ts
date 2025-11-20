@@ -34,6 +34,9 @@ export const CACHE_KEYS = {
   /** タグ別画像一覧 */
   tagImages: (tagId: string) => `cache:images:tag:${tagId}`,
 
+  /** タグの総画像数 */
+  tagTotalImageCount: (tagId: string) => `cache:images:tag:${tagId}:count`,
+
   /** ユーザーのタグ一覧（使用頻度順） */
   userTagsByUsage: (userId: string) => `cache:tags:user:${userId}:usage`,
 

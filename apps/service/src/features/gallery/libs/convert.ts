@@ -12,19 +12,18 @@ import { getImageUrl } from "@/libs/r2";
  */
 export function toFrameImageProps(
   imageWithTags: ImageWithTags,
-  authorUserId: string,
   variant: "original" | "thumbnail" = "thumbnail",
 ): ComponentProps<typeof FrameImage> {
-  const { id, width, height, title } = imageWithTags;
+  const { id, userId, width, height, title } = imageWithTags;
 
   return {
     id,
-    src: getImageUrl(authorUserId, id, variant),
+    src: getImageUrl(userId, id, variant),
     alt: title || "", // TODO: altの中身を考える
     width,
     height,
     linkParams: {
-      userId: authorUserId,
+      userId: userId,
       imageId: id,
     },
   };

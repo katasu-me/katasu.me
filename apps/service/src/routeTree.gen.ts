@@ -8,220 +8,240 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as ClosedBetaRouteImport } from './routes/closed-beta'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthSignupRouteImport } from './routes/auth/signup'
-import { Route as AuthErrorRouteImport } from './routes/auth/error'
-import { Route as UserLayoutUserIdRouteImport } from './routes/user/_layout.$userId'
-import { Route as ApiR2SplatRouteImport } from './routes/api/r2/$'
-import { Route as ApiAuthRedirectRouteImport } from './routes/api/auth/redirect'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as UserLayoutUserIdIndexRouteImport } from './routes/user/_layout.$userId/index'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$";
+import { Route as ApiAuthRedirectRouteImport } from "./routes/api/auth/redirect";
+import { Route as ApiR2SplatRouteImport } from "./routes/api/r2/$";
+import { Route as AuthErrorRouteImport } from "./routes/auth/error";
+import { Route as AuthSignupRouteImport } from "./routes/auth/signup";
+import { Route as ClosedBetaRouteImport } from "./routes/closed-beta";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as UserLayoutUserIdRouteImport } from "./routes/user/_layout.$userId";
+import { Route as UserLayoutUserIdIndexRouteImport } from "./routes/user/_layout.$userId/index";
+import { Route as UserLayoutUserIdTagTagIdRouteImport } from "./routes/user/_layout.$userId/tag/$tagId";
 
 const ClosedBetaRoute = ClosedBetaRouteImport.update({
-  id: '/closed-beta',
-  path: '/closed-beta',
+  id: "/closed-beta",
+  path: "/closed-beta",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuthSignupRoute = AuthSignupRouteImport.update({
-  id: '/auth/signup',
-  path: '/auth/signup',
+  id: "/auth/signup",
+  path: "/auth/signup",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuthErrorRoute = AuthErrorRouteImport.update({
-  id: '/auth/error',
-  path: '/auth/error',
+  id: "/auth/error",
+  path: "/auth/error",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const UserLayoutUserIdRoute = UserLayoutUserIdRouteImport.update({
-  id: '/user/_layout/$userId',
-  path: '/user/$userId',
+  id: "/user/_layout/$userId",
+  path: "/user/$userId",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiR2SplatRoute = ApiR2SplatRouteImport.update({
-  id: '/api/r2/$',
-  path: '/api/r2/$',
+  id: "/api/r2/$",
+  path: "/api/r2/$",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiAuthRedirectRoute = ApiAuthRedirectRouteImport.update({
-  id: '/api/auth/redirect',
-  path: '/api/auth/redirect',
+  id: "/api/auth/redirect",
+  path: "/api/auth/redirect",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
+  id: "/api/auth/$",
+  path: "/api/auth/$",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const UserLayoutUserIdIndexRoute = UserLayoutUserIdIndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => UserLayoutUserIdRoute,
-} as any)
+} as any);
+const UserLayoutUserIdTagTagIdRoute = UserLayoutUserIdTagTagIdRouteImport.update({
+  id: "/tag/$tagId",
+  path: "/tag/$tagId",
+  getParentRoute: () => UserLayoutUserIdRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/closed-beta': typeof ClosedBetaRoute
-  '/auth/error': typeof AuthErrorRoute
-  '/auth/signup': typeof AuthSignupRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/auth/redirect': typeof ApiAuthRedirectRoute
-  '/api/r2/$': typeof ApiR2SplatRoute
-  '/user/$userId': typeof UserLayoutUserIdRouteWithChildren
-  '/user/$userId/': typeof UserLayoutUserIdIndexRoute
+  "/": typeof IndexRoute;
+  "/closed-beta": typeof ClosedBetaRoute;
+  "/auth/error": typeof AuthErrorRoute;
+  "/auth/signup": typeof AuthSignupRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/auth/redirect": typeof ApiAuthRedirectRoute;
+  "/api/r2/$": typeof ApiR2SplatRoute;
+  "/user/$userId": typeof UserLayoutUserIdRouteWithChildren;
+  "/user/$userId/": typeof UserLayoutUserIdIndexRoute;
+  "/user/$userId/tag/$tagId": typeof UserLayoutUserIdTagTagIdRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/closed-beta': typeof ClosedBetaRoute
-  '/auth/error': typeof AuthErrorRoute
-  '/auth/signup': typeof AuthSignupRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/auth/redirect': typeof ApiAuthRedirectRoute
-  '/api/r2/$': typeof ApiR2SplatRoute
-  '/user/$userId': typeof UserLayoutUserIdIndexRoute
+  "/": typeof IndexRoute;
+  "/closed-beta": typeof ClosedBetaRoute;
+  "/auth/error": typeof AuthErrorRoute;
+  "/auth/signup": typeof AuthSignupRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/auth/redirect": typeof ApiAuthRedirectRoute;
+  "/api/r2/$": typeof ApiR2SplatRoute;
+  "/user/$userId": typeof UserLayoutUserIdIndexRoute;
+  "/user/$userId/tag/$tagId": typeof UserLayoutUserIdTagTagIdRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/closed-beta': typeof ClosedBetaRoute
-  '/auth/error': typeof AuthErrorRoute
-  '/auth/signup': typeof AuthSignupRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/auth/redirect': typeof ApiAuthRedirectRoute
-  '/api/r2/$': typeof ApiR2SplatRoute
-  '/user/_layout/$userId': typeof UserLayoutUserIdRouteWithChildren
-  '/user/_layout/$userId/': typeof UserLayoutUserIdIndexRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/closed-beta": typeof ClosedBetaRoute;
+  "/auth/error": typeof AuthErrorRoute;
+  "/auth/signup": typeof AuthSignupRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/auth/redirect": typeof ApiAuthRedirectRoute;
+  "/api/r2/$": typeof ApiR2SplatRoute;
+  "/user/_layout/$userId": typeof UserLayoutUserIdRouteWithChildren;
+  "/user/_layout/$userId/": typeof UserLayoutUserIdIndexRoute;
+  "/user/_layout/$userId/tag/$tagId": typeof UserLayoutUserIdTagTagIdRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/closed-beta'
-    | '/auth/error'
-    | '/auth/signup'
-    | '/api/auth/$'
-    | '/api/auth/redirect'
-    | '/api/r2/$'
-    | '/user/$userId'
-    | '/user/$userId/'
-  fileRoutesByTo: FileRoutesByTo
+    | "/"
+    | "/closed-beta"
+    | "/auth/error"
+    | "/auth/signup"
+    | "/api/auth/$"
+    | "/api/auth/redirect"
+    | "/api/r2/$"
+    | "/user/$userId"
+    | "/user/$userId/"
+    | "/user/$userId/tag/$tagId";
+  fileRoutesByTo: FileRoutesByTo;
   to:
-    | '/'
-    | '/closed-beta'
-    | '/auth/error'
-    | '/auth/signup'
-    | '/api/auth/$'
-    | '/api/auth/redirect'
-    | '/api/r2/$'
-    | '/user/$userId'
+    | "/"
+    | "/closed-beta"
+    | "/auth/error"
+    | "/auth/signup"
+    | "/api/auth/$"
+    | "/api/auth/redirect"
+    | "/api/r2/$"
+    | "/user/$userId"
+    | "/user/$userId/tag/$tagId";
   id:
-    | '__root__'
-    | '/'
-    | '/closed-beta'
-    | '/auth/error'
-    | '/auth/signup'
-    | '/api/auth/$'
-    | '/api/auth/redirect'
-    | '/api/r2/$'
-    | '/user/_layout/$userId'
-    | '/user/_layout/$userId/'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/"
+    | "/closed-beta"
+    | "/auth/error"
+    | "/auth/signup"
+    | "/api/auth/$"
+    | "/api/auth/redirect"
+    | "/api/r2/$"
+    | "/user/_layout/$userId"
+    | "/user/_layout/$userId/"
+    | "/user/_layout/$userId/tag/$tagId";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  ClosedBetaRoute: typeof ClosedBetaRoute
-  AuthErrorRoute: typeof AuthErrorRoute
-  AuthSignupRoute: typeof AuthSignupRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  ApiAuthRedirectRoute: typeof ApiAuthRedirectRoute
-  ApiR2SplatRoute: typeof ApiR2SplatRoute
-  UserLayoutUserIdRoute: typeof UserLayoutUserIdRouteWithChildren
+  IndexRoute: typeof IndexRoute;
+  ClosedBetaRoute: typeof ClosedBetaRoute;
+  AuthErrorRoute: typeof AuthErrorRoute;
+  AuthSignupRoute: typeof AuthSignupRoute;
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
+  ApiAuthRedirectRoute: typeof ApiAuthRedirectRoute;
+  ApiR2SplatRoute: typeof ApiR2SplatRoute;
+  UserLayoutUserIdRoute: typeof UserLayoutUserIdRouteWithChildren;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/closed-beta': {
-      id: '/closed-beta'
-      path: '/closed-beta'
-      fullPath: '/closed-beta'
-      preLoaderRoute: typeof ClosedBetaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/signup': {
-      id: '/auth/signup'
-      path: '/auth/signup'
-      fullPath: '/auth/signup'
-      preLoaderRoute: typeof AuthSignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/error': {
-      id: '/auth/error'
-      path: '/auth/error'
-      fullPath: '/auth/error'
-      preLoaderRoute: typeof AuthErrorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/user/_layout/$userId': {
-      id: '/user/_layout/$userId'
-      path: '/user/$userId'
-      fullPath: '/user/$userId'
-      preLoaderRoute: typeof UserLayoutUserIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/r2/$': {
-      id: '/api/r2/$'
-      path: '/api/r2/$'
-      fullPath: '/api/r2/$'
-      preLoaderRoute: typeof ApiR2SplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/redirect': {
-      id: '/api/auth/redirect'
-      path: '/api/auth/redirect'
-      fullPath: '/api/auth/redirect'
-      preLoaderRoute: typeof ApiAuthRedirectRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/user/_layout/$userId/': {
-      id: '/user/_layout/$userId/'
-      path: '/'
-      fullPath: '/user/$userId/'
-      preLoaderRoute: typeof UserLayoutUserIdIndexRouteImport
-      parentRoute: typeof UserLayoutUserIdRoute
-    }
+    "/closed-beta": {
+      id: "/closed-beta";
+      path: "/closed-beta";
+      fullPath: "/closed-beta";
+      preLoaderRoute: typeof ClosedBetaRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/auth/signup": {
+      id: "/auth/signup";
+      path: "/auth/signup";
+      fullPath: "/auth/signup";
+      preLoaderRoute: typeof AuthSignupRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/auth/error": {
+      id: "/auth/error";
+      path: "/auth/error";
+      fullPath: "/auth/error";
+      preLoaderRoute: typeof AuthErrorRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/user/_layout/$userId": {
+      id: "/user/_layout/$userId";
+      path: "/user/$userId";
+      fullPath: "/user/$userId";
+      preLoaderRoute: typeof UserLayoutUserIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/api/r2/$": {
+      id: "/api/r2/$";
+      path: "/api/r2/$";
+      fullPath: "/api/r2/$";
+      preLoaderRoute: typeof ApiR2SplatRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/api/auth/redirect": {
+      id: "/api/auth/redirect";
+      path: "/api/auth/redirect";
+      fullPath: "/api/auth/redirect";
+      preLoaderRoute: typeof ApiAuthRedirectRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/api/auth/$": {
+      id: "/api/auth/$";
+      path: "/api/auth/$";
+      fullPath: "/api/auth/$";
+      preLoaderRoute: typeof ApiAuthSplatRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/user/_layout/$userId/": {
+      id: "/user/_layout/$userId/";
+      path: "/";
+      fullPath: "/user/$userId/";
+      preLoaderRoute: typeof UserLayoutUserIdIndexRouteImport;
+      parentRoute: typeof UserLayoutUserIdRoute;
+    };
+    "/user/_layout/$userId/tag/$tagId": {
+      id: "/user/_layout/$userId/tag/$tagId";
+      path: "/tag/$tagId";
+      fullPath: "/user/$userId/tag/$tagId";
+      preLoaderRoute: typeof UserLayoutUserIdTagTagIdRouteImport;
+      parentRoute: typeof UserLayoutUserIdRoute;
+    };
   }
 }
 
 interface UserLayoutUserIdRouteChildren {
-  UserLayoutUserIdIndexRoute: typeof UserLayoutUserIdIndexRoute
+  UserLayoutUserIdIndexRoute: typeof UserLayoutUserIdIndexRoute;
+  UserLayoutUserIdTagTagIdRoute: typeof UserLayoutUserIdTagTagIdRoute;
 }
 
 const UserLayoutUserIdRouteChildren: UserLayoutUserIdRouteChildren = {
   UserLayoutUserIdIndexRoute: UserLayoutUserIdIndexRoute,
-}
+  UserLayoutUserIdTagTagIdRoute: UserLayoutUserIdTagTagIdRoute,
+};
 
-const UserLayoutUserIdRouteWithChildren =
-  UserLayoutUserIdRoute._addFileChildren(UserLayoutUserIdRouteChildren)
+const UserLayoutUserIdRouteWithChildren = UserLayoutUserIdRoute._addFileChildren(UserLayoutUserIdRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -232,16 +252,14 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthRedirectRoute: ApiAuthRedirectRoute,
   ApiR2SplatRoute: ApiR2SplatRoute,
   UserLayoutUserIdRoute: UserLayoutUserIdRouteWithChildren,
-}
-export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+};
+export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
+import type { getRouter } from "./router.tsx";
+
+declare module "@tanstack/react-start" {
   interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
+    ssr: true;
+    router: Awaited<ReturnType<typeof getRouter>>;
   }
 }
