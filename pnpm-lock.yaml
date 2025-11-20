@@ -24,19 +24,6 @@ importers:
         specifier: ^2.6.0
         version: 2.6.0
 
-  apps/image-optimizer:
-    dependencies:
-      image-size:
-        specifier: ^2.0.2
-        version: 2.0.2
-      wasm-image-optimization:
-        specifier: ^1.4.2
-        version: 1.4.2
-    devDependencies:
-      wrangler:
-        specifier: ^4.46.0
-        version: 4.46.0
-
   apps/service:
     dependencies:
       '@arrow2nd/vaul':

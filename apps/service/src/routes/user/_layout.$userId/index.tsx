@@ -11,10 +11,6 @@ import ImageDropArea from "@/features/upload/components/ImageDropArea";
 
 export const Route = createFileRoute("/user/_layout/$userId/")({
   component: RouteComponent,
-  pendingComponent: () => {
-    // TODO: 仮
-    return <Loading className="col-start-2 py-16" />;
-  },
   errorComponent: ({ error }) => {
     return <Message message={error.message ?? ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
   },
@@ -59,7 +55,7 @@ function RouteComponent() {
       {view === "timeline" ? (
         <GalleryMasonry images={frameImages} className="col-start-2" totalImageCount={userTotalImageCount} />
       ) : (
-        <ClientOnly>
+        <ClientOnly fallback={<Loading className="col-start-2 h-[50vh]" />}>
           <GalleryRandom userId={user.id} initialImages={frameImages} />
         </ClientOnly>
       )}
