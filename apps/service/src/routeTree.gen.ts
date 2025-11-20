@@ -17,6 +17,7 @@ import { Route as AuthSignupRouteImport } from "./routes/auth/signup";
 import { Route as ClosedBetaRouteImport } from "./routes/closed-beta";
 import { Route as IndexRouteImport } from "./routes/index";
 import { Route as UserLayoutUserIdRouteImport } from "./routes/user/_layout.$userId";
+import { Route as UserLayoutUserIdImageImageIdRouteImport } from "./routes/user/_layout.$userId/image.$imageId";
 import { Route as UserLayoutUserIdIndexRouteImport } from "./routes/user/_layout.$userId/index";
 import { Route as UserLayoutUserIdTagTagIdRouteImport } from "./routes/user/_layout.$userId/tag/$tagId";
 
@@ -70,6 +71,11 @@ const UserLayoutUserIdTagTagIdRoute = UserLayoutUserIdTagTagIdRouteImport.update
   path: "/tag/$tagId",
   getParentRoute: () => UserLayoutUserIdRoute,
 } as any);
+const UserLayoutUserIdImageImageIdRoute = UserLayoutUserIdImageImageIdRouteImport.update({
+  id: "/image/$imageId",
+  path: "/image/$imageId",
+  getParentRoute: () => UserLayoutUserIdRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute;
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   "/api/r2/$": typeof ApiR2SplatRoute;
   "/user/$userId": typeof UserLayoutUserIdRouteWithChildren;
   "/user/$userId/": typeof UserLayoutUserIdIndexRoute;
+  "/user/$userId/image/$imageId": typeof UserLayoutUserIdImageImageIdRoute;
   "/user/$userId/tag/$tagId": typeof UserLayoutUserIdTagTagIdRoute;
 }
 export interface FileRoutesByTo {
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   "/api/auth/redirect": typeof ApiAuthRedirectRoute;
   "/api/r2/$": typeof ApiR2SplatRoute;
   "/user/$userId": typeof UserLayoutUserIdIndexRoute;
+  "/user/$userId/image/$imageId": typeof UserLayoutUserIdImageImageIdRoute;
   "/user/$userId/tag/$tagId": typeof UserLayoutUserIdTagTagIdRoute;
 }
 export interface FileRoutesById {
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   "/api/r2/$": typeof ApiR2SplatRoute;
   "/user/_layout/$userId": typeof UserLayoutUserIdRouteWithChildren;
   "/user/_layout/$userId/": typeof UserLayoutUserIdIndexRoute;
+  "/user/_layout/$userId/image/$imageId": typeof UserLayoutUserIdImageImageIdRoute;
   "/user/_layout/$userId/tag/$tagId": typeof UserLayoutUserIdTagTagIdRoute;
 }
 export interface FileRouteTypes {
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | "/api/r2/$"
     | "/user/$userId"
     | "/user/$userId/"
+    | "/user/$userId/image/$imageId"
     | "/user/$userId/tag/$tagId";
   fileRoutesByTo: FileRoutesByTo;
   to:
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | "/api/auth/redirect"
     | "/api/r2/$"
     | "/user/$userId"
+    | "/user/$userId/image/$imageId"
     | "/user/$userId/tag/$tagId";
   id:
     | "__root__"
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | "/api/r2/$"
     | "/user/_layout/$userId"
     | "/user/_layout/$userId/"
+    | "/user/_layout/$userId/image/$imageId"
     | "/user/_layout/$userId/tag/$tagId";
   fileRoutesById: FileRoutesById;
 }
@@ -228,16 +240,25 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof UserLayoutUserIdTagTagIdRouteImport;
       parentRoute: typeof UserLayoutUserIdRoute;
     };
+    "/user/_layout/$userId/image/$imageId": {
+      id: "/user/_layout/$userId/image/$imageId";
+      path: "/image/$imageId";
+      fullPath: "/user/$userId/image/$imageId";
+      preLoaderRoute: typeof UserLayoutUserIdImageImageIdRouteImport;
+      parentRoute: typeof UserLayoutUserIdRoute;
+    };
   }
 }
 
 interface UserLayoutUserIdRouteChildren {
   UserLayoutUserIdIndexRoute: typeof UserLayoutUserIdIndexRoute;
+  UserLayoutUserIdImageImageIdRoute: typeof UserLayoutUserIdImageImageIdRoute;
   UserLayoutUserIdTagTagIdRoute: typeof UserLayoutUserIdTagTagIdRoute;
 }
 
 const UserLayoutUserIdRouteChildren: UserLayoutUserIdRouteChildren = {
   UserLayoutUserIdIndexRoute: UserLayoutUserIdIndexRoute,
+  UserLayoutUserIdImageImageIdRoute: UserLayoutUserIdImageImageIdRoute,
   UserLayoutUserIdTagTagIdRoute: UserLayoutUserIdTagTagIdRoute,
 };
 

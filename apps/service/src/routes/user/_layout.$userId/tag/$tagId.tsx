@@ -1,4 +1,5 @@
 import { ClientOnly, createFileRoute, useLoaderData, useRouteContext, useSearch } from "@tanstack/react-router";
+import { fallback, number, object, parse } from "valibot";
 import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
 import TagLinks from "@/components/TagLinks";
@@ -6,14 +7,21 @@ import GalleryMasonry from "@/features/gallery/components/GalleryMasonry";
 import GalleryRandom from "@/features/gallery/components/GalleryRandom";
 import { ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
+import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { tagPageLoaderFn } from "@/features/gallery/server-fn/tag-page";
 import ImageDropArea from "@/features/upload/components/ImageDropArea";
+
+const searchParamsSchema = object({
+  view: fallback(GalleryViewSchema, "timeline"),
+  page: fallback(number(), 1),
+});
 
 export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
   component: RouteComponent,
   errorComponent: ({ error }) => {
     return <Message message={error.message ?? ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
   },
+  validateSearch: (search) => parse(searchParamsSchema, search),
   loaderDeps: ({ search: { view, page } }) => ({ view, page }),
   loader: async ({ params, deps }) => {
     return tagPageLoaderFn({
@@ -29,8 +37,7 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
 
 function RouteComponent() {
   const { session, user, userTotalImageCount } = useRouteContext({ from: "/user/_layout/$userId" });
-  const { view } = useSearch({ from: "/user/_layout/$userId" });
-
+  const { view } = useSearch({ from: "/user/_layout/$userId/tag/$tagId" });
   const { tag, tags, images } = useLoaderData({ from: "/user/_layout/$userId/tag/$tagId" });
 
   const isOwner = session?.user.id === user.id;

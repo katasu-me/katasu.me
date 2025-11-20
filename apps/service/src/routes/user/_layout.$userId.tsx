@@ -2,18 +2,11 @@ import { env } from "cloudflare:workers";
 import { fetchTotalImageCountByUserId } from "@katasu.me/service-db";
 import { createFileRoute, notFound, Outlet, useRouteContext } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { fallback, number, object, parse } from "valibot";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { getUserSession } from "@/features/auth/libs/auth";
 import { cachedFetchPublicUserDataById } from "@/features/auth/libs/cached-user-data";
-import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { CACHE_KEYS, getCached } from "@/libs/cache";
-
-const searchParamsSchema = object({
-  view: fallback(GalleryViewSchema, "timeline"),
-  page: fallback(number(), 1),
-});
 
 const cachedFetchTotalImageCount = async (userId: string) => {
   return getCached(env.CACHE_KV, CACHE_KEYS.userImageCount(userId), async () => {
@@ -49,7 +42,6 @@ const fetchUser = createServerFn()
 
 export const Route = createFileRoute("/user/_layout/$userId")({
   component: UserLayoutComponent,
-  validateSearch: (search) => parse(searchParamsSchema, search),
   beforeLoad: async ({ params }) => {
     return fetchUser({
       data: {

@@ -127,13 +127,11 @@ export default function DraggableImage({
             "pc:mt-4 pc:pb-0 pc:text-sm pc:underline-offset-4",
             "hover:text-warm-black hover:decoration-warm-black",
           ])}
-          to="/"
-          // TODO:
-          // to="/user/$userId/image/$imageId"
-          // params={{
-          //   userId: linkParams.userId,
-          //   imageId: linkParams.imageId,
-          // }}
+          to="/user/$userId/image/$imageId"
+          params={{
+            userId: linkParams.userId,
+            imageId: linkParams.imageId,
+          }}
         >
           {alt || DEFAULT_IMAGE_TITLE}
         </Link>
