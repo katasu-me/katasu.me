@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { MAX_IMAGE_FILE_SIZE } from "@/app/(main)/user/[userId]/_schemas/upload";
+import { MAX_IMAGE_FILE_SIZE } from "@/features/image-upload/schemas/upload";
 
 const USERNAME_REQUIRED_MESSAGE = "ユーザー名を入力してください";
 const USERNAME_MAX_LENGTH_MESSAGE = "ユーザー名は50文字以内で入力してください";
