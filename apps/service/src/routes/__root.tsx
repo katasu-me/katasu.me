@@ -2,6 +2,8 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { PropsWithChildren } from "react";
+import BudouX from "@/components/BudouX";
+import MessagePage from "@/components/MessagePage";
 import { generateMetadataTitle } from "@/libs/meta";
 import appCss from "../styles.css?url";
 
@@ -29,8 +31,22 @@ export const Route = createRootRoute({
     ],
   }),
 
+  notFoundComponent: NotFound,
   shellComponent: RootDocument,
 });
+
+function NotFound() {
+  return (
+    <MessagePage title="404" showBackButton>
+      <p>
+        <BudouX>ページが見つかりませんでした。</BudouX>
+      </p>
+      <p className="mt-2">
+        <BudouX>ページが移動されたか、削除されたのかもしれません。</BudouX>
+      </p>
+    </MessagePage>
+  );
+}
 
 function RootDocument({ children }: PropsWithChildren) {
   return (

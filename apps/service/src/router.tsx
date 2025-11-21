@@ -9,7 +9,8 @@ export const getRouter = () => {
     routeTree,
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
-    defaultPendingMs: 500,
+    defaultPendingMs: 300,
+    defaultNotFoundComponent: () => <NotFound />,
   });
 
   return router;
