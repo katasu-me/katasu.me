@@ -40,17 +40,19 @@ function RootDocument({ children }: PropsWithChildren) {
       </head>
       <body className="grid grid-cols-(--grid-main-layout) bg-warm-white font-mix text-warm-black">
         {children}
-        <TanStackDevtools
-          config={{
-            position: "bottom-right",
-          }}
-          plugins={[
-            {
-              name: "Tanstack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        {import.meta.env.DEV && (
+          <TanStackDevtools
+            config={{
+              position: "bottom-right",
+            }}
+            plugins={[
+              {
+                name: "Tanstack Router",
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+        )}
         {/*         {process.env.VITE_UMAMI_SCRIPT_URL && process.env.VITE_UMAMI_WEBSITE_ID && ( */}
         {/*   <Script */}
         {/*     src={process.env.VITE_UMAMI_SCRIPT_URL} */}
