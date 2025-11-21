@@ -1,6 +1,7 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useState } from "react";
+import IconUser from "@/assets/icons/user.svg?react";
 import Button from "@/components/Button";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -13,13 +14,6 @@ import { getUserAvatarUrl } from "@/libs/r2";
 
 const getSettingsPageData = createServerFn().handler(async () => {
   const { session } = await requireAuth();
-
-  if (!session.user.name) {
-    throw redirect({
-      to: "/auth/signup",
-    });
-  }
-
   const userResult = await cachedFetchPublicUserDataById(session.user.id);
 
   if (!userResult.success || !userResult.data) {
@@ -57,8 +51,13 @@ function RouteComponent() {
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
       <Header user={data.user} rightMenu={{ loggedInUserId: data.session.user.id }} />
 
+      <h1 className="col-start-2 text-4xl">設定</h1>
+
       <div className="col-start-2 flex flex-col gap-8">
-        <h1 className="font-bold text-2xl">設定</h1>
+        <h2 className="flex items-center gap-2 text-2xl">
+          <IconUser className="size-6" />
+          ユーザー情報
+        </h2>
 
         <UserSettingsForm
           user={{

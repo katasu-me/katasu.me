@@ -51,9 +51,8 @@ export default function SignUpForm({ className }: Props) {
 
         const result = await signupFn({ data: formData });
 
-        if (result && "status" in result && result.status === "error") {
-          const errorMessage = result.error?.[""] || result.error?.[0] || "新規登録に失敗しました";
-          setFormError(Array.isArray(errorMessage) ? errorMessage[0] : errorMessage);
+        if (!result.success) {
+          setFormError("新規登録に失敗しました");
         }
       } catch (error) {
         if (error instanceof Error) {
