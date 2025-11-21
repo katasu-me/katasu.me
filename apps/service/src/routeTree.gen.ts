@@ -16,12 +16,18 @@ import { Route as AuthErrorRouteImport } from "./routes/auth/error";
 import { Route as AuthSignupRouteImport } from "./routes/auth/signup";
 import { Route as ClosedBetaRouteImport } from "./routes/closed-beta";
 import { Route as IndexRouteImport } from "./routes/index";
+import { Route as SettingsRouteImport } from "./routes/settings";
 import { Route as UserLayoutUserIdRouteImport } from "./routes/user/_layout.$userId";
 import { Route as UserLayoutUserIdImageImageIdRouteImport } from "./routes/user/_layout.$userId/image.$imageId";
 import { Route as UserLayoutUserIdIndexRouteImport } from "./routes/user/_layout.$userId/index";
 import { Route as UserLayoutUserIdTagTagIdRouteImport } from "./routes/user/_layout.$userId/tag/$tagId";
 import { Route as UserLayoutUserIdTagIndexRouteImport } from "./routes/user/_layout.$userId/tag/index";
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: "/settings",
+  path: "/settings",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const ClosedBetaRoute = ClosedBetaRouteImport.update({
   id: "/closed-beta",
   path: "/closed-beta",
@@ -86,6 +92,7 @@ const UserLayoutUserIdImageImageIdRoute = UserLayoutUserIdImageImageIdRouteImpor
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute;
   "/closed-beta": typeof ClosedBetaRoute;
+  "/settings": typeof SettingsRoute;
   "/auth/error": typeof AuthErrorRoute;
   "/auth/signup": typeof AuthSignupRoute;
   "/api/auth/$": typeof ApiAuthSplatRoute;
@@ -100,6 +107,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   "/": typeof IndexRoute;
   "/closed-beta": typeof ClosedBetaRoute;
+  "/settings": typeof SettingsRoute;
   "/auth/error": typeof AuthErrorRoute;
   "/auth/signup": typeof AuthSignupRoute;
   "/api/auth/$": typeof ApiAuthSplatRoute;
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   "/": typeof IndexRoute;
   "/closed-beta": typeof ClosedBetaRoute;
+  "/settings": typeof SettingsRoute;
   "/auth/error": typeof AuthErrorRoute;
   "/auth/signup": typeof AuthSignupRoute;
   "/api/auth/$": typeof ApiAuthSplatRoute;
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
   fullPaths:
     | "/"
     | "/closed-beta"
+    | "/settings"
     | "/auth/error"
     | "/auth/signup"
     | "/api/auth/$"
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
   to:
     | "/"
     | "/closed-beta"
+    | "/settings"
     | "/auth/error"
     | "/auth/signup"
     | "/api/auth/$"
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | "__root__"
     | "/"
     | "/closed-beta"
+    | "/settings"
     | "/auth/error"
     | "/auth/signup"
     | "/api/auth/$"
@@ -172,6 +184,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   ClosedBetaRoute: typeof ClosedBetaRoute;
+  SettingsRoute: typeof SettingsRoute;
   AuthErrorRoute: typeof AuthErrorRoute;
   AuthSignupRoute: typeof AuthSignupRoute;
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
@@ -182,6 +195,13 @@ export interface RootRouteChildren {
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
+    "/settings": {
+      id: "/settings";
+      path: "/settings";
+      fullPath: "/settings";
+      preLoaderRoute: typeof SettingsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     "/closed-beta": {
       id: "/closed-beta";
       path: "/closed-beta";
@@ -288,6 +308,7 @@ const UserLayoutUserIdRouteWithChildren = UserLayoutUserIdRoute._addFileChildren
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ClosedBetaRoute: ClosedBetaRoute,
+  SettingsRoute: SettingsRoute,
   AuthErrorRoute: AuthErrorRoute,
   AuthSignupRoute: AuthSignupRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
