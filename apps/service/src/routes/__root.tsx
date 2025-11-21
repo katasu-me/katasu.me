@@ -31,9 +31,19 @@ export const Route = createRootRoute({
     ],
   }),
 
+  errorComponent: ErrorComponent,
   notFoundComponent: NotFound,
   shellComponent: RootDocument,
 });
+
+function ErrorComponent() {
+  return (
+    <MessagePage title="Error" showBackButton>
+      <p>サーバーでエラーが発生しました</p>
+      <p className="mt-2">しばらく時間をおいて、再度お試しください 🙇</p>
+    </MessagePage>
+  );
+}
 
 function NotFound() {
   return (
