@@ -11,6 +11,7 @@ import { nanoid } from "nanoid";
 export function getAuth() {
   return betterAuth({
     baseURL: env.BETTER_AUTH_URL,
+    secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(drizzle(env.DB, { schema }), {
       provider: "sqlite",
     }),
