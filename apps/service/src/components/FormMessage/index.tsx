@@ -26,7 +26,7 @@ export default function FormMessage({ type, text, caption, className }: Props) {
         <IconCircleCheck className="size-6 text-warm-green" />
       )}
       <div className={twMerge("text-sm", isError ? "text-vivid-red" : "text-warm-green")}>
-        <p className="font-bold">{text}</p>
+        <p>{text}</p>
         {caption && <p className="mt-0.5 text-xs">{caption}</p>}
       </div>
     </div>

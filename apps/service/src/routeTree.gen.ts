@@ -20,6 +20,7 @@ import { Route as UserLayoutUserIdRouteImport } from "./routes/user/_layout.$use
 import { Route as UserLayoutUserIdImageImageIdRouteImport } from "./routes/user/_layout.$userId/image.$imageId";
 import { Route as UserLayoutUserIdIndexRouteImport } from "./routes/user/_layout.$userId/index";
 import { Route as UserLayoutUserIdTagTagIdRouteImport } from "./routes/user/_layout.$userId/tag/$tagId";
+import { Route as UserLayoutUserIdTagIndexRouteImport } from "./routes/user/_layout.$userId/tag/index";
 
 const ClosedBetaRoute = ClosedBetaRouteImport.update({
   id: "/closed-beta",
@@ -66,6 +67,11 @@ const UserLayoutUserIdIndexRoute = UserLayoutUserIdIndexRouteImport.update({
   path: "/",
   getParentRoute: () => UserLayoutUserIdRoute,
 } as any);
+const UserLayoutUserIdTagIndexRoute = UserLayoutUserIdTagIndexRouteImport.update({
+  id: "/tag/",
+  path: "/tag/",
+  getParentRoute: () => UserLayoutUserIdRoute,
+} as any);
 const UserLayoutUserIdTagTagIdRoute = UserLayoutUserIdTagTagIdRouteImport.update({
   id: "/tag/$tagId",
   path: "/tag/$tagId",
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   "/user/$userId/": typeof UserLayoutUserIdIndexRoute;
   "/user/$userId/image/$imageId": typeof UserLayoutUserIdImageImageIdRoute;
   "/user/$userId/tag/$tagId": typeof UserLayoutUserIdTagTagIdRoute;
+  "/user/$userId/tag": typeof UserLayoutUserIdTagIndexRoute;
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute;
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   "/user/$userId": typeof UserLayoutUserIdIndexRoute;
   "/user/$userId/image/$imageId": typeof UserLayoutUserIdImageImageIdRoute;
   "/user/$userId/tag/$tagId": typeof UserLayoutUserIdTagTagIdRoute;
+  "/user/$userId/tag": typeof UserLayoutUserIdTagIndexRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   "/user/_layout/$userId/": typeof UserLayoutUserIdIndexRoute;
   "/user/_layout/$userId/image/$imageId": typeof UserLayoutUserIdImageImageIdRoute;
   "/user/_layout/$userId/tag/$tagId": typeof UserLayoutUserIdTagTagIdRoute;
+  "/user/_layout/$userId/tag/": typeof UserLayoutUserIdTagIndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
@@ -129,7 +138,8 @@ export interface FileRouteTypes {
     | "/user/$userId"
     | "/user/$userId/"
     | "/user/$userId/image/$imageId"
-    | "/user/$userId/tag/$tagId";
+    | "/user/$userId/tag/$tagId"
+    | "/user/$userId/tag";
   fileRoutesByTo: FileRoutesByTo;
   to:
     | "/"
@@ -141,7 +151,8 @@ export interface FileRouteTypes {
     | "/api/r2/$"
     | "/user/$userId"
     | "/user/$userId/image/$imageId"
-    | "/user/$userId/tag/$tagId";
+    | "/user/$userId/tag/$tagId"
+    | "/user/$userId/tag";
   id:
     | "__root__"
     | "/"
@@ -154,7 +165,8 @@ export interface FileRouteTypes {
     | "/user/_layout/$userId"
     | "/user/_layout/$userId/"
     | "/user/_layout/$userId/image/$imageId"
-    | "/user/_layout/$userId/tag/$tagId";
+    | "/user/_layout/$userId/tag/$tagId"
+    | "/user/_layout/$userId/tag/";
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
@@ -233,6 +245,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof UserLayoutUserIdIndexRouteImport;
       parentRoute: typeof UserLayoutUserIdRoute;
     };
+    "/user/_layout/$userId/tag/": {
+      id: "/user/_layout/$userId/tag/";
+      path: "/tag";
+      fullPath: "/user/$userId/tag";
+      preLoaderRoute: typeof UserLayoutUserIdTagIndexRouteImport;
+      parentRoute: typeof UserLayoutUserIdRoute;
+    };
     "/user/_layout/$userId/tag/$tagId": {
       id: "/user/_layout/$userId/tag/$tagId";
       path: "/tag/$tagId";
@@ -254,12 +273,14 @@ interface UserLayoutUserIdRouteChildren {
   UserLayoutUserIdIndexRoute: typeof UserLayoutUserIdIndexRoute;
   UserLayoutUserIdImageImageIdRoute: typeof UserLayoutUserIdImageImageIdRoute;
   UserLayoutUserIdTagTagIdRoute: typeof UserLayoutUserIdTagTagIdRoute;
+  UserLayoutUserIdTagIndexRoute: typeof UserLayoutUserIdTagIndexRoute;
 }
 
 const UserLayoutUserIdRouteChildren: UserLayoutUserIdRouteChildren = {
   UserLayoutUserIdIndexRoute: UserLayoutUserIdIndexRoute,
   UserLayoutUserIdImageImageIdRoute: UserLayoutUserIdImageImageIdRoute,
   UserLayoutUserIdTagTagIdRoute: UserLayoutUserIdTagTagIdRoute,
+  UserLayoutUserIdTagIndexRoute: UserLayoutUserIdTagIndexRoute,
 };
 
 const UserLayoutUserIdRouteWithChildren = UserLayoutUserIdRoute._addFileChildren(UserLayoutUserIdRouteChildren);

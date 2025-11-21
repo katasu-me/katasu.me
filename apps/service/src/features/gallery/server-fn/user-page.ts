@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { fetchImagesByUserId, fetchTagsByUserId, type ImageWithTags } from "@katasu.me/service-db";
+import { fetchImagesByUserId, fetchTagsByUserId } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
 import { number, object, string } from "valibot";
 import { CACHE_KEYS, getCached } from "@/libs/cache";
@@ -34,11 +34,6 @@ const cachedFetchImagesByUserId = async (userId: string, offset: number) => {
   });
 };
 
-type FetchUserPageDataResult = {
-  tags: Awaited<ReturnType<typeof cachedFetchTagsByUsage>>;
-  images: ImageWithTags[];
-};
-
 const UserPageLoaderInputSchema = object({
   view: GalleryViewSchema,
   userId: string(),
@@ -48,7 +43,7 @@ const UserPageLoaderInputSchema = object({
 
 export const userPageLoaderFn = createServerFn({ method: "GET" })
   .inputValidator(UserPageLoaderInputSchema)
-  .handler(async ({ data }): Promise<FetchUserPageDataResult> => {
+  .handler(async ({ data }) => {
     const { view, userId, page, userTotalImageCount } = data;
 
     // ランダムビューの場合

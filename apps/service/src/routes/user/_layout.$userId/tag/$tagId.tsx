@@ -9,7 +9,7 @@ import { ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { tagPageLoaderFn } from "@/features/gallery/server-fn/tag-page";
-import ImageDropArea from "@/features/upload/components/ImageDropArea";
+import ImageDropArea from "@/features/image-upload/components/ImageDropArea";
 
 const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "timeline"),
@@ -18,6 +18,9 @@ const searchParamsSchema = object({
 
 export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
   component: RouteComponent,
+  pendingComponent: () => {
+    return <Loading className="col-start-2 h-[80vh]" />;
+  },
   errorComponent: ({ error }) => {
     return <Message message={error.message ?? ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
   },
