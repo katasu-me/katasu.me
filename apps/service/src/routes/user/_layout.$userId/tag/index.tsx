@@ -1,8 +1,10 @@
-import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
 import TagLink from "@/components/TagLinks/TabLink";
 import { tagListPageLoaderFn } from "@/features/gallery/server-fn/tag-list-page";
+import { generateMetadata } from "@/libs/meta";
+import { getUserAvatarUrl } from "@/libs/r2";
 
 export const Route = createFileRoute("/user/_layout/$userId/tag/")({
   component: RouteComponent,
@@ -19,10 +21,23 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/")({
       },
     });
   },
+  head: ({ match }) => {
+    const user = match.context.user;
+
+    return {
+      meta: generateMetadata({
+        pageTitle: `すべてのタグ - ${user.name}`,
+        imageUrl: getUserAvatarUrl(user.id),
+        twitterCard: "summary",
+        path: `/user/${user.id}/tag/`,
+        noindex: true,
+      }),
+    };
+  },
 });
 
 function RouteComponent() {
-  const { allTags } = useLoaderData({ from: "/user/_layout/$userId/tag/" });
+  const { allTags } = Route.useLoaderData();
 
   return (
     <>

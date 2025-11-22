@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useLoaderData, useRouteContext } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouteContext } from "@tanstack/react-router";
 import { twMerge } from "tailwind-merge";
 import IconFlag from "@/assets/icons/flag.svg?react";
 import IconButton from "@/components/IconButton";
@@ -11,11 +11,16 @@ import EditButton from "@/features/image-edit/components/EditButton";
 import BigImage from "@/features/image-view/components/BigImage";
 import ShareButton from "@/features/image-view/components/ShareButton";
 import { imagePageLoaderFn } from "@/features/image-view/server-fn/image-page";
+import { generateMetadata } from "@/libs/meta";
+import { getImageUrl } from "@/libs/r2";
 
 export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
   component: RouteComponent,
   pendingComponent: () => {
     return <Loading className="col-start-2 h-[80vh]" />;
+  },
+  errorComponent: ({ error }) => {
+    return <Message message={error.message} icon="error" />;
   },
   loader: async ({ params }) => {
     return imagePageLoaderFn({
@@ -24,15 +29,33 @@ export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
       },
     });
   },
+  head: ({ match, loaderData }) => {
+    if (!loaderData) {
+      return {};
+    }
+
+    const { image } = loaderData;
+    const username = match.context.user.name;
+
+    const pageTitle = image.title ? `${image.title} - ${username}` : username;
+    const description = image.tags.length > 0 ? image.tags.map((tag) => `#${tag.name}`).join(" ") : undefined;
+
+    return {
+      meta: generateMetadata({
+        pageTitle,
+        description,
+        imageUrl: getImageUrl(image.userId, image.id),
+        twitterCard: "summary_large_image",
+        path: `/user/${image.userId}/image/${image.id}`,
+        noindex: true,
+      }),
+    };
+  },
 });
 
 function RouteComponent() {
   const { session, user } = useRouteContext({ from: "/user/_layout/$userId" });
-  const { image } = useLoaderData({ from: "/user/_layout/$userId/image/$imageId" });
-
-  if (!image) {
-    return <Message message="画像が取得できませんでした" icon="error" />;
-  }
+  const { image } = Route.useLoaderData();
 
   const canEdit = session?.user.id === user.id;
   const frameImageProps = toFrameImageProps(image, "original");

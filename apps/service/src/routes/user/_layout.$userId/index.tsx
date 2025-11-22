@@ -1,4 +1,4 @@
-import { ClientOnly, createFileRoute, useLoaderData, useRouteContext, useSearch } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute, useRouteContext } from "@tanstack/react-router";
 import { fallback, number, object, parse } from "valibot";
 import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
@@ -10,6 +10,8 @@ import { toFrameImageProps } from "@/features/gallery/libs/convert";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { userPageLoaderFn } from "@/features/gallery/server-fn/user-page";
 import ImageDropArea from "@/features/image-upload/components/ImageDropArea";
+import { generateMetadata } from "@/libs/meta";
+import { getUserAvatarUrl } from "@/libs/r2";
 
 const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "timeline"),
@@ -36,12 +38,26 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
       },
     });
   },
+  head: ({ match }) => {
+    const user = match.context.user;
+    const imageUrl = user.hasAvatar ? getUserAvatarUrl(user.id, user.avatarSetAt) : undefined;
+
+    return {
+      meta: generateMetadata({
+        pageTitle: user.name,
+        imageUrl,
+        twitterCard: "summary",
+        path: `/user/${user.id}`,
+        noindex: false, // ユーザーページはインデックスする
+      }),
+    };
+  },
 });
 
 function RouteComponent() {
   const { session, user, userTotalImageCount } = useRouteContext({ from: "/user/_layout/$userId" });
-  const { view } = useSearch({ from: "/user/_layout/$userId/" });
-  const { tags, images } = useLoaderData({ from: "/user/_layout/$userId/" });
+  const { view } = Route.useSearch();
+  const { tags, images } = Route.useLoaderData();
 
   const isOwner = session?.user.id === user.id;
   const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];

@@ -10,12 +10,11 @@ type MetadataOptions = {
   noindex?: boolean;
 };
 
-export const generateMetadataTitle = (
+export const generateMetadata = (
   options?: MetadataOptions,
 ): DetailedHTMLProps<MetaHTMLAttributes<HTMLMetaElement>, HTMLMetaElement>[] => {
   const title = options?.pageTitle ? `${options.pageTitle} | ${SITE_NAME}` : `${SITE_NAME} | ${SITE_DESCRIPTION_SHORT}`;
   const description = options?.description || SITE_DESCRIPTION_SHORT;
-  const index = options?.noindex ? !options.noindex : true;
   const twitterCard = options?.twitterCard || (options?.imageUrl ? "summary_large_image" : "summary");
 
   const metaTags: DetailedHTMLProps<MetaHTMLAttributes<HTMLMetaElement>, HTMLMetaElement>[] = [
@@ -26,11 +25,12 @@ export const generateMetadataTitle = (
     { name: "twitter:card", content: twitterCard },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
-    { name: "robots", content: index ? "index,follow" : "noindex,nofollow" },
+    { name: "robots", content: options?.noindex ? "noindex,nofollow" : "index,follow" },
   ];
 
   if (options?.path) {
     metaTags.push({ property: "og:url", content: options.path });
+    metaTags.push({ name: "twitter:url", content: options.path });
   }
 
   if (options?.imageUrl) {

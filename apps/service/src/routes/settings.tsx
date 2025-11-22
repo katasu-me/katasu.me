@@ -7,17 +7,19 @@ import Button from "@/components/Button";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { Loading } from "@/components/Loading";
+import Message from "@/components/Message";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { signOut } from "@/features/auth/libs/auth-client";
 import { cachedFetchPublicUserDataById } from "@/features/auth/libs/cached-user-data";
 import SeeyouSoonDrawer from "@/features/settings/components/SeeyouSoonDrawer";
 import UserSettingsForm from "@/features/settings/components/UserSettingsForm";
+import { generateMetadata } from "@/libs/meta";
 import { getUserAvatarUrl } from "@/libs/r2";
 
-const settingsPageLoaderFn = createServerFn().handler(async () => {
+const settingsPageBeforeLoadFn = createServerFn().handler(async () => {
   const { session } = await requireAuth();
-  const userResult = await cachedFetchPublicUserDataById(session.user.id);
 
+  const userResult = await cachedFetchPublicUserDataById(session.user.id);
   if (!userResult.success || !userResult.data) {
     throw new Error("ユーザー情報の取得に失敗しました");
   }
@@ -34,16 +36,28 @@ const settingsPageLoaderFn = createServerFn().handler(async () => {
 
 export const Route = createFileRoute("/settings")({
   component: RouteComponent,
+  errorComponent: ({ error }) => {
+    return <Message message={error.message} icon="error" />;
+  },
   pendingComponent: () => {
     return <Loading className="col-start-2 h-[80vh]" />;
   },
-  loader: async () => {
-    return settingsPageLoaderFn();
+  beforeLoad: async () => {
+    return settingsPageBeforeLoadFn();
+  },
+  head: () => {
+    return {
+      meta: generateMetadata({
+        pageTitle: "設定",
+        noindex: true,
+      }),
+    };
   },
 });
 
 function RouteComponent() {
-  const data = Route.useLoaderData();
+  const data = Route.useRouteContext();
+
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 

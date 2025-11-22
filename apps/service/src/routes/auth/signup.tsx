@@ -2,8 +2,9 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import SignUpForm from "@/features/auth/components/SignUpForm";
 import { requireAuth } from "@/features/auth/libs/auth";
+import { generateMetadata } from "@/libs/meta";
 
-const checkSignupStatus = createServerFn().handler(async () => {
+const signupPageBeforeLoadFn = createServerFn().handler(async () => {
   const { session } = await requireAuth();
 
   // 新規登録済ならマイページへリダイレクト
@@ -22,7 +23,15 @@ const checkSignupStatus = createServerFn().handler(async () => {
 export const Route = createFileRoute("/auth/signup")({
   component: RouteComponent,
   beforeLoad: async () => {
-    return checkSignupStatus();
+    return signupPageBeforeLoadFn();
+  },
+  head: () => {
+    return {
+      meta: generateMetadata({
+        pageTitle: "新規登録",
+        noindex: true,
+      }),
+    };
   },
 });
 

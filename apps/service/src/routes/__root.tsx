@@ -4,7 +4,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { PropsWithChildren } from "react";
 import BudouX from "@/components/BudouX";
 import MessagePage from "@/components/MessagePage";
-import { generateMetadataTitle } from "@/libs/meta";
+import { generateMetadata } from "@/libs/meta";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -17,7 +17,7 @@ export const Route = createRootRoute({
         name: "viewport",
         content: "width=device-width, initial-scale=1",
       },
-      ...generateMetadataTitle(),
+      ...generateMetadata(),
     ],
     links: [
       {

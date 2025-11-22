@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { fetchTotalImageCountByUserId } from "@katasu.me/service-db";
-import { createFileRoute, notFound, Outlet, useRouteContext } from "@tanstack/react-router";
+import { createFileRoute, notFound, Outlet } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/user/_layout/$userId")({
 });
 
 function UserLayoutComponent() {
-  const { user, session } = useRouteContext({ from: "/user/_layout/$userId" });
+  const { user, session } = Route.useRouteContext();
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">

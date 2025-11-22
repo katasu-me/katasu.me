@@ -1,8 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import MessagePage from "@/components/MessagePage";
+import { generateMetadata } from "@/libs/meta";
 
 export const Route = createFileRoute("/auth/error")({
   component: RouteComponent,
+  head: () => {
+    return {
+      meta: generateMetadata({
+        pageTitle: "認証エラー",
+        noindex: true,
+      }),
+    };
+  },
 });
 
 function RouteComponent() {
