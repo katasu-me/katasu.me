@@ -16,7 +16,7 @@ type DeleteAccountResult =
       error: string;
     };
 
-export const deleteAccountAction = createServerFn({ method: "POST" })
+export const deleteAccountFn = createServerFn({ method: "POST" })
   .inputValidator((data: FormData) => {
     const confirmation = data.get("confirmation");
 

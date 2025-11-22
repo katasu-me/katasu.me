@@ -22,7 +22,7 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
     return <Loading className="col-start-2 h-[80vh]" />;
   },
   errorComponent: ({ error }) => {
-    return <Message message={error.message ?? ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
+    return <Message message={error.message || ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
   },
   validateSearch: (search) => parse(searchParamsSchema, search),
   loaderDeps: ({ search: { view, page } }) => ({ view, page }),

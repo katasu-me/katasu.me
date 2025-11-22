@@ -17,7 +17,7 @@ type UpdateUserSettingsResult =
       error: string;
     };
 
-export const updateUserSettingsAction = createServerFn({ method: "POST" })
+export const updateUserSettingsFn = createServerFn({ method: "POST" })
   .inputValidator((data: FormData) => {
     const username = data.get("username");
     const avatar = data.get("avatar");
@@ -32,8 +32,7 @@ export const updateUserSettingsAction = createServerFn({ method: "POST" })
     const result = v.safeParse(userSettingsFormSchema, payload);
 
     if (!result.success) {
-      const firstError = result.issues[0]?.message ?? "バリデーションエラー";
-      throw new Error(firstError);
+      throw new Error(result.issues.at(0)?.message ?? "設定の更新に失敗しました。もう一度お試しください。");
     }
 
     return result.output;
@@ -45,13 +44,11 @@ export const updateUserSettingsAction = createServerFn({ method: "POST" })
 
     updateData.name = data.username;
 
-    // removeAvatarがあるなら、アバター画像を未設定に
     if (data.removeAvatar) {
+      // removeAvatarがあるなら、アバター画像を未設定に
       updateData.avatarSetAt = null;
-    }
-
-    // アバター画像を変更
-    else if (data.avatar instanceof File && data.avatar.size > 0) {
+    } else if (data.avatar instanceof File && data.avatar.size > 0) {
+      // アバター画像を変更
       try {
         const arrayBuffer = await data.avatar.arrayBuffer();
         const dimensions = getImageDimensions(arrayBuffer);

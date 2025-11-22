@@ -10,7 +10,7 @@ import { getUserSession } from "@/features/auth/libs/auth";
 import { cachedFetchPublicUserDataById } from "@/features/auth/libs/cached-user-data";
 import DemoImages from "@/features/top/components/DemoImages";
 
-const fetchUserData = createServerFn().handler(async () => {
+const topPageLoaderFn = createServerFn().handler(async () => {
   const { session } = await getUserSession();
 
   let user: PublicUserData | undefined;
@@ -29,7 +29,7 @@ const fetchUserData = createServerFn().handler(async () => {
 export const Route = createFileRoute("/")({
   component: App,
   loader: async () => {
-    return fetchUserData();
+    return topPageLoaderFn();
   },
 });
 

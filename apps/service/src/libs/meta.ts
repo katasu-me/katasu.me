@@ -19,7 +19,7 @@ export const generateMetadataTitle = (
   const twitterCard = options?.twitterCard || (options?.imageUrl ? "summary_large_image" : "summary");
 
   const metaTags: DetailedHTMLProps<MetaHTMLAttributes<HTMLMetaElement>, HTMLMetaElement>[] = [
-    { name: "title", content: title },
+    { title },
     { name: "description", content: description },
     { property: "og:title", content: title },
     { property: "og:description", content: description },

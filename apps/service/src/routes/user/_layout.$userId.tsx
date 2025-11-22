@@ -14,7 +14,7 @@ const cachedFetchTotalImageCount = async (userId: string) => {
   });
 };
 
-const fetchUser = createServerFn()
+const userPageBeforeLoadFn = createServerFn()
   .inputValidator((data: { userId: string }) => data)
   .handler(async ({ data }) => {
     const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(data.userId), getUserSession()]);
@@ -43,7 +43,7 @@ const fetchUser = createServerFn()
 export const Route = createFileRoute("/user/_layout/$userId")({
   component: UserLayoutComponent,
   beforeLoad: async ({ params }) => {
-    return fetchUser({
+    return userPageBeforeLoadFn({
       data: {
         userId: params.userId,
       },

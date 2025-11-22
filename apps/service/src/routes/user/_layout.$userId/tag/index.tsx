@@ -10,7 +10,7 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/")({
     return <Loading className="col-start-2 h-[80vh]" />;
   },
   errorComponent: ({ error }) => {
-    return <Message message={error.message ?? "タグの取得に失敗しました"} icon="error" />;
+    return <Message message={error.message} icon="error" />;
   },
   loader: async ({ params }) => {
     return tagListPageLoaderFn({

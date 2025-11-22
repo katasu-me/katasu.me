@@ -39,7 +39,7 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
   const isDnDFileSet = useRef(false);
 
   const defaultValues: UploadImageFormData = {
-    file: null,
+    file: new File([], ""),
     tags: defaultTags,
   };
 
@@ -50,11 +50,6 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
       onChange: uploadImageSchema,
     },
     onSubmit: async ({ value }) => {
-      if (!value.file) {
-        setFormError("画像が選択されていません");
-        return;
-      }
-
       onPendingChange(true);
       setFormError("");
 
@@ -135,7 +130,7 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
 
     if (!originalFile) {
       setPreviewImage(null);
-      form.setFieldValue("file", null);
+      form.setFieldValue("file", new File([], ""));
       return;
     }
 

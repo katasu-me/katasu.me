@@ -7,8 +7,8 @@ import FormMessage from "@/components/FormMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
 import Input from "@/components/Input";
 import { type UserSettingsFormInput, userSettingsFormSchema } from "@/features/settings/schemas/user-settings";
-import { updateUserSettingsAction } from "@/features/settings/server-fn/update-user-settings";
 import { MAX_USERNAME_LENGTH } from "@/schemas/user";
+import { updateUserSettingsFn } from "../../server-fn/update-user-settings";
 
 type Props = {
   user: {
@@ -21,7 +21,7 @@ type Props = {
 
 export default function UserSettingsForm({ user, onSuccess, className }: Props) {
   const router = useRouter();
-  const updateUserSettingsFn = useServerFn(updateUserSettingsAction);
+  const updateUserSettings = useServerFn(updateUserSettingsFn);
   const [formError, setFormError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [shouldRemoveAvatar, setShouldRemoveAvatar] = useState(false);
@@ -54,7 +54,7 @@ export default function UserSettingsForm({ user, onSuccess, className }: Props) 
           formData.append("removeAvatar", shouldRemoveAvatar.toString());
         }
 
-        const result = await updateUserSettingsFn({ data: formData });
+        const result = await updateUserSettings({ data: formData });
 
         if (!result.success) {
           setFormError(result.error);
@@ -82,8 +82,8 @@ export default function UserSettingsForm({ user, onSuccess, className }: Props) 
       className={className}
       noValidate
     >
-      {formError && <FormMessage type="error" className="mb-4" text={formError} />}
-      {successMessage && <FormMessage type="success" className="mb-4" text={successMessage} />}
+      {formError && <FormMessage type="error" className="mb-8" text={formError} />}
+      {successMessage && <FormMessage type="success" className="mb-8" text={successMessage} />}
 
       <div className="flex w-full flex-col gap-6">
         <form.Field name="avatar">
@@ -97,9 +97,7 @@ export default function UserSettingsForm({ user, onSuccess, className }: Props) 
               }}
               error={
                 field.state.meta.errors.length > 0 && !field.state.meta.errorMap.onMount
-                  ? typeof field.state.meta.errors[0] === "string"
-                    ? field.state.meta.errors[0]
-                    : field.state.meta.errors[0]?.message
+                  ? field.state.meta.errors.at(0)?.message
                   : undefined
               }
             />
@@ -120,9 +118,7 @@ export default function UserSettingsForm({ user, onSuccess, className }: Props) 
               placeholder="すてきな名前"
               error={
                 field.state.meta.errors.length > 0 && !field.state.meta.errorMap.onMount
-                  ? typeof field.state.meta.errors[0] === "string"
-                    ? field.state.meta.errors[0]
-                    : field.state.meta.errors[0]?.message
+                  ? field.state.meta.errors.at(0)?.message
                   : undefined
               }
               maxLength={MAX_USERNAME_LENGTH}

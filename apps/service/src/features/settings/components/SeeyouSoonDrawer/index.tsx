@@ -5,7 +5,7 @@ import Drawer from "@/components/Drawer";
 import FormMessage from "@/components/FormMessage";
 import Input from "@/components/Input";
 import { CONFIRMATION_TEXT } from "@/features/settings/schemas/delete-account";
-import { deleteAccountAction } from "@/features/settings/server-fn/delete-account";
+import { deleteAccountFn } from "../../server-fn/delete-account";
 
 type Props = {
   open: boolean;
@@ -14,7 +14,7 @@ type Props = {
 };
 
 export default function SeeyouSoonDrawer({ open, onOpenChange, onSuccess }: Props) {
-  const deleteAccountFn = useServerFn(deleteAccountAction);
+  const deleteAccount = useServerFn(deleteAccountFn);
   const [confirmation, setConfirmation] = useState("");
   const [formError, setFormError] = useState<string>("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -33,7 +33,7 @@ export default function SeeyouSoonDrawer({ open, onOpenChange, onSuccess }: Prop
       const formData = new FormData();
       formData.append("confirmation", confirmation);
 
-      const result = await deleteAccountFn({ data: formData });
+      const result = await deleteAccount({ data: formData });
 
       if (!result.success) {
         setFormError(result.error);
@@ -93,9 +93,9 @@ export default function SeeyouSoonDrawer({ open, onOpenChange, onSuccess }: Prop
               </Button>
             </Close>
             <Button
+              className="flex-1"
               variant="danger"
               onClick={handleDelete}
-              className="flex-1"
               disabled={!isConfirmationValid || isDeleting}
             >
               {isDeleting ? "削除中…" : "削除する"}

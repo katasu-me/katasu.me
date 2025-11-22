@@ -9,11 +9,9 @@ import {
 
 export { MAX_TITLE_LENGTH, MAX_TAG_COUNT, MAX_TAG_TEXT_LENGTH };
 
-// 画像ファイル関連の定数
 export const MAX_IMAGE_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_IMAGE_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 
-// 画像ファイル関連のバリデーションメッセージ
 const EMPTY_IMAGE_MESSAGE = "画像が選択されていないか、未対応の形式です";
 const MAX_IMAGE_FILE_SIZE_MESSAGE = "画像サイズは10MB以下にしてください";
 const ALLOWED_IMAGE_FILE_TYPES_MESSAGE = "JPEG、PNG、WebP形式の画像のみアップロードできます";
