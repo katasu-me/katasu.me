@@ -16,7 +16,7 @@ import UserSettingsForm from "@/features/settings/components/UserSettingsForm";
 import { generateMetadata } from "@/libs/meta";
 import { getUserAvatarUrl } from "@/libs/r2";
 
-const settingsPageBeforeLoadFn = createServerFn().handler(async () => {
+const settingsPageLoaderFn = createServerFn().handler(async () => {
   const { session } = await requireAuth();
 
   const userResult = await cachedFetchPublicUserDataById(session.user.id);
@@ -41,8 +41,8 @@ export const Route = createFileRoute("/settings")({
   pendingComponent: () => {
     return <Loading className="col-start-2 h-[80vh]" />;
   },
-  beforeLoad: async () => {
-    return settingsPageBeforeLoadFn();
+  loader: async () => {
+    return settingsPageLoaderFn();
   },
   head: () => {
     return {
@@ -55,7 +55,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 function RouteComponent() {
-  const { user: loggedInUser } = Route.useRouteContext();
+  const { user: loggedInUser } = Route.useLoaderData();
 
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
