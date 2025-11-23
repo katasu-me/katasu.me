@@ -62,7 +62,9 @@ export default function UserSettingsForm({ user, onSuccess, className }: Props) 
         }
 
         setSuccessMessage("設定を保存しました");
-        await router.invalidate();
+        await router.invalidate({
+          sync: true,
+        });
         onSuccess?.();
       } catch (error) {
         if (error instanceof Error) {
