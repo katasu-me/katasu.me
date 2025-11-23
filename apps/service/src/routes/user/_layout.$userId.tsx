@@ -42,6 +42,9 @@ const userPageBeforeLoadFn = createServerFn()
 
 export const Route = createFileRoute("/user/_layout/$userId")({
   component: UserLayoutComponent,
+  pendingComponent: () => {
+    return <Loading className="col-start-2 h-[80vh]" />;
+  },
   beforeLoad: async ({ params }) => {
     return userPageBeforeLoadFn({
       data: {
