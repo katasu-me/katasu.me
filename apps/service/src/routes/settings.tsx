@@ -28,7 +28,6 @@ const settingsPageBeforeLoadFn = createServerFn().handler(async () => {
   const avatarUrl = userData.hasAvatar ? getUserAvatarUrl(userData.id, userData.avatarSetAt) : null;
 
   return {
-    session,
     user: userData,
     avatarUrl,
   };
@@ -56,7 +55,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 function RouteComponent() {
-  const data = Route.useRouteContext();
+  const { user: loggedInUser } = Route.useRouteContext();
 
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -68,7 +67,7 @@ function RouteComponent() {
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header user={data.user} rightMenu={{ loggedInUserId: data.session.user.id }} />
+      <Header user={loggedInUser} rightMenu={{ loggedInUserId: loggedInUser.id }} />
 
       <h1 className="col-start-2 text-4xl">設定</h1>
 
@@ -80,8 +79,8 @@ function RouteComponent() {
 
         <UserSettingsForm
           user={{
-            name: data.user.name,
-            avatarUrl: data.avatarUrl,
+            name: loggedInUser.name,
+            avatarUrl: getUserAvatarUrl(loggedInUser.id, loggedInUser.avatarSetAt),
           }}
         />
       </section>
@@ -103,7 +102,7 @@ function RouteComponent() {
         <SeeyouSoonDrawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} onSuccess={handleDeleteSuccess} />
       </section>
 
-      <Footer className="col-start-2" mode="logged-in-user" userId={data.session.user.id} />
+      <Footer className="col-start-2" mode="logged-in-user" userId={loggedInUser.id} />
     </div>
   );
 }
