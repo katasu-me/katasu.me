@@ -65,6 +65,8 @@ function RouteComponent() {
     navigate({ to: "/" });
   };
 
+  const avatarUrl = loggedInUser.hasAvatar ? getUserAvatarUrl(loggedInUser.id, loggedInUser.avatarSetAt) : null;
+
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
       <Header user={loggedInUser} rightMenu={{ loggedInUserId: loggedInUser.id }} />
@@ -80,7 +82,7 @@ function RouteComponent() {
         <UserSettingsForm
           user={{
             name: loggedInUser.name,
-            avatarUrl: getUserAvatarUrl(loggedInUser.id, loggedInUser.avatarSetAt),
+            avatarUrl,
           }}
         />
       </section>
