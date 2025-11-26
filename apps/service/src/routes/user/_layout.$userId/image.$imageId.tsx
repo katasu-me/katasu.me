@@ -4,6 +4,7 @@ import IconFlag from "@/assets/icons/flag.svg?react";
 import IconButton from "@/components/IconButton";
 import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
+import { useSession } from "@/features/auth/libs/auth-client";
 import { DEFAULT_IMAGE_TITLE } from "@/features/gallery/constants/page";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
 import RemoveButton from "@/features/image-delete/components/RemoveButton";
@@ -54,10 +55,11 @@ export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
 });
 
 function RouteComponent() {
-  const { session, user } = useRouteContext({ from: "/user/_layout/$userId" });
+  const { user } = useRouteContext({ from: "/user/_layout/$userId" });
   const { image } = Route.useLoaderData();
+  const session = useSession(); // FIXME: どうなんすかねこれ
 
-  const canEdit = session?.user.id === user.id;
+  const canEdit = session.data?.user.id === user.id;
   const frameImageProps = toFrameImageProps(image, "original");
 
   return (
@@ -94,7 +96,7 @@ function RouteComponent() {
         {!canEdit && (
           <IconButton asChild>
             <a
-              href={`/report/image?reporterUserId=${session?.user?.id}&imageId=${image.id}`}
+              href={`/report/image?reporterUserId=${session.data?.user?.id}&imageId=${image.id}`}
               target="_blank"
               rel="noopener noreferrer"
             >

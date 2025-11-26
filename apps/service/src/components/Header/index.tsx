@@ -12,7 +12,7 @@ import UserIcon from "./UserIcon";
 type Props = {
   user: PublicUserData;
   rightMenu?: {
-    loggedInUserId: string;
+    loggedInUserId: string; // FIXME: 名前を考えなおすべき
   };
 };
 

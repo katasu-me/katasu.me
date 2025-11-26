@@ -59,7 +59,7 @@ function RouteComponent() {
   const { user, userTotalImageCount } = useRouteContext({ from: "/user/_layout/$userId" });
   const { view } = Route.useSearch();
   const { tags, images } = Route.useLoaderData();
-  const session = useSession();
+  const session = useSession(); // FIXME: どうなんすかねこれ
 
   const isOwner = session.data?.user.id === user.id;
   const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];

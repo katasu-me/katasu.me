@@ -19,8 +19,10 @@ export default function EditButton({ imageId, title, tags }: Props) {
     setIsOpen(false);
 
     // アニメーション完了を待ってからページをリフレッシュ
-    setTimeout(() => {
-      router.invalidate();
+    setTimeout(async () => {
+      await router.invalidate({
+        sync: true,
+      });
     }, 400);
   };
 

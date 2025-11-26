@@ -59,8 +59,10 @@ export default function ImageDropArea({ title, counter, defaultTags, className }
     setDefaultImageFile(undefined);
 
     // アニメーション完了を待ってからページをリフレッシュ
-    setTimeout(() => {
-      router.invalidate();
+    setTimeout(async () => {
+      await router.invalidate({
+        sync: true,
+      });
     }, 400);
   };
 
