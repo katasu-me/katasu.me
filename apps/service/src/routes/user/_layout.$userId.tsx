@@ -5,6 +5,7 @@ import { createServerFn } from "@tanstack/react-start";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { Loading } from "@/components/Loading";
+import Message from "@/components/Message";
 import { cachedFetchPublicUserDataById } from "@/features/auth/libs/cached-user-data";
 import { CACHE_KEYS, getCached } from "@/libs/cache";
 
@@ -46,6 +47,9 @@ const userPageBeforeLoadFn = createServerFn()
 
 export const Route = createFileRoute("/user/_layout/$userId")({
   component: UserLayoutComponent,
+  errorComponent: ({ error }) => {
+    return <Message message={error.message} icon="error" />;
+  },
   pendingComponent: () => {
     return <Loading className="col-start-2 h-[80vh]" />;
   },
