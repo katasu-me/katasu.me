@@ -65,6 +65,10 @@ function UserLayoutComponent() {
 
   console.log("[DEBUG] UserLayoutComponent rendered: user", user);
 
+  if (!user) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
       <Header user={user} isOwnerPage={user.id === data?.session?.id} />
