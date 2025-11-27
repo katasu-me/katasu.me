@@ -5,7 +5,7 @@ import { createServerFn } from "@tanstack/react-start";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { Loading } from "@/components/Loading";
-import Message from "@/components/Message";
+import { useSession } from "@/features/auth/libs/auth-client";
 import { cachedFetchPublicUserDataById } from "@/features/auth/libs/cached-user-data";
 import { CACHE_KEYS, getCached } from "@/libs/cache";
 
@@ -47,38 +47,27 @@ const userPageBeforeLoadFn = createServerFn()
 
 export const Route = createFileRoute("/user/_layout/$userId")({
   component: UserLayoutComponent,
-  errorComponent: ({ error }) => {
-    return <Message message={error.message} icon="error" />;
-  },
   pendingComponent: () => {
     return <Loading className="col-start-2 h-[80vh]" />;
   },
   beforeLoad: async ({ params }) => {
-    const result = await userPageBeforeLoadFn({
+    return userPageBeforeLoadFn({
       data: {
         userId: params.userId,
       },
     });
-
-    console.log("[DEBUG] UserLayout beforeLoad: userPageBeforeLoadFn result", result);
-
-    return result;
   },
 });
 
 function UserLayoutComponent() {
   const { user } = Route.useRouteContext();
+  const { data } = useSession();
 
   console.log("[DEBUG] UserLayoutComponent rendered: user", user);
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header
-        user={user}
-        rightMenu={{
-          loggedInUserId: user.id,
-        }}
-      />
+      <Header user={user} isOwnerPage={user.id === data?.session?.id} />
       <Outlet />
       <Footer className="col-start-2" mode="logged-in-user" userId={user.id} />
     </div>

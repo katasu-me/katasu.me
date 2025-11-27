@@ -69,7 +69,7 @@ function RouteComponent() {
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header user={loggedInUser} rightMenu={{ loggedInUserId: loggedInUser.id }} />
+      <Header user={loggedInUser} isOwnerPage />
 
       <h1 className="col-start-2 text-4xl">設定</h1>
 

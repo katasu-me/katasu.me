@@ -11,21 +11,17 @@ import UserIcon from "./UserIcon";
 
 type Props = {
   user: PublicUserData;
-  rightMenu?: {
-    loggedInUserId: string; // FIXME: 名前を考えなおすべき
-  };
+  isOwnerPage?: boolean;
 };
 
-export default function Header({ user, rightMenu }: Props) {
-  const isOwnerPage = rightMenu?.loggedInUserId === user.id;
-
+export default function Header({ user, isOwnerPage = false }: Props) {
   const menuItems = [
-    !isOwnerPage && rightMenu && (
+    !isOwnerPage && (
       <Link
         key="flag"
         to={{
           pathname: "/report/user",
-          search: `reportedUserId=${user.id}&reporterUserId=${rightMenu.loggedInUserId}`,
+          search: `reportedUserId=${user.id}&reporterUserId=${user.id}`,
         }}
         target="_blank"
         rel="noopener"
@@ -50,23 +46,21 @@ export default function Header({ user, rightMenu }: Props) {
         iconImage={user.hasAvatar ? getUserAvatarUrl(user.id, user.avatarSetAt) : undefined}
       />
 
-      {rightMenu && (
-        <div className="flex items-center gap-2">
-          {/* TODO: 検索機能 */}
-          <IconButton>
-            <IconSearch className="h-6 w-6 opacity-25" />
-          </IconButton>
+      <div className="flex items-center gap-2">
+        {/* TODO: 検索機能 */}
+        <IconButton>
+          <IconSearch className="h-6 w-6 opacity-25" />
+        </IconButton>
 
-          <DropdownMenu
-            trigger={
-              <IconButton>
-                <IconDots className="h-6 w-6" />
-              </IconButton>
-            }
-            items={menuItems}
-          />
-        </div>
-      )}
+        <DropdownMenu
+          trigger={
+            <IconButton>
+              <IconDots className="h-6 w-6" />
+            </IconButton>
+          }
+          items={menuItems}
+        />
+      </div>
     </header>
   );
 }
