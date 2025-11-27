@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ClientOnly, createFileRoute, useRouteContext } from "@tanstack/react-router";
 import { fallback, number, object, parse } from "valibot";
 import { Loading } from "@/components/Loading";
@@ -9,7 +10,7 @@ import GalleryRandom from "@/features/gallery/components/GalleryRandom";
 import { ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
-import { userPageLoaderFn } from "@/features/gallery/server-fn/user-page";
+import { userPageQueryOptions } from "@/features/gallery/server-fn/user-page";
 import ImageDropArea from "@/features/image-upload/components/ImageDropArea";
 import { generateMetadata } from "@/libs/meta";
 import { getUserAvatarUrl } from "@/libs/r2";
@@ -30,14 +31,14 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
   validateSearch: (search) => parse(searchParamsSchema, search),
   loaderDeps: ({ search: { view, page } }) => ({ view, page }),
   loader: async ({ params, deps, context }) => {
-    return userPageLoaderFn({
-      data: {
+    await context.queryClient.ensureQueryData(
+      userPageQueryOptions({
         view: deps.view,
         userId: params.userId,
         page: deps.page,
         userTotalImageCount: context.userTotalImageCount,
-      },
-    });
+      }),
+    );
   },
   head: ({ match }) => {
     const user = match.context.user;
@@ -57,21 +58,29 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
 
 function RouteComponent() {
   const { user, userTotalImageCount } = useRouteContext({ from: "/user/_layout/$userId" });
-  const { view } = Route.useSearch();
-  const { tags, images } = Route.useLoaderData();
+  const { view, page } = Route.useSearch();
+  const { data } = useSuspenseQuery(
+    userPageQueryOptions({
+      view,
+      userId: user.id,
+      page,
+      userTotalImageCount,
+    }),
+  );
   const session = useSession(); // FIXME: どうなんすかねこれ
 
   const isOwner = session.data?.user.id === user.id;
-  const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];
+  const frameImages = data.images ? data.images.map((image) => toFrameImageProps(image)) : [];
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-      {tags && <TagLinks className="col-start-2" tags={tags} userId={user.id} />}
+      {data.tags && <TagLinks className="col-start-2" tags={data.tags} userId={user.id} />}
 
       {isOwner && (
         <div className="col-start-2">
           <ImageDropArea
             title="あたらしい画像を投稿する"
+            userId={user.id}
             counter={{
               total: userTotalImageCount,
               max: user.plan.maxPhotos,

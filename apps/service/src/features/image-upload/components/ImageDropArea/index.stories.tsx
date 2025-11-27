@@ -8,10 +8,17 @@ const meta = {
     layout: "padded",
   },
   tags: ["autodocs"],
+  args: {
+    userId: "test-user-id",
+  },
   argTypes: {
     title: {
       control: "text",
       description: "ドロップエリアに表示するタイトル",
+    },
+    userId: {
+      control: "text",
+      description: "ユーザーID",
     },
     className: {
       control: "text",

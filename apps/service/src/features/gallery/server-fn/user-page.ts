@@ -1,7 +1,8 @@
 import { env } from "cloudflare:workers";
 import { fetchImagesByUserId, fetchTagsByUserId } from "@katasu.me/service-db";
+import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
-import { number, object, string } from "valibot";
+import { type InferInput, number, object, string } from "valibot";
 import { CACHE_KEYS, getCached } from "@/libs/cache";
 import { GALLERY_PAGE_SIZE } from "../constants/page";
 import { GalleryViewSchema } from "../schemas/view";
@@ -41,7 +42,7 @@ const UserPageLoaderInputSchema = object({
   userTotalImageCount: number(),
 });
 
-export const userPageLoaderFn = createServerFn({ method: "GET" })
+const userPageLoaderFn = createServerFn({ method: "GET" })
   .inputValidator(UserPageLoaderInputSchema)
   .handler(async ({ data }) => {
     const { view, userId, page, userTotalImageCount } = data;
@@ -77,4 +78,12 @@ export const userPageLoaderFn = createServerFn({ method: "GET" })
       tags,
       images: imagesResult.data,
     };
+  });
+
+export type UserPageLoaderInput = InferInput<typeof UserPageLoaderInputSchema>;
+
+export const userPageQueryOptions = (input: UserPageLoaderInput) =>
+  queryOptions({
+    queryKey: ["user-page", input.userId, input.view, input.page],
+    queryFn: () => userPageLoaderFn({ data: input }),
   });

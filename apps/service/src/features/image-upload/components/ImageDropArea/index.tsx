@@ -1,4 +1,4 @@
-import { useRouter } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { type ComponentProps, type DragEvent, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import IconImagePlus from "@/assets/icons/image-plus.svg?react";
@@ -8,13 +8,14 @@ const MAX_FILE_COUNT = 1;
 
 type Props = {
   title: string;
+  userId: string;
 
   defaultTags?: string[];
   className?: string;
 } & Pick<ComponentProps<typeof UploadDrawer>, "counter">;
 
-export default function ImageDropArea({ title, counter, defaultTags, className }: Props) {
-  const router = useRouter();
+export default function ImageDropArea({ title, userId, counter, defaultTags, className }: Props) {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [defaultImageFile, setDefaultImageFile] = useState<File | undefined>();
@@ -58,10 +59,10 @@ export default function ImageDropArea({ title, counter, defaultTags, className }
     setOpen(false);
     setDefaultImageFile(undefined);
 
-    // アニメーション完了を待ってからページをリフレッシュ
+    // アニメーション完了を待ってからデータを再取得
     setTimeout(async () => {
-      await router.invalidate({
-        sync: true,
+      await queryClient.invalidateQueries({
+        queryKey: ["user-page", userId],
       });
     }, 400);
   };
