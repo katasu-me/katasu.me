@@ -50,7 +50,7 @@ export const Route = createFileRoute("/user/_layout/$userId")({
     return <Loading className="col-start-2 h-[80vh]" />;
   },
   beforeLoad: async ({ params }) => {
-    const result = userPageBeforeLoadFn({
+    const result = await userPageBeforeLoadFn({
       data: {
         userId: params.userId,
       },
