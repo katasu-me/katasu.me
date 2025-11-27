@@ -19,6 +19,8 @@ const userPageBeforeLoadFn = createServerFn()
   .handler(async ({ data }) => {
     const userResult = await cachedFetchPublicUserDataById(data.userId);
 
+    console.log("[DEBUG] userPageBeforeLoadFn: fetched userResult", userResult);
+
     // 存在しない、または新規登録が完了していない場合は404
     if (
       !userResult.success ||
@@ -26,11 +28,15 @@ const userPageBeforeLoadFn = createServerFn()
       !userResult.data.termsAgreedAt ||
       !userResult.data.privacyPolicyAgreedAt
     ) {
+      console.log("[DEBUG] userPageBeforeLoadFn: user not found or not completed registration");
       throw notFound();
     }
 
     const user = userResult.data;
     const totalImageCount = await cachedFetchTotalImageCount(user.id);
+
+    console.log("[DEBUG] userPageBeforeLoadFn: fetched user", user);
+    console.log("[DEBUG] userPageBeforeLoadFn: fetched totalImageCount", totalImageCount);
 
     return {
       user,
@@ -44,16 +50,22 @@ export const Route = createFileRoute("/user/_layout/$userId")({
     return <Loading className="col-start-2 h-[80vh]" />;
   },
   beforeLoad: async ({ params }) => {
-    return userPageBeforeLoadFn({
+    const result = userPageBeforeLoadFn({
       data: {
         userId: params.userId,
       },
     });
+
+    console.log("[DEBUG] UserLayout beforeLoad: userPageBeforeLoadFn result", result);
+
+    return result;
   },
 });
 
 function UserLayoutComponent() {
   const { user } = Route.useRouteContext();
+
+  console.log("[DEBUG] UserLayoutComponent rendered: user", user);
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
