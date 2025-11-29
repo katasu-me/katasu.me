@@ -38,15 +38,10 @@ export const Route = createFileRoute("/user/_layout/$userId")({
       },
     });
   },
-  loader: async ({ context }) => {
-    return {
-      user: context.user,
-    };
-  },
 });
 
 function UserLayoutComponent() {
-  const { user } = Route.useLoaderData();
+  const { user } = Route.useRouteContext();
   const { data: session } = useSession();
 
   return (
