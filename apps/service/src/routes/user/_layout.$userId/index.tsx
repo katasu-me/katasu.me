@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ClientOnly, createFileRoute, useRouteContext } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 import { fallback, number, object, parse } from "valibot";
 import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
@@ -42,6 +42,10 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
       ),
       context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userId)),
     ]);
+
+    return {
+      user: context.user,
+    };
   },
   head: ({ match }) => {
     const { user } = match.context;
@@ -60,7 +64,7 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
 });
 
 function RouteComponent() {
-  const { user } = useRouteContext({ from: "/user/_layout/$userId" });
+  const { user } = Route.useLoaderData();
   const { view, page } = Route.useSearch();
 
   const session = useSession();

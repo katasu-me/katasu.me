@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, useRouteContext } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { twMerge } from "tailwind-merge";
 import IconFlag from "@/assets/icons/flag.svg?react";
 import IconButton from "@/components/IconButton";
@@ -25,11 +25,16 @@ export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
     return <Message message={error.message} icon="error" />;
   },
   loader: async ({ params, context }) => {
-    return context.queryClient.ensureQueryData(
+    const loaderData = await context.queryClient.ensureQueryData(
       imagePageQueryOptions({
         imageId: params.imageId,
       }),
     );
+
+    return {
+      ...loaderData,
+      user: context.user,
+    };
   },
   head: ({ match, loaderData }) => {
     if (!loaderData) {
@@ -56,7 +61,7 @@ export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
 });
 
 function RouteComponent() {
-  const { user } = useRouteContext({ from: "/user/_layout/$userId" });
+  const { user } = Route.useLoaderData();
   const { imageId } = Route.useParams();
   const { data } = useSuspenseQuery(imagePageQueryOptions({ imageId }));
   const session = useSession();
