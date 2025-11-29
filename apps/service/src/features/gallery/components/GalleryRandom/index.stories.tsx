@@ -21,7 +21,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    initialImages: [],
     fetchOptions: {
       type: "user",
       userId: "test-user-id",

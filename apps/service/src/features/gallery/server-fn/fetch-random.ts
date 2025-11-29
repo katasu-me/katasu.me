@@ -1,5 +1,6 @@
 import { env } from "cloudflare:workers";
 import { fetchRandomImagesByTagId, fetchRandomImagesByUserId } from "@katasu.me/service-db";
+import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import { type InferOutput, literal, object, string, union } from "valibot";
 import { ERROR_MESSAGE } from "../constants/error";
@@ -40,4 +41,20 @@ export const fetchRandomImagesFn = createServerFn({ method: "GET" })
     }
 
     return result.data;
+  });
+
+const RANDOM_IMAGES_QUERY_KEY = "random-images";
+
+export const getRandomImagesQueryKey = (input: FetchRandomImagesInput) => {
+  if (input.type === "user") {
+    return [RANDOM_IMAGES_QUERY_KEY, "user", input.userId];
+  }
+
+  return [RANDOM_IMAGES_QUERY_KEY, "tag", input.tagId];
+};
+
+export const randomImagesQueryOptions = (input: FetchRandomImagesInput) =>
+  queryOptions({
+    queryKey: getRandomImagesQueryKey(input),
+    queryFn: () => fetchRandomImagesFn({ data: input }),
   });

@@ -95,7 +95,6 @@ function RouteComponent() {
       ) : (
         <ClientOnly fallback={<Loading className="col-start-2 h-[50vh]" />}>
           <GalleryRandom
-            initialImages={frameImages}
             fetchOptions={{
               type: "user",
               userId: user.id,

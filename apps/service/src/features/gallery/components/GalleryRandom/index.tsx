@@ -1,53 +1,59 @@
-import { type ComponentProps, useCallback, useEffect, useState } from "react";
-import type FrameImage from "@/components/FrameImage";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDevice } from "@/hooks/useDevice";
 import { toFrameImageProps } from "../../libs/convert";
-import { type FetchRandomImagesInput, fetchRandomImagesFn } from "../../server-fn/fetch-random";
+import {
+  type FetchRandomImagesInput,
+  getRandomImagesQueryKey,
+  randomImagesQueryOptions,
+} from "../../server-fn/fetch-random";
 import GalleryToggle from "../GalleryToggle";
 import DraggableImages from "./DraggableImages";
 
 type Props = {
-  initialImages: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
   fetchOptions: FetchRandomImagesInput;
 };
 
 const SHAKE_THRESHOLD = 15;
 const SHAKE_COOLDOWN = 500;
 
-export default function GalleryRandom({ initialImages, fetchOptions }: Props) {
+export default function GalleryRandom({ fetchOptions }: Props) {
   const { isDesktop } = useDevice();
-  const [images, setImages] = useState(initialImages);
+  const queryClient = useQueryClient();
   const [isScattering, setIsScattering] = useState(false);
-  const [imagesKey, setImagesKey] = useState(0);
+  const [imagesKey, setImagesKey] = useState(() => Date.now());
 
-  // ランダム画像を取得
-  const fetchImages = useCallback(async () => {
-    const images = await fetchRandomImagesFn({ data: fetchOptions });
-    const frameImages = images.map((image) => toFrameImageProps(image));
+  const { data } = useQuery(randomImagesQueryOptions(fetchOptions));
 
-    setImages(frameImages);
-  }, [fetchOptions]);
+  const images = useMemo(() => {
+    if (!data) {
+      return [];
+    }
 
-  // 初期表示時に画像を取得
+    return data.map((image) => toFrameImageProps(image));
+  }, [data]);
+
+  // ジェスチャーイベントの抑制
   useEffect(() => {
     const preventDefault = (e: Event) => e.preventDefault();
     document.addEventListener("gesturestart", preventDefault);
     document.addEventListener("gesturechange", preventDefault);
 
-    fetchImages();
-
     return () => {
       document.removeEventListener("gesturestart", preventDefault);
       document.removeEventListener("gesturechange", preventDefault);
     };
-  }, [fetchImages]);
+  }, []);
 
   // 再シャッフル
   const handleScatterComplete = useCallback(async () => {
-    await fetchImages();
-    setImagesKey((prev) => prev + 1);
+    await queryClient.invalidateQueries({
+      queryKey: getRandomImagesQueryKey(fetchOptions),
+    });
+
+    setImagesKey(Date.now());
     setIsScattering(false);
-  }, [fetchImages]);
+  }, [queryClient, fetchOptions]);
 
   // シェイク検知
   useEffect(() => {
