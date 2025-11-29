@@ -57,5 +57,5 @@ export const randomImagesQueryOptions = (input: FetchRandomImagesInput) =>
   queryOptions({
     queryKey: getRandomImagesQueryKey(input),
     queryFn: () => fetchRandomImagesFn({ data: input }),
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: false, // ランダムをフォーカス時に再取得すると不自然なのでしない
   });
