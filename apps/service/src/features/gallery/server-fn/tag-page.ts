@@ -5,9 +5,10 @@ import {
   fetchTagsByUserId,
   fetchTotalImageCountByTagId,
 } from "@katasu.me/service-db";
+import { queryOptions } from "@tanstack/react-query";
 import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { number, object, string } from "valibot";
+import { type InferInput, number, object, string } from "valibot";
 import { CACHE_KEYS, getCached } from "@/libs/cache";
 import { GALLERY_PAGE_SIZE } from "../constants/page";
 import { GalleryViewSchema } from "../schemas/view";
@@ -59,7 +60,7 @@ const TagPageLoaderInputSchema = object({
   page: number(),
 });
 
-export const tagPageLoaderFn = createServerFn({ method: "GET" })
+const tagPageLoaderFn = createServerFn({ method: "GET" })
   .inputValidator(TagPageLoaderInputSchema)
   .handler(async ({ data }) => {
     const { view, userId, tagId, page } = data;
@@ -107,4 +108,13 @@ export const tagPageLoaderFn = createServerFn({ method: "GET" })
       tags,
       images: imagesResult.data,
     };
+  });
+
+export type TagPageLoaderInput = InferInput<typeof TagPageLoaderInputSchema>;
+export const TAG_PAGE_QUERY_KEY = "tag-page";
+
+export const tagPageQueryOptions = (input: TagPageLoaderInput) =>
+  queryOptions({
+    queryKey: [TAG_PAGE_QUERY_KEY, input.userId, input.tagId, input.view, input.page],
+    queryFn: () => tagPageLoaderFn({ data: input }),
   });

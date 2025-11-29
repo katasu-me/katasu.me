@@ -9,7 +9,7 @@ import GalleryRandom from "@/features/gallery/components/GalleryRandom";
 import { ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
-import { tagPageLoaderFn } from "@/features/gallery/server-fn/tag-page";
+import { tagPageQueryOptions } from "@/features/gallery/server-fn/tag-page";
 import { userImageCountQueryOptions } from "@/features/gallery/server-fn/user-image-count";
 import ImageDropArea from "@/features/image-upload/components/ImageDropArea";
 import { generateMetadata } from "@/libs/meta";
@@ -31,15 +31,15 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
   validateSearch: (search) => parse(searchParamsSchema, search),
   loaderDeps: ({ search: { view, page } }) => ({ view, page }),
   loader: async ({ params, deps, context }) => {
+    const tagPageOptions = tagPageQueryOptions({
+      view: deps.view,
+      userId: params.userId,
+      tagId: params.tagId,
+      page: deps.page,
+    });
+
     const [loaderData] = await Promise.all([
-      tagPageLoaderFn({
-        data: {
-          view: deps.view,
-          userId: params.userId,
-          tagId: params.tagId,
-          page: deps.page,
-        },
-      }),
+      context.queryClient.ensureQueryData(tagPageOptions),
       context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userId)),
     ]);
 
@@ -67,12 +67,22 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
 
 function RouteComponent() {
   const { user } = useRouteContext({ from: "/user/_layout/$userId" });
-  const { view } = Route.useSearch();
-  const { tag, images } = Route.useLoaderData();
+  const { view, page } = Route.useSearch();
+  const { tagId } = Route.useParams();
+
+  const { data } = useSuspenseQuery(
+    tagPageQueryOptions({
+      view,
+      userId: user.id,
+      tagId,
+      page,
+    }),
+  );
   const { data: totalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
 
   const session = useSession();
 
+  const { tag, images } = data;
   const isOwner = user.id === session.data?.user.id;
   const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];
 
