@@ -2,7 +2,7 @@ import { ClientOnly, createFileRoute, useRouteContext } from "@tanstack/react-ro
 import { fallback, number, object, parse } from "valibot";
 import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
-import TagLinks from "@/components/TagLinks";
+import { useSession } from "@/features/auth/libs/auth-client";
 import GalleryMasonry from "@/features/gallery/components/GalleryMasonry";
 import GalleryRandom from "@/features/gallery/components/GalleryRandom";
 import { ERROR_MESSAGE } from "@/features/gallery/constants/error";
@@ -59,11 +59,13 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
 });
 
 function RouteComponent() {
-  const { session, user, userTotalImageCount } = useRouteContext({ from: "/user/_layout/$userId" });
+  const { user, userTotalImageCount } = useRouteContext({ from: "/user/_layout/$userId" });
   const { view } = Route.useSearch();
-  const { tag, tags, images } = Route.useLoaderData();
+  const { tag, images } = Route.useLoaderData();
 
-  const isOwner = session?.user.id === user.id;
+  const { data } = useSession();
+
+  const isOwner = user.id === data?.session?.id;
   const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];
 
   return (
@@ -71,8 +73,6 @@ function RouteComponent() {
       <h1 className="col-start-2 text-4xl">{`#${tag.name}`}</h1>
 
       <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-        {tags && <TagLinks className="col-start-2" tags={tags} userId={user.id} />}
-
         {isOwner && (
           <div className="col-start-2">
             <ImageDropArea
