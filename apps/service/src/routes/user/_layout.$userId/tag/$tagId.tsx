@@ -63,9 +63,9 @@ function RouteComponent() {
   const { view } = Route.useSearch();
   const { tag, images } = Route.useLoaderData();
 
-  const { data } = useSession();
+  const session = useSession();
 
-  const isOwner = user.id === data?.session?.id;
+  const isOwner = user.id === session.data?.user.id;
   const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];
 
   return (

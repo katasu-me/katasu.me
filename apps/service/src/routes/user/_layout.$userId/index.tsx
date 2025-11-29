@@ -70,7 +70,7 @@ function RouteComponent() {
     }),
   );
 
-  const isOwner = session.data?.user.id === user.id;
+  const isOwner = user.id === session.data?.user.id;
   const frameImages = data.images ? data.images.map((image) => toFrameImageProps(image)) : [];
 
   return (
