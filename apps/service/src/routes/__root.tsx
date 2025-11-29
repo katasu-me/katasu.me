@@ -1,6 +1,6 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import { createRootRouteWithContext, ErrorComponent, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { PropsWithChildren } from "react";
 import BudouX from "@/components/BudouX";
@@ -36,19 +36,21 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     ],
   }),
 
-  errorComponent: ErrorComponent,
+  errorComponent: (error) => {
+    return <ErrorComponent error={error} />;
+  },
   notFoundComponent: NotFound,
   shellComponent: RootDocument,
 });
 
-function ErrorComponent() {
-  return (
-    <MessagePage title="Error" showBackButton>
-      <p>エラーが発生しました</p>
-      <p className="mt-2">ページを再読み込みしてみてください…</p>
-    </MessagePage>
-  );
-}
+// function ErrorComponent() {
+//   return (
+//     <MessagePage title="Error" showBackButton>
+//       <p>エラーが発生しました</p>
+//       <p className="mt-2">ページを再読み込みしてみてください…</p>
+//     </MessagePage>
+//   );
+// }
 
 function NotFound() {
   return (
