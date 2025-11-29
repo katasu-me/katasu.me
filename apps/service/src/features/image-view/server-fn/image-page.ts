@@ -4,13 +4,6 @@ import { queryOptions } from "@tanstack/react-query";
 import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { type InferInput, object, string } from "valibot";
-import { CACHE_KEYS, getCached } from "@/libs/cache";
-
-const cachedFetchImageById = async (imageId: string) => {
-  return getCached(env.CACHE_KV, CACHE_KEYS.imageDetail(imageId), async () => {
-    return await fetchImageById(env.DB, imageId);
-  });
-};
 
 const ImagePageLoaderInputSchema = object({
   imageId: string(),
@@ -19,7 +12,7 @@ const ImagePageLoaderInputSchema = object({
 const imagePageLoaderFn = createServerFn({ method: "GET" })
   .inputValidator(ImagePageLoaderInputSchema)
   .handler(async ({ data }) => {
-    const image = await cachedFetchImageById(data.imageId);
+    const image = await fetchImageById(env.DB, data.imageId);
 
     if (!image.success) {
       throw new Error(image.error.message);

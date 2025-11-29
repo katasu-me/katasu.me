@@ -94,7 +94,12 @@ function RouteComponent() {
       )}
 
       {view === "timeline" ? (
-        <GalleryMasonry images={frameImages} className="col-start-2" totalImageCount={totalImageCount} />
+        <GalleryMasonry
+          className="col-start-2"
+          images={frameImages}
+          totalImageCount={totalImageCount}
+          currentPage={page}
+        />
       ) : (
         <ClientOnly fallback={<Loading className="col-start-2 h-[50vh]" />}>
           <GalleryRandom

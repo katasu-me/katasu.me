@@ -80,25 +80,10 @@ export const deleteImageFn = createServerFn({ method: "POST" })
         };
       }
 
-      // キャッシュを無効化
-      const keysToInvalidate = [
-        CACHE_KEYS.imageDetail(imageId), // 画像詳細
-        CACHE_KEYS.userImages(userId), // ユーザーの画像一覧
-        CACHE_KEYS.userImageCount(userId), // ユーザーの総画像数
-      ];
-
-      // タグに変更がある場合
+      // タグ一覧のKVキャッシュを無効化（TanStack Query未移行のため）
       if (prevImageData.tags.length !== 0) {
-        // タグ一覧
-        keysToInvalidate.push(CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId));
-
-        // 削除された画像のタグ別画像一覧
-        for (const tag of prevImageData.tags) {
-          keysToInvalidate.push(CACHE_KEYS.tagImages(tag.id));
-        }
+        await invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]);
       }
-
-      await invalidateCaches(env.CACHE_KV, keysToInvalidate);
 
       return {
         success: true,

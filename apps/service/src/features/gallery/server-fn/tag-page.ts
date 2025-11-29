@@ -9,22 +9,13 @@ import { queryOptions } from "@tanstack/react-query";
 import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { type InferInput, number, object, string } from "valibot";
-import { CACHE_KEYS, getCached } from "@/libs/cache";
 import { GALLERY_PAGE_SIZE } from "../constants/page";
 import { GalleryViewSchema } from "../schemas/view";
 import { fetchRandomImagesFn } from "./fetch-random";
 
-const cachedFetchTagById = async (tagId: string) => {
-  return fetchTagById(env.DB, tagId);
-};
-
-const cachedFetchTagsByUsage = async (userId: string) => {
-  const key = CACHE_KEYS.userTagsByUsage(userId);
-
-  const result = await getCached(env.CACHE_KV, key, async () => {
-    return fetchTagsByUserId(env.DB, userId, {
-      order: "usage",
-    });
+const fetchTagsByUsage = async (userId: string) => {
+  const result = await fetchTagsByUserId(env.DB, userId, {
+    order: "usage",
   });
 
   if (!result.success || result.data.length <= 0) {
@@ -32,25 +23,6 @@ const cachedFetchTagsByUsage = async (userId: string) => {
   }
 
   return result.data;
-};
-
-const cachedFetchImagesByTagId = async (tagId: string, offset: number) => {
-  const key = CACHE_KEYS.tagImages(tagId);
-
-  return getCached(env.CACHE_KV, key, async () => {
-    return fetchImagesByTagId(env.DB, tagId, {
-      offset,
-      order: "desc",
-    });
-  });
-};
-
-const cachedFetchTotalImageCountByTagId = async (tagId: string) => {
-  const key = CACHE_KEYS.tagTotalImageCount(tagId);
-
-  return getCached(env.CACHE_KV, key, async () => {
-    return fetchTotalImageCountByTagId(env.DB, tagId);
-  });
 };
 
 const TagPageLoaderInputSchema = object({
@@ -65,7 +37,7 @@ const tagPageLoaderFn = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { view, userId, tagId, page } = data;
 
-    const tagResult = await cachedFetchTagById(tagId);
+    const tagResult = await fetchTagById(env.DB, tagId);
 
     if (!tagResult.success || !tagResult.data) {
       throw notFound();
@@ -73,7 +45,7 @@ const tagPageLoaderFn = createServerFn({ method: "GET" })
 
     if (view === "random") {
       const [tags, images] = await Promise.all([
-        cachedFetchTagsByUsage(userId),
+        fetchTagsByUsage(userId),
         fetchRandomImagesFn({ data: { type: "tag", tagId } }),
       ]);
 
@@ -84,7 +56,7 @@ const tagPageLoaderFn = createServerFn({ method: "GET" })
       };
     }
 
-    const tagTotalImageCountResult = await cachedFetchTotalImageCountByTagId(tagId);
+    const tagTotalImageCountResult = await fetchTotalImageCountByTagId(env.DB, tagId);
 
     if (!tagTotalImageCountResult.success) {
       throw new Error(tagTotalImageCountResult.error.message);
@@ -95,8 +67,11 @@ const tagPageLoaderFn = createServerFn({ method: "GET" })
     const offset = tagTotalImageCount < rawOffset ? 0 : rawOffset;
 
     const [tags, imagesResult] = await Promise.all([
-      cachedFetchTagsByUsage(userId),
-      cachedFetchImagesByTagId(tagId, offset),
+      fetchTagsByUsage(userId),
+      fetchImagesByTagId(env.DB, tagId, {
+        offset,
+        order: "desc",
+      }),
     ]);
 
     if (!imagesResult.success) {

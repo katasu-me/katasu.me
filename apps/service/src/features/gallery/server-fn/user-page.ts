@@ -1,21 +1,15 @@
 import { env } from "cloudflare:workers";
-import { fetchImagesByUserId, fetchTagsByUserId } from "@katasu.me/service-db";
+import { fetchImagesByUserId, fetchTagsByUserId, fetchTotalImageCountByUserId } from "@katasu.me/service-db";
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import { type InferInput, number, object, string } from "valibot";
-import { CACHE_KEYS, getCached } from "@/libs/cache";
 import { GALLERY_PAGE_SIZE } from "../constants/page";
-import { cachedFetchTotalImageCount } from "../libs/cached-image-count";
 import { GalleryViewSchema } from "../schemas/view";
 import { fetchRandomImagesFn } from "./fetch-random";
 
-const cachedFetchTagsByUsage = async (userId: string) => {
-  const key = CACHE_KEYS.userTagsByUsage(userId);
-
-  const result = await getCached(env.CACHE_KV, key, async () => {
-    return fetchTagsByUserId(env.DB, userId, {
-      order: "usage",
-    });
+const fetchTagsByUsage = async (userId: string) => {
+  const result = await fetchTagsByUserId(env.DB, userId, {
+    order: "usage",
   });
 
   if (!result.success || result.data.length <= 0) {
@@ -23,17 +17,6 @@ const cachedFetchTagsByUsage = async (userId: string) => {
   }
 
   return result.data;
-};
-
-const cachedFetchImagesByUserId = async (userId: string, offset: number) => {
-  const key = CACHE_KEYS.userImages(userId);
-
-  return getCached(env.CACHE_KV, key, async () => {
-    return fetchImagesByUserId(env.DB, userId, {
-      offset,
-      order: "desc",
-    });
-  });
 };
 
 const UserPageLoaderInputSchema = object({
@@ -50,7 +33,7 @@ const userPageLoaderFn = createServerFn({ method: "GET" })
     // ランダムビューの場合
     if (view === "random") {
       const [tags, images] = await Promise.all([
-        cachedFetchTagsByUsage(userId),
+        fetchTagsByUsage(userId),
         fetchRandomImagesFn({ data: { type: "user", userId } }),
       ]);
 
@@ -61,15 +44,18 @@ const userPageLoaderFn = createServerFn({ method: "GET" })
     }
 
     // タイムラインビューの場合
-    const totalImageCountResult = await cachedFetchTotalImageCount(userId);
+    const totalImageCountResult = await fetchTotalImageCountByUserId(env.DB, userId);
     const totalImageCount = totalImageCountResult.success ? totalImageCountResult.data : 0;
 
     const rawOffset = GALLERY_PAGE_SIZE * (page - 1);
     const offset = totalImageCount < rawOffset ? 0 : rawOffset;
 
     const [tags, imagesResult] = await Promise.all([
-      cachedFetchTagsByUsage(userId),
-      cachedFetchImagesByUserId(userId, offset),
+      fetchTagsByUsage(userId),
+      fetchImagesByUserId(env.DB, userId, {
+        offset,
+        order: "desc",
+      }),
     ]);
 
     if (!imagesResult.success) {

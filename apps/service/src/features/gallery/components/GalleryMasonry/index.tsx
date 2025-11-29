@@ -18,7 +18,7 @@ const COLUMNS = new Map([
 type Props = {
   images: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
   totalImageCount: number;
-  currentPage?: number;
+  currentPage: number;
   itemsPerPage?: number;
   className?: string;
 };
@@ -39,7 +39,7 @@ function getImageColumns(paginatedImages: Props["images"], columns: number) {
 export default function GalleryMasonry({
   images,
   totalImageCount,
-  currentPage = 1,
+  currentPage,
   itemsPerPage = GALLERY_PAGE_SIZE,
   className,
 }: Props) {

@@ -103,38 +103,15 @@ export const editImageFn = createServerFn({ method: "POST" })
         };
       }
 
-      // キャッシュを無効化
-      const keysToInvalidate = [
-        CACHE_KEYS.imageDetail(imageId), // 画像詳細
-      ];
-
+      // タグ一覧のKVキャッシュを無効化（TanStack Query未移行のため）
       const prevTags = prevImageData.tags || [];
-      const prevTagIds = new Set(prevTags.map((t) => t.id));
-
       const newTags = updateImageResult.data?.tags || [];
       const newTagIds = new Set(newTags.map((t) => t.id));
 
-      // タグに変更があった場合、タグ一覧も無効化
       const tagsChanged = prevTags.length !== newTags.length || prevTags.some((tag) => !newTagIds.has(tag.id));
       if (tagsChanged) {
-        keysToInvalidate.push(CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId));
+        await invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]);
       }
-
-      // 削除されたタグ
-      for (const tag of prevTags) {
-        if (!newTagIds.has(tag.id)) {
-          keysToInvalidate.push(CACHE_KEYS.tagImages(tag.id));
-        }
-      }
-
-      // 追加されたタグ
-      for (const tag of newTags) {
-        if (!prevTagIds.has(tag.id)) {
-          keysToInvalidate.push(CACHE_KEYS.tagImages(tag.id));
-        }
-      }
-
-      await invalidateCaches(env.CACHE_KV, keysToInvalidate);
 
       return {
         success: true,

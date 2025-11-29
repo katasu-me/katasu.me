@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import { object, string } from "valibot";
-import { cachedFetchTotalImageCount } from "../libs/cached-image-count";
+import { fetchTotalImageCount } from "../libs/cached-image-count";
 
 const UserImageCountInputSchema = object({
   userId: string(),
@@ -10,7 +10,7 @@ const UserImageCountInputSchema = object({
 const userImageCountFn = createServerFn({ method: "GET" })
   .inputValidator(UserImageCountInputSchema)
   .handler(async ({ data }) => {
-    const result = await cachedFetchTotalImageCount(data.userId);
+    const result = await fetchTotalImageCount(data.userId);
 
     if (!result.success) {
       throw new Error(result.error.message);

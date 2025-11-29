@@ -163,17 +163,10 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    const keysToInvalidate = [CACHE_KEYS.userImages(userId), CACHE_KEYS.userImageCount(userId)];
-
+    // タグ一覧のKVキャッシュを無効化（TanStack Query未移行のため）
     if (registerImageResult.data?.tags) {
-      keysToInvalidate.push(CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId));
-
-      for (const tag of registerImageResult.data.tags) {
-        keysToInvalidate.push(CACHE_KEYS.tagImages(tag.id));
-      }
+      await invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]);
     }
-
-    await invalidateCaches(env.CACHE_KV, keysToInvalidate);
 
     return {
       success: true,

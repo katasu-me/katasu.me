@@ -22,21 +22,6 @@ export const CACHE_KEYS = {
   /** ユーザーの公開データ */
   user: (userId: string) => `cache:user:${userId}`,
 
-  /** ユーザーの画像一覧 */
-  userImages: (userId: string) => `cache:images:user:${userId}`,
-
-  /** ユーザーの総画像数 */
-  userImageCount: (userId: string) => `cache:images:user:${userId}:count`,
-
-  /** 画像詳細 */
-  imageDetail: (imageId: string) => `cache:images:detail:${imageId}`,
-
-  /** タグ別画像一覧 */
-  tagImages: (tagId: string) => `cache:images:tag:${tagId}`,
-
-  /** タグの総画像数 */
-  tagTotalImageCount: (tagId: string) => `cache:images:tag:${tagId}:count`,
-
   /** ユーザーのタグ一覧（使用頻度順） */
   userTagsByUsage: (userId: string) => `cache:tags:user:${userId}:usage`,
 
