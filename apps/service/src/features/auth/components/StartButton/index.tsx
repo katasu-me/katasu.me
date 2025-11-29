@@ -9,15 +9,6 @@ type Props = {
   className?: string;
 };
 
-// export function StartButtonFallback({ className }: Props) {
-//   return (
-//     <Button className={twMerge("flex w-48 items-center justify-center gap-2", className)} disabled>
-//       <IconLoader2 className="size-5 animate-spin" />
-//       よみこみちゅう
-//     </Button>
-//   );
-// }
-
 export default function StartButton({ user, className }: Props) {
   const buttonClassname = twMerge("w-48", className);
 
@@ -27,7 +18,12 @@ export default function StartButton({ user, className }: Props) {
       <Button asChild>
         <Link
           className={twMerge("mx-auto flex items-center justify-center gap-2", buttonClassname)}
-          to={`/user/${user.id}`}
+          to="/user/$userId"
+          params={{ userId: user.id }}
+          search={{
+            view: "timeline",
+            page: 1,
+          }}
         >
           <IconPlant className="size-5" />
           マイページへ
@@ -40,7 +36,17 @@ export default function StartButton({ user, className }: Props) {
   return (
     <div className={className}>
       <Button asChild>
-        <Link className="mx-auto flex w-fit items-center justify-center gap-2" to="/user/8uB8pmZ-pcGqxBfdpnWo6">
+        <Link
+          className="mx-auto flex w-fit items-center justify-center gap-2"
+          to="/user/$userId"
+          params={{
+            userId: "8uB8pmZ-pcGqxBfdpnWo6",
+          }}
+          search={{
+            view: "timeline",
+            page: 1,
+          }}
+        >
           <IconPlant className="size-5" />
           開発者のかたすみをのぞく
         </Link>

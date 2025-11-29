@@ -59,6 +59,8 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
 function RouteComponent() {
   const { user, userTotalImageCount } = useRouteContext({ from: "/user/_layout/$userId" });
   const { view, page } = Route.useSearch();
+
+  const session = useSession();
   const { data } = useSuspenseQuery(
     userPageQueryOptions({
       view,
@@ -67,7 +69,6 @@ function RouteComponent() {
       userTotalImageCount,
     }),
   );
-  const session = useSession(); // FIXME: どうなんすかねこれ
 
   const isOwner = session.data?.user.id === user.id;
   const frameImages = data.images ? data.images.map((image) => toFrameImageProps(image)) : [];
