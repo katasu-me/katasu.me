@@ -44,8 +44,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function ErrorComponent() {
   return (
     <MessagePage title="Error" showBackButton>
-      <p>サーバーでエラーが発生しました</p>
-      <p className="mt-2">しばらく時間をおいて、再度お試しください 🙇</p>
+      <p>エラーが発生しました</p>
+      <p className="mt-2">ページを再読み込みしてみてください…</p>
     </MessagePage>
   );
 }
