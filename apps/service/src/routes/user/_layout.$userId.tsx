@@ -39,6 +39,9 @@ export const Route = createFileRoute("/user/_layout/$userId")({
     });
   },
   loader: async ({ context }) => {
+    // NOTE:
+    // useRouteContextで取得すると、スマホで一定時間置いてからページバックで遷移したとき
+    // contextがundefinedになる問題があるため、loader経由で渡してる
     return {
       user: context.user,
     };
