@@ -71,6 +71,7 @@ const tagPageLoaderFn = createServerFn({ method: "GET" })
       fetchImagesByTagId(env.DB, tagId, {
         offset,
         order: "desc",
+        limit: GALLERY_PAGE_SIZE,
       }),
     ]);
 
@@ -82,6 +83,7 @@ const tagPageLoaderFn = createServerFn({ method: "GET" })
       tag: tagResult.data,
       tags,
       images: imagesResult.data,
+      tagTotalImageCount,
     };
   });
 

@@ -81,11 +81,11 @@ function RouteComponent() {
       page,
     }),
   );
-  const { data: totalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
+  const { data: userTotalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
 
   const session = useSession();
 
-  const { tag, images } = data;
+  const { tag, images, tagTotalImageCount } = data;
   const isOwner = user.id === session.data?.user.id;
   const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];
 
@@ -100,7 +100,7 @@ function RouteComponent() {
               title="あたらしい画像を投稿する"
               userId={user.id}
               counter={{
-                total: totalImageCount,
+                total: userTotalImageCount,
                 max: user.plan.maxPhotos,
               }}
               defaultTags={[tag.name]}
@@ -109,7 +109,12 @@ function RouteComponent() {
         )}
 
         {view === "timeline" ? (
-          <GalleryMasonry images={frameImages} className="col-start-2" totalImageCount={totalImageCount} />
+          <GalleryMasonry
+            images={frameImages}
+            className="col-start-2"
+            totalImageCount={tagTotalImageCount ?? 0}
+            currentPage={page}
+          />
         ) : (
           <ClientOnly fallback={<Loading className="col-start-2 h-[50vh]" />}>
             <GalleryRandom

@@ -55,6 +55,7 @@ const userPageLoaderFn = createServerFn({ method: "GET" })
       fetchImagesByUserId(env.DB, userId, {
         offset,
         order: "desc",
+        limit: GALLERY_PAGE_SIZE,
       }),
     ]);
 
