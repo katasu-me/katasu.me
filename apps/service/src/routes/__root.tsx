@@ -1,6 +1,6 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, ErrorComponent, HeadContent, Scripts } from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { PropsWithChildren } from "react";
 import BudouX from "@/components/BudouX";
@@ -36,21 +36,19 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     ],
   }),
 
-  errorComponent: (error) => {
-    return <ErrorComponent error={error} />;
-  },
+  errorComponent: ErrorComponent,
   notFoundComponent: NotFound,
   shellComponent: RootDocument,
 });
 
-// function ErrorComponent() {
-//   return (
-//     <MessagePage title="Error" showBackButton>
-//       <p>エラーが発生しました</p>
-//       <p className="mt-2">ページを再読み込みしてみてください…</p>
-//     </MessagePage>
-//   );
-// }
+function ErrorComponent() {
+  return (
+    <MessagePage title="Error" showBackButton>
+      <p>エラーが発生しました</p>
+      <p className="mt-2">ページを再読み込みしてみてください…</p>
+    </MessagePage>
+  );
+}
 
 function NotFound() {
   return (
@@ -86,6 +84,8 @@ function RootDocument({ children }: PropsWithChildren) {
             ]}
           />
         )}
+        <script src="//cdn.jsdelivr.net/npm/eruda" />
+        <script>eruda.init();</script>
         {/*         {process.env.VITE_UMAMI_SCRIPT_URL && process.env.VITE_UMAMI_WEBSITE_ID && ( */}
         {/*   <Script */}
         {/*     src={process.env.VITE_UMAMI_SCRIPT_URL} */}
