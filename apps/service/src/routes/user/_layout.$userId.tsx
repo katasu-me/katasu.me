@@ -27,15 +27,11 @@ const userPageBeforeLoadFn = createServerFn()
       !userResult.data.termsAgreedAt ||
       !userResult.data.privacyPolicyAgreedAt
     ) {
-      console.log("[DEBUG] userPageBeforeLoadFn: user not found or not completed registration");
       throw notFound();
     }
 
     const user = userResult.data;
     const totalImageCount = await cachedFetchTotalImageCount(user.id);
-
-    console.log("[DEBUG] userPageBeforeLoadFn: fetched user", user);
-    console.log("[DEBUG] userPageBeforeLoadFn: fetched totalImageCount", totalImageCount);
 
     return {
       user,

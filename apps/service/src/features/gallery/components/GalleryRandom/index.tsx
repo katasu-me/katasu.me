@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDevice } from "@/hooks/useDevice";
 import { toFrameImageProps } from "../../libs/convert";
@@ -23,7 +23,7 @@ export default function GalleryRandom({ fetchOptions }: Props) {
   const [isScattering, setIsScattering] = useState(false);
   const [imagesKey, setImagesKey] = useState(() => Date.now());
 
-  const { data } = useQuery(randomImagesQueryOptions(fetchOptions));
+  const { data } = useSuspenseQuery(randomImagesQueryOptions(fetchOptions));
 
   const images = useMemo(() => {
     if (!data) {
