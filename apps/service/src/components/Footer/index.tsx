@@ -35,7 +35,17 @@ export default function Footer({ className, ...props }: Props) {
       {props.mode === "logged-in-user" && props.userId && (
         <div className="flex flex-col items-center gap-6">
           <Button asChild>
-            <Link className="flex w-48 items-center justify-center gap-2" to={`/user/${props.userId}`}>
+            <Link
+              className="flex w-48 items-center justify-center gap-2"
+              to="/user/$userId"
+              params={{
+                userId: props.userId,
+              }}
+              search={{
+                view: "timeline",
+                page: 1,
+              }}
+            >
               <IconPlant className="size-5" />
               マイページへ
             </Link>
