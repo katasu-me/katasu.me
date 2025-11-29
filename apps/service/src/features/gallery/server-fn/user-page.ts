@@ -5,6 +5,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { type InferInput, number, object, string } from "valibot";
 import { CACHE_KEYS, getCached } from "@/libs/cache";
 import { GALLERY_PAGE_SIZE } from "../constants/page";
+import { cachedFetchTotalImageCount } from "../libs/cached-image-count";
 import { GalleryViewSchema } from "../schemas/view";
 import { fetchRandomImagesFn } from "./fetch-random";
 
@@ -39,13 +40,12 @@ const UserPageLoaderInputSchema = object({
   view: GalleryViewSchema,
   userId: string(),
   page: number(),
-  userTotalImageCount: number(),
 });
 
 const userPageLoaderFn = createServerFn({ method: "GET" })
   .inputValidator(UserPageLoaderInputSchema)
   .handler(async ({ data }) => {
-    const { view, userId, page, userTotalImageCount } = data;
+    const { view, userId, page } = data;
 
     // ランダムビューの場合
     if (view === "random") {
@@ -61,8 +61,11 @@ const userPageLoaderFn = createServerFn({ method: "GET" })
     }
 
     // タイムラインビューの場合
+    const totalImageCountResult = await cachedFetchTotalImageCount(userId);
+    const totalImageCount = totalImageCountResult.success ? totalImageCountResult.data : 0;
+
     const rawOffset = GALLERY_PAGE_SIZE * (page - 1);
-    const offset = userTotalImageCount < rawOffset ? 0 : rawOffset;
+    const offset = totalImageCount < rawOffset ? 0 : rawOffset;
 
     const [tags, imagesResult] = await Promise.all([
       cachedFetchTagsByUsage(userId),

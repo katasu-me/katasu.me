@@ -10,6 +10,7 @@ import GalleryRandom from "@/features/gallery/components/GalleryRandom";
 import { ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
+import { userImageCountQueryOptions } from "@/features/gallery/server-fn/user-image-count";
 import { userPageQueryOptions } from "@/features/gallery/server-fn/user-page";
 import ImageDropArea from "@/features/image-upload/components/ImageDropArea";
 import { generateMetadata } from "@/libs/meta";
@@ -31,14 +32,16 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
   validateSearch: (search) => parse(searchParamsSchema, search),
   loaderDeps: ({ search: { view, page } }) => ({ view, page }),
   loader: async ({ params, deps, context }) => {
-    await context.queryClient.ensureQueryData(
-      userPageQueryOptions({
-        view: deps.view,
-        userId: params.userId,
-        page: deps.page,
-        userTotalImageCount: context.userTotalImageCount,
-      }),
-    );
+    await Promise.all([
+      context.queryClient.ensureQueryData(
+        userPageQueryOptions({
+          view: deps.view,
+          userId: params.userId,
+          page: deps.page,
+        }),
+      ),
+      context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userId)),
+    ]);
   },
   head: ({ match }) => {
     const { user } = match.context;
@@ -57,7 +60,7 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
 });
 
 function RouteComponent() {
-  const { user, userTotalImageCount } = useRouteContext({ from: "/user/_layout/$userId" });
+  const { user } = useRouteContext({ from: "/user/_layout/$userId" });
   const { view, page } = Route.useSearch();
 
   const session = useSession();
@@ -66,9 +69,9 @@ function RouteComponent() {
       view,
       userId: user.id,
       page,
-      userTotalImageCount,
     }),
   );
+  const { data: totalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
 
   const isOwner = user.id === session.data?.user.id;
   const frameImages = data.images ? data.images.map((image) => toFrameImageProps(image)) : [];
@@ -83,7 +86,7 @@ function RouteComponent() {
             title="あたらしい画像を投稿する"
             userId={user.id}
             counter={{
-              total: userTotalImageCount,
+              total: totalImageCount,
               max: user.plan.maxPhotos,
             }}
           />
@@ -91,7 +94,7 @@ function RouteComponent() {
       )}
 
       {view === "timeline" ? (
-        <GalleryMasonry images={frameImages} className="col-start-2" totalImageCount={userTotalImageCount} />
+        <GalleryMasonry images={frameImages} className="col-start-2" totalImageCount={totalImageCount} />
       ) : (
         <ClientOnly fallback={<Loading className="col-start-2 h-[50vh]" />}>
           <GalleryRandom

@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ClientOnly, createFileRoute, useRouteContext } from "@tanstack/react-router";
 import { fallback, number, object, parse } from "valibot";
 import { Loading } from "@/components/Loading";
@@ -9,6 +10,7 @@ import { ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { tagPageLoaderFn } from "@/features/gallery/server-fn/tag-page";
+import { userImageCountQueryOptions } from "@/features/gallery/server-fn/user-image-count";
 import ImageDropArea from "@/features/image-upload/components/ImageDropArea";
 import { generateMetadata } from "@/libs/meta";
 import { getUserAvatarUrl } from "@/libs/r2";
@@ -28,15 +30,20 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
   },
   validateSearch: (search) => parse(searchParamsSchema, search),
   loaderDeps: ({ search: { view, page } }) => ({ view, page }),
-  loader: async ({ params, deps }) => {
-    return tagPageLoaderFn({
-      data: {
-        view: deps.view,
-        userId: params.userId,
-        tagId: params.tagId,
-        page: deps.page,
-      },
-    });
+  loader: async ({ params, deps, context }) => {
+    const [loaderData] = await Promise.all([
+      tagPageLoaderFn({
+        data: {
+          view: deps.view,
+          userId: params.userId,
+          tagId: params.tagId,
+          page: deps.page,
+        },
+      }),
+      context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userId)),
+    ]);
+
+    return loaderData;
   },
   head: ({ match, loaderData }) => {
     if (!loaderData) {
@@ -59,9 +66,10 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
 });
 
 function RouteComponent() {
-  const { user, userTotalImageCount } = useRouteContext({ from: "/user/_layout/$userId" });
+  const { user } = useRouteContext({ from: "/user/_layout/$userId" });
   const { view } = Route.useSearch();
   const { tag, images } = Route.useLoaderData();
+  const { data: totalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
 
   const session = useSession();
 
@@ -79,7 +87,7 @@ function RouteComponent() {
               title="あたらしい画像を投稿する"
               userId={user.id}
               counter={{
-                total: userTotalImageCount,
+                total: totalImageCount,
                 max: user.plan.maxPhotos,
               }}
               defaultTags={[tag.name]}
@@ -88,7 +96,7 @@ function RouteComponent() {
         )}
 
         {view === "timeline" ? (
-          <GalleryMasonry images={frameImages} className="col-start-2" totalImageCount={userTotalImageCount} />
+          <GalleryMasonry images={frameImages} className="col-start-2" totalImageCount={totalImageCount} />
         ) : (
           <ClientOnly fallback={<Loading className="col-start-2 h-[50vh]" />}>
             <GalleryRandom

@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { type ComponentProps, type DragEvent, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import IconImagePlus from "@/assets/icons/image-plus.svg?react";
+import { USER_IMAGE_COUNT_QUERY_KEY } from "@/features/gallery/server-fn/user-image-count";
 import { USER_PAGE_QUERY_KEY } from "@/features/gallery/server-fn/user-page";
 import UploadDrawer from "../UploadDrawer";
 
@@ -62,9 +63,14 @@ export default function ImageDropArea({ title, userId, counter, defaultTags, cla
 
     // アニメーション完了を待ってからデータを再取得
     setTimeout(async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [USER_PAGE_QUERY_KEY, userId],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [USER_PAGE_QUERY_KEY, userId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [USER_IMAGE_COUNT_QUERY_KEY, userId],
+        }),
+      ]);
     }, 400);
   };
 
