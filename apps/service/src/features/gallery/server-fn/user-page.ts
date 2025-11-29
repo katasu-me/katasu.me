@@ -81,9 +81,10 @@ const userPageLoaderFn = createServerFn({ method: "GET" })
   });
 
 export type UserPageLoaderInput = InferInput<typeof UserPageLoaderInputSchema>;
+export const USER_PAGE_QUERY_KEY = "user-page";
 
 export const userPageQueryOptions = (input: UserPageLoaderInput) =>
   queryOptions({
-    queryKey: ["user-page", input.userId, input.view, input.page],
+    queryKey: [USER_PAGE_QUERY_KEY, input.userId, input.view, input.page],
     queryFn: () => userPageLoaderFn({ data: input }),
   });

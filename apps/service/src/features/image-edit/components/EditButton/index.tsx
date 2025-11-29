@@ -1,7 +1,8 @@
-import { useRouter } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import IconPencil from "@/assets/icons/pencil.svg?react";
 import Button from "@/components/Button";
+import { IMAGE_PAGE_QUERY_KEY } from "@/features/image-view/server-fn/image-page";
 import EditDrawer from "../EditDrawer";
 
 type Props = {
@@ -11,17 +12,17 @@ type Props = {
 };
 
 export default function EditButton({ imageId, title, tags }: Props) {
-  const router = useRouter();
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSuccess = () => {
     // モーダルを閉じる
     setIsOpen(false);
 
-    // アニメーション完了を待ってからページをリフレッシュ
+    // アニメーション完了を待ってから画像情報を再フェッチ
     setTimeout(async () => {
-      await router.invalidate({
-        sync: true,
+      await queryClient.invalidateQueries({
+        queryKey: [IMAGE_PAGE_QUERY_KEY, imageId],
       });
     }, 400);
   };

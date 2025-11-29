@@ -41,7 +41,7 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
     );
   },
   head: ({ match }) => {
-    const user = match.context.user;
+    const { user } = match.context;
     const imageUrl = user.hasAvatar ? getUserAvatarUrl(user.id, user.avatarSetAt) : undefined;
 
     return {

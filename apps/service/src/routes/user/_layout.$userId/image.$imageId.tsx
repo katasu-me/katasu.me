@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouteContext } from "@tanstack/react-router";
 import { twMerge } from "tailwind-merge";
 import IconFlag from "@/assets/icons/flag.svg?react";
@@ -11,7 +12,7 @@ import RemoveButton from "@/features/image-delete/components/RemoveButton";
 import EditButton from "@/features/image-edit/components/EditButton";
 import BigImage from "@/features/image-view/components/BigImage";
 import ShareButton from "@/features/image-view/components/ShareButton";
-import { imagePageLoaderFn } from "@/features/image-view/server-fn/image-page";
+import { imagePageQueryOptions } from "@/features/image-view/server-fn/image-page";
 import { generateMetadata } from "@/libs/meta";
 import { getImageUrl } from "@/libs/r2";
 
@@ -23,12 +24,12 @@ export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
   errorComponent: ({ error }) => {
     return <Message message={error.message} icon="error" />;
   },
-  loader: async ({ params }) => {
-    return imagePageLoaderFn({
-      data: {
+  loader: async ({ params, context }) => {
+    return context.queryClient.ensureQueryData(
+      imagePageQueryOptions({
         imageId: params.imageId,
-      },
-    });
+      }),
+    );
   },
   head: ({ match, loaderData }) => {
     if (!loaderData) {
@@ -56,9 +57,11 @@ export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
 
 function RouteComponent() {
   const { user } = useRouteContext({ from: "/user/_layout/$userId" });
-  const { image } = Route.useLoaderData();
-  const session = useSession(); // FIXME: どうなんすかねこれ
+  const { imageId } = Route.useParams();
+  const { data } = useSuspenseQuery(imagePageQueryOptions({ imageId }));
+  const session = useSession();
 
+  const { image } = data;
   const canEdit = session.data?.user.id === user.id;
   const frameImageProps = toFrameImageProps(image, "original");
 

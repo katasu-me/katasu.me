@@ -20,8 +20,6 @@ const userPageBeforeLoadFn = createServerFn()
   .handler(async ({ data }) => {
     const userResult = await cachedFetchPublicUserDataById(data.userId);
 
-    console.log("[DEBUG] userPageBeforeLoadFn: fetched userResult", userResult);
-
     // 存在しない、または新規登録が完了していない場合は404
     if (
       !userResult.success ||
