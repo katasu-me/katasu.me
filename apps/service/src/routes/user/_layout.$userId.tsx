@@ -38,10 +38,12 @@ export const Route = createFileRoute("/user/_layout/$userId")({
       },
     });
   },
-  loader: ({ context }) => {
-    return {
-      user: context.user,
-    };
+  loader: async ({ params }) => {
+    return userPageBeforeLoadFn({
+      data: {
+        userId: params.userId,
+      },
+    });
   },
 });
 
