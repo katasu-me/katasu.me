@@ -84,8 +84,6 @@ function RootDocument({ children }: PropsWithChildren) {
             ]}
           />
         )}
-        <script src="//cdn.jsdelivr.net/npm/eruda" />
-        <script>eruda.init();</script>
         {/*         {process.env.VITE_UMAMI_SCRIPT_URL && process.env.VITE_UMAMI_WEBSITE_ID && ( */}
         {/*   <Script */}
         {/*     src={process.env.VITE_UMAMI_SCRIPT_URL} */}
