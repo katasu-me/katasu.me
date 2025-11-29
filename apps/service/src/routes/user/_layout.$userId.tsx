@@ -32,18 +32,16 @@ export const Route = createFileRoute("/user/_layout/$userId")({
     return <Loading className="col-start-2 h-[80vh]" />;
   },
   beforeLoad: async ({ params }) => {
-    return userPageBeforeLoadFn({
+    return await userPageBeforeLoadFn({
       data: {
         userId: params.userId,
       },
     });
   },
-  loader: async ({ params }) => {
-    return userPageBeforeLoadFn({
-      data: {
-        userId: params.userId,
-      },
-    });
+  loader: async ({ context }) => {
+    return {
+      user: context.user,
+    };
   },
 });
 
