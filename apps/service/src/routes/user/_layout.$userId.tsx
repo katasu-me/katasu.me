@@ -57,7 +57,7 @@ function UserLayoutComponent() {
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
       <Header user={user} isOwnerPage={isOwner} />
       <Outlet />
-      <Footer className="col-start-2" mode="logged-in-user" userId={user.id} />
+      <Footer className="col-start-2" mode="logged-in-user" userId={session?.user.id} />
     </div>
   );
 }
