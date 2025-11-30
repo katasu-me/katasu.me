@@ -3,7 +3,6 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { PropsWithChildren } from "react";
-import { Toaster } from "sonner";
 import BudouX from "@/components/BudouX";
 import MessagePage from "@/components/MessagePage";
 import UploadDrawer from "@/features/image-upload/components/UploadDrawer";
@@ -78,7 +77,6 @@ function RootDocument({ children }: PropsWithChildren) {
           <UploadDrawer />
           <UploadSnackbar />
         </UploadProvider>
-        <Toaster position="top-center" />
         {import.meta.env.DEV && (
           <TanStackDevtools
             config={{
