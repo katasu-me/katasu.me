@@ -51,10 +51,11 @@ export const Route = createFileRoute("/user/_layout/$userId")({
 function UserLayoutComponent() {
   const { user } = Route.useLoaderData();
   const { data: session } = useSession();
+  const isOwner = user.id === session?.user.id;
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header user={user} isOwnerPage={user.id === session?.user.id} />
+      <Header user={user} isOwnerPage={isOwner} />
       <Outlet />
       <Footer className="col-start-2" mode="logged-in-user" userId={user.id} />
     </div>

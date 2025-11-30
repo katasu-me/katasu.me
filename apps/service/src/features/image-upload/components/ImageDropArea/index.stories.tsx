@@ -1,5 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { UploadProvider } from "../../contexts/UploadContext";
 import ImageDropArea from "./";
+
+const queryClient = new QueryClient();
 
 const meta = {
   title: "UserPage/UserImageDropArea/ImageDropArea",
@@ -8,17 +12,25 @@ const meta = {
     layout: "padded",
   },
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <QueryClientProvider client={queryClient}>
+        <UploadProvider>
+          <Story />
+        </UploadProvider>
+      </QueryClientProvider>
+    ),
+  ],
   args: {
-    userId: "test-user-id",
+    counter: {
+      total: 5,
+      max: 100,
+    },
   },
   argTypes: {
     title: {
       control: "text",
       description: "ドロップエリアに表示するタイトル",
-    },
-    userId: {
-      control: "text",
-      description: "ユーザーID",
     },
     className: {
       control: "text",

@@ -1,29 +1,31 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { type ComponentProps, type DragEvent, useState } from "react";
+import { type DragEvent, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import IconImagePlus from "@/assets/icons/image-plus.svg?react";
-import { TAG_PAGE_QUERY_KEY } from "@/features/gallery/server-fn/tag-page";
-import { USER_IMAGE_COUNT_QUERY_KEY } from "@/features/gallery/server-fn/user-image-count";
-import { USER_PAGE_QUERY_KEY } from "@/features/gallery/server-fn/user-page";
-import UploadDrawer from "../UploadDrawer";
+import { useUpload } from "../../contexts/UploadContext";
 
 const MAX_FILE_COUNT = 1;
 
 type Props = {
   title: string;
-  userId: string;
-
+  counter: {
+    total: number;
+    max: number;
+  };
   defaultTags?: string[];
   className?: string;
-} & Pick<ComponentProps<typeof UploadDrawer>, "counter">;
+};
 
-export default function ImageDropArea({ title, userId, counter, defaultTags, className }: Props) {
-  const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
+export default function ImageDropArea({ title, counter, defaultTags, className }: Props) {
+  const { state, openDrawer } = useUpload();
   const [isDragging, setIsDragging] = useState(false);
-  const [defaultImageFile, setDefaultImageFile] = useState<File | undefined>();
+
+  const isUploading = state.status === "uploading";
 
   const handleDragEnter = (e: DragEvent<HTMLButtonElement>) => {
+    if (isUploading) {
+      return;
+    }
+
     if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
       setIsDragging(true);
     }
@@ -35,8 +37,11 @@ export default function ImageDropArea({ title, userId, counter, defaultTags, cla
 
   const handleDrop = (e: DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
     setIsDragging(false);
+
+    if (isUploading) {
+      return;
+    }
 
     if (e.dataTransfer.files !== null && e.dataTransfer.files.length > 0) {
       if (e.dataTransfer.files.length !== MAX_FILE_COUNT) {
@@ -44,69 +49,42 @@ export default function ImageDropArea({ title, userId, counter, defaultTags, cla
         return;
       }
 
-      setDefaultImageFile(e.dataTransfer.files[0]);
-      setOpen(true);
+      openDrawer({
+        defaultFile: e.dataTransfer.files[0],
+        defaultTags,
+        counter,
+      });
     }
   };
 
-  const handleOpenChange = (state: boolean) => {
-    setOpen(state);
-
-    if (!state) {
-      setDefaultImageFile(undefined);
+  const handleClick = () => {
+    if (isUploading) {
+      return;
     }
-  };
 
-  const handleSuccess = () => {
-    // モーダルを閉じる
-    setOpen(false);
-    setDefaultImageFile(undefined);
-
-    // アニメーション完了を待ってからデータを再取得
-    setTimeout(async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: [USER_PAGE_QUERY_KEY, userId],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: [USER_IMAGE_COUNT_QUERY_KEY, userId],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: [TAG_PAGE_QUERY_KEY, userId],
-        }),
-      ]);
-    }, 400);
+    openDrawer({ defaultTags, counter });
   };
 
   return (
-    <>
-      <button
-        className={twMerge(
-          "interactive-scale-sm flex w-full items-center justify-center gap-8 rounded-xl border-2 border-warm-black-50 border-dashed bg-warm-white py-6 hover:brightness-90",
-          isDragging && "scale-[101%] brightness-90",
-          className,
-        )}
-        onClick={() => setOpen(true)}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={handleDrop}
-        type="button"
-      >
-        <div className="flex items-center gap-2 text-sm tracking-wider">
-          <IconImagePlus className="h-4 w-4" />
-          <p>{isDragging ? "ドラッグ&ドロップしてアップロード" : title}</p>
-        </div>
-      </button>
-
-      <UploadDrawer
-        counter={counter}
-        open={open}
-        onOpenChange={handleOpenChange}
-        onSuccess={handleSuccess}
-        defaultImageFile={defaultImageFile}
-        defaultTags={defaultTags}
-      />
-    </>
+    <button
+      className={twMerge(
+        "interactive-scale-sm flex w-full items-center justify-center gap-8 rounded-xl border-2 border-warm-black-50 border-dashed bg-warm-white py-6 hover:brightness-90",
+        isDragging && "scale-[101%] brightness-90",
+        isUploading && "cursor-not-allowed opacity-50",
+        className,
+      )}
+      onClick={handleClick}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={handleDrop}
+      type="button"
+      disabled={isUploading}
+    >
+      <div className="flex items-center gap-2 text-sm tracking-wider">
+        <IconImagePlus className="h-4 w-4" />
+        <p>{isDragging ? "ドラッグ&ドロップしてアップロード" : title}</p>
+      </div>
+    </button>
   );
 }

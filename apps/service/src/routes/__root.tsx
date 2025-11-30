@@ -3,8 +3,12 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { PropsWithChildren } from "react";
+import { Toaster } from "sonner";
 import BudouX from "@/components/BudouX";
 import MessagePage from "@/components/MessagePage";
+import UploadDrawer from "@/features/image-upload/components/UploadDrawer";
+import UploadSnackbar from "@/features/image-upload/components/UploadSnackbar";
+import { UploadProvider } from "@/features/image-upload/contexts/UploadContext";
 import { generateMetadata } from "@/libs/meta";
 import appCss from "../styles.css?url";
 
@@ -70,7 +74,12 @@ function RootDocument({ children }: PropsWithChildren) {
         <HeadContent />
       </head>
       <body className="grid grid-cols-(--grid-main-layout) bg-warm-white font-mix text-warm-black">
-        {children}
+        <UploadProvider>
+          {children}
+          <UploadDrawer />
+          <UploadSnackbar />
+        </UploadProvider>
+        <Toaster position="top-center" />
         {import.meta.env.DEV && (
           <TanStackDevtools
             config={{

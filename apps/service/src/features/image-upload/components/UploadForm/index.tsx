@@ -15,15 +15,15 @@ import {
   type UploadImageFormData,
   uploadImageSchema,
 } from "@/features/image-upload/schemas/upload";
-import { uploadFn } from "@/features/image-upload/server-fn/upload";
 import { normalizeFile } from "@/libs/work-around";
+import { useUpload } from "../../contexts/UploadContext";
 import ImagePlaceholder from "./ImagePlaceholder";
 
 type Props = {
   onPendingChange: (pending: boolean) => void;
   defaultImageFile?: File;
   defaultTags?: string[];
-  onSuccess?: () => void;
+  defaultTitle?: string;
 };
 
 export type PreviewImage = {
@@ -32,14 +32,18 @@ export type PreviewImage = {
   height: number;
 };
 
-export default function UploadForm({ onPendingChange, defaultImageFile, defaultTags = [], onSuccess }: Props) {
+export default function UploadForm({ onPendingChange, defaultImageFile, defaultTags = [], defaultTitle }: Props) {
+  const { state, upload } = useUpload();
   const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
-  const [formError, setFormError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const isDnDFileSet = useRef(false);
 
+  const isUploading = state.status === "uploading";
+  const formError = state.status === "error" ? state.error : "";
+
   const defaultValues: UploadImageFormData = {
     file: new File([], ""),
+    title: defaultTitle,
     tags: defaultTags,
   };
 
@@ -51,35 +55,16 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
     },
     onSubmit: async ({ value }) => {
       onPendingChange(true);
-      setFormError("");
 
-      try {
-        const formData = new FormData();
-        formData.append("file", value.file);
+      // fire-and-forget: Context の upload を呼び出して即座に戻る
+      upload(value.file, {
+        title: value.title,
+        tags: value.tags,
+      });
 
-        if (value.title) {
-          formData.append("title", value.title);
-        }
-
-        if (value.tags && value.tags.length > 0) {
-          formData.append("tags", JSON.stringify(value.tags));
-        }
-
-        const result = await uploadFn({ data: formData });
-
-        if (!result.success) {
-          setFormError(result.error);
-          return;
-        }
-
-        form.reset();
-        setPreviewImage(null);
-        onSuccess?.();
-      } catch (error) {
-        setFormError(error instanceof Error ? error.message : "アップロードに失敗しました");
-      } finally {
-        onPendingChange(false);
-      }
+      // アップロード開始後、フォームの pending は解除
+      // 実際の進捗は Context 側で管理される
+      onPendingChange(false);
     },
   });
 
@@ -186,19 +171,19 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
         className="hidden"
       />
 
-      <form.Subscribe selector={(state) => [state.isSubmitting]}>
+      <form.Subscribe selector={(formState) => [formState.isSubmitting]}>
         {([isSubmitting]) => (
           <button
             type="button"
-            className={twMerge("block w-full cursor-pointer", !isSubmitting && "mb-4")}
+            className={twMerge("block w-full cursor-pointer", !isSubmitting && !isUploading && "mb-4")}
             onClick={handlePreviewClick}
             aria-label="画像を選択"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isUploading}
           >
             <motion.div
               initial={false}
               animate={
-                isSubmitting
+                isSubmitting || isUploading
                   ? {
                       scale: [0.98, 1.015, 0.99, 1.025, 0.985, 1.02, 0.98],
                       opacity: [0.3, 0.7, 0.85, 0.95, 1, 1, 1],
@@ -236,7 +221,7 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
                       filter: "blur(0px)",
                     }
               }
-              whileHover={!isSubmitting ? { scale: 1.05 } : undefined}
+              whileHover={!isSubmitting && !isUploading ? { scale: 1.05 } : undefined}
               transition={DEFAULT_TRANSITION}
             >
               {previewImage ? (
@@ -274,14 +259,14 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
         }
       </form.Field>
 
-      <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+      <form.Subscribe selector={(formState) => [formState.canSubmit, formState.isSubmitting]}>
         {([canSubmit, isSubmitting]) => (
           <>
             <motion.div
               className="flex flex-col gap-4 overflow-hidden"
               animate={{
-                opacity: isSubmitting ? 0 : 1,
-                height: isSubmitting ? 0 : "auto",
+                opacity: isSubmitting || isUploading ? 0 : 1,
+                height: isSubmitting || isUploading ? 0 : "auto",
               }}
               transition={DEFAULT_TRANSITION}
             >
@@ -308,7 +293,7 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
                     maxLength={MAX_TITLE_LENGTH}
                     currentLength={field.state.value?.length}
                     autoComplete="off"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isUploading}
                   />
                 )}
               </form.Field>
@@ -322,7 +307,7 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
                     onChangeTags={field.handleChange}
                     placeholder="風景とか…"
                     suggestTags={[]}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isUploading}
                     error={
                       typeof field.state.meta.errors[0] === "string"
                         ? field.state.meta.errors[0]
@@ -335,8 +320,8 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
 
             <FormSubmitButton
               className="mt-6 w-full"
-              disabled={!canSubmit || isSubmitting}
-              isSubmitting={isSubmitting}
+              disabled={!canSubmit || isSubmitting || isUploading}
+              isSubmitting={isSubmitting || isUploading}
               label="投稿"
               pendingLabel="投稿中…"
             />

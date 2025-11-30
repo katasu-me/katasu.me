@@ -88,7 +88,6 @@ function RouteComponent() {
         <div className="col-start-2">
           <ImageDropArea
             title="あたらしい画像を投稿する"
-            userId={user.id}
             counter={{
               total: totalImageCount,
               max: user.plan.maxPhotos,
