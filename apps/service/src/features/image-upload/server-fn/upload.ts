@@ -1,14 +1,13 @@
 import { env, waitUntil } from "cloudflare:workers";
-import { deleteImage, fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
+import { fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
 import * as v from "valibot";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
-import { deleteImageFromR2, generateR2Key, uploadImage } from "@/libs/r2";
+import { generateR2Key, uploadImage } from "@/libs/r2";
 import { ERROR_MESSAGE } from "../constants/error";
 import { generateImageVariants, getImageDimensions } from "../libs/image";
-import { checkImageModeration } from "../libs/moderation";
 import { uploadImageSchema } from "../schemas/upload";
 
 type UploadResult =
@@ -139,10 +138,9 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    // モデレーション、アップロード、DB登録を並列実行
+    // アップロード、DB登録を並列実行（モデレーションは一時的に無効化）
     start = performance.now();
-    const [moderationResult, uploadResult, registerResult] = await Promise.allSettled([
-      checkImageModeration(env.OPENAI_API_KEY, convertResult.original.data),
+    const [uploadResult, registerResult] = await Promise.allSettled([
       uploadImage(env.IMAGES_R2_BUCKET, {
         type: "image",
         variants: convertResult,
@@ -157,33 +155,6 @@ export const uploadFn = createServerFn({ method: "POST" })
       }),
     ]);
     timings.parallelOperations = performance.now() - start;
-
-    // モデレーション結果の確認
-    const isFlagged = moderationResult.status === "fulfilled" && moderationResult.value === true;
-
-    if (isFlagged) {
-      console.warn("[gallery] Inappropriate image detected:", { userId, imageId });
-
-      // アップロード済みの場合は削除
-      if (uploadResult.status === "fulfilled") {
-        waitUntil(deleteImageFromR2(env.IMAGES_R2_BUCKET, userId, imageId));
-      }
-
-      // DB登録済みの場合も削除
-      if (registerResult.status === "fulfilled" && registerResult.value.success) {
-        waitUntil(deleteImage(env.DB, imageId));
-      }
-
-      return {
-        success: false,
-        error: ERROR_MESSAGE.IMAGE_MODERATION_FLAGGED,
-      };
-    }
-
-    // モデレーションがエラーの場合（APIエラー等）は通過させる
-    if (moderationResult.status === "rejected") {
-      console.error("[gallery] Moderation check failed, allowing upload:", moderationResult.reason);
-    }
 
     // アップロード結果の確認
     if (uploadResult.status === "rejected") {
