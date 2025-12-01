@@ -1,11 +1,11 @@
-import { env } from "cloudflare:workers";
-import { fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
+import { env, waitUntil } from "cloudflare:workers";
+import { deleteImage, fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
 import * as v from "valibot";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
-import { generateR2Key, uploadImage } from "@/libs/r2";
+import { deleteImageFromR2, generateR2Key, uploadImage } from "@/libs/r2";
 import { ERROR_MESSAGE } from "../constants/error";
 import { generateImageVariants, getImageDimensions } from "../libs/image";
 import { checkImageModeration } from "../libs/moderation";
@@ -139,12 +139,40 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
+    // モデレーション、アップロード、DB登録を並列実行
     start = performance.now();
-    const isFlagged = await checkImageModeration(env.OPENAI_API_KEY, convertResult.original.data);
-    timings.checkImageModeration = performance.now() - start;
+    const [moderationResult, uploadResult, registerResult] = await Promise.allSettled([
+      checkImageModeration(env.OPENAI_API_KEY, convertResult.original.data),
+      uploadImage(env.IMAGES_R2_BUCKET, {
+        type: "image",
+        variants: convertResult,
+        userId,
+        imageId,
+      }),
+      registerImage(env.DB, session.user.id, {
+        ...convertResult.dimensions,
+        id: imageId,
+        title: data.title ?? null,
+        tags: data.tags,
+      }),
+    ]);
+    timings.parallelOperations = performance.now() - start;
+
+    // モデレーション結果の確認
+    const isFlagged = moderationResult.status === "fulfilled" && moderationResult.value === true;
 
     if (isFlagged) {
       console.warn("[gallery] Inappropriate image detected:", { userId, imageId });
+
+      // アップロード済みの場合は削除
+      if (uploadResult.status === "fulfilled") {
+        waitUntil(deleteImageFromR2(env.IMAGES_R2_BUCKET, userId, imageId));
+      }
+
+      // DB登録済みの場合も削除
+      if (registerResult.status === "fulfilled" && registerResult.value.success) {
+        waitUntil(deleteImage(env.DB, imageId));
+      }
 
       return {
         success: false,
@@ -152,17 +180,14 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    try {
-      start = performance.now();
-      await uploadImage(env.IMAGES_R2_BUCKET, {
-        type: "image",
-        variants: convertResult,
-        userId,
-        imageId,
-      });
-      timings.uploadImage = performance.now() - start;
-    } catch (error) {
-      console.error("[gallery] Image upload failed:", error);
+    // モデレーションがエラーの場合（APIエラー等）は通過させる
+    if (moderationResult.status === "rejected") {
+      console.error("[gallery] Moderation check failed, allowing upload:", moderationResult.reason);
+    }
+
+    // アップロード結果の確認
+    if (uploadResult.status === "rejected") {
+      console.error("[gallery] Image upload failed:", uploadResult.reason);
 
       return {
         success: false,
@@ -170,14 +195,17 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    start = performance.now();
-    const registerImageResult = await registerImage(env.DB, session.user.id, {
-      ...convertResult.dimensions,
-      id: imageId,
-      title: data.title ?? null,
-      tags: data.tags,
-    });
-    timings.registerImage = performance.now() - start;
+    // DB登録結果の確認
+    if (registerResult.status === "rejected") {
+      console.error("[gallery] Image registration to DB failed:", registerResult.reason);
+
+      return {
+        success: false,
+        error: ERROR_MESSAGE.IMAGE_REGISTER_FAILED,
+      };
+    }
+
+    const registerImageResult = registerResult.value;
 
     if (!registerImageResult.success) {
       console.error("[gallery] Image registration to DB failed:", registerImageResult.error);
@@ -188,11 +216,11 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    // タグ一覧のKVキャッシュを無効化（TanStack Query未移行のため）
+    // タグ一覧のKVキャッシュを無効化
     if (registerImageResult.data?.tags) {
-      start = performance.now();
-      await invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]);
-      timings.invalidateCaches = performance.now() - start;
+      waitUntil(
+        invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]),
+      );
     }
 
     timings.total = performance.now() - totalStart;
