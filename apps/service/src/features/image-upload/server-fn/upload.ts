@@ -47,11 +47,18 @@ export const uploadFn = createServerFn({ method: "POST" })
     return result.output;
   })
   .handler(async ({ data }): Promise<UploadResult> => {
-    const { session } = await requireAuth();
+    const totalStart = performance.now();
+    const timings: Record<string, number> = {};
 
+    let start = performance.now();
+    const { session } = await requireAuth();
+    timings.requireAuth = performance.now() - start;
+
+    start = performance.now();
     const { success } = await env.ACTIONS_RATE_LIMITER.limit({
       key: `upload:${session.user.id}`,
     });
+    timings.rateLimiter = performance.now() - start;
 
     if (!success) {
       return {
@@ -62,7 +69,9 @@ export const uploadFn = createServerFn({ method: "POST" })
 
     const userId = session.user.id;
 
+    start = performance.now();
     const userImageStatusResult = await fetchUserImageStatus(env.DB, userId);
+    timings.fetchUserImageStatus = performance.now() - start;
 
     if (!userImageStatusResult.success || !userImageStatusResult.data) {
       return {
@@ -81,7 +90,10 @@ export const uploadFn = createServerFn({ method: "POST" })
     const imageId = nanoid();
 
     const originalKey = generateR2Key("image", userId, imageId, "original");
+
+    start = performance.now();
     const existingOriginal = await env.IMAGES_R2_BUCKET.head(originalKey);
+    timings.checkDuplicate = performance.now() - start;
 
     if (existingOriginal) {
       console.error("[gallery] Image ID duplicated:", { userId, imageId });
@@ -102,13 +114,20 @@ export const uploadFn = createServerFn({ method: "POST" })
     let convertResult: Awaited<ReturnType<typeof generateImageVariants>>;
 
     try {
+      start = performance.now();
       const arrayBuffer = await data.file.arrayBuffer();
-      const originalImageDimensions = getImageDimensions(arrayBuffer);
+      timings.fileToArrayBuffer = performance.now() - start;
 
+      start = performance.now();
+      const originalImageDimensions = getImageDimensions(arrayBuffer);
+      timings.getImageDimensions = performance.now() - start;
+
+      start = performance.now();
       convertResult = await generateImageVariants(arrayBuffer, {
         originalWidth: originalImageDimensions.width,
         originalHeight: originalImageDimensions.height,
       });
+      timings.generateImageVariants = performance.now() - start;
     } catch (error) {
       console.error("[gallery] Image conversion failed:", error);
 
@@ -120,7 +139,9 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
+    start = performance.now();
     const isFlagged = await checkImageModeration(env.OPENAI_API_KEY, convertResult.original.data);
+    timings.checkImageModeration = performance.now() - start;
 
     if (isFlagged) {
       console.warn("[gallery] Inappropriate image detected:", { userId, imageId });
@@ -132,12 +153,14 @@ export const uploadFn = createServerFn({ method: "POST" })
     }
 
     try {
+      start = performance.now();
       await uploadImage(env.IMAGES_R2_BUCKET, {
         type: "image",
         variants: convertResult,
         userId,
         imageId,
       });
+      timings.uploadImage = performance.now() - start;
     } catch (error) {
       console.error("[gallery] Image upload failed:", error);
 
@@ -147,12 +170,14 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
+    start = performance.now();
     const registerImageResult = await registerImage(env.DB, session.user.id, {
       ...convertResult.dimensions,
       id: imageId,
       title: data.title ?? null,
       tags: data.tags,
     });
+    timings.registerImage = performance.now() - start;
 
     if (!registerImageResult.success) {
       console.error("[gallery] Image registration to DB failed:", registerImageResult.error);
@@ -165,8 +190,14 @@ export const uploadFn = createServerFn({ method: "POST" })
 
     // タグ一覧のKVキャッシュを無効化（TanStack Query未移行のため）
     if (registerImageResult.data?.tags) {
+      start = performance.now();
       await invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]);
+      timings.invalidateCaches = performance.now() - start;
     }
+
+    timings.total = performance.now() - totalStart;
+
+    console.log("[gallery] Upload timings (ms):", timings);
 
     return {
       success: true,
