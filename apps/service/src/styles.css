@@ -14,6 +14,11 @@
   --color-vivid-yellow: rgb(255, 218, 11);
   --color-vivid-red: rgb(255, 52, 11);
 
+  /** z-index */
+  --z-index-overlay: 1;
+  --z-index-dropdown: 50;
+  --z-index-floating: calc(infinity);
+
   /** イージング */
   --ease-magnetic: cubic-bezier(0.16, 1, 0.3, 1);
 

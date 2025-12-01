@@ -16,7 +16,7 @@ export default function SnackbarContent({ status, isDrawerOpen }: Props) {
     <AnimatePresence>
       {isVisible && status && (
         <motion.div
-          className="sticky top-0 z-50 col-span-full flex items-center justify-center gap-3 rounded-b-xl bg-warm-black text-warm-white shadow-lg"
+          className="sticky top-0 z-floating col-span-full flex items-center justify-center gap-3 rounded-b-xl bg-warm-black text-warm-white shadow-lg"
           initial={{
             opacity: 0,
             height: 0,

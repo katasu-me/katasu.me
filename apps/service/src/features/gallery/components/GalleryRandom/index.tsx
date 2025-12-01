@@ -118,7 +118,7 @@ export default function GalleryRandom({ fetchOptions }: Props) {
         onScatterComplete={handleScatterComplete}
       />
       <GalleryToggle
-        className="-translate-x-1/2 fixed bottom-6 left-1/2 z-[calc(infinity)]"
+        className="-translate-x-1/2 fixed bottom-6 left-1/2 z-floating"
         value="random"
         onRandomClick={() => setIsScattering(true)}
       />

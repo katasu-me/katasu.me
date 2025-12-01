@@ -40,7 +40,7 @@ export default function FrameImage({
           }}
         >
           {alt}
-          <span className="absolute inset-0 z-1" />
+          <span className="absolute inset-0 z-overlay" />
         </Link>
       )}
       <img

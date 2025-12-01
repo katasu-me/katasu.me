@@ -109,7 +109,7 @@ export default function GalleryMasonry({
         {totalPages > 1 && <Pagination className="mt-4" currentPage={currentPage} totalPages={totalPages} />}
       </div>
 
-      <GalleryToggle className="-translate-x-1/2 fixed bottom-6 left-1/2 z-[calc(infinity)]" value="timeline" />
+      <GalleryToggle className="-translate-x-1/2 fixed bottom-6 left-1/2 z-floating" value="timeline" />
     </>
   );
 }

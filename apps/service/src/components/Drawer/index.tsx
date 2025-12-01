@@ -16,9 +16,9 @@ export default function Drawer({ title, children, triggerChildren, titleClassnam
     <VaulDrawer.Root {...props}>
       {triggerChildren && <VaulDrawer.Trigger asChild>{triggerChildren}</VaulDrawer.Trigger>}
       <VaulDrawer.Portal>
-        <VaulDrawer.Overlay className="fixed inset-0 z-50 z-[calc(infinity)] bg-black/40" />
+        <VaulDrawer.Overlay className="fixed inset-0 z-floating bg-black/40" />
 
-        <VaulDrawer.Content className="fixed right-0 bottom-0 left-0 z-[calc(infinity)] m-2 pc:m-4 h-fit overflow-hidden rounded-xl bg-warm-white p-8 pc:px-4 pt-4 outline-none">
+        <VaulDrawer.Content className="fixed right-0 bottom-0 left-0 z-floating m-2 pc:m-4 h-fit overflow-hidden rounded-xl bg-warm-white p-8 pc:px-4 pt-4 outline-none">
           <VaulDrawer.Handle />
 
           <div className={twMerge("mx-auto mt-6 max-w-md", innerClassname)}>
