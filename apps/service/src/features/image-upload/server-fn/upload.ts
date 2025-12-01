@@ -61,7 +61,6 @@ export const uploadFn = createServerFn({ method: "POST" })
     }
 
     const userId = session.user.id;
-
     const userImageStatusResult = await fetchUserImageStatus(env.DB, userId);
 
     if (!userImageStatusResult.success || !userImageStatusResult.data) {
@@ -79,7 +78,6 @@ export const uploadFn = createServerFn({ method: "POST" })
     }
 
     const imageId = nanoid();
-
     const originalKey = generateR2Key("image", userId, imageId, "original");
     const existingOriginal = await env.IMAGES_R2_BUCKET.head(originalKey);
 
