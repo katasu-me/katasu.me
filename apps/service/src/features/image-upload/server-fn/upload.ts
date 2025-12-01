@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import * as v from "valibot";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
-import { generateR2Key, uploadImage } from "@/libs/r2";
+import { createImageUploadPromises, generateR2Key } from "@/libs/r2";
 import { ERROR_MESSAGE } from "../constants/error";
 import { generateImageVariants, getImageDimensions } from "../libs/image";
 import { uploadImageSchema } from "../schemas/upload";
@@ -138,18 +138,35 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    // 直列実行で個別計測
-    try {
-      start = performance.now();
-      await uploadImage(env.IMAGES_R2_BUCKET, {
-        type: "image",
-        variants: convertResult,
-        userId,
-        imageId,
+    // R2アップロードとDB登録を並列実行
+    start = performance.now();
+    const [originalUploadPromise, thumbnailUploadPromise] = createImageUploadPromises(env.IMAGES_R2_BUCKET, {
+      type: "image",
+      variants: convertResult,
+      userId,
+      imageId,
+    });
+
+    const registerImagePromise = registerImage(env.DB, session.user.id, {
+      ...convertResult.dimensions,
+      id: imageId,
+      title: data.title ?? null,
+      tags: data.tags,
+    });
+
+    const [originalResult, thumbnailResult, registerResult] = await Promise.allSettled([
+      originalUploadPromise,
+      thumbnailUploadPromise,
+      registerImagePromise,
+    ]);
+    timings.parallelOperations = performance.now() - start;
+
+    // エラーハンドリング
+    if (originalResult.status === "rejected" || thumbnailResult.status === "rejected") {
+      console.error("[gallery] Image upload failed:", {
+        original: originalResult.status === "rejected" ? originalResult.reason : "ok",
+        thumbnail: thumbnailResult.status === "rejected" ? thumbnailResult.reason : "ok",
       });
-      timings.uploadImage = performance.now() - start;
-    } catch (error) {
-      console.error("[gallery] Image upload failed:", error);
 
       return {
         success: false,
@@ -157,23 +174,17 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    start = performance.now();
-    const registerImageResult = await registerImage(env.DB, session.user.id, {
-      ...convertResult.dimensions,
-      id: imageId,
-      title: data.title ?? null,
-      tags: data.tags,
-    });
-    timings.registerImage = performance.now() - start;
-
-    if (!registerImageResult.success) {
-      console.error("[gallery] Image registration to DB failed:", registerImageResult.error);
+    if (registerResult.status === "rejected" || !registerResult.value.success) {
+      const error = registerResult.status === "rejected" ? registerResult.reason : registerResult.value.error;
+      console.error("[gallery] Image registration to DB failed:", error);
 
       return {
         success: false,
         error: ERROR_MESSAGE.IMAGE_REGISTER_FAILED,
       };
     }
+
+    const registerImageResult = registerResult.value;
 
     // タグ一覧のKVキャッシュを無効化
     if (registerImageResult.data?.tags) {

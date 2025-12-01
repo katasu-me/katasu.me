@@ -139,38 +139,28 @@ export async function uploadAvatarImage(r2: R2Bucket, options: UploadAvatarImage
 }
 
 /**
- * 変換済み画像をR2にアップロード（オリジナルとサムネイルの両方）
+ * 画像をR2にアップロードするPromiseの配列を返す
  * @param r2 Cloudflare R2バケットインスタンス
  * @param options アップロードオプション
+ * @returns オリジナルとサムネイルのアップロードPromise配列
  */
-export async function uploadImage(r2: R2Bucket, options: UploadImageOptions): Promise<void> {
-  try {
-    const originalKey = generateR2Key("image", options.userId, options.imageId, "original");
-    const thumbnailKey = generateR2Key("image", options.userId, options.imageId, "thumbnail");
+export function createImageUploadPromises(r2: R2Bucket, options: UploadImageOptions): [Promise<void>, Promise<void>] {
+  const originalKey = generateR2Key("image", options.userId, options.imageId, "original");
+  const thumbnailKey = generateR2Key("image", options.userId, options.imageId, "thumbnail");
 
-    // 個別計測用
-    const start1 = performance.now();
-    await upload(r2, originalKey, {
-      imageBuffer: options.variants.original.data,
-      userId: options.userId,
-      imageId: options.imageId,
-    });
-    console.log(
-      `[r2] original upload: ${performance.now() - start1}ms, size: ${options.variants.original.data.byteLength} bytes`,
-    );
+  const originalPromise = upload(r2, originalKey, {
+    imageBuffer: options.variants.original.data,
+    userId: options.userId,
+    imageId: options.imageId,
+  });
 
-    const start2 = performance.now();
-    await upload(r2, thumbnailKey, {
-      imageBuffer: options.variants.thumbnail.data,
-      userId: options.userId,
-      imageId: options.imageId,
-    });
-    console.log(
-      `[r2] thumbnail upload: ${performance.now() - start2}ms, size: ${options.variants.thumbnail.data.byteLength} bytes`,
-    );
-  } catch (error) {
-    throw new Error(`画像のアップロードに失敗しました: ${error}`);
-  }
+  const thumbnailPromise = upload(r2, thumbnailKey, {
+    imageBuffer: options.variants.thumbnail.data,
+    userId: options.userId,
+    imageId: options.imageId,
+  });
+
+  return [originalPromise, thumbnailPromise];
 }
 
 /**
