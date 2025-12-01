@@ -24,13 +24,11 @@ type Story = StoryObj<typeof SnackbarContent>;
 export const Uploading: Story = {
   args: {
     status: "uploading",
-    isVisible: true,
   },
 };
 
 export const Success: Story = {
   args: {
     status: "success",
-    isVisible: true,
   },
 };

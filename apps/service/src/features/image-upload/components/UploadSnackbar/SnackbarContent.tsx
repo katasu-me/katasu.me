@@ -6,11 +6,10 @@ import type { UploadStatus } from "../../contexts/UploadContext";
 
 type Props = {
   status: UploadStatus | undefined;
-  isDrawerOpen: boolean;
 };
 
-export default function SnackbarContent({ status, isDrawerOpen }: Props) {
-  const isVisible = (status === "uploading" || status === "success") && !isDrawerOpen;
+export default function SnackbarContent({ status }: Props) {
+  const isVisible = status === "uploading" || status === "success";
 
   return (
     <AnimatePresence>

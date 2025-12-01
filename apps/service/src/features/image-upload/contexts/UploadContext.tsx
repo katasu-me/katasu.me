@@ -45,6 +45,7 @@ const UploadContext = createContext<UploadContextType | null>(null);
 
 const initialState: UploadState = {
   status: "idle",
+  error: undefined,
 };
 
 export function UploadProvider({ children }: PropsWithChildren) {
@@ -64,6 +65,11 @@ export function UploadProvider({ children }: PropsWithChildren) {
     }
   }, [state.status]);
 
+  const reset = useCallback(() => {
+    setState(initialState);
+    setFormData(null);
+  }, []);
+
   const openDrawer = useCallback((options: OpenDrawerOptions) => {
     setFormData({
       file: options.defaultFile ?? new File([], ""),
@@ -80,7 +86,8 @@ export function UploadProvider({ children }: PropsWithChildren) {
     }
 
     setIsDrawerOpen(false);
-  }, [state.status]);
+    reset();
+  }, [state.status, reset]);
 
   const invalidateQueries = useCallback(async () => {
     if (!userId) {
@@ -146,11 +153,6 @@ export function UploadProvider({ children }: PropsWithChildren) {
     },
     [invalidateQueries],
   );
-
-  const reset = useCallback(() => {
-    setState(initialState);
-    setFormData(null);
-  }, []);
 
   const value = useMemo(
     () => ({

@@ -20,5 +20,5 @@ export default function UploadSnackbar() {
     return () => clearTimeout(timer);
   }, [upload?.state.status, upload?.reset]);
 
-  return <SnackbarContent status={upload?.state.status} isDrawerOpen={upload?.isDrawerOpen ?? false} />;
+  return <SnackbarContent status={upload?.state.status} />;
 }
