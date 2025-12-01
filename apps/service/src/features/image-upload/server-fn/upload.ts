@@ -1,5 +1,5 @@
 import { env, waitUntil } from "cloudflare:workers";
-import { fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
+import { deleteImage, fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
 import * as v from "valibot";
@@ -8,6 +8,7 @@ import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
 import { createImageUploadPromises, generateR2Key } from "@/libs/r2";
 import { ERROR_MESSAGE } from "../constants/error";
 import { generateImageVariants, getImageDimensions } from "../libs/image";
+import { checkImageModeration } from "../libs/moderation";
 import { uploadImageSchema } from "../schemas/upload";
 
 type UploadResult =
@@ -46,18 +47,11 @@ export const uploadFn = createServerFn({ method: "POST" })
     return result.output;
   })
   .handler(async ({ data }): Promise<UploadResult> => {
-    const totalStart = performance.now();
-    const timings: Record<string, number> = {};
-
-    let start = performance.now();
     const { session } = await requireAuth();
-    timings.requireAuth = performance.now() - start;
 
-    start = performance.now();
     const { success } = await env.ACTIONS_RATE_LIMITER.limit({
       key: `upload:${session.user.id}`,
     });
-    timings.rateLimiter = performance.now() - start;
 
     if (!success) {
       return {
@@ -68,9 +62,7 @@ export const uploadFn = createServerFn({ method: "POST" })
 
     const userId = session.user.id;
 
-    start = performance.now();
     const userImageStatusResult = await fetchUserImageStatus(env.DB, userId);
-    timings.fetchUserImageStatus = performance.now() - start;
 
     if (!userImageStatusResult.success || !userImageStatusResult.data) {
       return {
@@ -89,10 +81,7 @@ export const uploadFn = createServerFn({ method: "POST" })
     const imageId = nanoid();
 
     const originalKey = generateR2Key("image", userId, imageId, "original");
-
-    start = performance.now();
     const existingOriginal = await env.IMAGES_R2_BUCKET.head(originalKey);
-    timings.checkDuplicate = performance.now() - start;
 
     if (existingOriginal) {
       console.error("[gallery] Image ID duplicated:", { userId, imageId });
@@ -113,20 +102,13 @@ export const uploadFn = createServerFn({ method: "POST" })
     let convertResult: Awaited<ReturnType<typeof generateImageVariants>>;
 
     try {
-      start = performance.now();
       const arrayBuffer = await data.file.arrayBuffer();
-      timings.fileToArrayBuffer = performance.now() - start;
-
-      start = performance.now();
       const originalImageDimensions = getImageDimensions(arrayBuffer);
-      timings.getImageDimensions = performance.now() - start;
 
-      start = performance.now();
       convertResult = await generateImageVariants(arrayBuffer, {
         originalWidth: originalImageDimensions.width,
         originalHeight: originalImageDimensions.height,
       });
-      timings.generateImageVariants = performance.now() - start;
     } catch (error) {
       console.error("[gallery] Image conversion failed:", error);
 
@@ -138,8 +120,6 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    // R2アップロードとDB登録を並列実行
-    start = performance.now();
     const [originalUploadPromise, thumbnailUploadPromise] = createImageUploadPromises(env.IMAGES_R2_BUCKET, {
       type: "image",
       variants: convertResult,
@@ -154,12 +134,14 @@ export const uploadFn = createServerFn({ method: "POST" })
       tags: data.tags,
     });
 
-    const [originalResult, thumbnailResult, registerResult] = await Promise.allSettled([
+    const moderationPromise = checkImageModeration(env.OPENAI_API_KEY, convertResult.original.data);
+
+    const [originalResult, thumbnailResult, registerResult, moderationResult] = await Promise.allSettled([
       originalUploadPromise,
       thumbnailUploadPromise,
       registerImagePromise,
+      moderationPromise,
     ]);
-    timings.parallelOperations = performance.now() - start;
 
     // エラーハンドリング
     if (originalResult.status === "rejected" || thumbnailResult.status === "rejected") {
@@ -186,16 +168,30 @@ export const uploadFn = createServerFn({ method: "POST" })
 
     const registerImageResult = registerResult.value;
 
+    // モデレーションチェックで不適切と判断された場合は削除
+    if (moderationResult.status === "fulfilled" && moderationResult.value) {
+      waitUntil(
+        Promise.all([
+          env.IMAGES_R2_BUCKET.delete([
+            generateR2Key("image", userId, imageId, "original"),
+            generateR2Key("image", userId, imageId, "thumbnail"),
+          ]),
+          deleteImage(env.DB, imageId),
+        ]),
+      );
+
+      return {
+        success: false,
+        error: ERROR_MESSAGE.IMAGE_MODERATION_FLAGGED,
+      };
+    }
+
     // タグ一覧のKVキャッシュを無効化
     if (registerImageResult.data?.tags) {
       waitUntil(
         invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]),
       );
     }
-
-    timings.total = performance.now() - totalStart;
-
-    console.log("[gallery] Upload timings (ms):", timings);
 
     return {
       success: true,
