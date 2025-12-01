@@ -138,27 +138,18 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    // アップロード、DB登録を並列実行（モデレーションは一時的に無効化）
-    start = performance.now();
-    const [uploadResult, registerResult] = await Promise.allSettled([
-      uploadImage(env.IMAGES_R2_BUCKET, {
+    // 直列実行で個別計測
+    try {
+      start = performance.now();
+      await uploadImage(env.IMAGES_R2_BUCKET, {
         type: "image",
         variants: convertResult,
         userId,
         imageId,
-      }),
-      registerImage(env.DB, session.user.id, {
-        ...convertResult.dimensions,
-        id: imageId,
-        title: data.title ?? null,
-        tags: data.tags,
-      }),
-    ]);
-    timings.parallelOperations = performance.now() - start;
-
-    // アップロード結果の確認
-    if (uploadResult.status === "rejected") {
-      console.error("[gallery] Image upload failed:", uploadResult.reason);
+      });
+      timings.uploadImage = performance.now() - start;
+    } catch (error) {
+      console.error("[gallery] Image upload failed:", error);
 
       return {
         success: false,
@@ -166,17 +157,14 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    // DB登録結果の確認
-    if (registerResult.status === "rejected") {
-      console.error("[gallery] Image registration to DB failed:", registerResult.reason);
-
-      return {
-        success: false,
-        error: ERROR_MESSAGE.IMAGE_REGISTER_FAILED,
-      };
-    }
-
-    const registerImageResult = registerResult.value;
+    start = performance.now();
+    const registerImageResult = await registerImage(env.DB, session.user.id, {
+      ...convertResult.dimensions,
+      id: imageId,
+      title: data.title ?? null,
+      tags: data.tags,
+    });
+    timings.registerImage = performance.now() - start;
 
     if (!registerImageResult.success) {
       console.error("[gallery] Image registration to DB failed:", registerImageResult.error);
