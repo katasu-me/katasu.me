@@ -3,13 +3,13 @@ import { createServerFn } from "@tanstack/react-start";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { Loading } from "@/components/Loading";
-import { useSession } from "@/features/auth/libs/auth-client";
+import { getUserSession } from "@/features/auth/libs/auth";
 import { cachedFetchPublicUserDataById } from "@/features/auth/libs/cached-user-data";
 
 const userPageBeforeLoadFn = createServerFn()
   .inputValidator((data: { userId: string }) => data)
   .handler(async ({ data }) => {
-    const userResult = await cachedFetchPublicUserDataById(data.userId);
+    const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(data.userId), getUserSession()]);
 
     // 存在しない、または新規登録が完了していない場合は404
     if (
@@ -23,6 +23,8 @@ const userPageBeforeLoadFn = createServerFn()
 
     return {
       user: userResult.data,
+      sessionUser: session?.user ?? null,
+      isOwner: userResult.data.id === session?.user?.id,
     };
   });
 
@@ -44,20 +46,20 @@ export const Route = createFileRoute("/user/_layout/$userId")({
     // contextがundefinedになる問題があるため、loader経由で渡してる
     return {
       user: context.user,
+      sessionUser: context.sessionUser,
+      isOwner: context.isOwner,
     };
   },
 });
 
 function UserLayoutComponent() {
-  const { user } = Route.useLoaderData();
-  const { data: session } = useSession();
-  const isOwner = user.id === session?.user.id;
+  const { user, sessionUser, isOwner } = Route.useLoaderData();
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
       <Header user={user} isOwnerPage={isOwner} />
       <Outlet />
-      <Footer className="col-start-2" mode="logged-in-user" userId={session?.user.id} />
+      <Footer className="col-start-2" mode="logged-in-user" userId={sessionUser?.id} />
     </div>
   );
 }

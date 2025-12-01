@@ -4,7 +4,6 @@ import { fallback, number, object, parse } from "valibot";
 import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
 import TagLinks from "@/components/TagLinks";
-import { useSession } from "@/features/auth/libs/auth-client";
 import GalleryMasonry from "@/features/gallery/components/GalleryMasonry";
 import GalleryRandom from "@/features/gallery/components/GalleryRandom";
 import { ERROR_MESSAGE } from "@/features/gallery/constants/error";
@@ -45,6 +44,7 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
 
     return {
       user: context.user,
+      isOwner: context.isOwner,
     };
   },
   head: ({ match }) => {
@@ -64,10 +64,9 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
 });
 
 function RouteComponent() {
-  const { user } = Route.useLoaderData();
+  const { user, isOwner } = Route.useLoaderData();
   const { view, page } = Route.useSearch();
 
-  const session = useSession();
   const { data } = useSuspenseQuery(
     userPageQueryOptions({
       view,
@@ -77,7 +76,6 @@ function RouteComponent() {
   );
   const { data: totalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
 
-  const isOwner = user.id === session.data?.user.id;
   const frameImages = data.images ? data.images.map((image) => toFrameImageProps(image)) : [];
 
   return (

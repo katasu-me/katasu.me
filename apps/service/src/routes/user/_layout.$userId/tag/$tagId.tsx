@@ -3,7 +3,6 @@ import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 import { fallback, number, object, parse } from "valibot";
 import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
-import { useSession } from "@/features/auth/libs/auth-client";
 import GalleryMasonry from "@/features/gallery/components/GalleryMasonry";
 import GalleryRandom from "@/features/gallery/components/GalleryRandom";
 import { ERROR_MESSAGE } from "@/features/gallery/constants/error";
@@ -46,6 +45,7 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
     return {
       ...loaderData,
       user: context.user,
+      isOwner: context.isOwner,
     };
   },
   head: ({ match, loaderData }) => {
@@ -69,7 +69,7 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
 });
 
 function RouteComponent() {
-  const { user } = Route.useLoaderData();
+  const { user, isOwner } = Route.useLoaderData();
   const { view, page } = Route.useSearch();
   const { tagId } = Route.useParams();
 
@@ -83,10 +83,7 @@ function RouteComponent() {
   );
   const { data: userTotalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
 
-  const session = useSession();
-
   const { tag, images, tagTotalImageCount } = data;
-  const isOwner = user.id === session.data?.user.id;
   const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];
 
   return (
