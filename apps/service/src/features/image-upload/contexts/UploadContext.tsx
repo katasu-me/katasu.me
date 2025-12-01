@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, type PropsWithChildren, useContext, useEffect, useState } from "react";
 import { useSession } from "@/features/auth/libs/auth-client";
 import { TAG_PAGE_QUERY_KEY } from "@/features/gallery/server-fn/tag-page";
 import { USER_IMAGE_COUNT_QUERY_KEY } from "@/features/gallery/server-fn/user-image-count";
@@ -65,31 +65,34 @@ export function UploadProvider({ children }: PropsWithChildren) {
     }
   }, [state.status]);
 
-  const reset = useCallback(() => {
+  const reset = () => {
     setState(initialState);
     setFormData(null);
-  }, []);
+  };
 
-  const openDrawer = useCallback((options: OpenDrawerOptions) => {
+  const openDrawer = (options: OpenDrawerOptions) => {
     setFormData({
       file: options.defaultFile ?? new File([], ""),
       tags: options.defaultTags ?? [],
     });
     setCounter(options.counter);
     setIsDrawerOpen(true);
-  }, []);
+  };
 
-  const closeDrawer = useCallback(() => {
-    // アップロード中は閉じられないように
-    if (state.status === "uploading") {
-      return;
-    }
+  const closeDrawer = () => {
+    setState((currentState) => {
+      // アップロード中は閉じられないように
+      if (currentState.status === "uploading") {
+        return currentState;
+      }
 
-    setIsDrawerOpen(false);
-    reset();
-  }, [state.status, reset]);
+      setIsDrawerOpen(false);
+      setFormData(null);
+      return initialState;
+    });
+  };
 
-  const invalidateQueries = useCallback(async () => {
+  const invalidateQueries = async () => {
     if (!userId) {
       return;
     }
@@ -108,67 +111,65 @@ export function UploadProvider({ children }: PropsWithChildren) {
         }),
       ]);
     }, 400);
-  }, [queryClient, userId]);
+  };
 
-  const upload = useCallback(
-    (file: File, data: { title?: string; tags?: string[] }) => {
-      // エラー時に復元するためにフォームデータを保存しておく
-      setFormData({
-        file,
-        title: data.title,
-        tags: data.tags ?? [],
-      });
+  const upload = (file: File, data: { title?: FormData["title"]; tags?: FormData["tags"] }) => {
+    // エラー時に復元するためにフォームデータを保存しておく
+    setFormData({
+      file,
+      title: data.title,
+      tags: data.tags ?? [],
+    });
 
-      setState({ status: "uploading" });
-      setIsDrawerOpen(false);
+    setState({ status: "uploading" });
+    setIsDrawerOpen(false);
 
-      const formDataPayload = new globalThis.FormData();
-      formDataPayload.append("file", file);
+    const formDataPayload = new globalThis.FormData();
+    formDataPayload.append("file", file);
 
-      if (data.title) {
-        formDataPayload.append("title", data.title);
-      }
+    if (data.title) {
+      formDataPayload.append("title", data.title);
+    }
 
-      if (data.tags && data.tags.length > 0) {
-        formDataPayload.append("tags", JSON.stringify(data.tags));
-      }
+    if (data.tags && data.tags.length > 0) {
+      formDataPayload.append("tags", JSON.stringify(data.tags));
+    }
 
-      uploadFn({ data: formDataPayload })
-        .then((result) => {
-          if (!result.success) {
-            setState({ status: "error", error: result.error });
-            return;
-          }
+    uploadFn({ data: formDataPayload })
+      .then((result) => {
+        if (!result.success) {
+          setState({ status: "error", error: result.error });
+          return;
+        }
 
-          setState({ status: "success" });
-          setFormData(null);
-          invalidateQueries();
-        })
-        .catch((error) => {
-          setState({
-            status: "error",
-            error: error instanceof Error ? error.message : "アップロードに失敗しました",
-          });
+        setState({ status: "success" });
+        setFormData(null);
+        invalidateQueries();
+      })
+      .catch((error) => {
+        setState({
+          status: "error",
+          error: error instanceof Error ? error.message : "アップロードに失敗しました",
         });
-    },
-    [invalidateQueries],
-  );
+      });
+  };
 
-  const value = useMemo(
-    () => ({
-      state,
-      formData,
-      counter,
-      isDrawerOpen,
-      openDrawer,
-      closeDrawer,
-      upload,
-      reset,
-    }),
-    [state, formData, counter, isDrawerOpen, openDrawer, closeDrawer, upload, reset],
+  return (
+    <UploadContext.Provider
+      value={{
+        state,
+        formData,
+        counter,
+        isDrawerOpen,
+        openDrawer,
+        closeDrawer,
+        upload,
+        reset,
+      }}
+    >
+      {children}
+    </UploadContext.Provider>
   );
-
-  return <UploadContext.Provider value={value}>{children}</UploadContext.Provider>;
 }
 
 export function useUpload() {
