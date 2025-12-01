@@ -148,18 +148,26 @@ export async function uploadImage(r2: R2Bucket, options: UploadImageOptions): Pr
     const originalKey = generateR2Key("image", options.userId, options.imageId, "original");
     const thumbnailKey = generateR2Key("image", options.userId, options.imageId, "thumbnail");
 
-    await Promise.all([
-      upload(r2, originalKey, {
-        imageBuffer: options.variants.original.data,
-        userId: options.userId,
-        imageId: options.imageId,
-      }),
-      upload(r2, thumbnailKey, {
-        imageBuffer: options.variants.thumbnail.data,
-        userId: options.userId,
-        imageId: options.imageId,
-      }),
-    ]);
+    // 個別計測用
+    const start1 = performance.now();
+    await upload(r2, originalKey, {
+      imageBuffer: options.variants.original.data,
+      userId: options.userId,
+      imageId: options.imageId,
+    });
+    console.log(
+      `[r2] original upload: ${performance.now() - start1}ms, size: ${options.variants.original.data.byteLength} bytes`,
+    );
+
+    const start2 = performance.now();
+    await upload(r2, thumbnailKey, {
+      imageBuffer: options.variants.thumbnail.data,
+      userId: options.userId,
+      imageId: options.imageId,
+    });
+    console.log(
+      `[r2] thumbnail upload: ${performance.now() - start2}ms, size: ${options.variants.thumbnail.data.byteLength} bytes`,
+    );
   } catch (error) {
     throw new Error(`画像のアップロードに失敗しました: ${error}`);
   }
