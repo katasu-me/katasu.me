@@ -6,7 +6,7 @@ import { USER_IMAGE_COUNT_QUERY_KEY } from "@/features/gallery/server-fn/user-im
 import { USER_PAGE_QUERY_KEY } from "@/features/gallery/server-fn/user-page";
 import { uploadFn } from "../server-fn/upload";
 
-type UploadStatus = "idle" | "uploading" | "success" | "error";
+export type UploadStatus = "idle" | "uploading" | "success" | "error";
 
 type UploadState = {
   status: UploadStatus;

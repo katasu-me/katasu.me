@@ -20,16 +20,5 @@ export default function UploadSnackbar() {
     return () => clearTimeout(timer);
   }, [upload?.state.status, upload?.reset]);
 
-  if (!upload) {
-    return null;
-  }
-
-  const { state, isDrawerOpen } = upload;
-  const isVisible = (state.status === "uploading" || state.status === "success") && !isDrawerOpen;
-
-  if (state.status !== "uploading" && state.status !== "success") {
-    return null;
-  }
-
-  return <SnackbarContent status={state.status} isVisible={isVisible} />;
+  return <SnackbarContent status={upload?.state.status} isDrawerOpen={upload?.isDrawerOpen ?? false} />;
 }

@@ -2,21 +2,39 @@ import { AnimatePresence, motion } from "motion/react";
 import IconCheck from "@/assets/icons/circle-check.svg?react";
 import IconLoader from "@/assets/icons/loader-2.svg?react";
 import { DEFAULT_TRANSITION } from "@/constants/animation";
+import type { UploadStatus } from "../../contexts/UploadContext";
 
 type Props = {
-  status: "uploading" | "success";
-  isVisible: boolean;
+  status: UploadStatus | undefined;
+  isDrawerOpen: boolean;
 };
 
-export default function SnackbarContent({ status, isVisible }: Props) {
+export default function SnackbarContent({ status, isDrawerOpen }: Props) {
+  const isVisible = (status === "uploading" || status === "success") && !isDrawerOpen;
+
   return (
     <AnimatePresence>
-      {isVisible && (
+      {isVisible && status && (
         <motion.div
-          className="fixed top-4 left-1/2 z-50 flex items-center gap-3 rounded-xl bg-warm-black px-4 py-3 text-warm-white shadow-lg"
-          initial={{ opacity: 0, y: -20, scale: 0.95, x: "-50%" }}
-          animate={{ opacity: 1, y: 0, scale: 1, x: "-50%" }}
-          exit={{ opacity: 0, y: -20, scale: 0.95, x: "-50%" }}
+          className="sticky top-0 z-50 col-span-full flex items-center justify-center gap-3 rounded-b-xl bg-warm-black text-warm-white shadow-lg"
+          initial={{
+            opacity: 0,
+            height: 0,
+            y: -20,
+            scale: 0.95,
+          }}
+          animate={{
+            opacity: 1,
+            height: "3rem",
+            y: 0,
+            scale: 1,
+          }}
+          exit={{
+            opacity: 0,
+            height: 0,
+            y: -20,
+            scale: 0.95,
+          }}
           transition={DEFAULT_TRANSITION}
         >
           {status === "uploading" && (

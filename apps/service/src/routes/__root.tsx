@@ -73,9 +73,9 @@ function RootDocument({ children }: PropsWithChildren) {
       </head>
       <body className="grid grid-cols-(--grid-main-layout) bg-warm-white font-mix text-warm-black">
         <UploadProvider>
-          {children}
-          <UploadDrawer />
           <UploadSnackbar />
+          <UploadDrawer />
+          {children}
         </UploadProvider>
         {import.meta.env.DEV && (
           <TanStackDevtools
