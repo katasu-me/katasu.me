@@ -175,7 +175,7 @@ export const uploadFn = createServerFn({ method: "POST" })
     }
 
     if (registerResult.status === "rejected" || !registerResult.value.success) {
-      const error = registerResult.status === "rejected" ? registerResult.reason : registerResult.value.error;
+      const error = registerResult.status === "rejected" ? registerResult.reason : !registerResult.value.success;
       console.error("[gallery] Image registration to DB failed:", error);
 
       return {
