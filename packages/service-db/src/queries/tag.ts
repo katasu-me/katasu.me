@@ -74,41 +74,23 @@ export async function fetchTagsByUserId(
   try {
     const db = getDB(dbInstance);
 
-    // 使用頻度順
-    if (opts?.order === "usage") {
-      const usageCount = count(imageTag.imageId).as("usage_count");
+    const usageCount = count(imageTag.imageId).as("usage_count");
 
-      let query = db
-        .select({
-          id: tag.id,
-          userId: tag.userId,
-          name: tag.name,
-          usageCount: usageCount,
-          createdAt: tag.createdAt,
-          hiddenAt: tag.hiddenAt,
-        })
-        .from(tag)
-        .leftJoin(imageTag, eq(tag.id, imageTag.tagId))
-        .where(eq(tag.userId, userId))
-        .groupBy(tag.id)
-        .orderBy(desc(usageCount))
-        .$dynamic();
-
-      if (opts.limit) {
-        query = query.limit(opts.limit);
-      }
-
-      const results = await query;
-
-      // usageCountを除外
-      return {
-        success: true,
-        data: results.map(({ usageCount: _, ...tag }) => tag),
-      };
-    }
-
-    // 名前順
-    let query = db.select().from(tag).where(eq(tag.userId, userId)).orderBy(tag.name).$dynamic();
+    let query = db
+      .select({
+        id: tag.id,
+        userId: tag.userId,
+        name: tag.name,
+        usageCount: usageCount,
+        createdAt: tag.createdAt,
+        hiddenAt: tag.hiddenAt,
+      })
+      .from(tag)
+      .leftJoin(imageTag, eq(tag.id, imageTag.tagId))
+      .where(eq(tag.userId, userId))
+      .groupBy(tag.id)
+      .orderBy(opts?.order === "usage" ? desc(usageCount) : tag.name)
+      .$dynamic();
 
     if (opts?.limit) {
       query = query.limit(opts.limit);
@@ -116,9 +98,12 @@ export async function fetchTagsByUserId(
 
     const results = await query;
 
+    // 画像が0件のタグを除外
+    const data = results.filter((r) => r.usageCount > 0).map(({ usageCount: _, ...tag }) => tag);
+
     return {
       success: true,
-      data: results,
+      data,
     };
   } catch (error) {
     return createDBActionError("タグの取得に失敗しました", error);
