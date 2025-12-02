@@ -44,7 +44,7 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
 
     return {
       user: context.user,
-      isOwner: context.isOwner,
+      sessionUserId: context.sessionUserId,
     };
   },
   head: ({ match }) => {
@@ -64,7 +64,7 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
 });
 
 function RouteComponent() {
-  const { user, isOwner } = Route.useLoaderData();
+  const { user, sessionUserId } = Route.useLoaderData();
   const { view, page } = Route.useSearch();
 
   const { data } = useSuspenseQuery(
@@ -76,6 +76,7 @@ function RouteComponent() {
   );
   const { data: totalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
 
+  const isOwner = user.id === sessionUserId;
   const frameImages = data.images ? data.images.map((image) => toFrameImageProps(image)) : [];
 
   return (

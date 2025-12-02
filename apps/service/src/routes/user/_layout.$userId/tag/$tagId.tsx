@@ -45,7 +45,7 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
     return {
       ...loaderData,
       user: context.user,
-      isOwner: context.isOwner,
+      sessionUserId: context.sessionUserId,
     };
   },
   head: ({ match, loaderData }) => {
@@ -69,7 +69,7 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
 });
 
 function RouteComponent() {
-  const { user, isOwner } = Route.useLoaderData();
+  const { user, sessionUserId } = Route.useLoaderData();
   const { view, page } = Route.useSearch();
   const { tagId } = Route.useParams();
 
@@ -84,6 +84,7 @@ function RouteComponent() {
   const { data: userTotalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
 
   const { tag, images, tagTotalImageCount } = data;
+  const isOwner = user.id === sessionUserId;
   const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];
 
   return (

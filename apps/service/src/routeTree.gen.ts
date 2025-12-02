@@ -8,13 +8,18 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ClosedBetaRouteImport } from './routes/closed-beta'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReportLayoutRouteImport } from './routes/report/_layout'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 import { Route as AuthErrorRouteImport } from './routes/auth/error'
 import { Route as UserLayoutUserIdRouteImport } from './routes/user/_layout.$userId'
+import { Route as ReportLayoutUserRouteImport } from './routes/report/_layout/user'
+import { Route as ReportLayoutImageRouteImport } from './routes/report/_layout/image'
 import { Route as ApiR2SplatRouteImport } from './routes/api/r2/$'
 import { Route as ApiAuthRedirectRouteImport } from './routes/api/auth/redirect'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -23,6 +28,13 @@ import { Route as UserLayoutUserIdTagIndexRouteImport } from './routes/user/_lay
 import { Route as UserLayoutUserIdTagTagIdRouteImport } from './routes/user/_layout.$userId/tag/$tagId'
 import { Route as UserLayoutUserIdImageImageIdRouteImport } from './routes/user/_layout.$userId/image.$imageId'
 
+const ReportRouteImport = createFileRoute('/report')()
+
+const ReportRoute = ReportRouteImport.update({
+  id: '/report',
+  path: '/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -38,6 +50,10 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReportLayoutRoute = ReportLayoutRouteImport.update({
+  id: '/_layout',
+  getParentRoute: () => ReportRoute,
+} as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: '/auth/signup',
   path: '/auth/signup',
@@ -52,6 +68,16 @@ const UserLayoutUserIdRoute = UserLayoutUserIdRouteImport.update({
   id: '/user/_layout/$userId',
   path: '/user/$userId',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ReportLayoutUserRoute = ReportLayoutUserRouteImport.update({
+  id: '/user',
+  path: '/user',
+  getParentRoute: () => ReportLayoutRoute,
+} as any)
+const ReportLayoutImageRoute = ReportLayoutImageRouteImport.update({
+  id: '/image',
+  path: '/image',
+  getParentRoute: () => ReportLayoutRoute,
 } as any)
 const ApiR2SplatRoute = ApiR2SplatRouteImport.update({
   id: '/api/r2/$',
@@ -98,9 +124,12 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/auth/error': typeof AuthErrorRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/report': typeof ReportLayoutRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/auth/redirect': typeof ApiAuthRedirectRoute
   '/api/r2/$': typeof ApiR2SplatRoute
+  '/report/image': typeof ReportLayoutImageRoute
+  '/report/user': typeof ReportLayoutUserRoute
   '/user/$userId': typeof UserLayoutUserIdRouteWithChildren
   '/user/$userId/': typeof UserLayoutUserIdIndexRoute
   '/user/$userId/image/$imageId': typeof UserLayoutUserIdImageImageIdRoute
@@ -113,9 +142,12 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/auth/error': typeof AuthErrorRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/report': typeof ReportLayoutRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/auth/redirect': typeof ApiAuthRedirectRoute
   '/api/r2/$': typeof ApiR2SplatRoute
+  '/report/image': typeof ReportLayoutImageRoute
+  '/report/user': typeof ReportLayoutUserRoute
   '/user/$userId': typeof UserLayoutUserIdIndexRoute
   '/user/$userId/image/$imageId': typeof UserLayoutUserIdImageImageIdRoute
   '/user/$userId/tag/$tagId': typeof UserLayoutUserIdTagTagIdRoute
@@ -128,9 +160,13 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/auth/error': typeof AuthErrorRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/report': typeof ReportRouteWithChildren
+  '/report/_layout': typeof ReportLayoutRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/auth/redirect': typeof ApiAuthRedirectRoute
   '/api/r2/$': typeof ApiR2SplatRoute
+  '/report/_layout/image': typeof ReportLayoutImageRoute
+  '/report/_layout/user': typeof ReportLayoutUserRoute
   '/user/_layout/$userId': typeof UserLayoutUserIdRouteWithChildren
   '/user/_layout/$userId/': typeof UserLayoutUserIdIndexRoute
   '/user/_layout/$userId/image/$imageId': typeof UserLayoutUserIdImageImageIdRoute
@@ -145,9 +181,12 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/error'
     | '/auth/signup'
+    | '/report'
     | '/api/auth/$'
     | '/api/auth/redirect'
     | '/api/r2/$'
+    | '/report/image'
+    | '/report/user'
     | '/user/$userId'
     | '/user/$userId/'
     | '/user/$userId/image/$imageId'
@@ -160,9 +199,12 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/error'
     | '/auth/signup'
+    | '/report'
     | '/api/auth/$'
     | '/api/auth/redirect'
     | '/api/r2/$'
+    | '/report/image'
+    | '/report/user'
     | '/user/$userId'
     | '/user/$userId/image/$imageId'
     | '/user/$userId/tag/$tagId'
@@ -174,9 +216,13 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/error'
     | '/auth/signup'
+    | '/report'
+    | '/report/_layout'
     | '/api/auth/$'
     | '/api/auth/redirect'
     | '/api/r2/$'
+    | '/report/_layout/image'
+    | '/report/_layout/user'
     | '/user/_layout/$userId'
     | '/user/_layout/$userId/'
     | '/user/_layout/$userId/image/$imageId'
@@ -190,6 +236,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   AuthErrorRoute: typeof AuthErrorRoute
   AuthSignupRoute: typeof AuthSignupRoute
+  ReportRoute: typeof ReportRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAuthRedirectRoute: typeof ApiAuthRedirectRoute
   ApiR2SplatRoute: typeof ApiR2SplatRoute
@@ -198,6 +245,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/report': {
+      id: '/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -219,6 +273,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/report/_layout': {
+      id: '/report/_layout'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportLayoutRouteImport
+      parentRoute: typeof ReportRoute
+    }
     '/auth/signup': {
       id: '/auth/signup'
       path: '/auth/signup'
@@ -239,6 +300,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/user/$userId'
       preLoaderRoute: typeof UserLayoutUserIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/report/_layout/user': {
+      id: '/report/_layout/user'
+      path: '/user'
+      fullPath: '/report/user'
+      preLoaderRoute: typeof ReportLayoutUserRouteImport
+      parentRoute: typeof ReportLayoutRoute
+    }
+    '/report/_layout/image': {
+      id: '/report/_layout/image'
+      path: '/image'
+      fullPath: '/report/image'
+      preLoaderRoute: typeof ReportLayoutImageRouteImport
+      parentRoute: typeof ReportLayoutRoute
     }
     '/api/r2/$': {
       id: '/api/r2/$'
@@ -292,6 +367,31 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ReportLayoutRouteChildren {
+  ReportLayoutImageRoute: typeof ReportLayoutImageRoute
+  ReportLayoutUserRoute: typeof ReportLayoutUserRoute
+}
+
+const ReportLayoutRouteChildren: ReportLayoutRouteChildren = {
+  ReportLayoutImageRoute: ReportLayoutImageRoute,
+  ReportLayoutUserRoute: ReportLayoutUserRoute,
+}
+
+const ReportLayoutRouteWithChildren = ReportLayoutRoute._addFileChildren(
+  ReportLayoutRouteChildren,
+)
+
+interface ReportRouteChildren {
+  ReportLayoutRoute: typeof ReportLayoutRouteWithChildren
+}
+
+const ReportRouteChildren: ReportRouteChildren = {
+  ReportLayoutRoute: ReportLayoutRouteWithChildren,
+}
+
+const ReportRouteWithChildren =
+  ReportRoute._addFileChildren(ReportRouteChildren)
+
 interface UserLayoutUserIdRouteChildren {
   UserLayoutUserIdIndexRoute: typeof UserLayoutUserIdIndexRoute
   UserLayoutUserIdImageImageIdRoute: typeof UserLayoutUserIdImageImageIdRoute
@@ -315,6 +415,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   AuthErrorRoute: AuthErrorRoute,
   AuthSignupRoute: AuthSignupRoute,
+  ReportRoute: ReportRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAuthRedirectRoute: ApiAuthRedirectRoute,
   ApiR2SplatRoute: ApiR2SplatRoute,

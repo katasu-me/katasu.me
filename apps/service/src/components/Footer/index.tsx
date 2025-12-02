@@ -11,7 +11,7 @@ import DevelopedBy from "./DevelopedBy";
 type Props =
   | {
       mode: "logged-in-user";
-      userId?: string;
+      sessionUserId?: string;
       className?: string;
     }
   | {
@@ -21,7 +21,7 @@ type Props =
 
 export default function Footer({ className, ...props }: Props) {
   const navigate = useNavigate();
-  const showDivider = props.mode === "logged-in-user" ? !!props.userId : true;
+  const showDivider = props.mode === "logged-in-user" ? !!props.sessionUserId : true;
 
   const handleSignOut = async () => {
     await signOut();
@@ -32,14 +32,14 @@ export default function Footer({ className, ...props }: Props) {
     <footer className={twMerge("flex flex-col items-center border-warm-black-25 border-t py-32", className)}>
       {props.mode === "developed-by" && <DevelopedBy />}
 
-      {props.mode === "logged-in-user" && props.userId && (
+      {props.mode === "logged-in-user" && props.sessionUserId && (
         <div className="flex flex-col items-center gap-6">
           <Button asChild>
             <Link
               className="flex w-48 items-center justify-center gap-2"
               to="/user/$userId"
               params={{
-                userId: props.userId,
+                userId: props.sessionUserId,
               }}
               search={{
                 view: "timeline",

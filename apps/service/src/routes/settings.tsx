@@ -69,7 +69,7 @@ function RouteComponent() {
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header user={loggedInUser} isOwnerPage />
+      <Header user={loggedInUser} sessionUserId={loggedInUser.id} />
 
       <h1 className="col-start-2 text-4xl">設定</h1>
 
@@ -104,7 +104,7 @@ function RouteComponent() {
         <SeeyouSoonDrawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} onSuccess={handleDeleteSuccess} />
       </section>
 
-      <Footer className="col-start-2" mode="logged-in-user" userId={loggedInUser.id} />
+      <Footer className="col-start-2" mode="logged-in-user" sessionUserId={loggedInUser.id} />
     </div>
   );
 }

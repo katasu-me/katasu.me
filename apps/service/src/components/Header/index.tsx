@@ -11,29 +11,31 @@ import UserIcon from "./UserIcon";
 
 type Props = {
   user: PublicUserData;
-  isOwnerPage?: boolean;
+  sessionUserId?: string;
 };
 
-export default function Header({ user, isOwnerPage = false }: Props) {
+export default function Header({ user, sessionUserId }: Props) {
+  const isOwner = user.id === sessionUserId;
+
   const menuItems = [
-    !isOwnerPage && (
+    isOwner && (
+      <Link to="/settings">
+        <IconSettings className="size-4" />
+        <span>設定</span>
+      </Link>
+    ),
+    !isOwner && (
       <Link
-        key="flag"
-        to={{
-          pathname: "/report/user",
-          search: `reportedUserId=${user.id}&reporterUserId=${user.id}`,
+        to="/report/user"
+        search={{
+          reportedUserId: user.id,
+          reporterUserId: sessionUserId,
         }}
         target="_blank"
         rel="noopener"
       >
         <IconFlag className="size-4" />
         <span>このユーザーを報告</span>
-      </Link>
-    ),
-    isOwnerPage && (
-      <Link key="settings" to="/settings">
-        <IconSettings className="size-4" />
-        <span>設定</span>
       </Link>
     ),
   ];

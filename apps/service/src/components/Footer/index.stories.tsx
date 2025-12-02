@@ -17,7 +17,7 @@ type Story = StoryObj<typeof Footer>;
 export const LoggedInUser: Story = {
   args: {
     mode: "logged-in-user",
-    userId: "user",
+    sessionUserId: "user",
   },
 };
 
