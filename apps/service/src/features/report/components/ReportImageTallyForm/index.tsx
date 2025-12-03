@@ -9,6 +9,8 @@ export default function ReportImageTallyForm() {
     }
   }, []);
 
+  console.log("[DEBUG] ", "import.meta.env", import.meta.env);
+
   const embedId = import.meta.env.VITE_REPORT_IMAGE_TILLY_EMBED_ID;
 
   return (
