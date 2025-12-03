@@ -9,7 +9,7 @@ export default function ReportUserTallyForm() {
     }
   }, []);
 
-  const embedId = process.env.VITE_REPORT_USER_TILLY_EMBED_ID;
+  const embedId = import.meta.env.VITE_REPORT_USER_TILLY_EMBED_ID;
 
   return (
     <div className="col-start-2">
