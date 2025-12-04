@@ -1,131 +1,108 @@
-import Link from "next/link";
-import type { ComponentProps } from "react";
+import { Link, useLocation } from "@tanstack/react-router";
+import type { ComponentProps, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
-import ChevronLeft from "@/assets/icons/chevron-left.svg";
-import ChevronRight from "@/assets/icons/chevron-right.svg";
+import ChevronLeft from "@/assets/icons/chevron-left.svg?react";
+import ChevronRight from "@/assets/icons/chevron-right.svg?react";
 import IconButton from "@/components/IconButton";
 
 type Props = {
   currentPage: number;
   totalPages: number;
-  searchParams: URLSearchParams | Record<string, string>;
   className?: string;
 } & Omit<ComponentProps<"nav">, "children">;
 
-export default function Pagination({ currentPage, totalPages, searchParams, className, ...props }: Props) {
-  const createSearchParams = (page: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", page.toString());
-    return params.toString();
-  };
+const baseButtonStyle =
+  "flex size-10 items-center justify-center rounded-md border border-warm-black transition-all duration-400 ease-magnetic";
+const activeButtonStyle = "bg-warm-black text-white";
+const inactiveButtonStyle = "bg-warm-white text-warm-black hover:brightness-90";
 
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
+type PageButtonProps = {
+  page: number;
+  isCurrent: boolean;
+  pathname: string;
+};
 
-    // 先頭ページ
-    const isFirstCurrent = currentPage === 1;
-    pageNumbers.push(
-      <Link
-        key={1}
-        href={{
-          search: createSearchParams(1),
-        }}
-        aria-label="ページ1へ"
-        aria-current={isFirstCurrent ? "page" : undefined}
-        className={twMerge(
-          "rounded-md border border-gray-300 px-3 py-2 transition-all duration-400 ease-magnetic",
-          isFirstCurrent ? "bg-warm-black text-white" : "bg-white text-warm-black hover:brightness-90",
-        )}
-      >
-        1
-      </Link>,
+function PageButton({ page, isCurrent, pathname }: PageButtonProps) {
+  if (isCurrent) {
+    return (
+      <span aria-current="page" className={twMerge(baseButtonStyle, activeButtonStyle)}>
+        {page}
+      </span>
     );
+  }
 
-    // 省略記号（必要な場合）
+  return (
+    <Link
+      to={pathname}
+      search={(prev) => ({
+        ...prev,
+        page,
+      })}
+      aria-label={`ページ${page}へ`}
+      className={twMerge(baseButtonStyle, inactiveButtonStyle)}
+    >
+      {page}
+    </Link>
+  );
+}
+
+function Ellipsis() {
+  return (
+    <span className="px-2 text-warm-black" aria-hidden="true">
+      ...
+    </span>
+  );
+}
+
+export default function Pagination({ currentPage, totalPages, className, ...props }: Props) {
+  const location = useLocation();
+
+  const renderPageNumbers = (): ReactNode[] => {
+    const items: ReactNode[] = [];
+
+    // 先頭
+    items.push(<PageButton key={1} page={1} isCurrent={currentPage === 1} pathname={location.pathname} />);
+
+    // 省略
     if (currentPage > 3) {
-      pageNumbers.push(
-        <span key="ellipsis1" className="px-3 py-2 text-warm-black" aria-hidden="true">
-          ...
-        </span>,
-      );
+      items.push(<Ellipsis key="ellipsis1" />);
     }
 
-    // n-1ページ（現在のページが2以上の場合）
     if (currentPage > 2) {
-      pageNumbers.push(
-        <Link
-          key={currentPage - 1}
-          href={{
-            search: createSearchParams(currentPage - 1),
-          }}
-          aria-label={`ページ${currentPage - 1}へ`}
-          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-warm-black transition-all duration-400 ease-magnetic hover:brightness-90"
-        >
-          {currentPage - 1}
-        </Link>,
+      items.push(
+        <PageButton key={currentPage - 1} page={currentPage - 1} isCurrent={false} pathname={location.pathname} />,
       );
     }
 
-    // 現在のページ（先頭と末尾でない場合）
+    // 現在のページ
     if (currentPage !== 1 && currentPage !== totalPages) {
-      pageNumbers.push(
-        <span
-          key={currentPage}
-          aria-current="page"
-          className="rounded-md border border-gray-300 bg-warm-black px-3 py-2 text-white"
-        >
-          {currentPage}
-        </span>,
-      );
+      items.push(<PageButton key={currentPage} page={currentPage} isCurrent={true} pathname={location.pathname} />);
     }
 
-    // n+1ページ（現在のページが末尾でない場合）
     if (currentPage < totalPages - 1) {
-      pageNumbers.push(
-        <Link
-          key={currentPage + 1}
-          href={{
-            search: createSearchParams(currentPage + 1),
-          }}
-          aria-label={`ページ${currentPage + 1}へ`}
-          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-warm-black transition-all duration-400 ease-magnetic hover:brightness-90"
-        >
-          {currentPage + 1}
-        </Link>,
+      items.push(
+        <PageButton key={currentPage + 1} page={currentPage + 1} isCurrent={false} pathname={location.pathname} />,
       );
     }
 
-    // 省略記号（必要な場合）
+    // 省略
     if (currentPage < totalPages - 2) {
-      pageNumbers.push(
-        <span key="ellipsis2" className="px-3 py-2 text-warm-black" aria-hidden="true">
-          ...
-        </span>,
-      );
+      items.push(<Ellipsis key="ellipsis2" />);
     }
 
-    // 末尾ページ
+    // 末尾
     if (totalPages !== 1) {
-      const isLastCurrent = currentPage === totalPages;
-      pageNumbers.push(
-        <Link
+      items.push(
+        <PageButton
           key={totalPages}
-          href={{
-            search: createSearchParams(totalPages),
-          }}
-          aria-label={`ページ${totalPages}へ`}
-          aria-current={isLastCurrent ? "page" : undefined}
-          className={twMerge(
-            "rounded-md border border-gray-300 px-3 py-2 transition-all duration-400 ease-magnetic",
-            isLastCurrent ? "bg-warm-black text-white" : "bg-white text-warm-black hover:brightness-90",
-          )}
-        >
-          {totalPages}
-        </Link>,
+          page={totalPages}
+          isCurrent={currentPage === totalPages}
+          pathname={location.pathname}
+        />,
       );
     }
 
-    return pageNumbers;
+    return items;
   };
 
   const pageNumbers = renderPageNumbers();
@@ -133,34 +110,36 @@ export default function Pagination({ currentPage, totalPages, searchParams, clas
   const isLastPage = currentPage === totalPages;
 
   return (
-    <nav
-      aria-label="ページネーション"
-      className={twMerge("flex items-center justify-center gap-4", className)}
-      {...props}
-    >
+    <nav className={twMerge("flex items-center justify-center gap-3", className)} {...props}>
       {!isFirstPage && (
-        <IconButton
-          as="link"
-          href={{
-            search: createSearchParams(currentPage - 1),
-          }}
-          title="前のページへ"
-        >
-          <ChevronLeft className="h-5 w-5" />
+        <IconButton asChild>
+          <Link
+            to={location.pathname}
+            search={(prev) => ({
+              ...prev,
+              page: currentPage - 1,
+            })}
+            title="前のページへ"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Link>
         </IconButton>
       )}
 
       <div className="flex items-center gap-2">{pageNumbers}</div>
 
       {!isLastPage && (
-        <IconButton
-          as="link"
-          href={{
-            search: createSearchParams(currentPage + 1),
-          }}
-          title="次のページへ"
-        >
-          <ChevronRight className="h-5 w-5" />
+        <IconButton asChild>
+          <Link
+            to={location.pathname}
+            search={(prev) => ({
+              ...prev,
+              page: currentPage + 1,
+            })}
+            title="次のページへ"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Link>
         </IconButton>
       )}
     </nav>

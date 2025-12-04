@@ -42,9 +42,6 @@ yarn-error.log*
 **/wrangler.jsonc
 **/wrangler.toml
 
-# 何もバインドしていないのでコミットしちゃて (気持ち的に) OK
-!apps/image-optimizer/wrangler.jsonc
-
 # certificates
 **/certificates
 

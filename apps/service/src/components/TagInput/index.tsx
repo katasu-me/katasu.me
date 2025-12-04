@@ -347,7 +347,7 @@ export default function TagInput({
           <div
             ref={dropdownRef}
             className={twMerge(
-              "absolute right-0 left-0 z-50 max-h-60 overflow-y-auto rounded-lg border border-warm-black-25 bg-warm-white shadow-lg",
+              "absolute right-0 left-0 z-dropdown max-h-60 overflow-y-auto rounded-lg border border-warm-black-25 bg-warm-white shadow-lg",
               dropdownPosition === "bottom" ? "top-full mt-1" : "bottom-full mb-1",
             )}
             data-dropdown="true"

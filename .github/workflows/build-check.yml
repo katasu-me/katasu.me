@@ -16,5 +16,24 @@ jobs:
       - name: Setup pnpm
         uses: ./.github/actions/setup-pnpm
 
+      - name: Create wrangler.jsonc from template
+        run: |
+          cd apps/service
+          cp wrangler.example.jsonc wrangler.jsonc
+
+          # 開発環境の値を置換
+          sed -i "s|<DEVELOPMENT_URL>|${{ vars.DEVELOPMENT_URL }}|g" wrangler.jsonc
+          sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.jsonc
+          sed -i "s|<DEVELOPMENT_CACHE_KV_ID>|${{ secrets.DEVELOPMENT_CACHE_KV_ID }}|g" wrangler.jsonc
+          sed -i "s|<DEVELOPMENT_OPENAI_API_KEY>|${{ secrets.DEVELOPMENT_OPENAI_API_KEY }}|g" wrangler.jsonc
+
+          # 本番環境の値を置換
+          sed -i "s|<PRODUCTION_URL>|${{ vars.PRODUCTION_URL }}|g" wrangler.jsonc
+          sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.jsonc
+          sed -i "s|<PRODUCTION_CACHE_KV_ID>|${{ secrets.PRODUCTION_CACHE_KV_ID }}|g" wrangler.jsonc
+          sed -i "s|<PRODUCTION_OPENAI_API_KEY>|${{ secrets.PRODUCTION_OPENAI_API_KEY }}|g" wrangler.jsonc
+
+          echo "wrangler.jsonc created successfully"
+
       - name: Build
         run: pnpm build

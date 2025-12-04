@@ -4,9 +4,8 @@
   "packageManager": "pnpm@10.15.1",
   "scripts": {
     "dev": "turbo dev",
-    "dev:service": "turbo dev --filter=@katasu.me/service",
     "build": "turbo build",
-    "build:service": "turbo build:worker --filter=@katasu.me/service",
+    "build:service": "turbo build --filter=@katasu.me/service",
     "preview": "turbo preview",
     "lint": "turbo lint",
     "format": "turbo format",
@@ -14,10 +13,10 @@
     "test": "turbo test"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.2",
-    "@mizchi/lsmcp": "0.10.0-rc.6",
-    "@typescript/native-preview": "7.0.0-dev.20250902.1",
-    "lefthook": "^1.12.3",
-    "turbo": "^2.5.6"
+    "@biomejs/biome": "2.3.8",
+    "@mizchi/lsmcp": "0.10.0",
+    "@typescript/native-preview": "7.0.0-dev.20251110.1",
+    "lefthook": "^2.0.3",
+    "turbo": "^2.6.0"
   }
 }

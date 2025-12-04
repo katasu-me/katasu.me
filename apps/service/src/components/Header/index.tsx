@@ -1,43 +1,41 @@
 import type { PublicUserData } from "@katasu.me/service-db";
-import Link from "next/link";
-import IconDots from "@/assets/icons/dots.svg";
-import IconFlag from "@/assets/icons/flag.svg";
-import IconSearch from "@/assets/icons/search.svg";
-import IconSettings from "@/assets/icons/settings.svg";
+import { Link } from "@tanstack/react-router";
+import IconDots from "@/assets/icons/dots.svg?react";
+import IconFlag from "@/assets/icons/flag.svg?react";
+import IconSearch from "@/assets/icons/search.svg?react";
+import IconSettings from "@/assets/icons/settings.svg?react";
 import DropdownMenu from "@/components/DropdownMenu";
 import IconButton from "@/components/IconButton";
-import { getUserAvatarUrl } from "@/lib/r2";
+import { getUserAvatarUrl } from "@/libs/r2";
 import UserIcon from "./UserIcon";
 
 type Props = {
   user: PublicUserData;
-  rightMenu?: {
-    loggedInUserId: string;
-  };
+  sessionUserId?: string;
 };
 
-export default function Header({ user, rightMenu }: Props) {
-  const isOwnerPage = rightMenu?.loggedInUserId === user.id;
+export default function Header({ user, sessionUserId }: Props) {
+  const isOwner = user.id === sessionUserId;
 
   const menuItems = [
-    !isOwnerPage && rightMenu && (
+    isOwner && (
+      <Link to="/settings">
+        <IconSettings className="size-4" />
+        <span>設定</span>
+      </Link>
+    ),
+    !isOwner && (
       <Link
-        key="flag"
-        href={{
-          pathname: "/report/user",
-          search: `reportedUserId=${user.id}&reporterUserId=${rightMenu.loggedInUserId}`,
+        to="/report/user"
+        search={{
+          reportedUserId: user.id,
+          reporterUserId: sessionUserId,
         }}
         target="_blank"
         rel="noopener"
       >
         <IconFlag className="size-4" />
         <span>このユーザーを報告</span>
-      </Link>
-    ),
-    isOwnerPage && (
-      <Link key="settings" href="/settings">
-        <IconSettings className="size-4" />
-        <span>設定</span>
       </Link>
     ),
   ];
@@ -50,23 +48,21 @@ export default function Header({ user, rightMenu }: Props) {
         iconImage={user.hasAvatar ? getUserAvatarUrl(user.id, user.avatarSetAt) : undefined}
       />
 
-      {rightMenu && (
-        <div className="flex items-center gap-2">
-          {/* TODO: 検索機能 */}
-          <IconButton title="検索">
-            <IconSearch className="h-6 w-6 opacity-25" />
-          </IconButton>
+      <div className="flex items-center gap-2">
+        {/* TODO: 検索機能 */}
+        <IconButton>
+          <IconSearch className="h-6 w-6 opacity-25" />
+        </IconButton>
 
-          <DropdownMenu
-            trigger={
-              <IconButton title="その他">
-                <IconDots className="h-6 w-6" />
-              </IconButton>
-            }
-            items={menuItems}
-          />
-        </div>
-      )}
+        <DropdownMenu
+          trigger={
+            <IconButton>
+              <IconDots className="h-6 w-6" />
+            </IconButton>
+          }
+          items={menuItems}
+        />
+      </div>
     </header>
   );
 }

@@ -3,11 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
-    },
-    "build:worker": {
-      "dependsOn": ["^build"],
-      "outputs": [".open-next/**"]
+      "outputs": ["dist/**"]
     },
     "check": {
       "dependsOn": ["^check"]
@@ -22,7 +18,6 @@
       "dependsOn": ["^test"]
     },
     "dev": {
-      "env": ["NEXT_PUBLIC_SITE_URL", "BETTER_AUTH_*", "GOOGLE_*", "OPENAI_API_KEY"],
       "persistent": true,
       "cache": false
     },

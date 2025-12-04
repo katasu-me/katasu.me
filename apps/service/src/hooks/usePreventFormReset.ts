@@ -3,6 +3,8 @@ import { useEffect } from "react";
 /**
  * React 19で送信後にフォームがリセットされる問題のワークアラウンド
  * @see https://github.com/edmundhung/conform/issues/681
+ *
+ * FIXME: こいつ消せるかも
  */
 export function usePreventFormReset(formId: string | undefined, onReset?: () => void) {
   useEffect(() => {

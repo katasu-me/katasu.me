@@ -1,6 +1,3 @@
-"use client";
-
-import Image from "next/image";
 import {
   type ChangeEvent,
   type ComponentPropsWithoutRef,
@@ -11,15 +8,15 @@ import {
 } from "react";
 import Cropper, { type Area, type Point } from "react-easy-crop";
 import { twMerge } from "tailwind-merge";
-import IconClose from "@/assets/icons/close.svg";
-import IconPlus from "@/assets/icons/plus.svg";
-import IconReload from "@/assets/icons/reload.svg";
-import IconZoomIn from "@/assets/icons/zoom-in.svg";
-import IconZoomOut from "@/assets/icons/zoom-out.svg";
+import IconClose from "@/assets/icons/close.svg?react";
+import IconPlus from "@/assets/icons/plus.svg?react";
+import IconReload from "@/assets/icons/reload.svg?react";
+import IconZoomIn from "@/assets/icons/zoom-in.svg?react";
+import IconZoomOut from "@/assets/icons/zoom-out.svg?react";
 import Button from "@/components/Button";
 import Drawer from "@/components/Drawer";
 import FormMessage from "@/components/FormMessage";
-import { normalizeFile } from "@/lib/file";
+import { normalizeFile } from "@/libs/work-around";
 import { getCroppedImg } from "./cropImage";
 
 type Props = {
@@ -154,7 +151,7 @@ export default function AvatarUpload({ onFileChange, error, className, defaultAv
         >
           {preview ? (
             <>
-              <Image src={preview} alt="アイコンのプレビュー" fill className="object-cover" />
+              <img src={preview} alt="アイコンのプレビュー" className="size-full object-cover" />
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 text-white opacity-0 transition-opacity duration-400 ease-magnetic group-hover:opacity-100">
                 <IconReload className="size-5" />
                 <span className="text-sm">やっぱり変える</span>

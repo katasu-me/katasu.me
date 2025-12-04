@@ -1,6 +1,6 @@
 export type DBActionError = {
   message: string;
-  rawError?: unknown;
+  rawError?: Error;
 };
 
 export type ActionResult<T> =

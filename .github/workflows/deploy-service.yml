@@ -9,7 +9,6 @@ on:
       - main
     paths:
       - "apps/service/**"
-      - "apps/image-optimizer/**"
       - "packages/**"
       - "pnpm-lock.yaml"
       - ".github/workflows/deploy-service.yml"
@@ -29,26 +28,15 @@ jobs:
           cd apps/service
           cp wrangler.example.jsonc wrangler.jsonc
 
-
           # 開発環境の値を置換
           sed -i "s|<DEVELOPMENT_URL>|${{ vars.DEVELOPMENT_URL }}|g" wrangler.jsonc
-          sed -i "s|<DEVELOPMENT_NEXT_PUBLIC_IMAGE_R2_URL>|${{ vars.DEVELOPMENT_NEXT_PUBLIC_IMAGE_R2_URL }}|g" wrangler.jsonc
-          sed -i "s|<DEVELOPMENT_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID>|${{ vars.DEVELOPMENT_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID }}|g" wrangler.jsonc
-          sed -i "s|<DEVELOPMENT_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID>|${{ vars.DEVELOPMENT_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID }}|g" wrangler.jsonc
           sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.jsonc
           sed -i "s|<DEVELOPMENT_CACHE_KV_ID>|${{ secrets.DEVELOPMENT_CACHE_KV_ID }}|g" wrangler.jsonc
-          sed -i "s|<DEVELOPMENT_OPENAI_API_KEY>|${{ secrets.DEVELOPMENT_OPENAI_API_KEY }}|g" wrangler.jsonc
 
           # 本番環境の値を置換
           sed -i "s|<PRODUCTION_URL>|${{ vars.PRODUCTION_URL }}|g" wrangler.jsonc
-          sed -i "s|<UMAMI_SCRIPT_URL>|${{ vars.UMAMI_SCRIPT_URL }}|g" wrangler.jsonc
-          sed -i "s|<PRODUCTION_NEXT_PUBLIC_IMAGE_R2_URL>|${{ vars.PRODUCTION_NEXT_PUBLIC_IMAGE_R2_URL }}|g" wrangler.jsonc
-          sed -i "s|<PRODUCTION_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID>|${{ vars.PRODUCTION_NEXT_PUBLIC_REPORT_IMAGE_TILLY_EMBED_ID }}|g" wrangler.jsonc
-          sed -i "s|<PRODUCTION_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID>|${{ vars.PRODUCTION_NEXT_PUBLIC_REPORT_USER_TILLY_EMBED_ID }}|g" wrangler.jsonc
           sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.jsonc
           sed -i "s|<PRODUCTION_CACHE_KV_ID>|${{ secrets.PRODUCTION_CACHE_KV_ID }}|g" wrangler.jsonc
-          sed -i "s|<PRODUCTION_OPENAI_API_KEY>|${{ secrets.PRODUCTION_OPENAI_API_KEY }}|g" wrangler.jsonc
-          sed -i "s|<UMAMI_WEBSITE_ID>|${{ secrets.UMAMI_WEBSITE_ID }}|g" wrangler.jsonc
 
           echo "wrangler.jsonc created successfully"
 
@@ -56,18 +44,19 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ${{ github.workspace }}/apps/service/.next/cache
             ${{ github.workspace }}/.turbo
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
       - name: Develop Build
         if: github.ref == 'refs/heads/develop'
-        run: pnpm build:service
+        run: pnpm build
         env:
-          NEXT_PUBLIC_SITE_URL: ${{ vars.DEVELOPMENT_URL }}
-          NEXT_PUBLIC_IMAGE_R2_URL: ${{ vars.DEVELOPMENT_NEXT_PUBLIC_IMAGE_R2_URL }}
+          VITE_SITE_URL: ${{ vars.DEVELOPMENT_URL }}
+          VITE_IMAGE_R2_URL: ${{ vars.DEVELOPMENT_VITE_IMAGE_R2_URL }}
+          VITE_REPORT_IMAGE_TILLY_EMBED_ID: ${{ vars.DEVELOPMENT_VITE_REPORT_IMAGE_TILLY_EMBED_ID }}
+          VITE_REPORT_USER_TILLY_EMBED_ID: ${{ vars.DEVELOPMENT_VITE_REPORT_USER_TILLY_EMBED_ID }}
 
       - name: Deploy to development environment
         if: github.ref == 'refs/heads/develop'
@@ -80,10 +69,14 @@ jobs:
 
       - name: Production Build
         if: github.ref == 'refs/heads/main'
-        run: pnpm build:service
+        run: pnpm build
         env:
-          NEXT_PUBLIC_SITE_URL: ${{ vars.PRODUCTION_URL }}
-          NEXT_PUBLIC_IMAGE_R2_URL: ${{ vars.PRODUCTION_NEXT_PUBLIC_IMAGE_R2_URL }}
+          VITE_SITE_URL: ${{ vars.PRODUCTION_URL }}
+          VITE_IMAGE_R2_URL: ${{ vars.PRODUCTION_VITE_IMAGE_R2_URL }}
+          VITE_REPORT_IMAGE_TILLY_EMBED_ID: ${{ vars.PRODUCTION_VITE_REPORT_IMAGE_TILLY_EMBED_ID }}
+          VITE_REPORT_USER_TILLY_EMBED_ID: ${{ vars.PRODUCTION_VITE_REPORT_USER_TILLY_EMBED_ID }}
+          VITE_UMAMI_SCRIPT_URL: ${{ vars.VITE_UMAMI_SCRIPT_URL }}
+          VITE_UMAMI_WEBSITE_ID: ${{ vars.VITE_UMAMI_WEBSITE_ID }}
 
       - name: Deploy to production environment
         if: github.ref == 'refs/heads/main'
