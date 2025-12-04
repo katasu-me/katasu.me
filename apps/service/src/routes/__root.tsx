@@ -37,11 +37,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       { rel: "icon", href: "/favicon.ico" },
     ],
     scripts: [
-      {
-        src: import.meta.env.VITE_UMAMI_SCRIPT_URL,
-        "data-website-id": import.meta.env.VITE_UMAMI_WEBSITE_ID,
-        defer: true,
-      },
+      import.meta.env.VITE_UMAMI_SCRIPT_URL && import.meta.env.VITE_UMAMI_WEBSITE_ID
+        ? {
+            src: import.meta.env.VITE_UMAMI_SCRIPT_URL,
+            "data-website-id": import.meta.env.VITE_UMAMI_WEBSITE_ID,
+            defer: true,
+          }
+        : undefined,
     ],
   }),
 
