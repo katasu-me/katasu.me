@@ -104,6 +104,8 @@ function RouteComponent() {
                 imageId: image.id,
                 reporterUserId: sessionUserId,
               }}
+              target="_blank"
+              rel="noopener"
             >
               <IconFlag className="h-4 w-4" />
             </Link>
