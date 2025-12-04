@@ -142,7 +142,7 @@ export const uploadFn = createServerFn({ method: "POST" })
       moderationPromise,
     ]);
 
-    // エラーハンドリング
+    // アップロードのエラーハンドリング
     if (originalResult.status === "rejected" || thumbnailResult.status === "rejected") {
       console.error("[gallery] Image upload failed:", {
         original: originalResult.status === "rejected" ? originalResult.reason : "ok",
@@ -155,6 +155,7 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
+    // 画像の登録のエラーハンドリング
     if (registerResult.status === "rejected" || !registerResult.value.success) {
       const error = registerResult.status === "rejected" ? registerResult.reason : !registerResult.value.success;
       console.error("[gallery] Image registration to DB failed:", error);
@@ -167,8 +168,28 @@ export const uploadFn = createServerFn({ method: "POST" })
 
     const registerImageResult = registerResult.value;
 
+    // モデレーションのエラーハンドリング
+    if (moderationResult.status === "rejected") {
+      console.error("[gallery] Moderation API failed:", moderationResult.reason);
+
+      waitUntil(
+        Promise.all([
+          env.IMAGES_R2_BUCKET.delete([
+            generateR2Key("image", userId, imageId, "original"),
+            generateR2Key("image", userId, imageId, "thumbnail"),
+          ]),
+          deleteImage(env.DB, imageId, userId),
+        ]),
+      );
+
+      return {
+        success: false,
+        error: UPLOAD_ERROR_MESSAGE.IMAGE_MODERATION_FAILED,
+      };
+    }
+
     // モデレーションチェックで不適切と判断された場合は削除
-    if (moderationResult.status === "fulfilled" && moderationResult.value) {
+    if (moderationResult.value) {
       waitUntil(
         Promise.all([
           env.IMAGES_R2_BUCKET.delete([
