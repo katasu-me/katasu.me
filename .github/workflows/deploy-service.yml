@@ -65,15 +65,6 @@ jobs:
           VITE_REPORT_IMAGE_TILLY_EMBED_ID: ${{ vars.DEVELOPMENT_VITE_REPORT_IMAGE_TILLY_EMBED_ID }}
           VITE_REPORT_USER_TILLY_EMBED_ID: ${{ vars.DEVELOPMENT_VITE_REPORT_USER_TILLY_EMBED_ID }}
 
-      - name: Deploy to development
-        if: github.ref == 'refs/heads/develop'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
-          workingDirectory: apps/service
-
       - name: Build for production
         if: github.ref == 'refs/heads/main'
         run: pnpm build
@@ -85,8 +76,7 @@ jobs:
           VITE_UMAMI_SCRIPT_URL: ${{ vars.VITE_UMAMI_SCRIPT_URL }}
           VITE_UMAMI_WEBSITE_ID: ${{ vars.VITE_UMAMI_WEBSITE_ID }}
 
-      - name: Deploy to production
-        if: github.ref == 'refs/heads/main'
+      - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
