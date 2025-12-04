@@ -4,7 +4,6 @@ import { twMerge } from "tailwind-merge";
 import IconFlag from "@/assets/icons/flag.svg?react";
 import IconButton from "@/components/IconButton";
 import Message from "@/components/Message";
-import { useSession } from "@/features/auth/libs/auth-client";
 import { DEFAULT_IMAGE_TITLE } from "@/features/gallery/constants/page";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
 import RemoveButton from "@/features/image-delete/components/RemoveButton";
@@ -30,6 +29,7 @@ export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
     return {
       ...loaderData,
       user: context.user,
+      sessionUserId: context.sessionUserId,
     };
   },
   head: ({ match, loaderData }) => {
@@ -57,13 +57,12 @@ export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
 });
 
 function RouteComponent() {
-  const { user } = Route.useLoaderData();
+  const { user, sessionUserId } = Route.useLoaderData();
   const { imageId } = Route.useParams();
   const { data } = useSuspenseQuery(imagePageQueryOptions({ imageId }));
-  const session = useSession();
 
   const { image } = data;
-  const canEdit = session.data?.user.id === user.id;
+  const canEdit = sessionUserId === user.id;
   const frameImageProps = toFrameImageProps(image, "original");
 
   return (
@@ -99,13 +98,15 @@ function RouteComponent() {
       <div className="mt-4 flex items-center justify-center gap-2">
         {!canEdit && (
           <IconButton asChild>
-            <a
-              href={`/report/image?reporterUserId=${session.data?.user?.id}&imageId=${image.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/report/image"
+              search={{
+                imageId: image.id,
+                reporterUserId: sessionUserId,
+              }}
             >
               <IconFlag className="h-4 w-4" />
-            </a>
+            </Link>
           </IconButton>
         )}
 
