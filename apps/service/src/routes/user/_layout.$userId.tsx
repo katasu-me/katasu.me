@@ -17,7 +17,7 @@ const userPageBeforeLoadFn = createServerFn()
       !userResult.data.termsAgreedAt ||
       !userResult.data.privacyPolicyAgreedAt
     ) {
-      // NOTE: throw notfound() だと HTML が帰らずエラーページが出てしまう。ここがパスを持たないルートだからかな？
+      // NOTE: throw notfound() だと HTML が帰らずエラーページが出てしまう。ここがパスを持たないルートだからかも
       throw redirect({ to: "/404" });
     }
 
