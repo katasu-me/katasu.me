@@ -21,9 +21,6 @@ const searchParamsSchema = object({
 
 export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
   component: RouteComponent,
-  pendingComponent: () => {
-    return <Loading className="col-start-2 h-[80vh]" />;
-  },
   errorComponent: ({ error }) => {
     return <Message message={error.message || ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
   },

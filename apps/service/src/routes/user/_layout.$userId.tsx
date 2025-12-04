@@ -1,8 +1,7 @@
-import { createFileRoute, notFound, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { Loading } from "@/components/Loading";
 import { getUserSession } from "@/features/auth/libs/auth";
 import { cachedFetchPublicUserDataById } from "@/features/auth/libs/cached-user-data";
 
@@ -18,7 +17,8 @@ const userPageBeforeLoadFn = createServerFn()
       !userResult.data.termsAgreedAt ||
       !userResult.data.privacyPolicyAgreedAt
     ) {
-      throw notFound();
+      // NOTE: throw notfound() だと HTML が帰らずエラーページが出てしまう。ここがパスを持たないルートだからかな？
+      throw redirect({ to: "/404" });
     }
 
     return {
@@ -29,9 +29,6 @@ const userPageBeforeLoadFn = createServerFn()
 
 export const Route = createFileRoute("/user/_layout/$userId")({
   component: UserLayoutComponent,
-  pendingComponent: () => {
-    return <Loading className="col-start-2 h-[80vh]" />;
-  },
   beforeLoad: async ({ params }) => {
     return userPageBeforeLoadFn({
       data: {

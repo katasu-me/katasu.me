@@ -6,7 +6,6 @@ import IconUser from "@/assets/icons/user.svg?react";
 import Button from "@/components/Button";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { signOut } from "@/features/auth/libs/auth-client";
@@ -37,9 +36,6 @@ export const Route = createFileRoute("/settings")({
   component: RouteComponent,
   errorComponent: ({ error }) => {
     return <Message message={error.message} icon="error" />;
-  },
-  pendingComponent: () => {
-    return <Loading className="col-start-2 h-[80vh]" />;
   },
   loader: async () => {
     return settingsPageLoaderFn();

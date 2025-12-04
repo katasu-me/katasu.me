@@ -3,7 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { twMerge } from "tailwind-merge";
 import IconFlag from "@/assets/icons/flag.svg?react";
 import IconButton from "@/components/IconButton";
-import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
 import { useSession } from "@/features/auth/libs/auth-client";
 import { DEFAULT_IMAGE_TITLE } from "@/features/gallery/constants/page";
@@ -18,9 +17,6 @@ import { getImageUrl } from "@/libs/r2";
 
 export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
   component: RouteComponent,
-  pendingComponent: () => {
-    return <Loading className="col-start-2 h-[80vh]" />;
-  },
   errorComponent: ({ error }) => {
     return <Message message={error.message} icon="error" />;
   },

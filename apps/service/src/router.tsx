@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
-
+import { Loading } from "./components/Loading";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 
@@ -18,6 +18,7 @@ export const getRouter = () => {
   const router = createRouter({
     routeTree,
     context: { queryClient },
+    defaultPendingComponent: () => <Loading className="col-start-2 h-[80vh]" />,
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultPendingMs: 300,

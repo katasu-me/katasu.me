@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import Footer from "@/components/Footer";
-import { Loading } from "@/components/Loading";
 import { getUserSession } from "@/features/auth/libs/auth";
 
 const reportLayoutLoaderFn = createServerFn().handler(async () => {
@@ -11,9 +10,6 @@ const reportLayoutLoaderFn = createServerFn().handler(async () => {
 
 export const Route = createFileRoute("/report/_layout")({
   component: ReportLayoutComponent,
-  pendingComponent: () => {
-    return <Loading className="col-start-2 h-[80vh]" />;
-  },
   loader: async () => {
     return reportLayoutLoaderFn();
   },
