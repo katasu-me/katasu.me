@@ -29,7 +29,7 @@
       "name": "ACTIONS_RATE_LIMITER",
       "namespace_id": "1001",
       "simple": {
-        "limit": 100,
+        "limit": 60,
         "period": 60
       }
     }
@@ -110,7 +110,7 @@
           "name": "ACTIONS_RATE_LIMITER",
           "namespace_id": "1001",
           "simple": {
-            "limit": 100,
+            "limit": 60,
             "period": 60
           }
         }
