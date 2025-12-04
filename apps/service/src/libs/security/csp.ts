@@ -20,7 +20,7 @@ export function buildCsp(nonce: string, isDev: boolean): string {
       "blob:",
       ...(import.meta.env.VITE_IMAGE_R2_URL ? [import.meta.env.VITE_IMAGE_R2_URL] : []),
     ],
-    "font-src": ["'self'"],
+    "font-src": ["'self'", "data:"],
     "connect-src": [
       "'self'",
       "https://tally.so",
