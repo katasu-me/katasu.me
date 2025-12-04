@@ -3,8 +3,8 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { PropsWithChildren } from "react";
-import BudouX from "@/components/BudouX";
 import MessagePage from "@/components/MessagePage";
+import NotFoundPage from "@/components/NotFoundPage";
 import UploadDrawer from "@/features/image-upload/components/UploadDrawer";
 import UploadSnackbar from "@/features/image-upload/components/UploadSnackbar";
 import { UploadProvider } from "@/features/image-upload/contexts/UploadContext";
@@ -47,29 +47,16 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     ],
   }),
 
-  errorComponent: ErrorComponent,
-  notFoundComponent: NotFound,
+  errorComponent: ErrorPage,
+  notFoundComponent: NotFoundPage,
   shellComponent: RootDocument,
 });
 
-function ErrorComponent() {
+function ErrorPage() {
   return (
     <MessagePage title="Error" showBackButton>
       <p>エラーが発生しました</p>
       <p className="mt-2">ページを再読み込みしてみてください…</p>
-    </MessagePage>
-  );
-}
-
-function NotFound() {
-  return (
-    <MessagePage title="404" showBackButton>
-      <p>
-        <BudouX>ページが見つかりませんでした。</BudouX>
-      </p>
-      <p className="mt-2">
-        <BudouX>ページが移動されたか、削除されたのかもしれません。</BudouX>
-      </p>
     </MessagePage>
   );
 }
