@@ -1,7 +1,6 @@
 import { env } from "cloudflare:workers";
 import { deleteUser } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeaders } from "@tanstack/react-start/server";
 import * as v from "valibot";
 import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
@@ -36,7 +35,7 @@ export const deleteAccountFn = createServerFn({ method: "POST" })
     return result.output;
   })
   .handler(async (): Promise<DeleteAccountResult> => {
-    const { auth, session } = await requireAuth();
+    const { session } = await requireAuth();
 
     const { success: rateLimitSuccess } = await env.ACTIONS_RATE_LIMITER.limit({
       key: `delete-account:${session.user.id}`,
@@ -62,13 +61,6 @@ export const deleteAccountFn = createServerFn({ method: "POST" })
           error: "アカウントの削除に失敗しました",
         };
       }
-
-      await auth.api.revokeSession({
-        headers: getRequestHeaders(),
-        body: {
-          token: session.session.token,
-        },
-      });
 
       // KVのキャッシュを無効化
       await invalidateCache(env.CACHE_KV, CACHE_KEYS.user(session.user.id));
