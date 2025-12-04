@@ -70,15 +70,13 @@ function App() {
           </p>
 
           <p className="mt-6">
-            <BudouX>じぶんのための空間をつくる。</BudouX>
-          </p>
-
-          <p>
             <BudouX>気になった人がふらっと入って、ふらっと去っていく。</BudouX>
           </p>
-
           <p>
-            <BudouX>そんなかたすみの空間をはじめませんか？</BudouX>
+            <BudouX>じぶんがつくる「じぶん」のためのインターネットのかたすみ。</BudouX>
+          </p>
+          <p>
+            <BudouX>はじめてみませんか？</BudouX>
           </p>
         </div>
 
