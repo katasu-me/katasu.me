@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { object, optional, parse, string } from "valibot";
-import IconFlag from "@/assets/icons/flag.svg?react";
+import IconFlagFilled from "@/assets/icons/flag-filled.svg?react";
 import Message from "@/components/Message";
 import ReportImageTallyForm from "@/features/report/components/ReportImageTallyForm";
 import { generateMetadata } from "@/libs/meta";
@@ -34,9 +34,9 @@ export const Route = createFileRoute("/report/_layout/image")({
 function RouteComponent() {
   return (
     <>
-      <h1 className="col-start-2 flex items-center gap-2 pc:text-4xl text-2xl">
-        <IconFlag className="pc:size-8 size-6" />
-        投稿を報告
+      <h1 className="col-start-2 pc:text-4xl text-2xl">
+        <IconFlagFilled className="pc:size-12 size-8" />
+        <span className="mt-4 pc:mt-6 block">投稿を報告</span>
       </h1>
 
       <ReportImageTallyForm />
