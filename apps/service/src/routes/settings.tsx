@@ -58,6 +58,7 @@ function RouteComponent() {
 
   const handleDeleteSuccess = async () => {
     await signOut();
+    alert("アカウントの削除が完了しました。またね！");
     navigate({ to: "/" });
   };
 
