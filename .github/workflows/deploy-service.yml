@@ -82,7 +82,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
+          environment: production
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --env production
+          command: deploy
           workingDirectory: apps/service
