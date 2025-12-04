@@ -36,6 +36,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       { rel: "manifest", href: "/site.webmanifest" },
       { rel: "icon", href: "/favicon.ico" },
     ],
+    scripts: [
+      {
+        src: import.meta.env.VITE_UMAMI_SCRIPT_URL,
+        "data-website-id": import.meta.env.VITE_UMAMI_WEBSITE_ID,
+        defer: true,
+      },
+    ],
   }),
 
   errorComponent: ErrorComponent,
@@ -90,13 +97,6 @@ function RootDocument({ children }: PropsWithChildren) {
             ]}
           />
         )}
-        {/*         {process.env.VITE_UMAMI_SCRIPT_URL && process.env.VITE_UMAMI_WEBSITE_ID && ( */}
-        {/*   <Script */}
-        {/*     src={process.env.VITE_UMAMI_SCRIPT_URL} */}
-        {/*     data-website-id={process.env.VITE_UMAMI_WEBSITE_ID} */}
-        {/*     strategy="lazyOnload" */}
-        {/*   /> */}
-        {/* )} */}
         <Scripts />
       </body>
     </html>

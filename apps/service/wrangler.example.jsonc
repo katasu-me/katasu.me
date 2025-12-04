@@ -61,9 +61,7 @@
    */
   "vars": {
     "BETTER_AUTH_TELEMETRY": "0",
-    "BETTER_AUTH_URL": "<DEVELOPMENT_URL>",
-    "VITE_SITE_URL": "<DEVELOPMENT_URL>",
-    "VITE_IMAGE_R2_URL": "<DEVELOPMENT_VITE_IMAGE_R2_URL>"
+    "BETTER_AUTH_URL": "<DEVELOPMENT_URL>"
   },
   /**
    * Static Assets
@@ -85,11 +83,7 @@
       },
       "vars": {
         "BETTER_AUTH_TELEMETRY": "0",
-        "BETTER_AUTH_URL": "<PRODUCTION_URL>",
-        "VITE_SITE_URL": "<PRODUCTION_URL>",
-        "VITE_UMAMI_SCRIPT_URL": "<UMAMI_SCRIPT_URL>",
-        "VITE_UMAMI_WEBSITE_ID": "<UMAMI_WEBSITE_ID>",
-        "VITE_IMAGE_R2_URL": "<PRODUCTION_VITE_IMAGE_R2_URL>"
+        "BETTER_AUTH_URL": "<PRODUCTION_URL>"
       },
       "kv_namespaces": [
         {
