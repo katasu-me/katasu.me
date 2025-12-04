@@ -6,7 +6,7 @@ import Message from "@/components/Message";
 import TagLinks from "@/components/TagLinks";
 import GalleryMasonry from "@/features/gallery/components/GalleryMasonry";
 import GalleryRandom from "@/features/gallery/components/GalleryRandom";
-import { ERROR_MESSAGE } from "@/features/gallery/constants/error";
+import { GALLERY_ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { userImageCountQueryOptions } from "@/features/gallery/server-fn/user-image-count";
@@ -23,7 +23,7 @@ const searchParamsSchema = object({
 export const Route = createFileRoute("/user/_layout/$userId/")({
   component: RouteComponent,
   errorComponent: ({ error }) => {
-    return <Message message={error.message ?? ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
+    return <Message message={error.message ?? GALLERY_ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
   },
   validateSearch: (search) => parse(searchParamsSchema, search),
   loaderDeps: ({ search: { view, page } }) => ({ view, page }),
