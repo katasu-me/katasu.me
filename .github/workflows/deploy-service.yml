@@ -40,15 +40,6 @@ jobs:
 
           echo "wrangler.jsonc created successfully"
 
-      - name: Cache build
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ github.workspace }}/.turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
-
       - name: Develop Build
         if: github.ref == 'refs/heads/develop'
         run: pnpm build
@@ -85,5 +76,5 @@ jobs:
           environment: production
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+          command: deploy --config wrangler.jsonc
           workingDirectory: apps/service
