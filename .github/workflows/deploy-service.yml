@@ -23,24 +23,40 @@ jobs:
       - name: Setup pnpm
         uses: ./.github/actions/setup-pnpm
 
-      - name: Create wrangler.jsonc from template
+      - name: Create wrangler.toml for development
+        if: github.ref == 'refs/heads/develop'
         run: |
           cd apps/service
-          cp wrangler.example.jsonc wrangler.jsonc
+          cp wrangler.develop.toml wrangler.toml
 
-          # 開発環境の値を置換
-          sed -i "s|<DEVELOPMENT_URL>|${{ vars.DEVELOPMENT_URL }}|g" wrangler.jsonc
-          sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.jsonc
-          sed -i "s|<DEVELOPMENT_CACHE_KV_ID>|${{ secrets.DEVELOPMENT_CACHE_KV_ID }}|g" wrangler.jsonc
+          sed -i "s|<DEVELOPMENT_URL>|${{ vars.DEVELOPMENT_URL }}|g" wrangler.toml
+          sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.toml
+          sed -i "s|<DEVELOPMENT_CACHE_KV_ID>|${{ secrets.DEVELOPMENT_CACHE_KV_ID }}|g" wrangler.toml
 
-          # 本番環境の値を置換
-          sed -i "s|<PRODUCTION_URL>|${{ vars.PRODUCTION_URL }}|g" wrangler.jsonc
-          sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.jsonc
-          sed -i "s|<PRODUCTION_CACHE_KV_ID>|${{ secrets.PRODUCTION_CACHE_KV_ID }}|g" wrangler.jsonc
+          echo "wrangler.toml created for development"
 
-          echo "wrangler.jsonc created successfully"
+      - name: Create wrangler.toml for production
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd apps/service
+          cp wrangler.production.toml wrangler.toml
 
-      - name: Develop Build
+          sed -i "s|<PRODUCTION_URL>|${{ vars.PRODUCTION_URL }}|g" wrangler.toml
+          sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.toml
+          sed -i "s|<PRODUCTION_CACHE_KV_ID>|${{ secrets.PRODUCTION_CACHE_KV_ID }}|g" wrangler.toml
+
+          echo "wrangler.toml created for production"
+
+      - name: Cache build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.turbo
+          key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
+
+      - name: Build for development
         if: github.ref == 'refs/heads/develop'
         run: pnpm build
         env:
@@ -49,16 +65,16 @@ jobs:
           VITE_REPORT_IMAGE_TILLY_EMBED_ID: ${{ vars.DEVELOPMENT_VITE_REPORT_IMAGE_TILLY_EMBED_ID }}
           VITE_REPORT_USER_TILLY_EMBED_ID: ${{ vars.DEVELOPMENT_VITE_REPORT_USER_TILLY_EMBED_ID }}
 
-      - name: Deploy to development environment
+      - name: Deploy to development
         if: github.ref == 'refs/heads/develop'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --env=""
+          command: deploy
           workingDirectory: apps/service
 
-      - name: Production Build
+      - name: Build for production
         if: github.ref == 'refs/heads/main'
         run: pnpm build
         env:
@@ -69,12 +85,11 @@ jobs:
           VITE_UMAMI_SCRIPT_URL: ${{ vars.VITE_UMAMI_SCRIPT_URL }}
           VITE_UMAMI_WEBSITE_ID: ${{ vars.VITE_UMAMI_WEBSITE_ID }}
 
-      - name: Deploy to production environment
+      - name: Deploy to production
         if: github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
-          environment: production
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --config wrangler.jsonc
+          command: deploy
           workingDirectory: apps/service
