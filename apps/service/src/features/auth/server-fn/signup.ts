@@ -3,6 +3,7 @@ import { updateUser } from "@katasu.me/service-db";
 import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import * as v from "valibot";
+import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { signUpFormSchema } from "@/features/auth/schemas/signup";
 import { generateAvatarImage, getImageDimensions } from "@/features/image-upload/libs/image";
@@ -35,7 +36,7 @@ export const signupAction = createServerFn({ method: "POST" })
     const result = v.safeParse(signUpFormSchema, payload);
 
     if (!result.success) {
-      const firstError = result.issues[0]?.message ?? "バリデーションエラー";
+      const firstError = result.issues[0]?.message ?? ERROR_MESSAGE.VALIDATION_FAILED;
       throw new Error(firstError);
     }
 

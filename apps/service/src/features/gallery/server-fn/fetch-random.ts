@@ -3,7 +3,7 @@ import { fetchRandomImagesByTagId, fetchRandomImagesByUserId } from "@katasu.me/
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import { type InferOutput, literal, object, string, union } from "valibot";
-import { ERROR_MESSAGE } from "../constants/error";
+import { ERROR_MESSAGE } from "@/constants/error";
 
 const FetchRandomImagesInputSchema = union([
   object({

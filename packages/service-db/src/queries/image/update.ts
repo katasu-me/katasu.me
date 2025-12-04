@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { createDBActionError } from "../../lib/error";
 import { type Image, type ImageWithTags, image, imageTag, tag } from "../../schema";
@@ -10,12 +10,14 @@ import { getDB } from "../db";
  * 画像情報を更新する
  * @param dbInstance D1インスタンス
  * @param imageId 画像ID
+ * @param userId ユーザーID
  * @param imageData 更新データ
  * @returns 更新後の画像情報
  */
 export async function updateImage(
   dbInstance: AnyD1Database,
   imageId: string,
+  userId: string,
   imageData: Partial<Pick<ImageFormData, "title" | "tags">>,
 ): Promise<ActionResult<ImageWithTags>> {
   try {
@@ -23,13 +25,17 @@ export async function updateImage(
 
     const { tags, ...restImageData } = imageData;
 
-    // 画像情報を更新
-    const imageResult = await db.update(image).set(restImageData).where(eq(image.id, imageId)).returning().get();
+    const imageResult = await db
+      .update(image)
+      .set(restImageData)
+      .where(and(eq(image.id, imageId), eq(image.userId, userId)))
+      .returning()
+      .get();
 
     if (!imageResult) {
       return {
         success: false,
-        error: { message: "画像が見つかりません" },
+        error: { message: "画像が見つからないか、編集する権限がありません" },
       };
     }
 

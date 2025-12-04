@@ -1,7 +1,8 @@
 import { env } from "cloudflare:workers";
-import { deleteImage, fetchImageById } from "@katasu.me/service-db";
+import { deleteImage } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
 import { object, string } from "valibot";
+import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
 import { deleteImageFromR2 } from "@/libs/r2";
@@ -27,38 +28,21 @@ export const deleteImageFn = createServerFn({ method: "POST" })
     const { userId, imageId } = data;
 
     try {
-      // 認証チェック
       const { session } = await requireAuth();
 
-      // 画像を取得
-      const fetchImageResult = await fetchImageById(env.DB, imageId);
+      const { success: rateLimitSuccess } = await env.ACTIONS_RATE_LIMITER.limit({
+        key: `delete:${session.user.id}`,
+      });
 
-      if (!fetchImageResult.success) {
+      if (!rateLimitSuccess) {
         return {
           success: false,
-          error: "画像が見つかりません",
-        };
-      }
-
-      const prevImageData = fetchImageResult.data;
-
-      if (!prevImageData) {
-        return {
-          success: false,
-          error: "画像が見つかりません",
-        };
-      }
-
-      // 編集する権限があるか
-      if (prevImageData.userId !== session.user.id) {
-        return {
-          success: false,
-          error: "権限がありません",
+          error: ERROR_MESSAGE.RATE_LIMIT_EXCEEDED,
         };
       }
 
       // DBから画像を削除
-      const deleteResult = await deleteImage(env.DB, imageId);
+      const deleteResult = await deleteImage(env.DB, imageId, session.user.id);
 
       if (!deleteResult.success) {
         console.error("[delete] DBから画像を削除できませんでした:", deleteResult.error);
@@ -80,10 +64,8 @@ export const deleteImageFn = createServerFn({ method: "POST" })
         };
       }
 
-      // タグ一覧のKVキャッシュを無効化（TanStack Query未移行のため）
-      if (prevImageData.tags.length !== 0) {
-        await invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]);
-      }
+      // タグ一覧のKVキャッシュを無効化
+      await invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]);
 
       return {
         success: true,

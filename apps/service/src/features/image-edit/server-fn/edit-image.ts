@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { fetchImageById, updateImage } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
 import { object, optional, safeParse, string } from "valibot";
+import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
 import { editImageSchema } from "../schemas/edit";
@@ -28,9 +29,19 @@ export const editImageFn = createServerFn({ method: "POST" })
   .inputValidator(EditImageInputSchema)
   .handler(async ({ data }): Promise<EditImageResult> => {
     try {
-      // 認証チェック
       const { session } = await requireAuth();
       const userId = session.user.id;
+
+      const { success: rateLimitSuccess } = await env.ACTIONS_RATE_LIMITER.limit({
+        key: `edit:${userId}`,
+      });
+
+      if (!rateLimitSuccess) {
+        return {
+          success: false,
+          error: ERROR_MESSAGE.RATE_LIMIT_EXCEEDED,
+        };
+      }
 
       // タグをパース
       let tags: string[] | undefined;
@@ -45,7 +56,6 @@ export const editImageFn = createServerFn({ method: "POST" })
         }
       }
 
-      // バリデーション
       const validationResult = safeParse(editImageSchema, {
         imageId: data.imageId,
         title: data.title,
@@ -56,40 +66,18 @@ export const editImageFn = createServerFn({ method: "POST" })
         const firstIssue = validationResult.issues[0];
         return {
           success: false,
-          error: firstIssue?.message ?? "入力値が不正です",
+          error: firstIssue?.message ?? ERROR_MESSAGE.VALIDATION_FAILED,
         };
       }
 
       const { imageId, title, tags: validatedTags } = validationResult.output;
 
-      // 画像を取得
+      // タグ変更の比較用に現在の画像情報を取得
       const fetchImageResult = await fetchImageById(env.DB, imageId);
-
-      if (!fetchImageResult.success) {
-        return {
-          success: false,
-          error: "画像の取得に失敗しました",
-        };
-      }
-
-      const prevImageData = fetchImageResult.data;
-
-      if (!prevImageData) {
-        return {
-          success: false,
-          error: "画像が存在しません",
-        };
-      }
-
-      if (prevImageData.userId !== userId) {
-        return {
-          success: false,
-          error: "権限がありません",
-        };
-      }
+      const prevTags = fetchImageResult.success ? fetchImageResult.data?.tags || [] : [];
 
       // 画像情報を更新
-      const updateImageResult = await updateImage(env.DB, imageId, {
+      const updateImageResult = await updateImage(env.DB, imageId, userId, {
         title: title ?? null,
         tags: validatedTags ?? [],
       });
@@ -103,8 +91,7 @@ export const editImageFn = createServerFn({ method: "POST" })
         };
       }
 
-      // タグ一覧のKVキャッシュを無効化（TanStack Query未移行のため）
-      const prevTags = prevImageData.tags || [];
+      // タグ一覧のKVキャッシュを無効化
       const newTags = updateImageResult.data?.tags || [];
       const newTagIds = new Set(newTags.map((t) => t.id));
 

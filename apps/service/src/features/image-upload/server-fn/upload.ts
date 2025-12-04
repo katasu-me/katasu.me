@@ -3,10 +3,11 @@ import { deleteImage, fetchUserImageStatus, registerImage } from "@katasu.me/ser
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
 import * as v from "valibot";
+import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
 import { createImageUploadPromises, generateR2Key } from "@/libs/r2";
-import { ERROR_MESSAGE } from "../constants/error";
+import { UPLOAD_ERROR_MESSAGE } from "../constants/error";
 import { generateImageVariants, getImageDimensions } from "../libs/image";
 import { checkImageModeration } from "../libs/moderation";
 import { uploadImageSchema } from "../schemas/upload";
@@ -40,7 +41,7 @@ export const uploadFn = createServerFn({ method: "POST" })
     const result = v.safeParse(uploadImageSchema, payload);
 
     if (!result.success) {
-      const firstError = result.issues[0]?.message ?? "Validation error";
+      const firstError = result.issues[0]?.message ?? ERROR_MESSAGE.VALIDATION_FAILED;
       throw new Error(firstError);
     }
 
@@ -66,14 +67,14 @@ export const uploadFn = createServerFn({ method: "POST" })
     if (!userImageStatusResult.success || !userImageStatusResult.data) {
       return {
         success: false,
-        error: ERROR_MESSAGE.USER_UNAUTHORIZED,
+        error: UPLOAD_ERROR_MESSAGE.USER_UNAUTHORIZED,
       };
     }
 
     if (userImageStatusResult.data.uploadedPhotos >= userImageStatusResult.data.maxPhotos) {
       return {
         success: false,
-        error: ERROR_MESSAGE.IMAGE_UPLOAD_LIMIT_EXCEEDED,
+        error: UPLOAD_ERROR_MESSAGE.IMAGE_UPLOAD_LIMIT_EXCEEDED,
       };
     }
 
@@ -86,14 +87,14 @@ export const uploadFn = createServerFn({ method: "POST" })
 
       return {
         success: false,
-        error: ERROR_MESSAGE.IMAGE_ID_DUPLICATE,
+        error: UPLOAD_ERROR_MESSAGE.IMAGE_ID_DUPLICATE,
       };
     }
 
     if (!data.file) {
       return {
         success: false,
-        error: ERROR_MESSAGE.EMPTY_IMAGE,
+        error: UPLOAD_ERROR_MESSAGE.EMPTY_IMAGE,
       };
     }
 
@@ -110,7 +111,7 @@ export const uploadFn = createServerFn({ method: "POST" })
     } catch (error) {
       console.error("[gallery] Image conversion failed:", error);
 
-      const errorMessage = error instanceof Error ? error.message : ERROR_MESSAGE.IMAGE_CONVERSION_FAILED;
+      const errorMessage = error instanceof Error ? error.message : UPLOAD_ERROR_MESSAGE.IMAGE_CONVERSION_FAILED;
 
       return {
         success: false,
@@ -150,7 +151,7 @@ export const uploadFn = createServerFn({ method: "POST" })
 
       return {
         success: false,
-        error: ERROR_MESSAGE.IMAGE_UPLOAD_FAILED,
+        error: UPLOAD_ERROR_MESSAGE.IMAGE_UPLOAD_FAILED,
       };
     }
 
@@ -160,7 +161,7 @@ export const uploadFn = createServerFn({ method: "POST" })
 
       return {
         success: false,
-        error: ERROR_MESSAGE.IMAGE_REGISTER_FAILED,
+        error: UPLOAD_ERROR_MESSAGE.IMAGE_REGISTER_FAILED,
       };
     }
 
@@ -174,13 +175,13 @@ export const uploadFn = createServerFn({ method: "POST" })
             generateR2Key("image", userId, imageId, "original"),
             generateR2Key("image", userId, imageId, "thumbnail"),
           ]),
-          deleteImage(env.DB, imageId),
+          deleteImage(env.DB, imageId, userId),
         ]),
       );
 
       return {
         success: false,
-        error: ERROR_MESSAGE.IMAGE_MODERATION_FLAGGED,
+        error: UPLOAD_ERROR_MESSAGE.IMAGE_MODERATION_FLAGGED,
       };
     }
 

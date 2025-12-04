@@ -1,7 +1,9 @@
 import { env } from "cloudflare:workers";
 import { deleteUser } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeaders } from "@tanstack/react-start/server";
 import * as v from "valibot";
+import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCache } from "@/libs/cache";
 import { deleteUserDataFromR2 } from "@/libs/r2";
@@ -27,20 +29,29 @@ export const deleteAccountFn = createServerFn({ method: "POST" })
     const result = v.safeParse(deleteAccountSchema, payload);
 
     if (!result.success) {
-      const firstError = result.issues[0]?.message ?? "バリデーションエラー";
+      const firstError = result.issues[0]?.message ?? ERROR_MESSAGE.VALIDATION_FAILED;
       throw new Error(firstError);
     }
 
     return result.output;
   })
   .handler(async (): Promise<DeleteAccountResult> => {
-    const { session } = await requireAuth();
+    const { auth, session } = await requireAuth();
+
+    const { success: rateLimitSuccess } = await env.ACTIONS_RATE_LIMITER.limit({
+      key: `delete-account:${session.user.id}`,
+    });
+
+    if (!rateLimitSuccess) {
+      return {
+        success: false,
+        error: ERROR_MESSAGE.RATE_LIMIT_EXCEEDED,
+      };
+    }
 
     try {
-      // R2からユーザーデータを削除
       await deleteUserDataFromR2(env.IMAGES_R2_BUCKET, session.user.id);
 
-      // DBからユーザーを削除
       const deleteResult = await deleteUser(env.DB, session.user.id);
 
       if (!deleteResult.success) {
@@ -52,7 +63,14 @@ export const deleteAccountFn = createServerFn({ method: "POST" })
         };
       }
 
-      // キャッシュを無効化
+      await auth.api.revokeSession({
+        headers: getRequestHeaders(),
+        body: {
+          token: session.session.token,
+        },
+      });
+
+      // KVのキャッシュを無効化
       await invalidateCache(env.CACHE_KV, CACHE_KEYS.user(session.user.id));
 
       return {
