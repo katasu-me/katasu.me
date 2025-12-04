@@ -32,10 +32,19 @@ export const uploadFn = createServerFn({ method: "POST" })
     const title = data.get("title");
     const tagsJson = data.get("tags");
 
+    let tags: string[] | undefined;
+    if (tagsJson) {
+      try {
+        tags = JSON.parse(tagsJson as string);
+      } catch {
+        throw new Error("タグの形式が不正です");
+      }
+    }
+
     const payload = {
       file,
       title: title || undefined,
-      tags: tagsJson ? JSON.parse(tagsJson as string) : undefined,
+      tags,
     };
 
     const result = v.safeParse(uploadImageSchema, payload);
