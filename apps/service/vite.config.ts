@@ -8,7 +8,7 @@ import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
-const config = defineConfig(({ command }) => ({
+const config = defineConfig(({ mode, command }) => ({
   plugins: [
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     // this is the plugin that enables path aliases
@@ -21,7 +21,7 @@ const config = defineConfig(({ command }) => ({
     svgr(),
   ],
   server:
-    command === "serve"
+    mode !== "production" && command === "serve"
       ? {
           host: "local.katasu.me",
           port: 3000,

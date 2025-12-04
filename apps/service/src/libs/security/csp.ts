@@ -5,23 +5,26 @@
  * @returns CSPヘッダー文字列
  */
 export function buildCsp(nonce: string, isDev: boolean): string {
-  const imageR2Url = import.meta.env.VITE_IMAGE_R2_URL || "";
-
   const directives: Record<string, string[] | boolean> = {
     "default-src": ["'self'"],
     "script-src": [
       `'nonce-${nonce}'`,
       "'strict-dynamic'",
-      // 開発環境では 'unsafe-eval' を追加（HMR、ソースマップ用）
+      // 開発環境のみ (HMR用)
       ...(isDev ? ["'unsafe-eval'"] : []),
     ],
     "style-src": ["'self'", "'unsafe-inline'"],
-    "img-src": ["'self'", "data:", "blob:", ...(imageR2Url ? [imageR2Url] : [])],
+    "img-src": [
+      "'self'",
+      "data:",
+      "blob:",
+      ...(import.meta.env.VITE_IMAGE_R2_URL ? [import.meta.env.VITE_IMAGE_R2_URL] : []),
+    ],
     "font-src": ["'self'"],
     "connect-src": [
       "'self'",
       "https://tally.so",
-      // 開発環境ではWebSocket接続を許可（Vite HMR用）
+      // 開発環境のみ (HMR用)
       ...(isDev ? ["ws:", "wss:"] : []),
     ],
     "frame-src": ["https://tally.so"],

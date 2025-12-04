@@ -8,6 +8,8 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ClosedBetaRouteImport } from './routes/closed-beta'
@@ -26,6 +28,13 @@ import { Route as UserLayoutUserIdTagIndexRouteImport } from './routes/user/_lay
 import { Route as UserLayoutUserIdTagTagIdRouteImport } from './routes/user/_layout.$userId/tag/$tagId'
 import { Route as UserLayoutUserIdImageImageIdRouteImport } from './routes/user/_layout.$userId/image.$imageId'
 
+const ReportRouteImport = createFileRoute('/report')()
+
+const ReportRoute = ReportRouteImport.update({
+  id: '/report',
+  path: '/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -151,6 +160,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/auth/error': typeof AuthErrorRoute
   '/auth/signup': typeof AuthSignupRoute
+  '/report': typeof ReportRouteWithChildren
   '/report/_layout': typeof ReportLayoutRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/auth/redirect': typeof ApiAuthRedirectRoute
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/error'
     | '/auth/signup'
+    | '/report'
     | '/report/_layout'
     | '/api/auth/$'
     | '/api/auth/redirect'
@@ -225,6 +236,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   AuthErrorRoute: typeof AuthErrorRoute
   AuthSignupRoute: typeof AuthSignupRoute
+  ReportRoute: typeof ReportRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAuthRedirectRoute: typeof ApiAuthRedirectRoute
   ApiR2SplatRoute: typeof ApiR2SplatRoute
@@ -233,6 +245,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/report': {
+      id: '/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -256,7 +275,7 @@ declare module '@tanstack/react-router' {
     }
     '/report/_layout': {
       id: '/report/_layout'
-      path: ''
+      path: '/report'
       fullPath: '/report'
       preLoaderRoute: typeof ReportLayoutRouteImport
       parentRoute: typeof ReportRoute
@@ -348,6 +367,31 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ReportLayoutRouteChildren {
+  ReportLayoutImageRoute: typeof ReportLayoutImageRoute
+  ReportLayoutUserRoute: typeof ReportLayoutUserRoute
+}
+
+const ReportLayoutRouteChildren: ReportLayoutRouteChildren = {
+  ReportLayoutImageRoute: ReportLayoutImageRoute,
+  ReportLayoutUserRoute: ReportLayoutUserRoute,
+}
+
+const ReportLayoutRouteWithChildren = ReportLayoutRoute._addFileChildren(
+  ReportLayoutRouteChildren,
+)
+
+interface ReportRouteChildren {
+  ReportLayoutRoute: typeof ReportLayoutRouteWithChildren
+}
+
+const ReportRouteChildren: ReportRouteChildren = {
+  ReportLayoutRoute: ReportLayoutRouteWithChildren,
+}
+
+const ReportRouteWithChildren =
+  ReportRoute._addFileChildren(ReportRouteChildren)
+
 interface UserLayoutUserIdRouteChildren {
   UserLayoutUserIdIndexRoute: typeof UserLayoutUserIdIndexRoute
   UserLayoutUserIdImageImageIdRoute: typeof UserLayoutUserIdImageImageIdRoute
@@ -371,6 +415,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   AuthErrorRoute: AuthErrorRoute,
   AuthSignupRoute: AuthSignupRoute,
+  ReportRoute: ReportRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAuthRedirectRoute: ApiAuthRedirectRoute,
   ApiR2SplatRoute: ApiR2SplatRoute,
@@ -381,10 +426,11 @@ export const routeTree = rootRouteImport
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }
