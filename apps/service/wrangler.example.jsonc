@@ -96,7 +96,7 @@
           "binding": "DB",
           "database_name": "katasu-me",
           "database_id": "<PRODUCTION_DATABASE_ID>",
-          "migrations_dir": "src/db/migrations"
+          "migrations_dir": "../../packages/service-db/src/migrations"
         }
       ],
       "r2_buckets": [
