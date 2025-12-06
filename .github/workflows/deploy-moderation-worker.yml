@@ -23,19 +23,21 @@ jobs:
       - name: Setup pnpm
         uses: ./.github/actions/setup-pnpm
 
-      - name: Generate wrangler.toml for development
+      - name: Create wrangler.toml for development
         if: github.ref == 'refs/heads/develop'
-        working-directory: apps/moderation-worker
         run: |
+          cd apps/moderation-worker
           cp wrangler.develop.toml wrangler.toml
-          sed -i 's/<DEVELOPMENT_DATABASE_ID>/${{ secrets.CLOUDFLARE_D1_DEV_DATABASE_ID }}/g' wrangler.toml
+          sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.toml
+          echo "wrangler.toml created for development"
 
-      - name: Generate wrangler.toml for production
+      - name: Create wrangler.toml for production
         if: github.ref == 'refs/heads/main'
-        working-directory: apps/moderation-worker
         run: |
+          cd apps/moderation-worker
           cp wrangler.production.toml wrangler.toml
-          sed -i 's/<PRODUCTION_DATABASE_ID>/${{ secrets.CLOUDFLARE_D1_PROD_DATABASE_ID }}/g' wrangler.toml
+          sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.toml
+          echo "wrangler.toml created for production"
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
