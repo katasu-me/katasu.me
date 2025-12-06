@@ -31,10 +31,6 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy --minify
           workingDirectory: apps/moderation-worker
-          secrets: |
-            OPENAI_API_KEY
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Deploy to production environment
         if: github.ref == 'refs/heads/main'
@@ -44,7 +40,3 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy --minify --env production
           workingDirectory: apps/moderation-worker
-          secrets: |
-            OPENAI_API_KEY
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
