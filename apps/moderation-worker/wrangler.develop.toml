@@ -4,6 +4,11 @@ name = "katasu-me-dev-moderation"
 main = "src/index.ts"
 compatibility_date = "2025-09-02"
 compatibility_flags = ["nodejs_compat_v2"]
+workers_dev = false
+preview_urls = false
+
+[placement]
+mode = "smart"
 
 [observability]
 enabled = true
