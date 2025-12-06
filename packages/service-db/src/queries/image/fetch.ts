@@ -218,9 +218,9 @@ export async function fetchImagesByTagId(
         width: image.width,
         height: image.height,
         title: image.title,
+        status: image.status,
         createdAt: image.createdAt,
         updatedAt: image.updatedAt,
-        hiddenAt: image.hiddenAt,
         tagId: tag.id,
         tagName: tag.name,
         tagCreatedAt: tag.createdAt,
@@ -252,9 +252,9 @@ export async function fetchImagesByTagId(
           width: row.width,
           height: row.height,
           title: row.title,
+          status: row.status,
           createdAt: row.createdAt,
           updatedAt: row.updatedAt,
-          hiddenAt: row.hiddenAt,
           tags: [],
         });
       }

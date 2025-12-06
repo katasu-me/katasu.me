@@ -4,6 +4,12 @@ import { nanoid } from "nanoid";
 import { user } from "./user";
 
 /**
+ * 画像ステータス
+ */
+export const imageStatusEnum = ["published", "moderation_violation"] as const;
+export type ImageStatus = (typeof imageStatusEnum)[number];
+
+/**
  * 画像
  */
 export const image = sqliteTable(
@@ -18,12 +24,12 @@ export const image = sqliteTable(
     width: integer("width").notNull(),
     height: integer("height").notNull(),
     title: text("title"),
+    status: text("status", { enum: imageStatusEnum }).notNull().default("published"),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`)
       .$onUpdate(() => new Date()),
-    hiddenAt: integer("hidden_at", { mode: "timestamp" }),
   },
   (table) => [index("idx_image_user_id_created_at").on(table.userId, table.createdAt)],
 );

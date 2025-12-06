@@ -1,0 +1,21 @@
+{
+  "name": "@katasu.me/moderation-worker",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:dev": "wrangler deploy --config wrangler.develop.toml",
+    "deploy:prod": "wrangler deploy --config wrangler.production.toml",
+    "cf-typegen": "wrangler types",
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.33",
+    "typescript": "^5.7.5",
+    "wrangler": "^4.52.0"
+  },
+  "dependencies": {
+    "@katasu.me/service-db": "workspace:*",
+    "openai": "^4.103.0"
+  }
+}

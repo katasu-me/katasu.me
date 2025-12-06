@@ -1,12 +1,12 @@
 import { and, eq } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
-import { image, user } from "../../schema";
+import { type ImageStatus as ImageStatusEnum, image, user } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import { getDB } from "../db";
 
-export type ImageStatus = {
+export type ImageStatusResult = {
   exists: boolean;
-  hidden: boolean;
+  status: ImageStatusEnum | null;
   userBanned: boolean;
 };
 
@@ -21,13 +21,13 @@ export async function checkImageStatus(
   dbInstance: AnyD1Database,
   imageId: string,
   userId: string,
-): Promise<ActionResult<ImageStatus>> {
+): Promise<ActionResult<ImageStatusResult>> {
   try {
     const db = getDB(dbInstance);
 
     const result = await db
       .select({
-        hiddenAt: image.hiddenAt,
+        status: image.status,
         bannedAt: user.bannedAt,
       })
       .from(image)
@@ -40,7 +40,7 @@ export async function checkImageStatus(
         success: true,
         data: {
           exists: false,
-          hidden: false,
+          status: null,
           userBanned: false,
         },
       };
@@ -50,7 +50,7 @@ export async function checkImageStatus(
       success: true,
       data: {
         exists: true,
-        hidden: result.hiddenAt !== null,
+        status: result.status,
         userBanned: result.bannedAt !== null,
       },
     };
@@ -59,7 +59,7 @@ export async function checkImageStatus(
       success: false,
       error: {
         message: "画像の状態チェックに失敗しました",
-        rawError: error,
+        rawError: error instanceof Error ? error : undefined,
       },
     };
   }

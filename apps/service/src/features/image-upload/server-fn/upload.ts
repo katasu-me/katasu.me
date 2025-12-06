@@ -1,15 +1,15 @@
 import { env, waitUntil } from "cloudflare:workers";
-import { deleteImage, fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
+import { fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
 import * as v from "valibot";
 import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
-import { createImageUploadPromises, generateR2Key } from "@/libs/r2";
+import { createImageUploadPromises, generateR2Key, getImageUrl } from "@/libs/r2";
+import type { ModerationJobMessage } from "@/types/moderation";
 import { UPLOAD_ERROR_MESSAGE } from "../constants/error";
 import { generateImageVariants, getImageDimensions } from "../libs/image";
-import { checkImageModeration } from "../libs/moderation";
 import { uploadImageSchema } from "../schemas/upload";
 
 type UploadResult =
@@ -142,13 +142,10 @@ export const uploadFn = createServerFn({ method: "POST" })
       tags: data.tags,
     });
 
-    const moderationPromise = checkImageModeration(env.OPENAI_API_KEY, convertResult.original.data);
-
-    const [originalResult, thumbnailResult, registerResult, moderationResult] = await Promise.allSettled([
+    const [originalResult, thumbnailResult, registerResult] = await Promise.allSettled([
       originalUploadPromise,
       thumbnailUploadPromise,
       registerImagePromise,
-      moderationPromise,
     ]);
 
     // アップロードのエラーハンドリング
@@ -166,7 +163,13 @@ export const uploadFn = createServerFn({ method: "POST" })
 
     // 画像の登録のエラーハンドリング
     if (registerResult.status === "rejected" || !registerResult.value.success) {
-      const error = registerResult.status === "rejected" ? registerResult.reason : !registerResult.value.success;
+      const error =
+        registerResult.status === "rejected"
+          ? registerResult.reason
+          : !registerResult.value.success
+            ? registerResult.value.error
+            : null;
+
       console.error("[gallery] Image registration to DB failed:", error);
 
       return {
@@ -177,50 +180,24 @@ export const uploadFn = createServerFn({ method: "POST" })
 
     const registerImageResult = registerResult.value;
 
-    // モデレーションのエラーハンドリング
-    if (moderationResult.status === "rejected") {
-      console.error("[gallery] Moderation API failed:", moderationResult.reason);
+    // モデレーションジョブをQueueに投入
+    const moderationJob: ModerationJobMessage = {
+      imageId,
+      userId,
+      imageUrl: getImageUrl(userId, imageId, "original"),
+    };
 
-      waitUntil(
-        Promise.all([
-          env.IMAGES_R2_BUCKET.delete([
-            generateR2Key("image", userId, imageId, "original"),
-            generateR2Key("image", userId, imageId, "thumbnail"),
-          ]),
-          deleteImage(env.DB, imageId, userId),
-        ]),
-      );
+    console.log("[gallery] Enqueue moderation job:", { imageId, userId });
 
-      return {
-        success: false,
-        error: UPLOAD_ERROR_MESSAGE.IMAGE_MODERATION_FAILED,
-      };
-    }
-
-    // モデレーションチェックで不適切と判断された場合は削除
-    if (moderationResult.value) {
-      waitUntil(
-        Promise.all([
-          env.IMAGES_R2_BUCKET.delete([
-            generateR2Key("image", userId, imageId, "original"),
-            generateR2Key("image", userId, imageId, "thumbnail"),
-          ]),
-          deleteImage(env.DB, imageId, userId),
-        ]),
-      );
-
-      return {
-        success: false,
-        error: UPLOAD_ERROR_MESSAGE.IMAGE_MODERATION_FLAGGED,
-      };
-    }
-
-    // タグ一覧のKVキャッシュを無効化
-    if (registerImageResult.data?.tags) {
-      waitUntil(
-        invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]),
-      );
-    }
+    waitUntil(
+      Promise.all([
+        env.MODERATION_QUEUE.send(moderationJob),
+        // タグ一覧のKVキャッシュを無効化
+        registerImageResult.data?.tags
+          ? invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)])
+          : Promise.resolve(),
+      ]),
+    );
 
     return {
       success: true,

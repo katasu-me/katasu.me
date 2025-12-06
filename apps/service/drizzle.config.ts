@@ -1,4 +1,3 @@
-import { env } from "cloudflare:workers";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
@@ -6,6 +5,6 @@ export default defineConfig({
   out: "../../packages/service-db/src/migrations",
   dialect: "sqlite",
   dbCredentials: {
-    url: env.DATABASE_PATH || "",
+    url: process.env.DATABASE_PATH || "",
   },
 });

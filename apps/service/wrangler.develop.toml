@@ -42,6 +42,12 @@ migrations_dir = "../../packages/service-db/src/migrations"
 binding = "IMAGES_R2_BUCKET"
 bucket_name = "katasu-me-dev-images"
 
+# Queues
+# https://developers.cloudflare.com/queues/
+[[queues.producers]]
+binding = "MODERATION_QUEUE"
+queue = "katasu-me-dev-moderation"
+
 # Environment Variables
 # https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 [vars]

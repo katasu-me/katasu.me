@@ -1,7 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { createDBActionError } from "../../lib/error";
-import { type Image, type ImageWithTags, image, imageTag, tag } from "../../schema";
+import { type Image, type ImageStatus, type ImageWithTags, image, imageTag, tag } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import type { ImageFormData } from "../../types/image";
 import { getDB } from "../db";
@@ -91,21 +91,21 @@ export async function updateImage(
 }
 
 /**
- * 画像を表示・非表示を更新
+ * 画像のステータスを更新する
  * @param dbInstance D1インスタンス
  * @param imageId 画像ID
+ * @param status 新しいステータス
  * @returns 更新結果
  */
-export async function updateImageHidden(
+export async function updateImageStatus(
   dbInstance: AnyD1Database,
   imageId: string,
-  isHidden: boolean,
+  status: ImageStatus,
 ): Promise<ActionResult<Image>> {
   try {
     const db = getDB(dbInstance);
-    const hiddenAt = isHidden ? new Date() : null;
 
-    const result = await db.update(image).set({ hiddenAt }).where(eq(image.id, imageId)).returning().get();
+    const result = await db.update(image).set({ status }).where(eq(image.id, imageId)).returning().get();
 
     if (!result) {
       return {
@@ -119,6 +119,6 @@ export async function updateImageHidden(
       data: result,
     };
   } catch (error) {
-    return createDBActionError("画像の表示・非表示の更新に失敗しました", error);
+    return createDBActionError("画像ステータスの更新に失敗しました", error);
   }
 }

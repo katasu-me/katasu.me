@@ -1,0 +1,26 @@
+#:schema node_modules/wrangler/config-schema.json
+
+name = "katasu-me-moderation"
+main = "src/index.ts"
+compatibility_date = "2025-09-02"
+compatibility_flags = ["nodejs_compat_v2"]
+
+[observability]
+enabled = true
+
+# Queues
+# https://developers.cloudflare.com/queues/
+[[queues.consumers]]
+queue = "katasu-me-moderation"
+max_batch_size = 10
+max_batch_timeout = 30
+
+# Bindings
+[[d1_databases]]
+binding = "DB"
+database_name = "katasu-me"
+database_id = "<PRODUCTION_DATABASE_ID>"
+
+[[r2_buckets]]
+binding = "IMAGES_R2_BUCKET"
+bucket_name = "katasu-me-prod-images"
