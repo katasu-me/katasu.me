@@ -103,7 +103,7 @@ export default function FrameImage({
             imageId: linkParams.imageId,
           }}
         >
-          {alt}
+          <span className="sr-only">{alt}</span>
           <span className="absolute inset-0 z-overlay" />
         </Link>
       )}
