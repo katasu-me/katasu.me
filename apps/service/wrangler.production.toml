@@ -57,7 +57,7 @@ bucket_name = "katasu-me-prod-temp"
 # https://developers.cloudflare.com/queues/
 [[queues.producers]]
 binding = "MODERATION_QUEUE"
-queue = "katasu-me-moderation"
+queue = "katasu-me-upload-processing"
 
 # Environment Variables
 # https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

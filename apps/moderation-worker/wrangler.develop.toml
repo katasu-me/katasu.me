@@ -1,6 +1,6 @@
 #:schema node_modules/wrangler/config-schema.json
 
-name = "katasu-me-dev-moderation"
+name = "katasu-me-dev-upload-processing"
 main = "src/index.ts"
 compatibility_date = "2025-09-02"
 compatibility_flags = ["nodejs_compat_v2"]
@@ -16,7 +16,7 @@ enabled = true
 # Queues
 # https://developers.cloudflare.com/queues/
 [[queues.consumers]]
-queue = "katasu-me-dev-moderation"
+queue = "katasu-me-dev-upload-processing"
 max_batch_size = 1
 max_batch_timeout = 1
 
