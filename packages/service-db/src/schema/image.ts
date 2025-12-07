@@ -6,7 +6,7 @@ import { user } from "./user";
 /**
  * 画像ステータス
  */
-export const imageStatusEnum = ["processing", "published", "moderation_violation"] as const;
+export const imageStatusEnum = ["processing", "published", "moderation_violation", "error"] as const;
 export type ImageStatus = (typeof imageStatusEnum)[number];
 
 /**

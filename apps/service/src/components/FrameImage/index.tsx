@@ -3,8 +3,10 @@ import { Link } from "@tanstack/react-router";
 import { type ComponentProps, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import IconAlertTriangleFilled from "@/assets/icons/alert-triangle-filled.svg?react";
+import IconExclamationCircle from "@/assets/icons/exclamation-circle.svg?react";
 import IconLoader2 from "@/assets/icons/loader-2.svg?react";
 import { decodeThumbHash, getThumbHashLuminance } from "@/libs/thumbhash";
+import StatusOverlay from "./StatusOverlay";
 
 type FrameImageProps = {
   width: number;
@@ -33,6 +35,7 @@ export default function FrameImage({
 }: FrameImageProps) {
   const isViolation = status === "moderation_violation";
   const isProcessing = status === "processing";
+  const isError = status === "error";
 
   // ThumbHashからブラー画像と明るさを取得
   const { blurDataUrl, isDark } = useMemo(() => {
@@ -54,12 +57,19 @@ export default function FrameImage({
   const renderContent = () => {
     if (isViolation) {
       return (
-        <div className="pointer-events-none absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center gap-1 bg-warm-black-100 p-4">
-          <IconAlertTriangleFilled className="size-8 text-warm-black-50" />
-          {!hideStatusText && (
-            <span className="text-center font-bold text-warm-black-50 text-xs">ガイドライン違反</span>
-          )}
-        </div>
+        <StatusOverlay
+          icon={<IconAlertTriangleFilled className="size-8 text-warm-black-50" />}
+          text={hideStatusText ? undefined : "ガイドライン違反"}
+        />
+      );
+    }
+
+    if (isError) {
+      return (
+        <StatusOverlay
+          icon={<IconExclamationCircle className="size-8 text-warm-black-50" />}
+          text={hideStatusText ? undefined : "投稿に失敗"}
+        />
       );
     }
 

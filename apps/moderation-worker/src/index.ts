@@ -4,6 +4,8 @@ import { checkImageModeration } from "./libs/moderation";
 import { deleteImages, getImageUrl, uploadImages } from "./libs/r2";
 import type { ModerationEnv, ModerationJobMessage } from "./libs/types";
 
+const MAX_RETRY_ATTEMPTS = 3;
+
 export default {
   async queue(batch: MessageBatch<ModerationJobMessage>, env: ModerationEnv): Promise<void> {
     for (const message of batch.messages) {
@@ -14,7 +16,8 @@ export default {
 
         if (!tempObject) {
           console.error(`[moderation] Temp file not found: ${imageId}`);
-          message.ack(); // 一時ファイルがない場合はスキップ
+          await updateImageStatus(env.DB, imageId, "error");
+          message.ack();
           continue;
         }
 
@@ -42,8 +45,16 @@ export default {
         message.ack();
       } catch (error) {
         console.error(`[moderation] Error processing image ${imageId}:`, error);
-        // エラー時はリトライのためにackしない
-        message.retry();
+
+        if (message.attempts >= MAX_RETRY_ATTEMPTS) {
+          // リトライ上限に達したらエラーステータスに更新
+          console.error(`[moderation] Max retries reached for image ${imageId}`);
+          await updateImageStatus(env.DB, imageId, "error");
+          message.ack();
+        } else {
+          // リトライ
+          message.retry();
+        }
       }
     }
   },
