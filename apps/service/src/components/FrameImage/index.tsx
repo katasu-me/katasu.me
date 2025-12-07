@@ -16,7 +16,6 @@ type FrameImageProps = {
     imageId: string;
   };
   disableHoverEffect?: boolean;
-  hideStatusText?: boolean;
   status?: ImageStatus;
   thumbhash?: string | null;
 } & Omit<ComponentProps<"img">, "width" | "height">;
@@ -27,7 +26,6 @@ export default function FrameImage({
   height,
   linkParams,
   disableHoverEffect = false,
-  hideStatusText = false,
   status = "published",
   thumbhash,
   alt,
@@ -55,22 +53,10 @@ export default function FrameImage({
   }, [isProcessing, thumbhash]);
 
   const renderContent = () => {
-    if (isViolation) {
-      return (
-        <StatusOverlay
-          icon={<IconAlertTriangleFilled className="size-8 text-warm-black-50" />}
-          text={hideStatusText ? undefined : "ガイドライン違反"}
-        />
-      );
-    }
+    const StatusIcon = isViolation ? IconAlertTriangleFilled : isError ? IconExclamationCircle : null;
 
-    if (isError) {
-      return (
-        <StatusOverlay
-          icon={<IconExclamationCircle className="size-8 text-warm-black-50" />}
-          text={hideStatusText ? undefined : "投稿に失敗"}
-        />
-      );
+    if (StatusIcon) {
+      return <StatusOverlay icon={<StatusIcon className="size-8 text-warm-black-50" />} />;
     }
 
     if (isProcessing) {
@@ -88,13 +74,11 @@ export default function FrameImage({
             <IconLoader2
               className={twMerge("size-6 animate-spin", isDark ? "text-warm-white" : "text-warm-black-50")}
             />
-            {!hideStatusText && (
-              <span
-                className={twMerge("text-center font-bold text-xs", isDark ? "text-warm-white" : "text-warm-black-50")}
-              >
-                いい感じにしています
-              </span>
-            )}
+            <span
+              className={twMerge("text-center font-bold text-xs", isDark ? "text-warm-white" : "text-warm-black-50")}
+            >
+              いい感じにしています
+            </span>
           </div>
         </div>
       );

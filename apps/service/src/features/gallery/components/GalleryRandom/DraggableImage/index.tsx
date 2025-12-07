@@ -12,7 +12,7 @@ export type Position = {
 };
 
 type Props = {
-  image: Omit<ComponentProps<typeof FrameImage>, "hideStatusText">;
+  image: ComponentProps<typeof FrameImage>;
   initialPosition: Position;
   delay: number;
   containerRef: RefObject<HTMLDivElement | null>;

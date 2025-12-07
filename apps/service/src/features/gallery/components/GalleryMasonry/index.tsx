@@ -16,7 +16,7 @@ const COLUMNS = new Map([
 ]);
 
 type Props = {
-  images: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
+  images: ComponentProps<typeof FrameImage>[];
   totalImageCount: number;
   currentPage: number;
   itemsPerPage?: number;
@@ -101,7 +101,7 @@ export default function GalleryMasonry({
           {imageColumns.map((column, colIndex) => (
             <div key={colIndex.toString()} className="flex flex-1 flex-col gap-2 pc:gap-3">
               {column.map((image) => (
-                <FrameImage key={image.id} className="h-auto w-full" hideStatusText {...image} />
+                <FrameImage key={image.id} className="h-auto w-full" {...image} />
               ))}
             </div>
           ))}
