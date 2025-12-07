@@ -137,7 +137,7 @@ export async function fetchRandomImagesByUserId(
     const db = getDB(dbInstance);
 
     const results = await db.query.image.findMany({
-      where: and(eq(image.userId, userId), ne(image.status, "moderation_violation")),
+      where: and(eq(image.userId, userId), eq(image.status, "published")),
       orderBy: [sql`RANDOM()`],
       limit,
       with: {
@@ -313,14 +313,14 @@ export async function fetchRandomImagesByTagId(
   try {
     const db = getDB(dbInstance);
 
-    // 1. タグIDに紐づく公開・処理中の画像IDをランダムに取得
+    // 1. タグIDに紐づく公開済み画像IDをランダムに取得
     const imageIdResults = await db
       .select({
         imageId: imageTag.imageId,
       })
       .from(imageTag)
       .innerJoin(image, eq(imageTag.imageId, image.id))
-      .where(and(eq(imageTag.tagId, tagId), ne(image.status, "moderation_violation")))
+      .where(and(eq(imageTag.tagId, tagId), eq(image.status, "published")))
       .orderBy(sql`RANDOM()`)
       .limit(limit);
 
