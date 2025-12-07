@@ -7,7 +7,7 @@ import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
 import { uploadTempImage } from "@/libs/r2";
-import type { ModerationJobMessage } from "@/types/moderation";
+import type { UploadJobMessage } from "@/types/upload";
 import { UPLOAD_ERROR_MESSAGE } from "../constants/error";
 import { getImageDimensions } from "../libs/image";
 import { uploadImageServerSchema } from "../schemas/upload";
@@ -148,15 +148,15 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    // モデレーションジョブをQueueに投入
-    const moderationJob: ModerationJobMessage = {
+    // アップロードジョブをQueueに投入
+    const uploadJob: UploadJobMessage = {
       imageId,
       userId,
     };
 
     waitUntil(
       Promise.all([
-        env.MODERATION_QUEUE.send(moderationJob),
+        env.MODERATION_QUEUE.send(uploadJob),
         // タグ一覧のKVキャッシュを無効化
         registerResult.data?.tags
           ? invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)])

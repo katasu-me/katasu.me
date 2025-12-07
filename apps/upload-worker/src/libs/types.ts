@@ -1,9 +1,9 @@
-export type ModerationJobMessage = {
+export type UploadJobMessage = {
   imageId: string;
   userId: string;
 };
 
-export type ModerationEnv = Cloudflare.Env & {
+export type UploadEnv = Cloudflare.Env & {
   OPENAI_API_KEY: string;
   IMAGE_R2_URL: string;
 };

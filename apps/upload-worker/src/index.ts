@@ -2,12 +2,12 @@ import { updateImageStatus } from "@katasu.me/service-db";
 import { generateImageVariants } from "./libs/image";
 import { checkImageModeration } from "./libs/moderation";
 import { deleteImages, getImageUrl, uploadImages } from "./libs/r2";
-import type { ModerationEnv, ModerationJobMessage } from "./libs/types";
+import type { UploadEnv, UploadJobMessage } from "./libs/types";
 
 const MAX_RETRY_ATTEMPTS = 3;
 
 export default {
-  async queue(batch: MessageBatch<ModerationJobMessage>, env: ModerationEnv): Promise<void> {
+  async queue(batch: MessageBatch<UploadJobMessage>, env: UploadEnv): Promise<void> {
     for (const message of batch.messages) {
       const { imageId, userId } = message.body;
 
@@ -15,7 +15,7 @@ export default {
         const tempObject = await env.TEMP_R2_BUCKET.get(imageId);
 
         if (!tempObject) {
-          console.error(`[moderation] Temp file not found: ${imageId}`);
+          console.error(`[upload] Temp file not found: ${imageId}`);
           await updateImageStatus(env.DB, imageId, "error");
           message.ack();
           continue;
@@ -44,11 +44,11 @@ export default {
 
         message.ack();
       } catch (error) {
-        console.error(`[moderation] Error processing image ${imageId}:`, error);
+        console.error(`[upload] Error processing image ${imageId}:`, error);
 
         if (message.attempts >= MAX_RETRY_ATTEMPTS) {
           // リトライ上限に達したらエラーステータスに更新
-          console.error(`[moderation] Max retries reached for image ${imageId}`);
+          console.error(`[upload] Max retries reached for image ${imageId}`);
           await updateImageStatus(env.DB, imageId, "error");
           message.ack();
         } else {

@@ -1,5 +1,5 @@
 {
-  "name": "@katasu.me/moderation-worker",
+  "name": "@katasu.me/upload-worker",
   "private": true,
   "scripts": {
     "dev": "wrangler dev",
