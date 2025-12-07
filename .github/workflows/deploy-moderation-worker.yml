@@ -29,6 +29,7 @@ jobs:
           cd apps/moderation-worker
           cp wrangler.develop.toml wrangler.toml
           sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.toml
+          sed -i "s|<DEVELOPMENT_IMAGE_R2_URL>|${{ vars.DEVELOPMENT_VITE_IMAGE_R2_URL }}|g" wrangler.toml
           echo "wrangler.toml created for development"
 
       - name: Create wrangler.toml for production
@@ -37,6 +38,7 @@ jobs:
           cd apps/moderation-worker
           cp wrangler.production.toml wrangler.toml
           sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.toml
+          sed -i "s|<PRODUCTION_IMAGE_R2_URL>|${{ vars.PRODUCTION_VITE_IMAGE_R2_URL }}|g" wrangler.toml
           echo "wrangler.toml created for production"
 
       - name: Deploy

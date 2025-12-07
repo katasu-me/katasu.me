@@ -5,7 +5,7 @@ export type ModerationJobMessage = {
 
 export type ModerationEnv = Cloudflare.Env & {
   OPENAI_API_KEY: string;
-  VITE_IMAGE_R2_URL: string;
+  IMAGE_R2_URL: string;
 };
 
 export type ConvertWebpOptions = {

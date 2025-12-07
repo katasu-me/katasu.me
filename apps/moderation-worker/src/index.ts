@@ -36,7 +36,7 @@ export default {
         console.log(`[moderation] Deleted temp file: ${imageId}`);
 
         // モデレーションチェック
-        const imageUrl = getImageUrl(env.VITE_IMAGE_R2_URL, userId, imageId);
+        const imageUrl = getImageUrl(env.IMAGE_R2_URL, userId, imageId);
         const flagged = await checkImageModeration(env.OPENAI_API_KEY, imageUrl);
 
         console.log(`[moderation] Moderation result for image ${imageId}: ${flagged ? "flagged" : "approved"}`);
