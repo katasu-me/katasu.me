@@ -1,6 +1,6 @@
 import type { ImageStatus } from "@katasu.me/service-db";
 import { Link } from "@tanstack/react-router";
-import { type ComponentProps, useMemo, useState } from "react";
+import { type ComponentProps, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import IconAlertTriangleFilled from "@/assets/icons/alert-triangle-filled.svg?react";
 import IconExclamationCircle from "@/assets/icons/exclamation-circle.svg?react";
@@ -34,8 +34,6 @@ export default function FrameImage({
   const isViolation = status === "moderation_violation";
   const isProcessing = status === "processing";
   const isError = status === "error";
-
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   // ThumbHashからブラー画像と明るさを取得
   const { blurDataUrl, isDark } = useMemo(() => {
@@ -77,10 +75,8 @@ export default function FrameImage({
         className={twMerge(
           "pointer-events-none absolute top-0 left-0 h-full w-full object-cover transition-opacity duration-400 ease-magnetic",
           !disableHoverEffect && "group-hover:brightness-90",
-          !isImageLoaded && "opacity-0",
         )}
         alt={alt}
-        onLoad={() => setIsImageLoaded(true)}
         {...props}
       />
     );
