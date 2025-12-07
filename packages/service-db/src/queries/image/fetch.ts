@@ -9,6 +9,7 @@ export type FetchImagesOptions = {
   limit?: number;
   offset?: number;
   order?: "asc" | "desc";
+  includeViolation?: boolean;
 };
 
 export const DEFAULT_FETCH_IMAGES_LIMIT = 24;
@@ -82,8 +83,12 @@ export async function fetchImagesByUserId(
   try {
     const db = getDB(dbInstance);
 
+    const whereCondition = opts.includeViolation
+      ? eq(image.userId, userId)
+      : and(eq(image.userId, userId), ne(image.status, "moderation_violation"));
+
     const results = await db.query.image.findMany({
-      where: and(eq(image.userId, userId), ne(image.status, "moderation_violation")),
+      where: whereCondition,
       orderBy: [opts.order === "asc" ? asc(image.createdAt) : desc(image.createdAt)],
       limit: opts.limit ?? DEFAULT_FETCH_IMAGES_LIMIT,
       offset: opts.offset ?? 0,
@@ -203,12 +208,16 @@ export async function fetchImagesByTagId(
   try {
     const db = getDB(dbInstance);
 
-    // 指定されたタグIDを持つ、公開・処理中の画像のリストを取得
+    // 指定されたタグIDを持つ画像のリストを取得
+    const whereCondition = opts.includeViolation
+      ? eq(imageTag.tagId, tagId)
+      : and(eq(imageTag.tagId, tagId), ne(image.status, "moderation_violation"));
+
     const targetImageIdsSubquery = db
       .select({ imageId: imageTag.imageId })
       .from(imageTag)
       .innerJoin(image, eq(imageTag.imageId, image.id))
-      .where(and(eq(imageTag.tagId, tagId), ne(image.status, "moderation_violation")))
+      .where(whereCondition)
       .as("target_images");
 
     // 画像とそのタグを取得

@@ -3,6 +3,7 @@ import { fetchImagesByUserId, fetchTagsByUserId, fetchTotalImageCountByUserId } 
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import { type InferInput, number, object, string } from "valibot";
+import { getUserSession } from "../../auth/libs/auth";
 import { GALLERY_PAGE_SIZE } from "../constants/page";
 import { GalleryViewSchema } from "../schemas/view";
 import { fetchRandomImagesFn } from "./fetch-random";
@@ -30,6 +31,9 @@ const userPageLoaderFn = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { view, userId, page } = data;
 
+    const { session } = await getUserSession();
+    const isOwner = session?.user?.id === userId;
+
     // ランダムビューの場合
     if (view === "random") {
       const [tags, images] = await Promise.all([
@@ -56,6 +60,7 @@ const userPageLoaderFn = createServerFn({ method: "GET" })
         offset,
         order: "desc",
         limit: GALLERY_PAGE_SIZE,
+        includeViolation: isOwner,
       }),
     ]);
 
