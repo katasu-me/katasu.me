@@ -85,7 +85,7 @@ export default function FrameImage({
   return (
     <div
       className={twMerge(
-        "group intaraction-base relative overflow-hidden border-5 border-white bg-center bg-cover bg-warm-black-25 shadow-md",
+        "group interactive-base relative overflow-hidden border-5 border-white bg-center bg-cover bg-warm-black-25 shadow-md",
         !disableHoverEffect && "interactive-scale-sm",
         className,
       )}
