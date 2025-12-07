@@ -1,7 +1,7 @@
 import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { createDBActionError } from "../../lib/error";
-import { type ImageWithTags, image, imageTag, tag } from "../../schema";
+import { type ImageStatus, type ImageWithTags, image, imageTag, tag } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import { getDB } from "../db";
 
@@ -15,6 +15,19 @@ export type FetchImagesOptions = {
 export const DEFAULT_FETCH_IMAGES_LIMIT = 24;
 export const DEFAULT_RANDOM_IMAGES_LIMIT = 10;
 export const MAX_TAGS_PER_IMAGE = 10; // 1画像あたりのタグ最大数
+
+const THUMBHASH_HIDDEN_STATUSES: ImageStatus[] = ["moderation_violation", "error"];
+
+/**
+ * 違反・エラー画像のthumbhashをnullにする
+ */
+function maskThumbhash<T extends { status: ImageStatus; thumbhash: string | null }>(imageData: T): T {
+  if (THUMBHASH_HIDDEN_STATUSES.includes(imageData.status)) {
+    return { ...imageData, thumbhash: null };
+  }
+
+  return imageData;
+}
 
 /**
  * 画像IDから画像を取得する
@@ -59,10 +72,10 @@ export async function fetchImageById(
 
     return {
       success: true,
-      data: {
+      data: maskThumbhash({
         ...imageData,
         tags: imageTag.map((it) => it.tag),
-      },
+      }),
     };
   } catch (error) {
     return createDBActionError("画像の取得に失敗しました", error);
@@ -110,10 +123,10 @@ export async function fetchImagesByUserId(
       data: results.map((result) => {
         const { imageTag, ...imageData } = result;
 
-        return {
+        return maskThumbhash({
           ...imageData,
           tags: imageTag.map((it) => it.tag),
-        };
+        });
       }),
     };
   } catch (error) {
@@ -158,10 +171,10 @@ export async function fetchRandomImagesByUserId(
       data: results.map((result) => {
         const { imageTag, ...imageData } = result;
 
-        return {
+        return maskThumbhash({
           ...imageData,
           tags: imageTag.map((it) => it.tag),
-        };
+        });
       }),
     };
   } catch (error) {
@@ -287,7 +300,9 @@ export async function fetchImagesByTagId(
     }
 
     // limitを適用（タグでグループ化した後）
-    const images = Array.from(imageMap.values()).slice(0, opts.limit ?? DEFAULT_FETCH_IMAGES_LIMIT);
+    const images = Array.from(imageMap.values())
+      .slice(0, opts.limit ?? DEFAULT_FETCH_IMAGES_LIMIT)
+      .map(maskThumbhash);
 
     return {
       success: true,
@@ -354,10 +369,10 @@ export async function fetchRandomImagesByTagId(
       data: results.map((result) => {
         const { imageTag, ...imageData } = result;
 
-        return {
+        return maskThumbhash({
           ...imageData,
           tags: imageTag.map((it) => it.tag),
-        };
+        });
       }),
     };
   } catch (error) {
