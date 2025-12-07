@@ -11,6 +11,7 @@ import RemoveButton from "@/features/image-delete/components/RemoveButton";
 import EditButton from "@/features/image-edit/components/EditButton";
 import BigImage from "@/features/image-view/components/BigImage";
 import ShareButton from "@/features/image-view/components/ShareButton";
+import { ERROR_MESSAGE } from "@/features/image-view/constants/message";
 import { imagePageQueryOptions } from "@/features/image-view/server-fn/image-page";
 import { generateMetadata } from "@/libs/meta";
 import { getImageUrl } from "@/libs/r2";
@@ -69,11 +70,7 @@ function RouteComponent() {
   const frameImageProps = toFrameImageProps(image, "original");
 
   const renderContent = () => {
-    const errorMessage = isViolation
-      ? "この投稿はガイドラインに違反しているため、非表示になりました"
-      : isError
-        ? "この投稿は処理中にエラーが発生したため、公開できませんでした"
-        : null;
+    const errorMessage = isViolation ? ERROR_MESSAGE.VIOLATION : isError ? ERROR_MESSAGE.PROCESSING_FAILED : null;
 
     if (errorMessage) {
       return (
