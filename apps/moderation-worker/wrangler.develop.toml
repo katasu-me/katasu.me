@@ -17,8 +17,8 @@ enabled = true
 # https://developers.cloudflare.com/queues/
 [[queues.consumers]]
 queue = "katasu-me-dev-moderation"
-max_batch_size = 10
-max_batch_timeout = 30
+max_batch_size = 1
+max_batch_timeout = 1
 
 # Bindings
 [[d1_databases]]
