@@ -1,4 +1,4 @@
-import { asc, count, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { createDBActionError } from "../../lib/error";
 import { type ImageWithTags, image, imageTag, tag } from "../../schema";
@@ -83,7 +83,7 @@ export async function fetchImagesByUserId(
     const db = getDB(dbInstance);
 
     const results = await db.query.image.findMany({
-      where: eq(image.userId, userId),
+      where: and(eq(image.userId, userId), eq(image.status, "published")),
       orderBy: [opts.order === "asc" ? asc(image.createdAt) : desc(image.createdAt)],
       limit: opts.limit ?? DEFAULT_FETCH_IMAGES_LIMIT,
       offset: opts.offset ?? 0,
@@ -132,7 +132,7 @@ export async function fetchRandomImagesByUserId(
     const db = getDB(dbInstance);
 
     const results = await db.query.image.findMany({
-      where: eq(image.userId, userId),
+      where: and(eq(image.userId, userId), eq(image.status, "published")),
       orderBy: [sql`RANDOM()`],
       limit,
       with: {
@@ -203,11 +203,12 @@ export async function fetchImagesByTagId(
   try {
     const db = getDB(dbInstance);
 
-    // 指定されたタグIDを持つ画像IDのリストを取得
+    // 指定されたタグIDを持つ、公開画像のリストを取得
     const targetImageIdsSubquery = db
       .select({ imageId: imageTag.imageId })
       .from(imageTag)
-      .where(eq(imageTag.tagId, tagId))
+      .innerJoin(image, eq(imageTag.imageId, image.id))
+      .where(and(eq(imageTag.tagId, tagId), eq(image.status, "published")))
       .as("target_images");
 
     // 画像とそのタグを取得
@@ -303,13 +304,14 @@ export async function fetchRandomImagesByTagId(
   try {
     const db = getDB(dbInstance);
 
-    // 1. タグIDに紐づく画像IDをランダムに取得
+    // 1. タグIDに紐づくpublished画像IDをランダムに取得
     const imageIdResults = await db
       .select({
         imageId: imageTag.imageId,
       })
       .from(imageTag)
-      .where(eq(imageTag.tagId, tagId))
+      .innerJoin(image, eq(imageTag.imageId, image.id))
+      .where(and(eq(imageTag.tagId, tagId), eq(image.status, "published")))
       .orderBy(sql`RANDOM()`)
       .limit(limit);
 
