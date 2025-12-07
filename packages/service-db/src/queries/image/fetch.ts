@@ -1,7 +1,7 @@
 import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { createDBActionError } from "../../lib/error";
-import { type ImageStatus, type ImageWithTags, image, imageTag, tag } from "../../schema";
+import { type ImageStatus, type ImageWithTags, image, imageTag } from "../../schema";
 import type { ActionResult } from "../../types/error";
 import { getDB } from "../db";
 
@@ -14,7 +14,6 @@ export type FetchImagesOptions = {
 
 export const DEFAULT_FETCH_IMAGES_LIMIT = 24;
 export const DEFAULT_RANDOM_IMAGES_LIMIT = 10;
-export const MAX_TAGS_PER_IMAGE = 10; // 1画像あたりのタグ最大数
 
 const THUMBHASH_HIDDEN_STATUSES: ImageStatus[] = ["moderation_violation", "error"];
 
@@ -221,92 +220,62 @@ export async function fetchImagesByTagId(
   try {
     const db = getDB(dbInstance);
 
-    // 指定されたタグIDを持つ画像のリストを取得
+    // 指定されたタグIDを持つ画像IDを取得
     const whereCondition = opts.includeAllStatuses
       ? eq(imageTag.tagId, tagId)
       : and(eq(imageTag.tagId, tagId), eq(image.status, "published"));
 
-    const targetImageIdsSubquery = db
-      .select({ imageId: imageTag.imageId })
+    const imageIdResults = await db
+      .select({ imageId: imageTag.imageId, createdAt: image.createdAt })
       .from(imageTag)
       .innerJoin(image, eq(imageTag.imageId, image.id))
       .where(whereCondition)
-      .as("target_images");
-
-    // 画像とそのタグを取得
-    const results = await db
-      .select({
-        imageId: image.id,
-        userId: image.userId,
-        width: image.width,
-        height: image.height,
-        title: image.title,
-        status: image.status,
-        thumbhash: image.thumbhash,
-        createdAt: image.createdAt,
-        updatedAt: image.updatedAt,
-        tagId: tag.id,
-        tagName: tag.name,
-        tagCreatedAt: tag.createdAt,
-        tagHiddenAt: tag.hiddenAt,
-      })
-      .from(image)
-      .innerJoin(targetImageIdsSubquery, eq(image.id, targetImageIdsSubquery.imageId))
-      .leftJoin(imageTag, eq(image.id, imageTag.imageId))
-      .leftJoin(tag, eq(imageTag.tagId, tag.id))
       .orderBy(opts.order === "asc" ? asc(image.createdAt) : desc(image.createdAt))
-      .limit((opts.limit ?? DEFAULT_FETCH_IMAGES_LIMIT) * MAX_TAGS_PER_IMAGE) // 1画像あたり最大10タグなので10倍取得
+      .limit(opts.limit ?? DEFAULT_FETCH_IMAGES_LIMIT)
       .offset(opts.offset ?? 0);
 
-    if (results.length === 0) {
+    if (imageIdResults.length === 0) {
       return {
         success: true,
         data: [],
       };
     }
 
-    // 結果を画像ごとにグループ化
-    const imageMap = new Map<string, ImageWithTags>();
+    const imageIds = imageIdResults.map((r) => r.imageId);
 
-    for (const row of results) {
-      if (!imageMap.has(row.imageId)) {
-        imageMap.set(row.imageId, {
-          id: row.imageId,
-          userId: row.userId,
-          width: row.width,
-          height: row.height,
-          title: row.title,
-          status: row.status,
-          thumbhash: row.thumbhash,
-          createdAt: row.createdAt,
-          updatedAt: row.updatedAt,
-          tags: [],
-        });
-      }
+    // 画像IDから完全な画像とタグを取得
+    const results = await db.query.image.findMany({
+      where: inArray(image.id, imageIds),
+      with: {
+        imageTag: {
+          with: {
+            tag: {
+              columns: {
+                userId: false,
+              },
+            },
+          },
+        },
+      },
+    });
 
-      // タグを追加
-      if (row.tagId && row.tagName && row.tagCreatedAt) {
-        const imageData = imageMap.get(row.imageId);
-
-        if (imageData) {
-          imageData.tags.push({
-            id: row.tagId,
-            name: row.tagName,
-            createdAt: row.tagCreatedAt,
-            hiddenAt: row.tagHiddenAt,
-          });
-        }
-      }
-    }
-
-    // limitを適用（タグでグループ化した後）
-    const images = Array.from(imageMap.values())
-      .slice(0, opts.limit ?? DEFAULT_FETCH_IMAGES_LIMIT)
-      .map(maskThumbhash);
+    // 元の順序を維持するためにソート
+    const sortedResults = results.sort((a, b) => {
+      const indexA = imageIds.indexOf(a.id);
+      const indexB = imageIds.indexOf(b.id);
+      return indexA - indexB;
+    });
 
     return {
       success: true,
-      data: images,
+      data: sortedResults.map((result) => {
+        const { imageTag, ...imageData } = result;
+
+        return maskThumbhash({
+          ...imageData,
+          tags: imageTag.map((it) => it.tag),
+        });
+      }),
     };
   } catch (error) {
     return createDBActionError("タグIDからの画像一覧の取得に失敗しました", error);
