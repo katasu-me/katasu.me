@@ -19,7 +19,7 @@ export default function GalleryToggle({ value, onRandomClick, className }: Props
 
   return (
     <div
-      className={twMerge("flex rounded-lg bg-warm-black-25 p-1", className)}
+      className={twMerge("flex rounded-lg border-2 border-warm-white bg-warm-black-25 p-1", className)}
       role="tablist"
       aria-label="Layout selection"
     >
