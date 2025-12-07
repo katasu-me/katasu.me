@@ -1,6 +1,6 @@
 import type { ImageStatus } from "@katasu.me/service-db";
 import { Link } from "@tanstack/react-router";
-import { type ComponentProps, useMemo } from "react";
+import { type ComponentProps, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import IconAlertTriangleFilled from "@/assets/icons/alert-triangle-filled.svg?react";
 import IconExclamationCircle from "@/assets/icons/exclamation-circle.svg?react";
@@ -35,9 +35,11 @@ export default function FrameImage({
   const isProcessing = status === "processing";
   const isError = status === "error";
 
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
   // ThumbHashからブラー画像と明るさを取得
   const { blurDataUrl, isDark } = useMemo(() => {
-    if (!isProcessing || !thumbhash) {
+    if (!thumbhash) {
       return {
         blurDataUrl: null,
         isDark: false,
@@ -50,7 +52,7 @@ export default function FrameImage({
       blurDataUrl: decodeThumbHash(thumbhash),
       isDark: luminance < 0.7,
     };
-  }, [isProcessing, thumbhash]);
+  }, [thumbhash]);
 
   const renderContent = () => {
     const StatusIcon = isViolation ? IconAlertTriangleFilled : isError ? IconExclamationCircle : null;
@@ -62,24 +64,10 @@ export default function FrameImage({
     if (isProcessing) {
       return (
         <div className="pointer-events-none absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center gap-1 p-4">
-          {blurDataUrl && (
-            <img
-              className="absolute top-0 left-0 h-full w-full scale-110 object-cover blur-lg"
-              src={blurDataUrl}
-              alt=""
-              aria-hidden="true"
-            />
-          )}
-          <div className="relative z-10 flex flex-col items-center justify-center gap-1">
-            <IconLoader2
-              className={twMerge("size-6 animate-spin", isDark ? "text-warm-white" : "text-warm-black-50")}
-            />
-            <span
-              className={twMerge("text-center font-bold text-xs", isDark ? "text-warm-white" : "text-warm-black-50")}
-            >
-              いい感じにしています
-            </span>
-          </div>
+          <IconLoader2 className={twMerge("size-6 animate-spin", isDark ? "text-warm-white" : "text-warm-black-50")} />
+          <span className={twMerge("text-center font-bold text-xs", isDark ? "text-warm-white" : "text-warm-black-50")}>
+            いい感じにしています
+          </span>
         </div>
       );
     }
@@ -87,10 +75,12 @@ export default function FrameImage({
     return (
       <img
         className={twMerge(
-          "pointer-events-none absolute top-0 left-0 h-full w-full object-cover transition-all",
+          "pointer-events-none absolute top-0 left-0 h-full w-full object-cover transition-opacity duration-400 ease-magnetic",
           !disableHoverEffect && "group-hover:brightness-90",
+          !isImageLoaded && "opacity-0",
         )}
         alt={alt}
+        onLoad={() => setIsImageLoaded(true)}
         {...props}
       />
     );
@@ -99,11 +89,14 @@ export default function FrameImage({
   return (
     <div
       className={twMerge(
-        "group intaraction-base relative overflow-hidden border-5 border-white bg-warm-black-25 shadow-md",
+        "group intaraction-base relative overflow-hidden border-5 border-white bg-center bg-cover bg-warm-black-25 shadow-md",
         !disableHoverEffect && "interactive-scale-sm",
         className,
       )}
-      style={{ aspectRatio: `${width} / ${height}` }}
+      style={{
+        aspectRatio: `${width} / ${height}`,
+        backgroundImage: blurDataUrl ? `url(${blurDataUrl})` : undefined,
+      }}
     >
       {linkParams && (
         <Link
