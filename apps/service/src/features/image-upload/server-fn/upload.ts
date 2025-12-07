@@ -140,7 +140,7 @@ export const uploadFn = createServerFn({ method: "POST" })
       console.error("[gallery] Image registration to DB failed:", registerResult.error);
 
       // 一時ファイルを削除（失敗しても続行）
-      env.TEMP_R2_BUCKET.delete(tempId).catch(() => {});
+      env.TEMP_R2_BUCKET.delete(imageId).catch(() => {});
 
       return {
         success: false,

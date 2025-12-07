@@ -1,7 +1,6 @@
 export type ModerationJobMessage = {
   imageId: string;
   userId: string;
-  tempId: string;
 };
 
 export type ModerationEnv = Cloudflare.Env & {
