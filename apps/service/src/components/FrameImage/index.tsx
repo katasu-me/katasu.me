@@ -1,6 +1,12 @@
+import type { ImageStatus } from "@katasu.me/service-db";
 import { Link } from "@tanstack/react-router";
-import type { ComponentProps } from "react";
+import { type ComponentProps, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
+import IconAlertTriangleFilled from "@/assets/icons/alert-triangle-filled.svg?react";
+import IconExclamationCircle from "@/assets/icons/exclamation-circle.svg?react";
+import IconLoader2 from "@/assets/icons/loader-2.svg?react";
+import { decodeThumbHash, getThumbHashLuminance } from "@/libs/thumbhash";
+import StatusOverlay from "./StatusOverlay";
 
 type FrameImageProps = {
   width: number;
@@ -10,6 +16,8 @@ type FrameImageProps = {
     imageId: string;
   };
   disableHoverEffect?: boolean;
+  status?: ImageStatus;
+  thumbhash?: string | null;
 } & Omit<ComponentProps<"img">, "width" | "height">;
 
 export default function FrameImage({
@@ -18,9 +26,76 @@ export default function FrameImage({
   height,
   linkParams,
   disableHoverEffect = false,
+  status = "published",
+  thumbhash,
   alt,
   ...props
 }: FrameImageProps) {
+  const isViolation = status === "moderation_violation";
+  const isProcessing = status === "processing";
+  const isError = status === "error";
+
+  // ThumbHashからブラー画像と明るさを取得
+  const { blurDataUrl, isDark } = useMemo(() => {
+    if (!isProcessing || !thumbhash) {
+      return {
+        blurDataUrl: null,
+        isDark: false,
+      };
+    }
+
+    const luminance = getThumbHashLuminance(thumbhash);
+
+    return {
+      blurDataUrl: decodeThumbHash(thumbhash),
+      isDark: luminance < 0.7,
+    };
+  }, [isProcessing, thumbhash]);
+
+  const renderContent = () => {
+    const StatusIcon = isViolation ? IconAlertTriangleFilled : isError ? IconExclamationCircle : null;
+
+    if (StatusIcon) {
+      return <StatusOverlay icon={<StatusIcon className="size-8 text-warm-black-50" />} />;
+    }
+
+    if (isProcessing) {
+      return (
+        <div className="pointer-events-none absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center gap-1 p-4">
+          {blurDataUrl && (
+            <img
+              className="absolute top-0 left-0 h-full w-full scale-110 object-cover blur-lg"
+              src={blurDataUrl}
+              alt=""
+              aria-hidden="true"
+            />
+          )}
+          <div className="relative z-10 flex flex-col items-center justify-center gap-1">
+            <IconLoader2
+              className={twMerge("size-6 animate-spin", isDark ? "text-warm-white" : "text-warm-black-50")}
+            />
+            <span
+              className={twMerge("text-center font-bold text-xs", isDark ? "text-warm-white" : "text-warm-black-50")}
+            >
+              いい感じにしています
+            </span>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <img
+        className={twMerge(
+          "pointer-events-none absolute top-0 left-0 h-full w-full object-cover transition-all",
+          !disableHoverEffect && "group-hover:brightness-90",
+        )}
+        alt={alt}
+        {...props}
+      />
+    );
+  };
+
   return (
     <div
       className={twMerge(
@@ -43,14 +118,7 @@ export default function FrameImage({
           <span className="absolute inset-0 z-overlay" />
         </Link>
       )}
-      <img
-        className={twMerge(
-          "pointer-events-none absolute top-0 left-0 h-full w-full object-cover transition-all",
-          !disableHoverEffect && "group-hover:brightness-90",
-        )}
-        alt={alt}
-        {...props}
-      />
+      {renderContent()}
     </div>
   );
 }

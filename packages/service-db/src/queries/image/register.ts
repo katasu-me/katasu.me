@@ -105,7 +105,7 @@ export async function registerImage(
 
   // あんまないと思うけど念のため
   if (!imageResult) {
-    await deleteImage(dbInstance, userId).catch(() => {
+    await deleteImage(dbInstance, imageId, userId).catch(() => {
       // 失敗しても無視
     });
 

@@ -4,6 +4,7 @@ import { useSession } from "@/features/auth/libs/auth-client";
 import { TAG_PAGE_QUERY_KEY } from "@/features/gallery/server-fn/tag-page";
 import { USER_IMAGE_COUNT_QUERY_KEY } from "@/features/gallery/server-fn/user-image-count";
 import { USER_PAGE_QUERY_KEY } from "@/features/gallery/server-fn/user-page";
+import { calculateThumbHash } from "../libs/thumbhash";
 import { uploadFn } from "../server-fn/upload";
 
 export type UploadStatus = "idle" | "uploading" | "success" | "error";
@@ -113,7 +114,7 @@ export function UploadProvider({ children }: PropsWithChildren) {
     }, 400);
   };
 
-  const upload = (file: File, data: { title?: FormData["title"]; tags?: FormData["tags"] }) => {
+  const upload = async (file: File, data: { title?: FormData["title"]; tags?: FormData["tags"] }) => {
     // エラー時に復元するためにフォームデータを保存しておく
     setFormData({
       file,
@@ -124,34 +125,38 @@ export function UploadProvider({ children }: PropsWithChildren) {
     setState({ status: "uploading" });
     setIsDrawerOpen(false);
 
-    const formDataPayload = new globalThis.FormData();
-    formDataPayload.append("file", file);
+    try {
+      // ThumbHash を計算
+      const thumbhash = await calculateThumbHash(file);
 
-    if (data.title) {
-      formDataPayload.append("title", data.title);
-    }
+      const formDataPayload = new globalThis.FormData();
+      formDataPayload.append("file", file);
+      formDataPayload.append("thumbhash", thumbhash);
 
-    if (data.tags && data.tags.length > 0) {
-      formDataPayload.append("tags", JSON.stringify(data.tags));
-    }
+      if (data.title) {
+        formDataPayload.append("title", data.title);
+      }
 
-    uploadFn({ data: formDataPayload })
-      .then((result) => {
-        if (!result.success) {
-          setState({ status: "error", error: result.error });
-          return;
-        }
+      if (data.tags && data.tags.length > 0) {
+        formDataPayload.append("tags", JSON.stringify(data.tags));
+      }
 
-        setState({ status: "success" });
-        setFormData(null);
-        invalidateQueries();
-      })
-      .catch((error) => {
-        setState({
-          status: "error",
-          error: error instanceof Error ? error.message : "アップロードに失敗しました",
-        });
+      const result = await uploadFn({ data: formDataPayload });
+
+      if (!result.success) {
+        setState({ status: "error", error: result.error });
+        return;
+      }
+
+      setState({ status: "success" });
+      setFormData(null);
+      invalidateQueries();
+    } catch (error) {
+      setState({
+        status: "error",
+        error: error instanceof Error ? error.message : "アップロードに失敗しました",
       });
+    }
   };
 
   return (

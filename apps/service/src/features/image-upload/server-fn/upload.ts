@@ -1,16 +1,16 @@
 import { env, waitUntil } from "cloudflare:workers";
-import { deleteImage, fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
+import { fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
 import * as v from "valibot";
 import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
-import { createImageUploadPromises, generateR2Key } from "@/libs/r2";
+import { uploadTempImage } from "@/libs/r2";
+import type { UploadJobMessage } from "@/types/upload";
 import { UPLOAD_ERROR_MESSAGE } from "../constants/error";
-import { generateImageVariants, getImageDimensions } from "../libs/image";
-import { checkImageModeration } from "../libs/moderation";
-import { uploadImageSchema } from "../schemas/upload";
+import { getImageDimensions } from "../libs/image";
+import { uploadImageServerSchema } from "../schemas/upload";
 
 type UploadResult =
   | {
@@ -31,6 +31,7 @@ export const uploadFn = createServerFn({ method: "POST" })
     const file = data.get("file");
     const title = data.get("title");
     const tagsJson = data.get("tags");
+    const thumbhash = data.get("thumbhash");
 
     let tags: string[] | undefined;
     if (tagsJson) {
@@ -45,9 +46,10 @@ export const uploadFn = createServerFn({ method: "POST" })
       file,
       title: title || undefined,
       tags,
+      thumbhash,
     };
 
-    const result = v.safeParse(uploadImageSchema, payload);
+    const result = v.safeParse(uploadImageServerSchema, payload);
 
     if (!result.success) {
       const firstError = result.issues[0]?.message ?? ERROR_MESSAGE.VALIDATION_FAILED;
@@ -87,19 +89,6 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    const imageId = nanoid();
-    const originalKey = generateR2Key("image", userId, imageId, "original");
-    const existingOriginal = await env.IMAGES_R2_BUCKET.head(originalKey);
-
-    if (existingOriginal) {
-      console.error("[gallery] Image ID duplicated:", { userId, imageId });
-
-      return {
-        success: false,
-        error: UPLOAD_ERROR_MESSAGE.IMAGE_ID_DUPLICATE,
-      };
-    }
-
     if (!data.file) {
       return {
         success: false,
@@ -107,56 +96,30 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    let convertResult: Awaited<ReturnType<typeof generateImageVariants>>;
-
+    // 画像のサイズを取得
+    let dimensions: { width: number; height: number };
     try {
       const arrayBuffer = await data.file.arrayBuffer();
-      const originalImageDimensions = getImageDimensions(arrayBuffer);
-
-      convertResult = await generateImageVariants(arrayBuffer, {
-        originalWidth: originalImageDimensions.width,
-        originalHeight: originalImageDimensions.height,
-      });
+      dimensions = getImageDimensions(arrayBuffer);
     } catch (error) {
-      console.error("[gallery] Image conversion failed:", error);
-
-      const errorMessage = error instanceof Error ? error.message : UPLOAD_ERROR_MESSAGE.IMAGE_CONVERSION_FAILED;
+      console.error("[gallery] Failed to get image dimensions:", error);
 
       return {
         success: false,
-        error: errorMessage,
+        error: UPLOAD_ERROR_MESSAGE.IMAGE_CONVERSION_FAILED,
       };
     }
 
-    const [originalUploadPromise, thumbnailUploadPromise] = createImageUploadPromises(env.IMAGES_R2_BUCKET, {
-      type: "image",
-      variants: convertResult,
-      userId,
-      imageId,
-    });
+    const imageId = nanoid();
 
-    const registerImagePromise = registerImage(env.DB, session.user.id, {
-      ...convertResult.dimensions,
-      id: imageId,
-      title: data.title ?? null,
-      tags: data.tags,
-    });
-
-    const moderationPromise = checkImageModeration(env.OPENAI_API_KEY, convertResult.original.data);
-
-    const [originalResult, thumbnailResult, registerResult, moderationResult] = await Promise.allSettled([
-      originalUploadPromise,
-      thumbnailUploadPromise,
-      registerImagePromise,
-      moderationPromise,
-    ]);
-
-    // アップロードのエラーハンドリング
-    if (originalResult.status === "rejected" || thumbnailResult.status === "rejected") {
-      console.error("[gallery] Image upload failed:", {
-        original: originalResult.status === "rejected" ? originalResult.reason : "ok",
-        thumbnail: thumbnailResult.status === "rejected" ? thumbnailResult.reason : "ok",
+    // 一時バケットに画像をアップロード
+    try {
+      await uploadTempImage(env.TEMP_R2_BUCKET, {
+        imageId,
+        file: data.file,
       });
+    } catch (error) {
+      console.error("[gallery] Failed to upload temp image:", error);
 
       return {
         success: false,
@@ -164,10 +127,20 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    // 画像の登録のエラーハンドリング
-    if (registerResult.status === "rejected" || !registerResult.value.success) {
-      const error = registerResult.status === "rejected" ? registerResult.reason : !registerResult.value.success;
-      console.error("[gallery] Image registration to DB failed:", error);
+    // DBに画像を登録
+    const registerResult = await registerImage(env.DB, userId, {
+      id: imageId,
+      ...dimensions,
+      title: data.title ?? null,
+      thumbhash: data.thumbhash,
+      tags: data.tags,
+    });
+
+    if (!registerResult.success) {
+      console.error("[gallery] Image registration to DB failed:", registerResult.error);
+
+      // 一時ファイルを削除（失敗しても続行）
+      env.TEMP_R2_BUCKET.delete(imageId).catch(() => {});
 
       return {
         success: false,
@@ -175,52 +148,21 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
-    const registerImageResult = registerResult.value;
+    // アップロードジョブをQueueに投入
+    const uploadJob: UploadJobMessage = {
+      imageId,
+      userId,
+    };
 
-    // モデレーションのエラーハンドリング
-    if (moderationResult.status === "rejected") {
-      console.error("[gallery] Moderation API failed:", moderationResult.reason);
-
-      waitUntil(
-        Promise.all([
-          env.IMAGES_R2_BUCKET.delete([
-            generateR2Key("image", userId, imageId, "original"),
-            generateR2Key("image", userId, imageId, "thumbnail"),
-          ]),
-          deleteImage(env.DB, imageId, userId),
-        ]),
-      );
-
-      return {
-        success: false,
-        error: UPLOAD_ERROR_MESSAGE.IMAGE_MODERATION_FAILED,
-      };
-    }
-
-    // モデレーションチェックで不適切と判断された場合は削除
-    if (moderationResult.value) {
-      waitUntil(
-        Promise.all([
-          env.IMAGES_R2_BUCKET.delete([
-            generateR2Key("image", userId, imageId, "original"),
-            generateR2Key("image", userId, imageId, "thumbnail"),
-          ]),
-          deleteImage(env.DB, imageId, userId),
-        ]),
-      );
-
-      return {
-        success: false,
-        error: UPLOAD_ERROR_MESSAGE.IMAGE_MODERATION_FLAGGED,
-      };
-    }
-
-    // タグ一覧のKVキャッシュを無効化
-    if (registerImageResult.data?.tags) {
-      waitUntil(
-        invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]),
-      );
-    }
+    waitUntil(
+      Promise.all([
+        env.MODERATION_QUEUE.send(uploadJob),
+        // タグ一覧のKVキャッシュを無効化
+        registerResult.data?.tags
+          ? invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)])
+          : Promise.resolve(),
+      ]),
+    );
 
     return {
       success: true,

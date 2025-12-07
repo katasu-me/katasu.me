@@ -9,6 +9,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { type InferInput, number, object, string } from "valibot";
+import { getUserSession } from "../../auth/libs/auth";
 import { GALLERY_PAGE_SIZE } from "../constants/page";
 import { GalleryViewSchema } from "../schemas/view";
 import { fetchRandomImagesFn } from "./fetch-random";
@@ -36,6 +37,9 @@ const tagPageLoaderFn = createServerFn({ method: "GET" })
   .inputValidator(TagPageLoaderInputSchema)
   .handler(async ({ data }) => {
     const { view, userId, tagId, page } = data;
+
+    const { session } = await getUserSession();
+    const isOwner = session?.user?.id === userId;
 
     const tagResult = await fetchTagById(env.DB, tagId);
 
@@ -72,6 +76,7 @@ const tagPageLoaderFn = createServerFn({ method: "GET" })
         offset,
         order: "desc",
         limit: GALLERY_PAGE_SIZE,
+        includeAllStatuses: isOwner,
       }),
     ]);
 

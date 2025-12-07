@@ -1,0 +1,38 @@
+#:schema node_modules/wrangler/config-schema.json
+
+name = "katasu-me-upload-processing"
+main = "src/index.ts"
+compatibility_date = "2025-09-02"
+compatibility_flags = ["nodejs_compat_v2"]
+workers_dev = false
+preview_urls = false
+
+[placement]
+mode = "smart"
+
+[observability]
+enabled = true
+
+# Queues
+# https://developers.cloudflare.com/queues/
+[[queues.consumers]]
+queue = "katasu-me-upload-processing"
+max_batch_size = 1
+max_batch_timeout = 1
+
+# Bindings
+[[d1_databases]]
+binding = "DB"
+database_name = "katasu-me"
+database_id = "<PRODUCTION_DATABASE_ID>"
+
+[[r2_buckets]]
+binding = "IMAGES_R2_BUCKET"
+bucket_name = "katasu-me-prod-images"
+
+[[r2_buckets]]
+binding = "TEMP_R2_BUCKET"
+bucket_name = "katasu-me-prod-temp"
+
+[vars]
+IMAGE_R2_URL = "<PRODUCTION_IMAGE_R2_URL>"

@@ -1,4 +1,4 @@
-import { asc, count, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { createDBActionError } from "../../lib/error";
 import { type ImageWithTags, image, imageTag, tag } from "../../schema";
@@ -9,6 +9,7 @@ export type FetchImagesOptions = {
   limit?: number;
   offset?: number;
   order?: "asc" | "desc";
+  includeAllStatuses?: boolean;
 };
 
 export const DEFAULT_FETCH_IMAGES_LIMIT = 24;
@@ -82,8 +83,12 @@ export async function fetchImagesByUserId(
   try {
     const db = getDB(dbInstance);
 
+    const whereCondition = opts.includeAllStatuses
+      ? eq(image.userId, userId)
+      : and(eq(image.userId, userId), eq(image.status, "published"));
+
     const results = await db.query.image.findMany({
-      where: eq(image.userId, userId),
+      where: whereCondition,
       orderBy: [opts.order === "asc" ? asc(image.createdAt) : desc(image.createdAt)],
       limit: opts.limit ?? DEFAULT_FETCH_IMAGES_LIMIT,
       offset: opts.offset ?? 0,
@@ -132,7 +137,7 @@ export async function fetchRandomImagesByUserId(
     const db = getDB(dbInstance);
 
     const results = await db.query.image.findMany({
-      where: eq(image.userId, userId),
+      where: and(eq(image.userId, userId), eq(image.status, "published")),
       orderBy: [sql`RANDOM()`],
       limit,
       with: {
@@ -203,11 +208,16 @@ export async function fetchImagesByTagId(
   try {
     const db = getDB(dbInstance);
 
-    // 指定されたタグIDを持つ画像IDのリストを取得
+    // 指定されたタグIDを持つ画像のリストを取得
+    const whereCondition = opts.includeAllStatuses
+      ? eq(imageTag.tagId, tagId)
+      : and(eq(imageTag.tagId, tagId), eq(image.status, "published"));
+
     const targetImageIdsSubquery = db
       .select({ imageId: imageTag.imageId })
       .from(imageTag)
-      .where(eq(imageTag.tagId, tagId))
+      .innerJoin(image, eq(imageTag.imageId, image.id))
+      .where(whereCondition)
       .as("target_images");
 
     // 画像とそのタグを取得
@@ -218,9 +228,10 @@ export async function fetchImagesByTagId(
         width: image.width,
         height: image.height,
         title: image.title,
+        status: image.status,
+        thumbhash: image.thumbhash,
         createdAt: image.createdAt,
         updatedAt: image.updatedAt,
-        hiddenAt: image.hiddenAt,
         tagId: tag.id,
         tagName: tag.name,
         tagCreatedAt: tag.createdAt,
@@ -252,9 +263,10 @@ export async function fetchImagesByTagId(
           width: row.width,
           height: row.height,
           title: row.title,
+          status: row.status,
+          thumbhash: row.thumbhash,
           createdAt: row.createdAt,
           updatedAt: row.updatedAt,
-          hiddenAt: row.hiddenAt,
           tags: [],
         });
       }
@@ -301,13 +313,14 @@ export async function fetchRandomImagesByTagId(
   try {
     const db = getDB(dbInstance);
 
-    // 1. タグIDに紐づく画像IDをランダムに取得
+    // 1. タグIDに紐づく公開済み画像IDをランダムに取得
     const imageIdResults = await db
       .select({
         imageId: imageTag.imageId,
       })
       .from(imageTag)
-      .where(eq(imageTag.tagId, tagId))
+      .innerJoin(image, eq(imageTag.imageId, image.id))
+      .where(and(eq(imageTag.tagId, tagId), eq(image.status, "published")))
       .orderBy(sql`RANDOM()`)
       .limit(limit);
 

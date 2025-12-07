@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { twMerge } from "tailwind-merge";
 import IconTrash from "@/assets/icons/trash.svg?react";
 import Button from "@/components/Button";
 import { deleteImageFn } from "../../server-fn/delete-image";
@@ -7,9 +8,10 @@ import { deleteImageFn } from "../../server-fn/delete-image";
 type Props = {
   userId: string;
   imageId: string;
+  className?: string;
 };
 
-export default function RemoveButton({ userId, imageId }: Props) {
+export default function RemoveButton({ userId, imageId, className }: Props) {
   const navigate = useNavigate();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -47,7 +49,12 @@ export default function RemoveButton({ userId, imageId }: Props) {
   };
 
   return (
-    <Button className="flex items-center gap-1" variant="danger" onClick={handleDeleteClick} disabled={isDeleting}>
+    <Button
+      className={twMerge("flex items-center gap-1", className)}
+      variant="danger"
+      onClick={handleDeleteClick}
+      disabled={isDeleting}
+    >
       <IconTrash className="h-4 w-4" />
       {isDeleting ? "削除中..." : "削除する"}
     </Button>

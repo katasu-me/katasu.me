@@ -1,0 +1,50 @@
+permissions:
+  contents: read
+name: 投稿処理用のWorkerをデプロイ
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+    paths:
+      - "apps/upload-worker/**"
+      - "packages/service-db/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-upload-worker.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
+
+      - name: Create wrangler.toml for development
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          cd apps/upload-worker
+          cp wrangler.develop.toml wrangler.toml
+          sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.toml
+          sed -i "s|<DEVELOPMENT_IMAGE_R2_URL>|${{ vars.DEVELOPMENT_VITE_IMAGE_R2_URL }}|g" wrangler.toml
+          echo "wrangler.toml created for development"
+
+      - name: Create wrangler.toml for production
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd apps/upload-worker
+          cp wrangler.production.toml wrangler.toml
+          sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.toml
+          sed -i "s|<PRODUCTION_IMAGE_R2_URL>|${{ vars.PRODUCTION_VITE_IMAGE_R2_URL }}|g" wrangler.toml
+          echo "wrangler.toml created for production"
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --minify
+          workingDirectory: apps/upload-worker

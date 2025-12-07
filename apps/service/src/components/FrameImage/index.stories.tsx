@@ -75,3 +75,31 @@ export const WithoutHoverEffect: Story = {
     height: 200,
   },
 };
+
+export const Processing: Story = {
+  args: {
+    alt: "処理中の画像",
+    status: "processing",
+    thumbhash: "YJqGPQw7d3h4d4c4d3eHeAh4aIhwh3Zz",
+    width: 300,
+    height: 200,
+  },
+};
+
+export const ModerationViolation: Story = {
+  args: {
+    alt: "ガイドライン違反の画像",
+    status: "moderation_violation",
+    width: 300,
+    height: 200,
+  },
+};
+
+export const ProcessError: Story = {
+  args: {
+    alt: "投稿エラーの画像",
+    status: "error",
+    width: 300,
+    height: 200,
+  },
+};

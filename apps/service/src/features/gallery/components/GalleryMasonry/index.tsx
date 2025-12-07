@@ -16,7 +16,7 @@ const COLUMNS = new Map([
 ]);
 
 type Props = {
-  images: Omit<ComponentProps<typeof FrameImage>, "requireConfirmation">[];
+  images: ComponentProps<typeof FrameImage>[];
   totalImageCount: number;
   currentPage: number;
   itemsPerPage?: number;
