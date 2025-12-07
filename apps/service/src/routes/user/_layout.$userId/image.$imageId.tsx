@@ -65,77 +65,91 @@ function RouteComponent() {
   const { image } = data;
   const canEdit = sessionUserId === user.id;
   const isViolation = image.status === "moderation_violation";
+  const isError = image.status === "error";
   const frameImageProps = toFrameImageProps(image, "original");
+
+  const renderContent = () => {
+    const errorMessage = isViolation
+      ? "この投稿はガイドラインに違反しているため、非表示になりました"
+      : isError
+        ? "この投稿は処理中にエラーが発生したため、公開できませんでした"
+        : null;
+
+    if (errorMessage) {
+      return (
+        <div className="mt-8">
+          <p className="mt-2 text-sm text-warm-black-50">
+            <BudouX>{errorMessage}</BudouX>
+          </p>
+          {canEdit && <RemoveButton className="mx-auto mt-6" userId={user.id} imageId={image.id} />}
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <h2 className={twMerge("mt-8 text-xl", !image.title && "text-warm-black-50")}>
+          {image.title || DEFAULT_IMAGE_TITLE}
+        </h2>
+
+        {image.tags.length > 0 && (
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {image.tags.map((tag) => (
+              <Link
+                key={tag.name}
+                className="text-sm text-warm-black hover:underline"
+                to="/user/$userId/tag/$tagId"
+                params={{
+                  userId: user.id,
+                  tagId: tag.id,
+                }}
+                search={{
+                  view: "timeline",
+                  page: 1,
+                }}
+              >
+                #{tag.name}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-4 flex items-center justify-center gap-2">
+          {!canEdit && (
+            <IconButton asChild>
+              <Link
+                to="/report/image"
+                search={{
+                  imageId: image.id,
+                  reporterUserId: sessionUserId,
+                }}
+                target="_blank"
+                rel="noopener"
+              >
+                <IconFlag className="h-4 w-4" />
+              </Link>
+            </IconButton>
+          )}
+
+          <ShareButton title={image.title} userId={user.id} imageId={image.id} />
+        </div>
+
+        {canEdit && (
+          <div className="mt-7 flex flex-col items-center justify-center gap-6">
+            <div className="flex items-center gap-3">
+              <EditButton imageId={image.id} title={image.title} tags={image.tags.map((tag) => tag.name)} />
+              <RemoveButton userId={user.id} imageId={image.id} />
+            </div>
+          </div>
+        )}
+      </>
+    );
+  };
 
   return (
     <div className="col-start-2 mx-auto w-full text-center">
       <BigImage {...frameImageProps} />
-
-      {isViolation ? (
-        <div className="mt-8">
-          <p className="mt-2 text-sm text-warm-black-50">
-            <BudouX>この投稿はガイドラインに違反しているため、非表示になりました</BudouX>
-          </p>
-          {canEdit && <RemoveButton className="mx-auto mt-6" userId={user.id} imageId={image.id} />}
-        </div>
-      ) : (
-        <>
-          <h2 className={twMerge("mt-8 text-xl", !image.title && "text-warm-black-50")}>
-            {image.title || DEFAULT_IMAGE_TITLE}
-          </h2>
-
-          {image.tags.length > 0 && (
-            <div className="mt-4 flex flex-wrap justify-center gap-2">
-              {image.tags.map((tag) => (
-                <Link
-                  key={tag.name}
-                  className="text-sm text-warm-black hover:underline"
-                  to="/user/$userId/tag/$tagId"
-                  params={{
-                    userId: user.id,
-                    tagId: tag.id,
-                  }}
-                  search={{
-                    view: "timeline",
-                    page: 1,
-                  }}
-                >
-                  #{tag.name}
-                </Link>
-              ))}
-            </div>
-          )}
-
-          <div className="mt-4 flex items-center justify-center gap-2">
-            {!canEdit && (
-              <IconButton asChild>
-                <Link
-                  to="/report/image"
-                  search={{
-                    imageId: image.id,
-                    reporterUserId: sessionUserId,
-                  }}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <IconFlag className="h-4 w-4" />
-                </Link>
-              </IconButton>
-            )}
-
-            <ShareButton title={image.title} userId={user.id} imageId={image.id} />
-          </div>
-
-          {canEdit && (
-            <div className="mt-7 flex flex-col items-center justify-center gap-6">
-              <div className="flex items-center gap-3">
-                <EditButton imageId={image.id} title={image.title} tags={image.tags.map((tag) => tag.name)} />
-                <RemoveButton userId={user.id} imageId={image.id} />
-              </div>
-            </div>
-          )}
-        </>
-      )}
+      {renderContent()}
     </div>
   );
 }
