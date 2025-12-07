@@ -13,7 +13,7 @@ import {
   MAX_TAG_TEXT_LENGTH,
   MAX_TITLE_LENGTH,
   type UploadImageFormData,
-  uploadImageSchema,
+  uploadImageClientSchema,
 } from "@/features/image-upload/schemas/upload";
 import { normalizeFile } from "@/libs/work-around";
 import { useUpload } from "../../contexts/UploadContext";
@@ -50,8 +50,8 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
   const form = useForm({
     defaultValues,
     validators: {
-      onMount: uploadImageSchema,
-      onChange: uploadImageSchema,
+      onMount: uploadImageClientSchema,
+      onChange: uploadImageClientSchema,
     },
     onSubmit: async ({ value }) => {
       onPendingChange(true);

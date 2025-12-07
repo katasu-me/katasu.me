@@ -14,7 +14,7 @@ export function toFrameImageProps(
   imageWithTags: ImageWithTags,
   variant: "original" | "thumbnail" = "thumbnail",
 ): ComponentProps<typeof FrameImage> {
-  const { id, userId, width, height, title, status } = imageWithTags;
+  const { id, userId, width, height, title, status, thumbhash } = imageWithTags;
 
   return {
     id,
@@ -23,6 +23,7 @@ export function toFrameImageProps(
     width,
     height,
     status,
+    thumbhash,
     linkParams: {
       userId: userId,
       imageId: id,

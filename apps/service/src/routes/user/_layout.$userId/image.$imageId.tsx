@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { twMerge } from "tailwind-merge";
 import IconFlag from "@/assets/icons/flag.svg?react";
+import BudouX from "@/components/BudouX";
 import IconButton from "@/components/IconButton";
 import Message from "@/components/Message";
 import { DEFAULT_IMAGE_TITLE } from "@/features/gallery/constants/page";
@@ -72,8 +73,9 @@ function RouteComponent() {
 
       {isViolation ? (
         <div className="mt-8">
-          <h2 className="text-warm-black-75 text-xl">不適切な画像を検出しました</h2>
-          <p className="mt-2 text-sm text-warm-black-50">この投稿はガイドラインに違反しているため非表示になりました</p>
+          <p className="mt-2 text-sm text-warm-black-50">
+            <BudouX>この投稿はガイドラインに違反しているため、非表示になりました</BudouX>
+          </p>
           {canEdit && <RemoveButton className="mx-auto mt-6" userId={user.id} imageId={image.id} />}
         </div>
       ) : (

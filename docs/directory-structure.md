@@ -41,7 +41,7 @@ export default function ParentComponent() {
 ```
 
 **実例:**
-- `GalleryView/Random/DraggableImage/` - Randomの表示要素
+- `GalleryRandom/DraggableImage/` - GalleryRandomの表示要素
 - `UploadDrawer/FilmCounter/` - ドロワーのタイトル部分
 - `UploadForm/ImagePlaceholder/` - フォームのプレビュー部分
 
@@ -78,7 +78,8 @@ export default function TriggerButton() {
 ```
 
 **実例:**
-- `UserImageDropArea/ImageDropArea/` + `UploadDrawer/` - ドロップエリア（トリガー）とアップロードドロワー（コンテンツ）
+- `ImageDropArea/` + `UploadDrawer/` - ドロップエリア（トリガー）とアップロードドロワー（コンテンツ）
+- `EditButton/` + `EditDrawer/` - 編集ボタン（トリガー）と編集ドロワー（コンテンツ）
 
 **ネーミング規則:**
 - トリガー: `〜Button`, `〜Area`, `〜Link` など（UIとして見える部分）
@@ -127,85 +128,159 @@ _components/           # 共通の親ディレクトリ
 
 ### ✅ 良い例
 
-#### 例1: GalleryView
+#### 例1: gallery feature
 ```
-GalleryView/
-  ├── index.tsx              # GalleryViewコンポーネント
-  ├── LayoutToggle/          # ルールA: UIの一部
-  ├── Random/
-  │   ├── index.tsx
-  │   └── DraggableImage/    # ルールA: Randomの表示要素
-  └── Timeline/
+features/gallery/
+  ├── components/
+  │   ├── GalleryMasonry/      # メイソンリー表示
+  │   ├── GalleryRandom/       # ランダム表示
+  │   │   ├── index.tsx
+  │   │   ├── DraggableImage/  # ルールA: GalleryRandomの表示要素
+  │   │   └── DraggableImages/ # ルールA: GalleryRandomの表示要素
+  │   └── GalleryToggle/       # 表示切り替えトグル
+  ├── constants/
+  ├── libs/
+  ├── schemas/
+  └── server-fn/
 ```
 
 **理由:**
-- `LayoutToggle`は`GalleryView`のUI要素として直接レンダリング
-- `DraggableImage`は`Random`の表示要素として直接レンダリング
+- `DraggableImage`と`DraggableImages`は`GalleryRandom`の表示要素として直接レンダリング
 
-#### 例2: UserImageDropArea
+#### 例2: image-upload feature
 ```
-UserImageDropArea/
-  ├── index.tsx              # 親コンポーネント
-  ├── ImageDropArea/         # ルールB: トリガー
-  └── UploadDrawer/          # ルールB: コンテンツ
-      ├── index.tsx
-      ├── FilmCounter/       # ルールA: ドロワーのUI部分
-      └── UploadForm/        # ルールA: ドロワーのUI部分
+features/image-upload/
+  ├── components/
+  │   ├── ImageDropArea/      # ルールB: トリガー
+  │   ├── UploadDrawer/       # ルールB: コンテンツ
+  │   │   ├── index.tsx
+  │   │   └── FilmCounter/    # ルールA: ドロワーのUI部分
+  │   ├── UploadForm/
+  │   │   ├── index.tsx
+  │   │   └── ImagePlaceholder/  # ルールA: フォームのUI部分
+  │   └── UploadSnackbar/     # アップロード通知
+  ├── constants/
+  ├── contexts/
+  ├── libs/
+  ├── schemas/
+  └── server-fn/
 ```
 
 **理由:**
 - `ImageDropArea`（ドロップエリア）と`UploadDrawer`は独立したUIなので兄弟配置
-- `FilmCounter`と`UploadForm`は`UploadDrawer`のUI構造の一部
+- `FilmCounter`は`UploadDrawer`のUI構造の一部
+- `ImagePlaceholder`は`UploadForm`のUI構造の一部
 
-### ❌ 悪い例（修正前）
+### ❌ 悪い例
 
 ```
-image/[imageId]/_components/
-  ├── EditDrawer/            # ← EditButtonから使われるが、離れた場所にある
-  └── ImagePageContent/
-      └── EditButton/        # ← EditDrawerを開くボタン
+features/image-edit/
+  ├── components/
+  │   ├── EditDrawer/        # ← EditButtonから使われるが、離れた場所にある
+  │   └── SomeWrapper/
+  │       └── EditButton/    # ← EditDrawerを開くボタン
 ```
 
 **問題点:**
 - `EditButton`を見ても、`EditDrawer`が兄弟にあるとは分からない
 - `EditButton`の中に`EditDrawer`があると誤解する可能性
 
-### ✅ 良い例（修正後）
+### ✅ 良い例
 
 ```
-image/[imageId]/_components/
-  ├── EditButton/            # ルールB: トリガー
-  ├── EditDrawer/            # ルールB: コンテンツ
-  └── ImagePageContent/      # EditButtonを使用
-      ├── index.tsx
-      ├── BigImage/          # ルールA: ページのUI部分
-      ├── RemoveButton/      # ルールA: ページのUI部分
-      └── ShareButton/       # ルールA: ページのUI部分
+features/image-edit/
+  ├── components/
+  │   ├── EditButton/        # ルールB: トリガー
+  │   ├── EditDrawer/        # ルールB: コンテンツ
+  │   │   └── index.tsx
+  │   └── EditForm/          # ルールA: ドロワーのUI部分
+  │       └── index.tsx
+  ├── schemas/
+  └── server-fn/
 ```
 
 **改善点:**
 - `EditButton`と`EditDrawer`が兄弟なので関係性が明確
 - トリガーとコンテンツの関係が一目で分かる
 
-## プレフィクス `_` の使用
+#### 例3: image-view feature
+```
+features/image-view/
+  ├── components/
+  │   ├── BigImage/          # 画像の拡大表示
+  │   └── ShareButton/       # 共有ボタン
+  └── server-fn/
+```
 
-ページ配下でのみ使うファイルには、プレフィクスに `_` をつけます。
+## features ディレクトリの構成
+
+機能（feature）単位でビジネスロジックを整理しています。
 
 ```
-user/[userId]/
-  ├── page.tsx               # ページ本体
-  ├── _components/           # このページ配下でのみ使用
-  ├── _actions/              # このページ配下でのみ使用
-  ├── _schemas/              # このページ配下でのみ使用
-  ├── _lib/                  # このページ配下でのみ使用
-  └── tag/[tagId]/
-      ├── page.tsx
-      └── _components/       # tag/[tagId]ページでのみ使用
+features/
+  ├── auth/                  # 認証機能
+  │   ├── components/
+  │   │   ├── SignInButton/
+  │   │   ├── SignInDrawer/
+  │   │   ├── SignUpForm/
+  │   │   └── StartButton/
+  │   ├── libs/
+  │   ├── schemas/
+  │   └── server-fn/
+  ├── gallery/               # ギャラリー機能
+  ├── image-delete/          # 画像削除機能
+  ├── image-edit/            # 画像編集機能
+  ├── image-upload/          # 画像アップロード機能
+  ├── image-view/            # 画像表示機能
+  ├── report/                # 通報機能
+  ├── settings/              # 設定機能
+  └── top/                   # トップページ機能
+```
+
+**各featureディレクトリの構成:**
+- `components/` - UI コンポーネント
+- `libs/` - ユーティリティ関数
+- `schemas/` - バリデーションスキーマ
+- `server-fn/` - サーバー関数
+- `contexts/` - React Context（必要な場合）
+- `constants/` - 定数定義（必要な場合）
+- `assets/` - 静的リソース（必要な場合）
+
+## プレフィクス `_` の使用
+
+TanStack Routerのファイルベースルーティングでは、`_`プレフィクスはレイアウトルートを示します。
+
+```
+routes/
+  ├── __root.tsx             # ルートレイアウト
+  ├── index.tsx              # トップページ
+  ├── 404.tsx                # 404ページ
+  ├── settings.tsx           # 設定ページ
+  ├── closed-beta.tsx        # クローズドベータページ
+  ├── api/                   # APIルート
+  │   ├── auth/
+  │   └── r2/
+  ├── auth/                  # 認証関連ルート
+  │   ├── error.tsx
+  │   └── signup.tsx
+  ├── report/                # 通報関連ルート
+  │   ├── _layout.tsx        # レイアウト
+  │   └── _layout/
+  │       ├── image.tsx
+  │       └── user.tsx
+  └── user/                  # ユーザー関連ルート
+      ├── _layout.$userId.tsx        # レイアウト
+      └── _layout.$userId/
+          ├── index.tsx
+          ├── image.$imageId.tsx
+          └── tag/
+              ├── index.tsx
+              └── $tagId.tsx
 ```
 
 **ルール:**
-- 下の階層で共通して使うコンポーネントは親階層の`_components`などに配置
-- 特定のページでのみ使うものは、そのページの`_components`に配置
+- `_layout.tsx` - レイアウトルート（URLパスには含まれない）
+- `$param` - 動的ルートパラメータ
 
 ## まとめ
 

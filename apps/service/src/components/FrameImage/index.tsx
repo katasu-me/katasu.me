@@ -1,8 +1,10 @@
 import type { ImageStatus } from "@katasu.me/service-db";
 import { Link } from "@tanstack/react-router";
-import type { ComponentProps } from "react";
+import { type ComponentProps, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import IconAlertTriangleFilled from "@/assets/icons/alert-triangle-filled.svg?react";
+import IconLoader2 from "@/assets/icons/loader-2.svg?react";
+import { decodeThumbHash, getThumbHashLuminance } from "@/libs/thumbhash";
 
 type FrameImageProps = {
   width: number;
@@ -12,7 +14,9 @@ type FrameImageProps = {
     imageId: string;
   };
   disableHoverEffect?: boolean;
+  hideStatusText?: boolean;
   status?: ImageStatus;
+  thumbhash?: string | null;
 } & Omit<ComponentProps<"img">, "width" | "height">;
 
 export default function FrameImage({
@@ -21,11 +25,82 @@ export default function FrameImage({
   height,
   linkParams,
   disableHoverEffect = false,
+  hideStatusText = false,
   status = "published",
+  thumbhash,
   alt,
   ...props
 }: FrameImageProps) {
   const isViolation = status === "moderation_violation";
+  const isProcessing = status === "processing";
+
+  // ThumbHashからブラー画像と明るさを取得
+  const { blurDataUrl, isDark } = useMemo(() => {
+    if (!isProcessing || !thumbhash) {
+      return {
+        blurDataUrl: null,
+        isDark: false,
+      };
+    }
+
+    const luminance = getThumbHashLuminance(thumbhash);
+
+    return {
+      blurDataUrl: decodeThumbHash(thumbhash),
+      isDark: luminance < 0.7,
+    };
+  }, [isProcessing, thumbhash]);
+
+  const renderContent = () => {
+    if (isViolation) {
+      return (
+        <div className="pointer-events-none absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center gap-1 bg-warm-black-100 p-4">
+          <IconAlertTriangleFilled className="size-8 text-warm-black-50" />
+          {!hideStatusText && (
+            <span className="text-center font-bold text-warm-black-50 text-xs">ガイドライン違反</span>
+          )}
+        </div>
+      );
+    }
+
+    if (isProcessing) {
+      return (
+        <div className="pointer-events-none absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center gap-1 p-4">
+          {blurDataUrl && (
+            <img
+              className="absolute top-0 left-0 h-full w-full scale-110 object-cover blur-lg"
+              src={blurDataUrl}
+              alt=""
+              aria-hidden="true"
+            />
+          )}
+          <div className="relative z-10 flex flex-col items-center justify-center gap-1">
+            <IconLoader2
+              className={twMerge("size-6 animate-spin", isDark ? "text-warm-white" : "text-warm-black-50")}
+            />
+            {!hideStatusText && (
+              <span
+                className={twMerge("text-center font-bold text-xs", isDark ? "text-warm-white" : "text-warm-black-50")}
+              >
+                いい感じにしています
+              </span>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <img
+        className={twMerge(
+          "pointer-events-none absolute top-0 left-0 h-full w-full object-cover transition-all",
+          !disableHoverEffect && "group-hover:brightness-90",
+        )}
+        alt={alt}
+        {...props}
+      />
+    );
+  };
 
   return (
     <div
@@ -49,21 +124,7 @@ export default function FrameImage({
           <span className="absolute inset-0 z-overlay" />
         </Link>
       )}
-      {isViolation ? (
-        <div className="pointer-events-none absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center gap-1 bg-warm-black-100 p-4">
-          <IconAlertTriangleFilled className="size-8 text-warm-black-50" />
-          <span className="text-center text-warm-black-50 text-xs">ガイドライン違反</span>
-        </div>
-      ) : (
-        <img
-          className={twMerge(
-            "pointer-events-none absolute top-0 left-0 h-full w-full object-cover transition-all",
-            !disableHoverEffect && "group-hover:brightness-90",
-          )}
-          alt={alt}
-          {...props}
-        />
-      )}
+      {renderContent()}
     </div>
   );
 }

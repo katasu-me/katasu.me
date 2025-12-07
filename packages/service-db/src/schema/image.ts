@@ -6,7 +6,7 @@ import { user } from "./user";
 /**
  * 画像ステータス
  */
-export const imageStatusEnum = ["published", "moderation_violation"] as const;
+export const imageStatusEnum = ["processing", "published", "moderation_violation"] as const;
 export type ImageStatus = (typeof imageStatusEnum)[number];
 
 /**
@@ -24,7 +24,8 @@ export const image = sqliteTable(
     width: integer("width").notNull(),
     height: integer("height").notNull(),
     title: text("title"),
-    status: text("status", { enum: imageStatusEnum }).notNull().default("published"),
+    status: text("status", { enum: imageStatusEnum }).notNull().default("processing"),
+    thumbhash: text("thumbhash"),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .notNull()

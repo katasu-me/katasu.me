@@ -29,3 +29,7 @@ database_id = "<DEVELOPMENT_DATABASE_ID>"
 [[r2_buckets]]
 binding = "IMAGES_R2_BUCKET"
 bucket_name = "katasu-me-dev-images"
+
+[[r2_buckets]]
+binding = "TEMP_R2_BUCKET"
+bucket_name = "katasu-me-dev-temp"

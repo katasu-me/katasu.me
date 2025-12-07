@@ -1,23 +1,12 @@
-import type { ImageVariants } from "@/types/image";
-
 type UploadAvatarImageOptions = {
   type: "avatar";
   imageBuffer: ArrayBuffer;
   userId: string;
 };
 
-type UploadImageOptions = {
-  type: "image";
-  variants: Pick<ImageVariants, "original" | "thumbnail">;
-  userId: string;
+type UploadTempImageOptions = {
   imageId: string;
-};
-
-// 内部的にR2へアップロードする際の型
-type UploadToR2Options = {
-  imageBuffer: ArrayBuffer;
-  userId: string;
-  imageId?: string;
+  file: File;
 };
 
 /**
@@ -103,24 +92,6 @@ export function getUserAvatarUrl(userId: string, avatarSetAt?: Date | null): str
 }
 
 /**
- * 画像をR2にアップロード
- * @param r2 Cloudflare R2バケットインスタンス
- * @param key R2のキー
- * @param options アップロードオプション
- */
-async function upload(r2: R2Bucket, key: string, options: UploadToR2Options): Promise<void> {
-  try {
-    await r2.put(key, options.imageBuffer, {
-      httpMetadata: {
-        contentType: "image/webp",
-      },
-    });
-  } catch (error) {
-    throw new Error(`R2へのアップロードに失敗しました: ${error}`);
-  }
-}
-
-/**
  * 変換済みアバター画像をR2にアップロード
  * @param r2 Cloudflare R2バケットインスタンス
  * @param options アップロードオプション
@@ -129,38 +100,14 @@ export async function uploadAvatarImage(r2: R2Bucket, options: UploadAvatarImage
   try {
     const key = generateR2Key("avatar", options.userId);
 
-    await upload(r2, key, {
-      imageBuffer: options.imageBuffer,
-      userId: options.userId,
+    await r2.put(key, options.imageBuffer, {
+      httpMetadata: {
+        contentType: "image/webp",
+      },
     });
   } catch (error) {
     throw new Error(`アバター画像のアップロードに失敗しました: ${error}`);
   }
-}
-
-/**
- * 画像をR2にアップロードするPromiseの配列を返す
- * @param r2 Cloudflare R2バケットインスタンス
- * @param options アップロードオプション
- * @returns オリジナルとサムネイルのアップロードPromise配列
- */
-export function createImageUploadPromises(r2: R2Bucket, options: UploadImageOptions): [Promise<void>, Promise<void>] {
-  const originalKey = generateR2Key("image", options.userId, options.imageId, "original");
-  const thumbnailKey = generateR2Key("image", options.userId, options.imageId, "thumbnail");
-
-  const originalPromise = upload(r2, originalKey, {
-    imageBuffer: options.variants.original.data,
-    userId: options.userId,
-    imageId: options.imageId,
-  });
-
-  const thumbnailPromise = upload(r2, thumbnailKey, {
-    imageBuffer: options.variants.thumbnail.data,
-    userId: options.userId,
-    imageId: options.imageId,
-  });
-
-  return [originalPromise, thumbnailPromise];
 }
 
 /**
@@ -191,5 +138,24 @@ export async function deleteUserDataFromR2(r2: R2Bucket, userId: string): Promis
 
   if (imagesList.objects.length > 0) {
     return r2.delete(imagesList.objects.map(({ key }) => key));
+  }
+}
+
+/**
+ * 一時バケットに画像をアップロード
+ * @param r2 一時バケットのR2インスタンス
+ * @param options アップロードオプション
+ */
+export async function uploadTempImage(r2: R2Bucket, options: UploadTempImageOptions): Promise<void> {
+  const safeTempId = sanitizePathComponent(options.imageId);
+
+  try {
+    await r2.put(safeTempId, options.file, {
+      httpMetadata: {
+        contentType: options.file.type,
+      },
+    });
+  } catch (error) {
+    throw new Error(`一時ファイルのアップロードに失敗しました: ${error}`);
   }
 }

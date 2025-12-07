@@ -101,7 +101,7 @@ export default function GalleryMasonry({
           {imageColumns.map((column, colIndex) => (
             <div key={colIndex.toString()} className="flex flex-1 flex-col gap-2 pc:gap-3">
               {column.map((image) => (
-                <FrameImage key={image.id} className="h-auto w-full" {...image} />
+                <FrameImage key={image.id} className="h-auto w-full" hideStatusText {...image} />
               ))}
             </div>
           ))}
