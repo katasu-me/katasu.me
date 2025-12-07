@@ -76,7 +76,7 @@ const tagPageLoaderFn = createServerFn({ method: "GET" })
         offset,
         order: "desc",
         limit: GALLERY_PAGE_SIZE,
-        includeViolation: isOwner,
+        includeAllStatuses: isOwner,
       }),
     ]);
 

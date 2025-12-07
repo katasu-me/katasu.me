@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, inArray, ne, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { createDBActionError } from "../../lib/error";
 import { type ImageWithTags, image, imageTag, tag } from "../../schema";
@@ -9,7 +9,7 @@ export type FetchImagesOptions = {
   limit?: number;
   offset?: number;
   order?: "asc" | "desc";
-  includeViolation?: boolean;
+  includeAllStatuses?: boolean;
 };
 
 export const DEFAULT_FETCH_IMAGES_LIMIT = 24;
@@ -83,9 +83,9 @@ export async function fetchImagesByUserId(
   try {
     const db = getDB(dbInstance);
 
-    const whereCondition = opts.includeViolation
+    const whereCondition = opts.includeAllStatuses
       ? eq(image.userId, userId)
-      : and(eq(image.userId, userId), ne(image.status, "moderation_violation"));
+      : and(eq(image.userId, userId), eq(image.status, "published"));
 
     const results = await db.query.image.findMany({
       where: whereCondition,
@@ -209,9 +209,9 @@ export async function fetchImagesByTagId(
     const db = getDB(dbInstance);
 
     // 指定されたタグIDを持つ画像のリストを取得
-    const whereCondition = opts.includeViolation
+    const whereCondition = opts.includeAllStatuses
       ? eq(imageTag.tagId, tagId)
-      : and(eq(imageTag.tagId, tagId), ne(image.status, "moderation_violation"));
+      : and(eq(imageTag.tagId, tagId), eq(image.status, "published"));
 
     const targetImageIdsSubquery = db
       .select({ imageId: imageTag.imageId })
