@@ -1,6 +1,6 @@
 permissions:
   contents: read
-name: モデレーション用のWorkerをデプロイ
+name: 投稿処理用のWorkerをデプロイ
 
 on:
   push:
@@ -8,10 +8,10 @@ on:
       - develop
       - main
     paths:
-      - "apps/moderation-worker/**"
+      - "apps/upload-worker/**"
       - "packages/service-db/**"
       - "pnpm-lock.yaml"
-      - ".github/workflows/deploy-moderation-worker.yml"
+      - ".github/workflows/deploy-upload-worker.yml"
 
 jobs:
   deploy:
@@ -26,7 +26,7 @@ jobs:
       - name: Create wrangler.toml for development
         if: github.ref == 'refs/heads/develop'
         run: |
-          cd apps/moderation-worker
+          cd apps/upload-worker
           cp wrangler.develop.toml wrangler.toml
           sed -i "s|<DEVELOPMENT_DATABASE_ID>|${{ secrets.DEVELOPMENT_DATABASE_ID }}|g" wrangler.toml
           sed -i "s|<DEVELOPMENT_IMAGE_R2_URL>|${{ vars.DEVELOPMENT_VITE_IMAGE_R2_URL }}|g" wrangler.toml
@@ -35,7 +35,7 @@ jobs:
       - name: Create wrangler.toml for production
         if: github.ref == 'refs/heads/main'
         run: |
-          cd apps/moderation-worker
+          cd apps/upload-worker
           cp wrangler.production.toml wrangler.toml
           sed -i "s|<PRODUCTION_DATABASE_ID>|${{ secrets.PRODUCTION_DATABASE_ID }}|g" wrangler.toml
           sed -i "s|<PRODUCTION_IMAGE_R2_URL>|${{ vars.PRODUCTION_VITE_IMAGE_R2_URL }}|g" wrangler.toml
@@ -47,4 +47,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy --minify
-          workingDirectory: apps/moderation-worker
+          workingDirectory: apps/upload-worker
