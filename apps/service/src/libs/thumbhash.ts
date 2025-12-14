@@ -1,4 +1,5 @@
-import { thumbHashToDataURL } from "thumbhash";
+import { thumbHashToAverageRGBA, thumbHashToDataURL } from "thumbhash";
+import { type HSL, rgbToHsl } from "./color";
 
 /**
  * Base64エンコードされたThumbHashをバイト配列にデコード
@@ -43,4 +44,19 @@ export function getThumbHashLuminance(thumbhashBase64: string): number {
 
   // 0-63の値を0-1に正規化
   return lDc / 63;
+}
+
+/**
+ * ThumbHashから平均色のHSL値を取得
+ * @param thumbhashBase64 Base64エンコードされたThumbHash文字列
+ * @returns HSL値、失敗した場合はnull
+ */
+export function getThumbHashHSL(thumbhashBase64: string): HSL | null {
+  const bytes = decodeBase64(thumbhashBase64);
+  if (!bytes) {
+    return null;
+  }
+
+  const { r, g, b } = thumbHashToAverageRGBA(bytes);
+  return rgbToHsl(r, g, b);
 }

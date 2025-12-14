@@ -7,6 +7,7 @@ import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
 import { uploadTempImage } from "@/libs/r2";
+import { getThumbHashHSL } from "@/libs/thumbhash";
 import type { UploadJobMessage } from "@/types/upload";
 import { UPLOAD_ERROR_MESSAGE } from "../constants/error";
 import { getImageDimensions } from "../libs/image";
@@ -127,12 +128,18 @@ export const uploadFn = createServerFn({ method: "POST" })
       };
     }
 
+    // ThumbHashから平均色のHSL値を計算
+    const avgColor = data.thumbhash ? getThumbHashHSL(data.thumbhash) : null;
+
     // DBに画像を登録
     const registerResult = await registerImage(env.DB, userId, {
       id: imageId,
       ...dimensions,
       title: data.title ?? null,
       thumbhash: data.thumbhash,
+      avgColorH: avgColor?.h ?? null,
+      avgColorS: avgColor?.s ?? null,
+      avgColorL: avgColor?.l ?? null,
       tags: data.tags,
     });
 
