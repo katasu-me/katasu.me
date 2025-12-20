@@ -64,7 +64,7 @@ export default function FrameImage({
         <div className="pointer-events-none absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center gap-1 p-4">
           <IconLoader2 className={twMerge("size-6 animate-spin", isDark ? "text-warm-white" : "text-warm-black-50")} />
           <span className={twMerge("text-center font-bold text-xs", isDark ? "text-warm-white" : "text-warm-black-50")}>
-            いい感じにしています
+            ちょっとまってね
           </span>
         </div>
       );
