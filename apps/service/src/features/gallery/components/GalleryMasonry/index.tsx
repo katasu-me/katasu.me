@@ -47,7 +47,19 @@ export default function GalleryMasonry({
   const [columns, setColumns] = useState(DEFAULT_COLUMNS);
   const [isReady, setIsReady] = useState(false);
 
+  const hasImages = totalImageCount > 0;
+
   useEffect(() => {
+    // 画像がない場合はリセット
+    if (!hasImages) {
+      setIsReady(false);
+      return;
+    }
+
+    if (!containerRef.current) {
+      return;
+    }
+
     const updateColumns = (entries: ResizeObserverEntry[]) => {
       const entry = entries.at(0);
       if (!entry) {
@@ -65,21 +77,16 @@ export default function GalleryMasonry({
       }
 
       // CLS軽減のため、初回のカラム数設定が完了したらフェードイン
-      if (!isReady) {
-        setIsReady(true);
-      }
+      setIsReady(true);
     };
 
     const resizeObserver = new ResizeObserver(updateColumns);
-
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
+    resizeObserver.observe(containerRef.current);
 
     return () => {
       resizeObserver.disconnect();
     };
-  }, [isReady]);
+  }, [hasImages]);
 
   const totalPages = Math.ceil(totalImageCount / itemsPerPage);
   const imageColumns = getImageColumns(images, columns);
