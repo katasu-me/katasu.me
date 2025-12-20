@@ -49,7 +49,7 @@ bucket_name = "katasu-me-dev-temp"
 # Queues
 # https://developers.cloudflare.com/queues/
 [[queues.producers]]
-binding = "MODERATION_QUEUE"
+binding = "UPLOAD_QUEUE"
 queue = "katasu-me-dev-upload-processing"
 
 # Environment Variables

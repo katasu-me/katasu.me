@@ -163,7 +163,7 @@ export const uploadFn = createServerFn({ method: "POST" })
 
     waitUntil(
       Promise.all([
-        env.MODERATION_QUEUE.send(uploadJob),
+        env.UPLOAD_QUEUE.send(uploadJob),
         // タグ一覧のKVキャッシュを無効化
         registerResult.data?.tags
           ? invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)])
