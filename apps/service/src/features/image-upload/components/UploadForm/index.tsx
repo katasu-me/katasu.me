@@ -56,14 +56,11 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
     onSubmit: async ({ value }) => {
       onPendingChange(true);
 
-      // fire-and-forget: Context の upload を呼び出して即座に戻る
       upload(value.file, {
         title: value.title,
         tags: value.tags,
       });
 
-      // アップロード開始後、フォームの pending は解除
-      // 実際の進捗は Context 側で管理される
       onPendingChange(false);
     },
   });

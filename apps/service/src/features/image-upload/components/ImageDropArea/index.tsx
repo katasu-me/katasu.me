@@ -20,6 +20,7 @@ export default function ImageDropArea({ title, counter, defaultTags, className }
   const [isDragging, setIsDragging] = useState(false);
 
   const isUploading = state.status === "uploading";
+  const isUploadLimited = counter.total >= counter.max;
 
   const handleDragEnter = (e: DragEvent<HTMLButtonElement>) => {
     if (isUploading) {
@@ -83,7 +84,13 @@ export default function ImageDropArea({ title, counter, defaultTags, className }
     >
       <div className="flex items-center gap-2 text-sm tracking-wider">
         <IconImagePlus className="h-4 w-4" />
-        <p>{isDragging ? "ドラッグ&ドロップしてアップロード" : title}</p>
+        <p>
+          {isUploadLimited
+            ? "投稿できる画像の上限に達しました 🥺"
+            : isDragging
+              ? "ドラッグ&ドロップしてアップロード"
+              : title}
+        </p>
       </div>
     </button>
   );
