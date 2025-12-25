@@ -4,6 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
 import LogoImage from "@/assets/logo.svg?react";
 import BudouX from "@/components/BudouX";
 import Footer from "@/components/Footer";
+import { Loading } from "@/components/Loading";
 import { SITE_NAME } from "@/constants/site";
 import StartButton from "@/features/auth/components/StartButton";
 import { getUserSession } from "@/features/auth/libs/auth";
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/")({
   loader: async () => {
     return topPageLoaderFn();
   },
+  pendingComponent: () => <Loading className="col-start-2 h-screen" />,
 });
 
 function App() {
