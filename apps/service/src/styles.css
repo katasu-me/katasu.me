@@ -52,6 +52,10 @@ body {
   font-family: "Reddit Sans Variable", "IBM Plex Sans JP", BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* ドットのパターン */
+  background-image: radial-gradient(var(--color-warm-black-10) 1px, transparent 1px);
+  background-size: 16px 16px;
 }
 
 .interactive-scale-sm {
