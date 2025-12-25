@@ -59,31 +59,33 @@ function App() {
       </section>
 
       <section className="mx-auto text-center">
-        <div className="flex flex-col gap-6 text-warm-black leading-[1.6] tracking-[0.04em]">
+        <div className="text-center text-warm-black leading-8 tracking-[0.04em]">
           <p>
-            <BudouX>{`${SITE_NAME}はインターネットのかたすみにある、ぽつんと画像をおいておける場所です。`}</BudouX>
+            <BudouX>{`${SITE_NAME}は、インターネットのかたすみに画像をおけるサービスです。`}</BudouX>
           </p>
-          <p>
+
+          <p className="mt-12">
             <BudouX>「せっかくだから写真や画像を公開したい」</BudouX>
             <BudouX>「けど、SNSはなんか違うかも……」</BudouX>
-          </p>
-          <p>
+            <br />
             <BudouX>みたいな気持ちから生まれました。</BudouX>
           </p>
 
-          <p className="mt-6">
-            <BudouX>気になった人がふらっと入って、ふらっと去っていく。</BudouX>
+          <p className="mt-12">
+            <BudouX>SNSのように、誰かの投稿が流れてくることはありません。</BudouX>
+            <br />
+            <BudouX>ここにおいた画像は、あなたのページに辿りつかないと見ることができません。</BudouX>
           </p>
-          <p>
+
+          <p className="mt-12">
             <BudouX>じぶんがつくる「じぶん」のためのインターネットのかたすみ。</BudouX>
-          </p>
-          <p>
+            <br />
             <BudouX>はじめてみませんか？</BudouX>
           </p>
         </div>
 
         <ClientOnly>
-          <DemoImages className="mx-auto mt-32 mb-16" />
+          <DemoImages className="mx-auto mt-32 mb-24" />
         </ClientOnly>
 
         <StartButton className="my-32 mt-16" user={user} />
