@@ -22,6 +22,7 @@ export const getRouter = () => {
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultPendingMs: 300,
+    defaultViewTransition: true,
     ssr: {
       nonce: serverNonce,
     },
