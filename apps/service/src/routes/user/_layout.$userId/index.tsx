@@ -28,6 +28,8 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
   validateSearch: (search) => parse(searchParamsSchema, search),
   loaderDeps: ({ search: { view, page } }) => ({ view, page }),
   loader: async ({ params, deps, context }) => {
+    const isOwner = params.userId === context.sessionUserId;
+
     await Promise.all([
       context.queryClient.ensureQueryData(
         userPageQueryOptions({
@@ -36,7 +38,7 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
           page: deps.page,
         }),
       ),
-      context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userId)),
+      context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userId, isOwner)),
     ]);
 
     return {
@@ -71,9 +73,9 @@ function RouteComponent() {
       page,
     }),
   );
-  const { data: totalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
-
   const isOwner = user.id === sessionUserId;
+  const { data: totalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id, isOwner));
+
   const frameImages = data.images ? data.images.map((image) => toFrameImageProps(image)) : [];
 
   return (
