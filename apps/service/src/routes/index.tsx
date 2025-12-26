@@ -72,20 +72,22 @@ function App() {
           </p>
 
           <p className="mt-12">
-            <BudouX>SNSのように、誰かの投稿が流れてくることはありません。</BudouX>
+            <BudouX>ここは開かれているけど、開かれすぎていない場所です。</BudouX>
             <br />
             <BudouX>ここにおいた画像は、あなたのページに辿りつかないと見ることができません。</BudouX>
           </p>
 
           <p className="mt-12">
             <BudouX>じぶんがつくる「じぶん」のためのインターネットのかたすみ。</BudouX>
-            <br />
+          </p>
+
+          <p className="mt-12">
             <BudouX>はじめてみませんか？</BudouX>
           </p>
         </div>
 
         <ClientOnly>
-          <DemoImages className="mx-auto mt-32 mb-24" />
+          <DemoImages className="mx-auto my-24" />
         </ClientOnly>
 
         <StartButton className="my-32 mt-16" user={user} />
