@@ -181,20 +181,30 @@ export async function fetchRandomImagesByUserId(
   }
 }
 
+export type FetchTotalImageCountOptions = {
+  includeAllStatuses?: boolean;
+};
+
 /**
  * ユーザーIDから総投稿画像数を取得する
  * @param dbInstance D1インスタンス
  * @param userId ユーザーID
+ * @param opts オプション
  * @return 総投稿枚数
  */
 export async function fetchTotalImageCountByUserId(
   dbInstance: AnyD1Database,
   userId: string,
+  opts: FetchTotalImageCountOptions = {},
 ): Promise<ActionResult<number>> {
   try {
     const db = getDB(dbInstance);
 
-    const result = await db.select({ count: count() }).from(image).where(eq(image.userId, userId));
+    const whereCondition = opts.includeAllStatuses
+      ? eq(image.userId, userId)
+      : and(eq(image.userId, userId), eq(image.status, "published"));
+
+    const result = await db.select({ count: count() }).from(image).where(whereCondition);
 
     return {
       success: true,
@@ -353,16 +363,26 @@ export async function fetchRandomImagesByTagId(
  * タグIDから総投稿画像数を取得する
  * @param dbInstance D1インスタンス
  * @param tagId タグID
+ * @param opts オプション
  * @return 総投稿枚数
  */
 export async function fetchTotalImageCountByTagId(
   dbInstance: AnyD1Database,
   tagId: string,
+  opts: FetchTotalImageCountOptions = {},
 ): Promise<ActionResult<number>> {
   try {
     const db = getDB(dbInstance);
 
-    const result = await db.select({ count: count() }).from(imageTag).where(eq(imageTag.tagId, tagId));
+    const whereCondition = opts.includeAllStatuses
+      ? eq(imageTag.tagId, tagId)
+      : and(eq(imageTag.tagId, tagId), eq(image.status, "published"));
+
+    const result = await db
+      .select({ count: count() })
+      .from(imageTag)
+      .innerJoin(image, eq(imageTag.imageId, image.id))
+      .where(whereCondition);
 
     return {
       success: true,

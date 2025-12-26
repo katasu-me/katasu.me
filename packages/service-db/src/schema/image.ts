@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { index, integer, primaryKey, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
+import { index, integer, primaryKey, real, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 import { user } from "./user";
 
@@ -26,6 +26,12 @@ export const image = sqliteTable(
     title: text("title"),
     status: text("status", { enum: imageStatusEnum }).notNull().default("processing"),
     thumbhash: text("thumbhash"),
+    /** 平均色の色相 (0-360) */
+    avgColorH: real("avg_color_h"),
+    /** 平均色の彩度 (0-100) */
+    avgColorS: real("avg_color_s"),
+    /** 平均色の明度 (0-100) */
+    avgColorL: real("avg_color_l"),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .notNull()

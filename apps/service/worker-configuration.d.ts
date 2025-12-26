@@ -21,7 +21,7 @@ declare namespace Cloudflare {
     TEMP_R2_BUCKET: R2Bucket;
     DB: D1Database;
     ACTIONS_RATE_LIMITER: RateLimit;
-    MODERATION_QUEUE: Queue;
+    UPLOAD_QUEUE: Queue;
   }
 }
 interface Env extends Cloudflare.Env {}

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import ChevronLeft from "@/assets/icons/chevron-left.svg";
-import IconDots from "@/assets/icons/dots.svg";
-import IconFlag from "@/assets/icons/flag.svg";
-import IconSearch from "@/assets/icons/search.svg";
-import IconSettings from "@/assets/icons/settings.svg";
+import ChevronLeft from "@/assets/icons/chevron-left.svg?react";
+import IconDots from "@/assets/icons/dots.svg?react";
+import IconFlag from "@/assets/icons/flag.svg?react";
+import IconSearch from "@/assets/icons/search.svg?react";
+import IconSettings from "@/assets/icons/settings.svg?react";
 import IconButton from "./";
 
 const meta = {
@@ -13,13 +13,6 @@ const meta = {
     layout: "padded",
   },
   tags: ["autodocs"],
-  argTypes: {
-    as: {
-      control: "select",
-      options: ["button", "link"],
-      description: "レンダリングする要素",
-    },
-  },
 } satisfies Meta<typeof IconButton>;
 
 export default meta;
@@ -74,10 +67,12 @@ export const Sizes: Story = {
   ),
 };
 
-export const AsLink: Story = {
+export const AsChild: Story = {
   render: () => (
-    <IconButton as="link" href="#" title="検索">
-      <IconSearch className="h-6 w-6" />
+    <IconButton asChild>
+      <a href="/" title="検索">
+        <IconSearch className="h-6 w-6" />
+      </a>
     </IconButton>
   ),
 };

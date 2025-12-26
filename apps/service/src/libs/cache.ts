@@ -1,5 +1,5 @@
 const isDev = import.meta.env.MODE === "development";
-const DEFAULT_TTL = 600; // 10分
+const DEFAULT_TTL = 60 * 60 * 24; // 24時間
 
 type CachedData<T> = {
   data: T;
@@ -8,7 +8,8 @@ type CachedData<T> = {
 };
 
 type CacheOptions = {
-  ttl?: number; // デフォルト: 600秒
+  /** @default 24時間 */
+  ttl?: number;
 };
 
 /**

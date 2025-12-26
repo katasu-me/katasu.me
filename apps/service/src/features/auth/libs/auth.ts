@@ -4,7 +4,7 @@ import { redirect } from "@tanstack/react-router";
 import { getRequestHeaders } from "@tanstack/react-start/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { reactStartCookies } from "better-auth/react-start";
+import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { drizzle } from "drizzle-orm/d1";
 import { nanoid } from "nanoid";
 
@@ -64,7 +64,7 @@ export function getAuth() {
         },
       },
     },
-    plugins: [reactStartCookies()],
+    plugins: [tanstackStartCookies()],
   });
 }
 

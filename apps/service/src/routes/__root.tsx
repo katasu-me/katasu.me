@@ -25,6 +25,11 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         name: "viewport",
         content: "width=device-width, initial-scale=1",
       },
+      // はてブのブックマーク・コメント一覧を非表示
+      {
+        name: "Hatena::Bookmark",
+        content: "nocomment",
+      },
       ...generateMetadata(),
     ],
     links: [

@@ -6,6 +6,7 @@ import IconUser from "@/assets/icons/user.svg?react";
 import Button from "@/components/Button";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { Loading } from "@/components/Loading";
 import Message from "@/components/Message";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { signOut } from "@/features/auth/libs/auth-client";
@@ -34,6 +35,7 @@ const settingsPageLoaderFn = createServerFn().handler(async () => {
 
 export const Route = createFileRoute("/settings")({
   component: RouteComponent,
+  pendingComponent: () => <Loading className="col-start-2 h-screen" />,
   errorComponent: ({ error }) => {
     return <Message message={error.message} icon="error" />;
   },

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
-import type FrameImage from "../FrameImage";
+import type FrameImage from "@/components/FrameImage";
 import GalleryMasonry from "./index";
 
 const sampleImages: ComponentProps<typeof FrameImage>[] = [
@@ -119,6 +119,7 @@ const meta = {
   args: {
     images: sampleImages,
     totalImageCount: sampleImages.length,
+    currentPage: 1,
   },
 } satisfies Meta<typeof GalleryMasonry>;
 
@@ -177,6 +178,7 @@ export const PortraitGallery: Story = {
         height: 390,
       },
     ],
+    totalImageCount: 6,
   },
 };
 
@@ -223,6 +225,7 @@ export const LandscapeGallery: Story = {
         title: "都市の夜景",
       },
     ],
+    totalImageCount: 5,
   },
 };
 
@@ -276,18 +279,21 @@ export const MixedAspectRatios: Story = {
         title: "小スクエア",
       },
     ],
+    totalImageCount: 6,
   },
 };
 
 export const FewImages: Story = {
   args: {
     images: sampleImages.slice(0, 4),
+    totalImageCount: 4,
   },
 };
 
 export const WithPagination: Story = {
   args: {
     images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
+    totalImageCount: 36,
     currentPage: 1,
     itemsPerPage: 12,
   },
@@ -296,6 +302,7 @@ export const WithPagination: Story = {
 export const PaginationSecondPage: Story = {
   args: {
     images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
+    totalImageCount: 36,
     currentPage: 2,
     itemsPerPage: 12,
   },
@@ -304,6 +311,7 @@ export const PaginationSecondPage: Story = {
 export const PaginationLastPage: Story = {
   args: {
     images: [...sampleImages, ...sampleImages, ...sampleImages], // 36枚の画像
+    totalImageCount: 36,
     currentPage: 3,
     itemsPerPage: 12,
   },

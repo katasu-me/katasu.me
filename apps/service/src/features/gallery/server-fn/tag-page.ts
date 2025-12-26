@@ -60,7 +60,9 @@ const tagPageLoaderFn = createServerFn({ method: "GET" })
       };
     }
 
-    const tagTotalImageCountResult = await fetchTotalImageCountByTagId(env.DB, tagId);
+    const tagTotalImageCountResult = await fetchTotalImageCountByTagId(env.DB, tagId, {
+      includeAllStatuses: isOwner,
+    });
 
     if (!tagTotalImageCountResult.success) {
       throw new Error(tagTotalImageCountResult.error.message);

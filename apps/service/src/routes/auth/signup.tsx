@@ -1,5 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { Loading } from "@/components/Loading";
 import SignUpForm from "@/features/auth/components/SignUpForm";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { generateMetadata } from "@/libs/meta";
@@ -22,6 +23,7 @@ const signupPageBeforeLoadFn = createServerFn().handler(async () => {
 
 export const Route = createFileRoute("/auth/signup")({
   component: RouteComponent,
+  pendingComponent: () => <Loading className="col-start-2 h-screen" />,
   beforeLoad: async () => {
     return signupPageBeforeLoadFn();
   },
