@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import DraggableImageStack from "./";
+import DraggableImages from "./";
 
 const meta = {
-  title: "UserPage/GalleryView/Random/DraggableImage",
-  component: DraggableImageStack,
+  title: "UserPage/GalleryView/Random/DraggableImages",
+  component: DraggableImages,
   parameters: {
     layout: "fullscreen",
   },
@@ -21,9 +21,10 @@ const meta = {
         },
       },
     ],
-    isLoading: false,
+    isScattering: false,
+    onScatterComplete: () => {},
   },
-} satisfies Meta<typeof DraggableImageStack>;
+} satisfies Meta<typeof DraggableImages>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -102,16 +103,14 @@ export const WithoutLink: Story = {
   },
 };
 
-export const WithLoading: Story = {
+export const Scattering: Story = {
   args: {
-    images: [],
-    isLoading: true,
+    isScattering: true,
   },
 };
 
-export const WithError: Story = {
+export const EmptyImages: Story = {
   args: {
     images: [],
-    error: "画像の読み込みに失敗しました",
   },
 };

@@ -12,9 +12,6 @@ const meta = {
     currentPage: { control: "number" },
     totalPages: { control: "number" },
   },
-  args: {
-    searchParams: new URLSearchParams(),
-  },
   decorators: [(Story) => <div suppressHydrationWarning>{Story()}</div>],
 } satisfies Meta<typeof Pagination>;
 

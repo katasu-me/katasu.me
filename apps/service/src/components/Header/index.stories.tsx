@@ -35,12 +35,6 @@ const meta = {
     layout: "padded",
   },
   tags: ["autodocs"],
-  argTypes: {
-    rightMenu: {
-      control: "object",
-      description: "右側のメニュー設定（loggedInUserIdを含む）",
-    },
-  },
   decorators: [
     (Story) => (
       <div className="max-w-screen-lg">
@@ -59,38 +53,30 @@ export const Default: Story = {
   },
 };
 
-export const WithRightMenu: Story = {
+export const WithSessionUser: Story = {
   args: {
     user: mockUser,
-    rightMenu: {
-      loggedInUserId: "logged-in-user",
-    },
+    sessionUserId: "logged-in-user",
   },
 };
 
 export const OwnerPage: Story = {
   args: {
     user: mockUser,
-    rightMenu: {
-      loggedInUserId: "user123", // mockUser.idと同じ
-    },
+    sessionUserId: "user123", // mockUser.idと同じ
   },
 };
 
 export const WithAvatar: Story = {
   args: {
     user: mockUserWithAvatar,
-    rightMenu: {
-      loggedInUserId: "user456", // mockUserWithAvatar.idと同じ
-    },
+    sessionUserId: "user456", // mockUserWithAvatar.idと同じ
   },
 };
 
 export const VisitorView: Story = {
   args: {
     user: mockUserWithAvatar,
-    rightMenu: {
-      loggedInUserId: "other-user", // 異なるユーザーID
-    },
+    sessionUserId: "other-user", // 異なるユーザーID
   },
 };
