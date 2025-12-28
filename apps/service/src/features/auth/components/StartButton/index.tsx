@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { twMerge } from "tailwind-merge";
 import IconPlant from "@/assets/icons/plant.svg?react";
 import Button from "@/components/Button";
+import SignInDrawer from "../SignInDrawer";
 
 type Props = {
   user: PublicUserData | undefined;
@@ -32,34 +33,9 @@ export default function StartButton({ user, className }: Props) {
     );
   }
 
-  // TODO: リリース時には外す
   return (
-    <div className={className}>
-      <Button asChild>
-        <Link
-          className="mx-auto flex w-fit items-center justify-center gap-2"
-          to="/user/$userId"
-          params={{
-            userId: "8uB8pmZ-pcGqxBfdpnWo6",
-          }}
-          search={{
-            view: "timeline",
-            page: 1,
-          }}
-        >
-          <IconPlant className="size-5" />
-          開発者のかたすみをのぞく
-        </Link>
-      </Button>
-      <Link className="mt-4 block text-center text-warm-black-50 text-xs hover:underline" to="/closed-beta">
-        βテスト登録済のかたはこちら
-      </Link>
-    </div>
+    <SignInDrawer>
+      <Button className={buttonClassname}>はじめる</Button>
+    </SignInDrawer>
   );
-
-  // return (
-  //   <SignInDrawer>
-  //     <Button className={buttonClassname}>はじめる</Button>
-  //   </SignInDrawer>
-  // );
 }
