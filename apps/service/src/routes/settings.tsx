@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useState } from "react";
+import IconCheck from "@/assets/icons/check.svg?react";
 import IconMoodMrrr from "@/assets/icons/mood-wrrr.svg?react";
+import IconPlant from "@/assets/icons/plant.svg?react";
 import IconUser from "@/assets/icons/user.svg?react";
 import Button from "@/components/Button";
 import Footer from "@/components/Footer";
@@ -70,7 +72,32 @@ function RouteComponent() {
     <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
       <Header user={loggedInUser} sessionUserId={loggedInUser.id} />
 
+      {/* TODO: プランを追加したらプランもここで切り替えられるようにする */}
       <h1 className="col-start-2 text-4xl">設定</h1>
+      <section className="col-start-2 flex flex-col gap-8">
+        <h2 className="flex items-center gap-2 text-2xl">
+          <IconPlant className="size-6" />
+          現在のプラン
+        </h2>
+
+        <div className="rounded-md border border-warm-black-25 bg-warm-white px-6 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-lg">リビングプラン</p>
+              <p className="text-sm text-warm-black-50">ベーシックなプラン。ここはあなたのアルバム。</p>
+            </div>
+
+            <span className="break-keep">無料</span>
+          </div>
+
+          <p className="mt-4 flex items-center gap-2 border-warm-black-25 border-t border-dashed pt-4 text-sm">
+            <IconCheck className="size-4" />
+            <span>
+              最大<span className="mx-0.5 text-base">1000枚</span>まで投稿できます
+            </span>
+          </p>
+        </div>
+      </section>
 
       <section className="col-start-2 flex flex-col gap-8">
         <h2 className="flex items-center gap-2 text-2xl">
