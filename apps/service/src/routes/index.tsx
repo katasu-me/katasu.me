@@ -49,11 +49,6 @@ function App() {
             インターネットのかたすみ
           </h1>
 
-          {/* TODO: リリース時には外す */}
-          <p className="mt-8">
-            準備中。年内リリース予定 <span className="text-xs">(かも)</span>
-          </p>
-
           <StartButton className="mt-8 pc:mt-10" user={user} />
         </div>
       </section>
