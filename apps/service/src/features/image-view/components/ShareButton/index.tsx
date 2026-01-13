@@ -27,7 +27,7 @@ export default function ShareButton({ title: rawTitle, userId, imageId }: Props)
     } catch (error) {
       // ユーザーがキャンセルした場合は何もしない
       if (error instanceof Error && error.name !== "AbortError") {
-        openShareSite(url);
+        openShareSite(text);
       }
     }
   };
