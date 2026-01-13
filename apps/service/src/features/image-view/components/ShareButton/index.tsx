@@ -8,19 +8,19 @@ type Props = {
   imageId: string;
 };
 
-export default function ShareButton({ title, userId, imageId }: Props) {
+export default function ShareButton({ title: rawTitle, userId, imageId }: Props) {
   const { isDesktop } = useDevice();
 
   const handleShare = async () => {
     const url = new URL(`/user/${userId}/image/${imageId}`, window.location.origin).toString();
+    const title = rawTitle?.trim();
+    const text = title ? `${title}\n${url}` : url;
 
     // デスクトップの場合、またはWebShare APIが利用できない場合はしぇあ.comを使用
     if (isDesktop || !navigator.share) {
-      openShareSite(url);
+      openShareSite(text);
       return;
     }
-
-    const text = title ? `${title}\n${url}` : url;
 
     try {
       await navigator.share({ text });
@@ -32,10 +32,9 @@ export default function ShareButton({ title, userId, imageId }: Props) {
     }
   };
 
-  const openShareSite = (url: string) => {
-    const shareText = title ? `${title}\n${url}` : url;
+  const openShareSite = (text: string) => {
     const shareUrl = new URL("https://しぇあ.com");
-    shareUrl.searchParams.set("text", shareText);
+    shareUrl.searchParams.set("text", text);
 
     window.open(shareUrl.toString(), "_blank", "noopener,noreferrer");
   };
