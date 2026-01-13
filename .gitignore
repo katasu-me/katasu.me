@@ -56,6 +56,3 @@ yarn-error.log*
 
 # test
 **/__screenshots__
-
-# lsmcp cache
-**/.lsmcp/cache
