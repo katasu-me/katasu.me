@@ -20,11 +20,10 @@ export default function ShareButton({ title, userId, imageId }: Props) {
       return;
     }
 
+    const text = title ? `${title}\n${url}` : url;
+
     try {
-      await navigator.share({
-        title: title || "katasu.me",
-        url,
-      });
+      await navigator.share({ text });
     } catch (error) {
       // ユーザーがキャンセルした場合は何もしない
       if (error instanceof Error && error.name !== "AbortError") {
