@@ -19,8 +19,8 @@ export default function StartButton({ user, className }: Props) {
       <Button asChild>
         <Link
           className={twMerge("mx-auto flex items-center justify-center gap-2", buttonClassname)}
-          to="/user/$userId"
-          params={{ userId: user.id }}
+          to="/user/$userSlug"
+          params={{ userSlug: user.id }}
           search={{
             view: "timeline",
             page: 1,

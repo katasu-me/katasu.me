@@ -16,8 +16,8 @@ export default function UserIcon({ userId, username, iconImage, className }: Pro
   return (
     <Link
       className="interactive-scale flex items-center gap-3"
-      to="/user/$userId"
-      params={{ userId }}
+      to="/user/$userSlug"
+      params={{ userSlug: userId }}
       search={{
         view: "timeline",
         page: 1,

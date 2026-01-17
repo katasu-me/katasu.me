@@ -16,7 +16,7 @@ import { imagePageQueryOptions } from "@/features/image-view/server-fn/image-pag
 import { generateMetadata } from "@/libs/meta";
 import { getImageUrl } from "@/libs/r2";
 
-export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
+export const Route = createFileRoute("/user/_layout/$userSlug/image/$imageId")({
   component: RouteComponent,
   errorComponent: ({ error }) => {
     return <Message message={error.message} icon="error" />;
@@ -95,9 +95,9 @@ function RouteComponent() {
               <Link
                 key={tag.name}
                 className="text-sm text-warm-black hover:underline"
-                to="/user/$userId/tag/$tagId"
+                to="/user/$userSlug/tag/$tagId"
                 params={{
-                  userId: user.id,
+                  userSlug: user.id,
                   tagId: tag.id,
                 }}
                 search={{

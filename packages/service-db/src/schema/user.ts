@@ -4,6 +4,7 @@ import { plan } from "./plan";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
+  customUrl: text("customUrl").unique(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: integer("emailVerified", { mode: "boolean" }).notNull().default(false),

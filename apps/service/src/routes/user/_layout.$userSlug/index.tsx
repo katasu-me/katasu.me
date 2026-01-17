@@ -20,7 +20,7 @@ const searchParamsSchema = object({
   page: fallback(number(), 1),
 });
 
-export const Route = createFileRoute("/user/_layout/$userId/")({
+export const Route = createFileRoute("/user/_layout/$userSlug/")({
   component: RouteComponent,
   errorComponent: ({ error }) => {
     return <Message message={error.message ?? GALLERY_ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
@@ -28,17 +28,17 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
   validateSearch: (search) => parse(searchParamsSchema, search),
   loaderDeps: ({ search: { view, page } }) => ({ view, page }),
   loader: async ({ params, deps, context }) => {
-    const isOwner = params.userId === context.sessionUserId;
+    const isOwner = params.userSlug === context.sessionUserId;
 
     await Promise.all([
       context.queryClient.ensureQueryData(
         userPageQueryOptions({
           view: deps.view,
-          userId: params.userId,
+          userId: params.userSlug,
           page: deps.page,
         }),
       ),
-      context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userId, isOwner)),
+      context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userSlug, isOwner)),
     ]);
 
     return {

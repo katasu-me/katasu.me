@@ -1,38 +1,54 @@
+import { env } from "cloudflare:workers";
+import { fetchPublicUserDataByCustomUrlOrId } from "@katasu.me/service-db";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { getUserSession } from "@/features/auth/libs/auth";
-import { cachedFetchPublicUserDataById } from "@/features/auth/libs/cached-user-data";
 
 const userPageBeforeLoadFn = createServerFn()
-  .inputValidator((data: { userId: string }) => data)
+  .inputValidator((data: { userSlug: string; pathname: string }) => data)
   .handler(async ({ data }) => {
-    const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(data.userId), getUserSession()]);
+    const [userResult, { session }] = await Promise.all([
+      fetchPublicUserDataByCustomUrlOrId(env.DB, data.userSlug),
+      getUserSession(),
+    ]);
 
     // 存在しない、または新規登録が完了していない場合は404
     if (
       !userResult.success ||
       !userResult.data ||
-      !userResult.data.termsAgreedAt ||
-      !userResult.data.privacyPolicyAgreedAt
+      !userResult.data.user.termsAgreedAt ||
+      !userResult.data.user.privacyPolicyAgreedAt
     ) {
       // NOTE: throw notfound() だと HTML が帰らずエラーページが出てしまう。ここがパスを持たないルートだからかも
       throw redirect({ to: "/404" });
     }
 
+    const { user, foundByCustomUrl } = userResult.data;
+
+    // IDでアクセスされた場合、カスタムURLがあればリダイレクト
+    if (!foundByCustomUrl && user.customUrl) {
+      const newPathname = data.pathname.replace(`/user/${data.userSlug}`, `/user/${user.customUrl}`);
+      throw redirect({
+        to: newPathname,
+        statusCode: 301,
+      });
+    }
+
     return {
-      user: userResult.data,
+      user,
       sessionUserId: session?.user?.id,
     };
   });
 
-export const Route = createFileRoute("/user/_layout/$userId")({
+export const Route = createFileRoute("/user/_layout/$userSlug")({
   component: UserLayoutComponent,
-  beforeLoad: async ({ params }) => {
+  beforeLoad: async ({ params, location }) => {
     return userPageBeforeLoadFn({
       data: {
-        userId: params.userId,
+        userSlug: params.userSlug,
+        pathname: location.pathname,
       },
     });
   },
