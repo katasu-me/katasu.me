@@ -97,9 +97,9 @@ export default function FrameImage({
       {linkParams && (
         <Link
           className="focus:outline-none"
-          to="/user/$userId/image/$imageId"
+          to="/user/$userSlug/image/$imageId"
           params={{
-            userId: linkParams.userId,
+            userSlug: linkParams.userId,
             imageId: linkParams.imageId,
           }}
         >

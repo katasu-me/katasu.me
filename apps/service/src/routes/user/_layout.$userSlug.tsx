@@ -7,10 +7,10 @@ import Header from "@/components/Header";
 import { getUserSession } from "@/features/auth/libs/auth";
 
 const userPageBeforeLoadFn = createServerFn()
-  .inputValidator((data: { userId: string }) => data)
+  .inputValidator((data: { userSlug: string; pathname: string }) => data)
   .handler(async ({ data }) => {
     const [userResult, { session }] = await Promise.all([
-      fetchPublicUserDataByCustomUrlOrId(env.DB, data.userId),
+      fetchPublicUserDataByCustomUrlOrId(env.DB, data.userSlug),
       getUserSession(),
     ]);
 
@@ -27,16 +27,11 @@ const userPageBeforeLoadFn = createServerFn()
 
     const { user, foundByCustomUrl } = userResult.data;
 
+    // IDでアクセスされた場合、カスタムURLがあればリダイレクト
     if (!foundByCustomUrl && user.customUrl) {
+      const newPathname = data.pathname.replace(`/user/${data.userSlug}`, `/user/${user.customUrl}`);
       throw redirect({
-        to: "/user/$userId",
-        params: {
-          userId: user.customUrl,
-        },
-        search: {
-          view: "timeline",
-          page: 1,
-        },
+        to: newPathname,
         statusCode: 301,
       });
     }
@@ -47,12 +42,13 @@ const userPageBeforeLoadFn = createServerFn()
     };
   });
 
-export const Route = createFileRoute("/user/_layout/$userId")({
+export const Route = createFileRoute("/user/_layout/$userSlug")({
   component: UserLayoutComponent,
-  beforeLoad: async ({ params }) => {
+  beforeLoad: async ({ params, location }) => {
     return userPageBeforeLoadFn({
       data: {
-        userId: params.userId,
+        userSlug: params.userSlug,
+        pathname: location.pathname,
       },
     });
   },

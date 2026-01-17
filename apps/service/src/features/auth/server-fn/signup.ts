@@ -93,8 +93,8 @@ export const signupAction = createServerFn({ method: "POST" })
 
     // 成功時はユーザーページへリダイレクト
     throw redirect({
-      to: "/user/$userId",
-      params: { userId: session.user.id },
+      to: "/user/$userSlug",
+      params: { userSlug: session.user.id },
       search: {
         view: "timeline",
         page: 1,

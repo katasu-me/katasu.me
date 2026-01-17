@@ -8,9 +8,9 @@ export default function TagLink({ id, name, userId }: Props) {
   return (
     <Link
       className="interactive-scale-brightness relative flex h-8 shrink-0 items-center justify-center overflow-hidden rounded-md bg-warm-black px-4 py-2 text-center text-warm-white text-xs"
-      to="/user/$userId/tag/$tagId"
+      to="/user/$userSlug/tag/$tagId"
       params={{
-        userId,
+        userSlug: userId,
         tagId: id,
       }}
       search={{
