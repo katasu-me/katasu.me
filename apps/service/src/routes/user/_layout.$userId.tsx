@@ -1,28 +1,48 @@
+import { env } from "cloudflare:workers";
+import { fetchPublicUserDataByCustomUrlOrId } from "@katasu.me/service-db";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { getUserSession } from "@/features/auth/libs/auth";
-import { cachedFetchPublicUserDataById } from "@/features/auth/libs/cached-user-data";
 
 const userPageBeforeLoadFn = createServerFn()
   .inputValidator((data: { userId: string }) => data)
   .handler(async ({ data }) => {
-    const [userResult, { session }] = await Promise.all([cachedFetchPublicUserDataById(data.userId), getUserSession()]);
+    const [userResult, { session }] = await Promise.all([
+      fetchPublicUserDataByCustomUrlOrId(env.DB, data.userId),
+      getUserSession(),
+    ]);
 
     // 存在しない、または新規登録が完了していない場合は404
     if (
       !userResult.success ||
       !userResult.data ||
-      !userResult.data.termsAgreedAt ||
-      !userResult.data.privacyPolicyAgreedAt
+      !userResult.data.user.termsAgreedAt ||
+      !userResult.data.user.privacyPolicyAgreedAt
     ) {
       // NOTE: throw notfound() だと HTML が帰らずエラーページが出てしまう。ここがパスを持たないルートだからかも
       throw redirect({ to: "/404" });
     }
 
+    const { user, foundByCustomUrl } = userResult.data;
+
+    if (!foundByCustomUrl && user.customUrl) {
+      throw redirect({
+        to: "/user/$userId",
+        params: {
+          userId: user.customUrl,
+        },
+        search: {
+          view: "timeline",
+          page: 1,
+        },
+        statusCode: 301,
+      });
+    }
+
     return {
-      user: userResult.data,
+      user,
       sessionUserId: session?.user?.id,
     };
   });

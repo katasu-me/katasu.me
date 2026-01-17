@@ -2,8 +2,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import IconCheck from "@/assets/icons/check.svg?react";
+import IconLayoutFilled from "@/assets/icons/layout-filled.svg?react";
 import IconMoodMrrr from "@/assets/icons/mood-wrrr.svg?react";
-import IconPlant from "@/assets/icons/plant.svg?react";
+import IconSeedling from "@/assets/icons/seedling.svg?react";
 import IconUser from "@/assets/icons/user.svg?react";
 import Button from "@/components/Button";
 import Footer from "@/components/Footer";
@@ -13,6 +14,7 @@ import Message from "@/components/Message";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { signOut } from "@/features/auth/libs/auth-client";
 import { cachedFetchPublicUserDataById } from "@/features/auth/libs/cached-user-data";
+import CustomUrlForm from "@/features/settings/components/CustomUrlForm";
 import SeeyouSoonDrawer from "@/features/settings/components/SeeyouSoonDrawer";
 import UserSettingsForm from "@/features/settings/components/UserSettingsForm";
 import { generateMetadata } from "@/libs/meta";
@@ -74,9 +76,9 @@ function RouteComponent() {
 
       {/* TODO: プランを追加したらプランもここで切り替えられるようにする */}
       <h1 className="col-start-2 text-4xl">設定</h1>
-      <section className="col-start-2 flex flex-col gap-8">
+      <section className="col-start-2 flex flex-col gap-6">
         <h2 className="flex items-center gap-2 text-2xl">
-          <IconPlant className="size-6" />
+          <IconSeedling className="size-6" />
           現在のプラン
         </h2>
 
@@ -99,7 +101,7 @@ function RouteComponent() {
         </div>
       </section>
 
-      <section className="col-start-2 flex flex-col gap-8">
+      <section className="col-start-2 flex flex-col gap-6">
         <h2 className="flex items-center gap-2 text-2xl">
           <IconUser className="size-6" />
           ユーザー情報
@@ -113,15 +115,22 @@ function RouteComponent() {
         />
       </section>
 
-      <section className="col-start-2 flex flex-col gap-4">
+      <section className="col-start-2 flex flex-col gap-6">
+        <h2 className="flex items-center gap-2 text-2xl">
+          <IconLayoutFilled className="size-6" />
+          マイページ
+        </h2>
+
+        <CustomUrlForm userId={loggedInUser.id} currentCustomUrl={loggedInUser.customUrl} />
+      </section>
+
+      <section className="col-start-2 flex flex-col gap-6">
         <h2 className="flex items-center gap-2 text-2xl">
           <IconMoodMrrr className="size-6" />
           危険な操作
         </h2>
 
-        <p className="mb-2 text-sm text-warm-black">
-          アカウントを削除すると、投稿した画像やタグなどのデータがすべて削除されます。
-        </p>
+        <p className="mb-2 text-sm">アカウントを削除すると、投稿した画像やタグなどのデータがすべて削除されます。</p>
 
         <Button variant="danger" onClick={() => setIsDrawerOpen(true)}>
           アカウントを削除する
