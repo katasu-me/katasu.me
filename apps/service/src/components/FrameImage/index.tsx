@@ -12,7 +12,7 @@ type FrameImageProps = {
   width: number;
   height: number;
   linkParams?: {
-    userId: string;
+    userSlug: string;
     imageId: string;
   };
   disableHoverEffect?: boolean;
@@ -99,7 +99,7 @@ export default function FrameImage({
           className="focus:outline-none"
           to="/user/$userSlug/image/$imageId"
           params={{
-            userSlug: linkParams.userId,
+            userSlug: linkParams.userSlug,
             imageId: linkParams.imageId,
           }}
         >

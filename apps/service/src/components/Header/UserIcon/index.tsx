@@ -3,13 +3,13 @@ import { twMerge } from "tailwind-merge";
 import { DEFAULT_AVATAR_URL } from "@/constants/image";
 
 type Props = {
-  userId: string;
+  userSlug: string;
   username: string;
   iconImage?: string;
   className?: string;
 };
 
-export default function UserIcon({ userId, username, iconImage, className }: Props) {
+export default function UserIcon({ userSlug, username, iconImage, className }: Props) {
   const avatarImageUrl = iconImage ? iconImage : DEFAULT_AVATAR_URL;
   const alt = `${username}さんのアイコン`;
 
@@ -17,7 +17,7 @@ export default function UserIcon({ userId, username, iconImage, className }: Pro
     <Link
       className="interactive-scale flex items-center gap-3"
       to="/user/$userSlug"
-      params={{ userSlug: userId }}
+      params={{ userSlug }}
       search={{
         view: "timeline",
         page: 1,

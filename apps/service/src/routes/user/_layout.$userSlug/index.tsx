@@ -55,7 +55,7 @@ export const Route = createFileRoute("/user/_layout/$userSlug/")({
         pageTitle: user.name,
         imageUrl,
         twitterCard: "summary",
-        path: `/user/${user.id}`,
+        path: `/user/${user.customUrl || user.id}`,
         noindex: false, // ユーザーページはインデックスする
       }),
     };
@@ -81,7 +81,7 @@ function RouteComponent() {
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-      {data.tags && <TagLinks className="col-start-2" tags={data.tags} userId={user.customUrl || user.id} />}
+      {data.tags && <TagLinks className="col-start-2" tags={data.tags} userSlug={userSlug} />}
 
       {isOwner && (
         <div className="col-start-2">

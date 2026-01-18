@@ -26,7 +26,7 @@ export function toFrameImageProps(
     status,
     thumbhash,
     linkParams: {
-      userId: userSlug || userId,
+      userSlug: userSlug || userId,
       imageId: id,
     },
   };

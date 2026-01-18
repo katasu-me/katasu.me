@@ -9,21 +9,19 @@ const meta: Meta<typeof TagLinks> = {
   },
   tags: ["autodocs"],
   args: {
+    userSlug: "test-user",
     tags: [
       {
         id: "1",
         name: "画像",
-        userId: "test",
       },
       {
         id: "2",
         name: "イラスト",
-        userId: "test",
       },
       {
         id: "3",
         name: "風景",
-        userId: "test",
       },
     ],
   },
@@ -45,14 +43,14 @@ export const Warp: Story = {
 export const ManyTags: Story = {
   args: {
     tags: [
-      { id: "1", name: "画像", userId: "test" },
-      { id: "2", name: "イラスト", userId: "test" },
-      { id: "3", name: "風景", userId: "test" },
-      { id: "4", name: "ポートレート", userId: "test" },
-      { id: "5", name: "モノクロ", userId: "test" },
-      { id: "6", name: "夕焼け", userId: "test" },
-      { id: "7", name: "海", userId: "test" },
-      { id: "8", name: "山", userId: "test" },
+      { id: "1", name: "画像" },
+      { id: "2", name: "イラスト" },
+      { id: "3", name: "風景" },
+      { id: "4", name: "ポートレート" },
+      { id: "5", name: "モノクロ" },
+      { id: "6", name: "夕焼け" },
+      { id: "7", name: "海" },
+      { id: "8", name: "山" },
     ],
   },
 };

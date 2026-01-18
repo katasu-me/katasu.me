@@ -22,7 +22,7 @@ export const Route = createFileRoute("/user/_layout/$userSlug/tag/")({
         pageTitle: `すべてのタグ - ${user.name}`,
         imageUrl: getUserAvatarUrl(user.id),
         twitterCard: "summary",
-        path: `/user/${user.id}/tag/`,
+        path: `/user/${user.customUrl || user.id}/tag/`,
         noindex: true,
       }),
     };
@@ -41,7 +41,7 @@ function RouteComponent() {
       {allTags.length > 0 ? (
         <div className="col-start-2 mx-auto flex min-h-48 w-full flex-wrap content-start items-start gap-2">
           {allTags.map((tag) => (
-            <TagLink key={tag.id} {...tag} userId={userSlug} />
+            <TagLink key={tag.id} id={tag.id} name={tag.name} userSlug={userSlug} />
           ))}
         </div>
       ) : (

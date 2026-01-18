@@ -129,7 +129,7 @@ export default function DraggableImage({
           ])}
           to="/user/$userSlug/image/$imageId"
           params={{
-            userSlug: linkParams.userId,
+            userSlug: linkParams.userSlug,
             imageId: linkParams.imageId,
           }}
         >

@@ -58,7 +58,7 @@ export const Route = createFileRoute("/user/_layout/$userSlug/tag/$tagId")({
         pageTitle: `#${tag.name} - ${user.name}`,
         imageUrl: getUserAvatarUrl(user.id),
         twitterCard: "summary",
-        path: `/user/${user.id}/tag/${tag.id}`,
+        path: `/user/${user.customUrl || user.id}/tag/${tag.id}`,
         noindex: true,
       }),
     };

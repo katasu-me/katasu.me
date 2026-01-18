@@ -40,9 +40,9 @@ export const Route = createFileRoute("/user/_layout/$userSlug/image/$imageId")({
     }
 
     const { image } = loaderData;
-    const username = match.context.user.name;
+    const user = match.context.user;
 
-    const pageTitle = image.title ? `${image.title} - ${username}` : username;
+    const pageTitle = image.title ? `${image.title} - ${user.name}` : user.name;
     const description = image.tags.length > 0 ? image.tags.map((tag) => `#${tag.name}`).join(" ") : undefined;
 
     return {
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/user/_layout/$userSlug/image/$imageId")({
         description,
         imageUrl: getImageUrl(image.userId, image.id),
         twitterCard: "summary_large_image",
-        path: `/user/${image.userId}/image/${image.id}`,
+        path: `/user/${user.customUrl || user.id}/image/${image.id}`,
         noindex: true,
       }),
     };
