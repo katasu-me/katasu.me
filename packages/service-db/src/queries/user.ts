@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { createDBActionError } from "../lib/error";
@@ -15,7 +15,7 @@ export type UserWithMaxPhotos = User & {
 
 export type PublicUserData = Pick<
   UserWithMaxPhotos,
-  "id" | "name" | "avatarSetAt" | "bannedAt" | "termsAgreedAt" | "privacyPolicyAgreedAt" | "plan"
+  "id" | "name" | "customUrl" | "avatarSetAt" | "bannedAt" | "termsAgreedAt" | "privacyPolicyAgreedAt" | "plan"
 > & {
   hasAvatar: boolean;
 };
@@ -38,6 +38,7 @@ export async function fetchPublicUserDataById(
       columns: {
         id: true,
         name: true,
+        customUrl: true,
         avatarSetAt: true,
         bannedAt: true,
         termsAgreedAt: true,
@@ -228,5 +229,109 @@ export async function deleteUser(dbInstance: AnyD1Database, userId: string): Pro
     };
   } catch (error) {
     return createDBActionError("ユーザーの削除に失敗しました", error);
+  }
+}
+
+/**
+ * customUrlまたはuserIdから公開可能なユーザー情報を取得する
+ * customUrlを優先して検索し、見つからなければuserIdとして検索する
+ * @param dbInstance D1インスタンス
+ * @param userSlug customUrlまたはuserId
+ * @returns ユーザー情報と、どちらで見つかったかのフラグ
+ */
+export async function fetchPublicUserDataByUserSlug(
+  dbInstance: AnyD1Database,
+  userSlug: string,
+): Promise<ActionResult<{ user: PublicUserData; foundByCustomUrl: boolean } | undefined>> {
+  try {
+    const db = getDB(dbInstance);
+
+    // customUrl または id で検索
+    const rawResult = await db.query.user.findFirst({
+      where: (u) => or(eq(u.customUrl, userSlug), eq(u.id, userSlug)),
+      columns: {
+        id: true,
+        name: true,
+        customUrl: true,
+        avatarSetAt: true,
+        bannedAt: true,
+        termsAgreedAt: true,
+        privacyPolicyAgreedAt: true,
+      },
+      with: {
+        plan: {
+          columns: {
+            maxPhotos: true,
+          },
+        },
+      },
+    });
+
+    if (!rawResult) {
+      return {
+        success: true,
+        data: undefined,
+      };
+    }
+
+    const foundByCustomUrl = rawResult.customUrl === userSlug;
+
+    return {
+      success: true,
+      data: {
+        user: {
+          ...rawResult,
+          hasAvatar: rawResult.avatarSetAt !== null,
+        },
+        foundByCustomUrl,
+      },
+    };
+  } catch (error) {
+    return createDBActionError("ユーザーの取得に失敗しました", error);
+  }
+}
+
+/**
+ * customUrlが利用可能かどうかをチェックする
+ * @param dbInstance D1インスタンス
+ * @param customUrl チェックするcustomUrl
+ * @param excludeUserId 除外するユーザーID（自分自身の更新時に使用）
+ * @returns 利用可能な場合true
+ */
+export async function isCustomUrlAvailable(
+  dbInstance: AnyD1Database,
+  customUrl: string,
+  excludeUserId?: string,
+): Promise<ActionResult<boolean>> {
+  try {
+    const db = getDB(dbInstance);
+
+    const existingUser = await db.query.user.findFirst({
+      where: (u) => eq(u.customUrl, customUrl),
+      columns: {
+        id: true,
+      },
+    });
+
+    if (!existingUser) {
+      return {
+        success: true,
+        data: true,
+      };
+    }
+
+    if (excludeUserId && existingUser.id === excludeUserId) {
+      return {
+        success: true,
+        data: true,
+      };
+    }
+
+    return {
+      success: true,
+      data: false,
+    };
+  } catch (error) {
+    return createDBActionError("customUrlの確認に失敗しました", error);
   }
 }

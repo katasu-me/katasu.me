@@ -6,13 +6,14 @@ import { getImageUrl } from "@/libs/r2";
 /**
  * ImageWithTagsをFrameImageのPropsに変換
  * @param imageWithTags ImageWithTags
- * @param authorUserId 画像登録者のユーザーID
  * @param variant 画像バリアント（デフォルト: thumbnail）
+ * @param userSlug リンクに使用するユーザースラッグ（カスタムURL or ユーザーID）
  * @returns FrameImageProps
  */
 export function toFrameImageProps(
   imageWithTags: ImageWithTags,
   variant: "original" | "thumbnail" = "thumbnail",
+  userSlug?: string,
 ): ComponentProps<typeof FrameImage> {
   const { id, userId, width, height, title, status, thumbhash } = imageWithTags;
 
@@ -25,7 +26,7 @@ export function toFrameImageProps(
     status,
     thumbhash,
     linkParams: {
-      userId: userId,
+      userSlug: userSlug || userId,
       imageId: id,
     },
   };

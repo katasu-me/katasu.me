@@ -16,7 +16,7 @@ import { imagePageQueryOptions } from "@/features/image-view/server-fn/image-pag
 import { generateMetadata } from "@/libs/meta";
 import { getImageUrl } from "@/libs/r2";
 
-export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
+export const Route = createFileRoute("/user/_layout/$userSlug/image/$imageId")({
   component: RouteComponent,
   errorComponent: ({ error }) => {
     return <Message message={error.message} icon="error" />;
@@ -40,9 +40,9 @@ export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
     }
 
     const { image } = loaderData;
-    const username = match.context.user.name;
+    const user = match.context.user;
 
-    const pageTitle = image.title ? `${image.title} - ${username}` : username;
+    const pageTitle = image.title ? `${image.title} - ${user.name}` : user.name;
     const description = image.tags.length > 0 ? image.tags.map((tag) => `#${tag.name}`).join(" ") : undefined;
 
     return {
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/user/_layout/$userId/image/$imageId")({
         description,
         imageUrl: getImageUrl(image.userId, image.id),
         twitterCard: "summary_large_image",
-        path: `/user/${image.userId}/image/${image.id}`,
+        path: `/user/${user.customUrl || user.id}/image/${image.id}`,
         noindex: true,
       }),
     };
@@ -67,7 +67,7 @@ function RouteComponent() {
   const canEdit = sessionUserId === user.id;
   const isViolation = image.status === "moderation_violation";
   const isError = image.status === "error";
-  const frameImageProps = toFrameImageProps(image, "original");
+  const frameImageProps = toFrameImageProps(image, "original", user.customUrl || user.id);
 
   const renderContent = () => {
     const errorMessage = isViolation ? ERROR_MESSAGE.VIOLATION : isError ? ERROR_MESSAGE.PROCESSING_FAILED : null;
@@ -95,9 +95,9 @@ function RouteComponent() {
               <Link
                 key={tag.name}
                 className="text-sm text-warm-black hover:underline"
-                to="/user/$userId/tag/$tagId"
+                to="/user/$userSlug/tag/$tagId"
                 params={{
-                  userId: user.id,
+                  userSlug: user.customUrl || user.id,
                   tagId: tag.id,
                 }}
                 search={{

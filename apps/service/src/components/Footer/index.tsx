@@ -37,9 +37,9 @@ export default function Footer({ className, ...props }: Props) {
           <Button asChild>
             <Link
               className="flex w-48 items-center justify-center gap-2"
-              to="/user/$userId"
+              to="/user/$userSlug"
               params={{
-                userId: props.sessionUserId,
+                userSlug: props.sessionUserId,
               }}
               search={{
                 view: "timeline",

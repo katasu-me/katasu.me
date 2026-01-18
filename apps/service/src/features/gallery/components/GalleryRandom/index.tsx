@@ -12,12 +12,13 @@ import DraggableImages from "./DraggableImages";
 
 type Props = {
   fetchOptions: FetchRandomImagesInput;
+  userSlug?: string;
 };
 
 const SHAKE_THRESHOLD = 15;
 const SHAKE_COOLDOWN = 500;
 
-export default function GalleryRandom({ fetchOptions }: Props) {
+export default function GalleryRandom({ fetchOptions, userSlug }: Props) {
   const { isDesktop } = useDevice();
   const queryClient = useQueryClient();
   const [isScattering, setIsScattering] = useState(false);
@@ -30,8 +31,8 @@ export default function GalleryRandom({ fetchOptions }: Props) {
       return [];
     }
 
-    return data.map((image) => toFrameImageProps(image));
-  }, [data]);
+    return data.map((image) => toFrameImageProps(image, "thumbnail", userSlug));
+  }, [data, userSlug]);
 
   // ジェスチャーイベントの抑制
   useEffect(() => {

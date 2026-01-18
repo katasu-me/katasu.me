@@ -5,12 +5,12 @@ import { tagListPageLoaderFn } from "@/features/gallery/server-fn/tag-list-page"
 import { generateMetadata } from "@/libs/meta";
 import { getUserAvatarUrl } from "@/libs/r2";
 
-export const Route = createFileRoute("/user/_layout/$userId/tag/")({
+export const Route = createFileRoute("/user/_layout/$userSlug/tag/")({
   component: RouteComponent,
   loader: async ({ params }) => {
     return tagListPageLoaderFn({
       data: {
-        userId: params.userId,
+        userId: params.userSlug,
       },
     });
   },
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/")({
         pageTitle: `すべてのタグ - ${user.name}`,
         imageUrl: getUserAvatarUrl(user.id),
         twitterCard: "summary",
-        path: `/user/${user.id}/tag/`,
+        path: `/user/${user.customUrl || user.id}/tag/`,
         noindex: true,
       }),
     };
@@ -31,6 +31,8 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/")({
 
 function RouteComponent() {
   const { allTags } = Route.useLoaderData();
+  const { context } = Route.useMatch();
+  const userSlug = context.user.customUrl || context.user.id;
 
   return (
     <>
@@ -39,7 +41,7 @@ function RouteComponent() {
       {allTags.length > 0 ? (
         <div className="col-start-2 mx-auto flex min-h-48 w-full flex-wrap content-start items-start gap-2">
           {allTags.map((tag) => (
-            <TagLink key={tag.id} {...tag} />
+            <TagLink key={tag.id} id={tag.id} name={tag.name} userSlug={userSlug} />
           ))}
         </div>
       ) : (
