@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 
 import type { AnyD1Database } from "drizzle-orm/d1";
 import { createDBActionError } from "../lib/error";
@@ -236,50 +236,36 @@ export async function deleteUser(dbInstance: AnyD1Database, userId: string): Pro
  * customUrlまたはuserIdから公開可能なユーザー情報を取得する
  * customUrlを優先して検索し、見つからなければuserIdとして検索する
  * @param dbInstance D1インスタンス
- * @param identifier customUrlまたはuserId
+ * @param userSlug customUrlまたはuserId
  * @returns ユーザー情報と、どちらで見つかったかのフラグ
  */
-export async function fetchPublicUserDataByCustomUrlOrId(
+export async function fetchPublicUserDataByUserSlug(
   dbInstance: AnyD1Database,
-  identifier: string,
+  userSlug: string,
 ): Promise<ActionResult<{ user: PublicUserData; foundByCustomUrl: boolean } | undefined>> {
   try {
     const db = getDB(dbInstance);
 
-    const columns = {
-      id: true,
-      name: true,
-      customUrl: true,
-      avatarSetAt: true,
-      bannedAt: true,
-      termsAgreedAt: true,
-      privacyPolicyAgreedAt: true,
-    } as const;
-
-    const withPlan = {
-      plan: {
-        columns: {
-          maxPhotos: true,
+    // customUrl または id で検索
+    const rawResult = await db.query.user.findFirst({
+      where: (u) => or(eq(u.customUrl, userSlug), eq(u.id, userSlug)),
+      columns: {
+        id: true,
+        name: true,
+        customUrl: true,
+        avatarSetAt: true,
+        bannedAt: true,
+        termsAgreedAt: true,
+        privacyPolicyAgreedAt: true,
+      },
+      with: {
+        plan: {
+          columns: {
+            maxPhotos: true,
+          },
         },
       },
-    } as const;
-
-    let rawResult = await db.query.user.findFirst({
-      where: (u) => eq(u.customUrl, identifier),
-      columns,
-      with: withPlan,
     });
-
-    let foundByCustomUrl = true;
-
-    if (!rawResult) {
-      rawResult = await db.query.user.findFirst({
-        where: (u) => eq(u.id, identifier),
-        columns,
-        with: withPlan,
-      });
-      foundByCustomUrl = false;
-    }
 
     if (!rawResult) {
       return {
@@ -287,6 +273,8 @@ export async function fetchPublicUserDataByCustomUrlOrId(
         data: undefined,
       };
     }
+
+    const foundByCustomUrl = rawResult.customUrl === userSlug;
 
     return {
       success: true,
