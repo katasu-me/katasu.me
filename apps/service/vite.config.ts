@@ -12,6 +12,7 @@ const config = defineConfig(({ mode, command }) => ({
   plugins: [
     cloudflare({
       viteEnvironment: { name: "ssr" },
+      auxiliaryWorkers: [{ configPath: "../upload-worker/wrangler.jsonc" }],
     }),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({

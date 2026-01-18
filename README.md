@@ -84,8 +84,14 @@ pnpm wrangler r2 bucket create katasu-me-dev-images
 cp .env.example .env.local
 ```
 
-Google OAuth、OpenAI APIキーなど、必要な環境変数を `.env.local` に設定します。
+Google OAuthのシークレットなど、必要な環境変数を `.env.local` に設定します。
 
+##### upload-worker用の環境変数
+
+```bash
+cd apps/upload-worker
+cp .env.example .env.local
+```
 
 #### 7. データベースマイグレーション
 

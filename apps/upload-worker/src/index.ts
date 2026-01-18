@@ -30,8 +30,12 @@ export default {
         await env.TEMP_R2_BUCKET.delete(imageId);
 
         // モデレーションチェック
-        const imageUrl = getImageUrl(env.IMAGE_R2_URL, userId, imageId);
-        const flagged = await checkImageModeration(env.OPENAI_API_KEY, imageUrl);
+        let flagged = false;
+
+        if (env.SKIP_MODERATION !== "true") {
+          const imageUrl = getImageUrl(env.IMAGE_R2_URL, userId, imageId);
+          flagged = await checkImageModeration(env.OPENAI_API_KEY, imageUrl);
+        }
 
         if (flagged) {
           // 不適切な画像なら削除
