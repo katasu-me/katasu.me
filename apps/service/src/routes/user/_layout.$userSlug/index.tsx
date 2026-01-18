@@ -76,11 +76,12 @@ function RouteComponent() {
   const isOwner = user.id === sessionUserId;
   const { data: totalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id, isOwner));
 
-  const frameImages = data.images ? data.images.map((image) => toFrameImageProps(image)) : [];
+  const userSlug = user.customUrl || user.id;
+  const frameImages = data.images ? data.images.map((image) => toFrameImageProps(image, "thumbnail", userSlug)) : [];
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-      {data.tags && <TagLinks className="col-start-2" tags={data.tags} userId={user.id} />}
+      {data.tags && <TagLinks className="col-start-2" tags={data.tags} userId={user.customUrl || user.id} />}
 
       {isOwner && (
         <div className="col-start-2">
@@ -108,6 +109,7 @@ function RouteComponent() {
               type: "user",
               userId: user.id,
             }}
+            userSlug={userSlug}
           />
         </ClientOnly>
       )}

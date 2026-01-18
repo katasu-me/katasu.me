@@ -43,7 +43,7 @@ export default function Header({ user, sessionUserId }: Props) {
   return (
     <header className="col-start-2 flex items-center justify-between">
       <UserIcon
-        userId={user.id}
+        userId={user.customUrl || user.id}
         username={user.name}
         iconImage={user.hasAvatar ? getUserAvatarUrl(user.id, user.avatarSetAt) : undefined}
       />

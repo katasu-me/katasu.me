@@ -31,6 +31,8 @@ export const Route = createFileRoute("/user/_layout/$userSlug/tag/")({
 
 function RouteComponent() {
   const { allTags } = Route.useLoaderData();
+  const { context } = Route.useMatch();
+  const userSlug = context.user.customUrl || context.user.id;
 
   return (
     <>
@@ -39,7 +41,7 @@ function RouteComponent() {
       {allTags.length > 0 ? (
         <div className="col-start-2 mx-auto flex min-h-48 w-full flex-wrap content-start items-start gap-2">
           {allTags.map((tag) => (
-            <TagLink key={tag.id} {...tag} />
+            <TagLink key={tag.id} {...tag} userId={userSlug} />
           ))}
         </div>
       ) : (

@@ -82,7 +82,8 @@ function RouteComponent() {
 
   const { tag, images, tagTotalImageCount } = data;
   const isOwner = user.id === sessionUserId;
-  const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];
+  const userSlug = user.customUrl || user.id;
+  const frameImages = images ? images.map((image) => toFrameImageProps(image, "thumbnail", userSlug)) : [];
 
   return (
     <>
@@ -116,6 +117,7 @@ function RouteComponent() {
                 type: "tag",
                 tagId: tag.id,
               }}
+              userSlug={userSlug}
             />
           </ClientOnly>
         )}

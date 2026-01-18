@@ -20,7 +20,7 @@ export default function StartButton({ user, className }: Props) {
         <Link
           className={twMerge("mx-auto flex items-center justify-center gap-2", buttonClassname)}
           to="/user/$userSlug"
-          params={{ userSlug: user.id }}
+          params={{ userSlug: user.customUrl || user.id }}
           search={{
             view: "timeline",
             page: 1,

@@ -67,7 +67,7 @@ function RouteComponent() {
   const canEdit = sessionUserId === user.id;
   const isViolation = image.status === "moderation_violation";
   const isError = image.status === "error";
-  const frameImageProps = toFrameImageProps(image, "original");
+  const frameImageProps = toFrameImageProps(image, "original", user.customUrl || user.id);
 
   const renderContent = () => {
     const errorMessage = isViolation ? ERROR_MESSAGE.VIOLATION : isError ? ERROR_MESSAGE.PROCESSING_FAILED : null;
@@ -97,7 +97,7 @@ function RouteComponent() {
                 className="text-sm text-warm-black hover:underline"
                 to="/user/$userSlug/tag/$tagId"
                 params={{
-                  userSlug: user.id,
+                  userSlug: user.customUrl || user.id,
                   tagId: tag.id,
                 }}
                 search={{
