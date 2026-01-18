@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { fetchPublicUserDataByCustomUrlOrId } from "@katasu.me/service-db";
+import { fetchPublicUserDataByUserSlug } from "@katasu.me/service-db";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import Footer from "@/components/Footer";
@@ -10,7 +10,7 @@ const userPageBeforeLoadFn = createServerFn()
   .inputValidator((data: { userSlug: string; pathname: string }) => data)
   .handler(async ({ data }) => {
     const [userResult, { session }] = await Promise.all([
-      fetchPublicUserDataByCustomUrlOrId(env.DB, data.userSlug),
+      fetchPublicUserDataByUserSlug(env.DB, data.userSlug),
       getUserSession(),
     ]);
 
