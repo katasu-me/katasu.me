@@ -47,8 +47,10 @@ pnpm wrangler login
 
 ```bash
 cd apps/service
-cp wrangler.example.jsonc wrangler.jsonc
+cp wrangler.develop.toml wrangler.toml
 ```
+
+以降の手順で作成したリソースのIDを `wrangler.toml` 内のプレースホルダー（`<DEVELOPMENT_...>`）に設定します。
 
 #### 3. D1データベースの作成
 
@@ -57,7 +59,7 @@ cp wrangler.example.jsonc wrangler.jsonc
 pnpm wrangler d1 create katasu-me-dev
 ```
 
-出力された `database_id` を `wrangler.jsonc` の `d1_databases` セクションに記入します。
+出力された `database_id` を `wrangler.toml` の `<DEVELOPMENT_DATABASE_ID>` に設定します。
 
 #### 4. KV Namespaceの作成
 
@@ -66,7 +68,7 @@ pnpm wrangler d1 create katasu-me-dev
 pnpm wrangler kv namespace create CACHE_KV
 ```
 
-出力された `id` を `wrangler.jsonc` の `kv_namespaces` セクションに記入します。
+出力された `id` を `wrangler.toml` の `<DEVELOPMENT_CACHE_KV_ID>` に設定します。
 
 #### 5. R2バケットの作成
 
@@ -84,8 +86,14 @@ pnpm wrangler r2 bucket create katasu-me-dev-images
 cp .env.example .env.local
 ```
 
-Google OAuth、OpenAI APIキーなど、必要な環境変数を `.env.local` に設定します。
+Google OAuthのAPIキーなど、必要な環境変数を `.env.local` に設定します。
 
+##### upload-worker用の環境変数
+
+```bash
+cd apps/upload-worker
+cp .env.example .env.local
+```
 
 #### 7. データベースマイグレーション
 

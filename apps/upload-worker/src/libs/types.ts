@@ -6,6 +6,7 @@ export type UploadJobMessage = {
 export type UploadEnv = Cloudflare.Env & {
   OPENAI_API_KEY: string;
   IMAGE_R2_URL: string;
+  SKIP_MODERATION?: string;
 };
 
 export type ConvertWebpOptions = {
