@@ -97,7 +97,7 @@ importers:
         version: 19.2.0(react@19.2.0)
       react-easy-crop:
         specifier: ^5.5.5
-        version: 5.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 5.5.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
@@ -4239,8 +4239,8 @@ packages:
     peerDependencies:
       react: ^19.2.0
 
-  react-easy-crop@5.5.5:
-    resolution: {integrity: sha512-aRiY8CnsHir4cmoPaXbZW0Hpmy0Wd+7mxZbALx/+rxvAIIy0hesK48hCBjorAt9Kl9dA8IskWnhOq3ky44coLA==}
+  react-easy-crop@5.5.6:
+    resolution: {integrity: sha512-Jw3/ozs8uXj3NpL511Suc4AHY+mLRO23rUgipXvNYKqezcFSYHxe4QXibBymkOoY6oOtLVMPO2HNPRHYvMPyTw==}
     peerDependencies:
       react: '>=16.4.0'
       react-dom: '>=16.4.0'
@@ -8632,7 +8632,7 @@ snapshots:
       react: 19.2.0
       scheduler: 0.27.0
 
-  react-easy-crop@5.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  react-easy-crop@5.5.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       normalize-wheel: 1.0.1
       react: 19.2.0
