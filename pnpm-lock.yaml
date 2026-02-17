@@ -115,7 +115,7 @@ importers:
         version: 5.1.4(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0))
       wasm-image-optimization:
         specifier: ^1.4.3
-        version: 1.4.3
+        version: 1.4.5
     devDependencies:
       '@biomejs/biome':
         specifier: 2.3.13
@@ -212,7 +212,7 @@ importers:
         version: 4.104.0(ws@8.19.0)(zod@3.25.76)
       wasm-image-optimization:
         specifier: ^1.4.3
-        version: 1.4.3
+        version: 1.4.5
     devDependencies:
       '@types/node':
         specifier: ^25.0.3
@@ -4912,8 +4912,8 @@ packages:
     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
     engines: {node: '>=18'}
 
-  wasm-image-optimization@1.4.3:
-    resolution: {integrity: sha512-vYQtMPGm98U/rTg3BnCZWrpRjV8Y0hD8CWR4NIrgLzeDqsIh2nrzJu9RmrGDX6NIC5q9rBRdkjQ/wmeRKWh2RQ==}
+  wasm-image-optimization@1.4.5:
+    resolution: {integrity: sha512-1+Lvzz5IjaDe+BXmG4ZWSdVfPItndzgAVFq8BTUEwIWQL/gF+4zqjASC03/6wT4Fq1sgOFomwK6qaOSsDyFtcw==}
 
   web-streams-polyfill@4.0.0-beta.3:
     resolution: {integrity: sha512-QW95TCTaHmsYfHDybGMwO5IJIM93I/6vTRk+daHTWFPhwh+C8Cg7j7XyKrwrj8Ib6vYXe0ocYNrmzY4xAAN6ug==}
@@ -9422,7 +9422,7 @@ snapshots:
       xml-name-validator: 5.0.0
     optional: true
 
-  wasm-image-optimization@1.4.3:
+  wasm-image-optimization@1.4.5:
     dependencies:
       mkdirp: 3.0.1
       worker-lib: 2.0.8
