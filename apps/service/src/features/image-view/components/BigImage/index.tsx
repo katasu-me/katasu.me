@@ -9,21 +9,19 @@ export default function BigImage(props: Props) {
     <motion.div
       initial={{
         opacity: 0,
-        scale: 0.95,
-        rotate: 4,
+        scale: 1.025,
         filter: "blur(8px)",
       }}
       animate={{
         opacity: 1,
         scale: 1,
-        rotate: 0,
         filter: "blur(0px)",
       }}
       transition={{
         type: "spring",
         mass: 5,
         stiffness: 550,
-        damping: 60,
+        damping: 100,
       }}
     >
       <FrameImage
