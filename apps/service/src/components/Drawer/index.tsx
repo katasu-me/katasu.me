@@ -13,7 +13,7 @@ type Props = {
 
 export default function Drawer({ title, children, triggerChildren, titleClassname, innerClassname, ...props }: Props) {
   return (
-    <VaulDrawer.Root {...props}>
+    <VaulDrawer.Root {...props} repositionInputs={false}>
       {triggerChildren && <VaulDrawer.Trigger asChild>{triggerChildren}</VaulDrawer.Trigger>}
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 z-floating bg-black/40" />
