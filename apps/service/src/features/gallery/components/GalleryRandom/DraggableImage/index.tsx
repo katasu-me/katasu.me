@@ -70,7 +70,7 @@ export default function DraggableImage({
         x: 0,
         y: 500,
         opacity: 0,
-        scale: 0.85,
+        scale: 1.5,
         filter: "blur(16px)",
       }}
       animate={
