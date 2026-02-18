@@ -25,20 +25,19 @@
     "db:seed:prod": "wrangler d1 execute katasu-me --remote --file=../../packages/service-db/src/seeds/plans.sql --env production"
   },
   "dependencies": {
-    "@arrow2nd/vaul": "^1.1.7",
-    "@cloudflare/vite-plugin": "^1.16.0",
+    "@cloudflare/vite-plugin": "^1.25.0",
     "@katasu.me/service-db": "workspace:*",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/vite": "^4.0.6",
-    "@tanstack/react-devtools": "^0.8.2",
+    "@tanstack/react-devtools": "^0.9.5",
     "@tanstack/react-form": "^1.27.0",
     "@tanstack/react-query": "^5.90.11",
-    "@tanstack/react-router": "^1.139.14",
-    "@tanstack/react-router-devtools": "^1.139.14",
-    "@tanstack/react-router-ssr-query": "^1.139.14",
-    "@tanstack/react-start": "^1.139.14",
-    "@tanstack/router-plugin": "^1.139.14",
+    "@tanstack/react-router": "^1.160.2",
+    "@tanstack/react-router-devtools": "^1.160.2",
+    "@tanstack/react-router-ssr-query": "^1.160.2",
+    "@tanstack/react-start": "^1.160.2",
+    "@tanstack/router-plugin": "^1.160.2",
     "better-auth": "^1.4.5",
     "budoux": "^0.7.0",
     "drizzle-kit": "^0.31.6",
@@ -54,7 +53,8 @@
     "tailwindcss": "^4.0.6",
     "thumbhash": "^0.1.1",
     "valibot": "^1.2.0",
-    "vite-tsconfig-paths": "^5.1.4",
+    "vaul": "^1.1.2",
+    "vite-tsconfig-paths": "^6.1.1",
     "wasm-image-optimization": "^1.4.3"
   },
   "devDependencies": {
@@ -75,6 +75,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "@vitest/ui": "^4.0.15",
+    "baseline-browser-mapping": "^2.9.19",
     "better-sqlite3": "^12.5.0",
     "happy-dom": "^20.0.10",
     "storybook": "^10.1.10",
@@ -84,6 +85,6 @@
     "vite-plugin-svgr": "^4.5.0",
     "vitest": "^4.0.16",
     "web-vitals": "^5.1.0",
-    "wrangler": "^4.52.0"
+    "wrangler": "^4.65.0"
   }
 }

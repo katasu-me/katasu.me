@@ -8,8 +8,6 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ClosedBetaRouteImport } from './routes/closed-beta'
@@ -29,13 +27,6 @@ import { Route as UserLayoutUserSlugTagIndexRouteImport } from './routes/user/_l
 import { Route as UserLayoutUserSlugTagTagIdRouteImport } from './routes/user/_layout.$userSlug/tag/$tagId'
 import { Route as UserLayoutUserSlugImageImageIdRouteImport } from './routes/user/_layout.$userSlug/image.$imageId'
 
-const ReportRouteImport = createFileRoute('/report')()
-
-const ReportRoute = ReportRouteImport.update({
-  id: '/report',
-  path: '/report',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -57,8 +48,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportLayoutRoute = ReportLayoutRouteImport.update({
-  id: '/_layout',
-  getParentRoute: () => ReportRoute,
+  id: '/report/_layout',
+  path: '/report',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: '/auth/signup',
@@ -141,7 +133,7 @@ export interface FileRoutesByFullPath {
   '/user/$userSlug/': typeof UserLayoutUserSlugIndexRoute
   '/user/$userSlug/image/$imageId': typeof UserLayoutUserSlugImageImageIdRoute
   '/user/$userSlug/tag/$tagId': typeof UserLayoutUserSlugTagTagIdRoute
-  '/user/$userSlug/tag': typeof UserLayoutUserSlugTagIndexRoute
+  '/user/$userSlug/tag/': typeof UserLayoutUserSlugTagIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -169,7 +161,6 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/auth/error': typeof AuthErrorRoute
   '/auth/signup': typeof AuthSignupRoute
-  '/report': typeof ReportRouteWithChildren
   '/report/_layout': typeof ReportLayoutRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/auth/redirect': typeof ApiAuthRedirectRoute
@@ -201,7 +192,7 @@ export interface FileRouteTypes {
     | '/user/$userSlug/'
     | '/user/$userSlug/image/$imageId'
     | '/user/$userSlug/tag/$tagId'
-    | '/user/$userSlug/tag'
+    | '/user/$userSlug/tag/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,7 +219,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/error'
     | '/auth/signup'
-    | '/report'
     | '/report/_layout'
     | '/api/auth/$'
     | '/api/auth/redirect'
@@ -249,7 +239,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   AuthErrorRoute: typeof AuthErrorRoute
   AuthSignupRoute: typeof AuthSignupRoute
-  ReportRoute: typeof ReportRouteWithChildren
+  ReportLayoutRoute: typeof ReportLayoutRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAuthRedirectRoute: typeof ApiAuthRedirectRoute
   ApiR2SplatRoute: typeof ApiR2SplatRoute
@@ -258,13 +248,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/report': {
-      id: '/report'
-      path: '/report'
-      fullPath: '/report'
-      preLoaderRoute: typeof ReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -298,7 +281,7 @@ declare module '@tanstack/react-router' {
       path: '/report'
       fullPath: '/report'
       preLoaderRoute: typeof ReportLayoutRouteImport
-      parentRoute: typeof ReportRoute
+      parentRoute: typeof rootRouteImport
     }
     '/auth/signup': {
       id: '/auth/signup'
@@ -366,7 +349,7 @@ declare module '@tanstack/react-router' {
     '/user/_layout/$userSlug/tag/': {
       id: '/user/_layout/$userSlug/tag/'
       path: '/tag'
-      fullPath: '/user/$userSlug/tag'
+      fullPath: '/user/$userSlug/tag/'
       preLoaderRoute: typeof UserLayoutUserSlugTagIndexRouteImport
       parentRoute: typeof UserLayoutUserSlugRoute
     }
@@ -401,17 +384,6 @@ const ReportLayoutRouteWithChildren = ReportLayoutRoute._addFileChildren(
   ReportLayoutRouteChildren,
 )
 
-interface ReportRouteChildren {
-  ReportLayoutRoute: typeof ReportLayoutRouteWithChildren
-}
-
-const ReportRouteChildren: ReportRouteChildren = {
-  ReportLayoutRoute: ReportLayoutRouteWithChildren,
-}
-
-const ReportRouteWithChildren =
-  ReportRoute._addFileChildren(ReportRouteChildren)
-
 interface UserLayoutUserSlugRouteChildren {
   UserLayoutUserSlugIndexRoute: typeof UserLayoutUserSlugIndexRoute
   UserLayoutUserSlugImageImageIdRoute: typeof UserLayoutUserSlugImageImageIdRoute
@@ -436,7 +408,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   AuthErrorRoute: AuthErrorRoute,
   AuthSignupRoute: AuthSignupRoute,
-  ReportRoute: ReportRouteWithChildren,
+  ReportLayoutRoute: ReportLayoutRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAuthRedirectRoute: ApiAuthRedirectRoute,
   ApiR2SplatRoute: ApiR2SplatRoute,
