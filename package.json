@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.2",
-    "@typescript/native-preview": "7.0.0-dev.20251110.1",
+    "@typescript/native-preview": "7.0.0-dev.20260224.1",
     "lefthook": "^2.0.3",
     "turbo": "^2.6.0"
   }
