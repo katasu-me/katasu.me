@@ -41,7 +41,7 @@
     "better-auth": "^1.4.5",
     "budoux": "^0.8.0",
     "drizzle-kit": "^0.31.6",
-    "drizzle-orm": "^0.45.0",
+    "drizzle-orm": "^0.45.2",
     "image-size": "^2.0.2",
     "motion": "^12.23.24",
     "nanoid": "^5.1.6",
