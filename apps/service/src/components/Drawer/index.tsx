@@ -22,7 +22,7 @@ export default function Drawer({ title, children, triggerChildren, titleClassnam
           <div className="flex flex-col rounded-xl bg-warm-white p-8 pc:px-4 pt-4 outline-none">
             <VaulDrawer.Handle className="shrink-0" />
 
-            <div className={twMerge("mx-auto mt-6 max-w-md", innerClassname)}>
+            <div className={twMerge("mx-auto mt-6 pc:w-md w-full", innerClassname)}>
               <VaulDrawer.Title className={twMerge("mb-6 text-warm-black text-xl", titleClassname)}>
                 {title}
               </VaulDrawer.Title>
