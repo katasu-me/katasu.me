@@ -24,6 +24,7 @@ export function buildCsp(nonce: string, isDev: boolean): string {
     "connect-src": [
       "'self'",
       "https://tally.so",
+      "https://umami.arrow2nd.com",
       // 開発環境のみ (HMR用)
       ...(isDev ? ["ws:", "wss:"] : []),
     ],
