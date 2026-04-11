@@ -1,7 +1,7 @@
 {
   "name": "katasu.me",
   "private": true,
-  "packageManager": "pnpm@10.15.1",
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
@@ -13,8 +13,8 @@
     "test": "turbo test"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.2",
-    "@typescript/native-preview": "7.0.0-dev.20251110.1",
+    "@biomejs/biome": "2.4.10",
+    "@typescript/native-preview": "7.0.0-dev.20260405.1",
     "lefthook": "^2.0.3",
     "turbo": "^2.6.0"
   }
