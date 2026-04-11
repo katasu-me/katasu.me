@@ -25,6 +25,7 @@
     "db:seed:prod": "wrangler d1 execute katasu-me --remote --file=../../packages/service-db/src/seeds/plans.sql --env production"
   },
   "dependencies": {
+    "@arrow2nd/vaul": "^1.1.7",
     "@cloudflare/vite-plugin": "^1.25.0",
     "@katasu.me/service-db": "workspace:*",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
@@ -53,7 +54,6 @@
     "tailwindcss": "^4.0.6",
     "thumbhash": "^0.1.1",
     "valibot": "^1.2.0",
-    "vaul": "^1.1.2",
     "vite-tsconfig-paths": "^6.1.1",
     "wasm-image-optimization": "^1.4.3"
   },
