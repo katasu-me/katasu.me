@@ -1,4 +1,5 @@
 import { useForm } from "@tanstack/react-form";
+import { isRedirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import AvatarUpload from "@/components/AvatarUpload";
@@ -51,10 +52,15 @@ export default function SignUpForm({ className }: Props) {
 
         const result = await signupFn({ data: formData });
 
-        if (!result.success) {
-          setFormError("新規登録に失敗しました");
+        if (result && !result.success) {
+          setFormError(result.error);
         }
       } catch (error) {
+        // 成功時はサーバー側でリダイレクトがthrowされるため、そのまま再throw
+        if (isRedirect(error)) {
+          throw error;
+        }
+
         if (error instanceof Error) {
           setFormError(error.message);
         }
