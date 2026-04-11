@@ -230,14 +230,14 @@ importers:
   packages/service-db:
     dependencies:
       drizzle-orm:
-        specifier: ^0.45.0
+        specifier: ^0.45.2
         version: 0.45.2(@opentelemetry/api@1.9.1)(better-sqlite3@12.8.0)(kysely@0.28.15)
       nanoid:
-        specifier: ^5.1.6
+        specifier: ^5.1.7
         version: 5.1.7
     devDependencies:
       drizzle-kit:
-        specifier: ^0.31.6
+        specifier: ^0.31.10
         version: 0.31.10
 
 packages:
