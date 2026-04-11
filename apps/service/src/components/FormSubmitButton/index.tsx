@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
-import IconLoader2 from "@/assets/icons/loader-2.svg?react";
 import Button from "@/components/Button";
+import LoaderIcon from "@/components/Icon/LucideAnimated/LoaderIcon";
 
 type Props = Pick<ComponentProps<"button">, "className" | "disabled"> & {
   label: string;
@@ -21,7 +21,7 @@ export default function FormSubmitButton({
     <Button type="submit" className={className} variant={variant} disabled={disabled}>
       {isSubmitting ? (
         <span className="flex items-center justify-center gap-2">
-          <IconLoader2 className="size-5 animate-spin" />
+          <LoaderIcon className="size-5" size={20} />
           {pendingLabel}
         </span>
       ) : (
