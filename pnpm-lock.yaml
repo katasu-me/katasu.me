@@ -82,7 +82,7 @@ importers:
         version: 12.36.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       nanoid:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.1.7
       openai:
         specifier: ^6.9.0
         version: 6.29.0(ws@8.20.0)(zod@4.3.6)
@@ -234,7 +234,7 @@ importers:
         version: 0.45.1(@opentelemetry/api@1.9.1)(better-sqlite3@12.8.0)(kysely@0.28.15)
       nanoid:
         specifier: ^5.1.6
-        version: 5.1.6
+        version: 5.1.7
     devDependencies:
       drizzle-kit:
         specifier: ^0.31.6
@@ -3907,8 +3907,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nanoid@5.1.6:
-    resolution: {integrity: sha512-c7+7RQ+dMB5dPwwCp4ee1/iV/q2P6aK1mTZcfr1BTuVlyW9hJYiMPybJCcnBlQtuSmTIWNeazm/zqNoZSSElBg==}
+  nanoid@5.1.7:
+    resolution: {integrity: sha512-ua3NDgISf6jdwezAheMOk4mbE1LXjm1DfMUDMuJf4AqxLFK3ccGpgWizwa5YV7Yz9EpXwEaWoRXSb/BnV0t5dQ==}
     engines: {node: ^18 || >=20}
     hasBin: true
 
@@ -7932,7 +7932,7 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  nanoid@5.1.6: {}
+  nanoid@5.1.7: {}
 
   nanostores@1.2.0: {}
 
