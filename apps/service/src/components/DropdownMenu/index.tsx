@@ -10,7 +10,7 @@ type Props = {
 
 export default function DropdownMenu({ trigger, items, contentClassName, align = "end", sideOffset = 5 }: Props) {
   return (
-    <RadixDropdownMenu.Root>
+    <RadixDropdownMenu.Root modal={false}>
       <RadixDropdownMenu.Trigger asChild>{trigger}</RadixDropdownMenu.Trigger>
 
       <RadixDropdownMenu.Portal>
