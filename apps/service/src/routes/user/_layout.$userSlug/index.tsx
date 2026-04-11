@@ -20,7 +20,7 @@ const searchParamsSchema = object({
   page: fallback(number(), 1),
 });
 
-export const Route = createFileRoute("/user/_layout/$userId/")({
+export const Route = createFileRoute("/user/_layout/$userSlug/")({
   component: RouteComponent,
   errorComponent: ({ error }) => {
     return <Message message={error.message ?? GALLERY_ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
@@ -28,17 +28,17 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
   validateSearch: (search) => parse(searchParamsSchema, search),
   loaderDeps: ({ search: { view, page } }) => ({ view, page }),
   loader: async ({ params, deps, context }) => {
-    const isOwner = params.userId === context.sessionUserId;
+    const isOwner = params.userSlug === context.sessionUserId;
 
     await Promise.all([
       context.queryClient.ensureQueryData(
         userPageQueryOptions({
           view: deps.view,
-          userId: params.userId,
+          userId: params.userSlug,
           page: deps.page,
         }),
       ),
-      context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userId, isOwner)),
+      context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userSlug, isOwner)),
     ]);
 
     return {
@@ -55,7 +55,7 @@ export const Route = createFileRoute("/user/_layout/$userId/")({
         pageTitle: user.name,
         imageUrl,
         twitterCard: "summary",
-        path: `/user/${user.id}`,
+        path: `/user/${user.customUrl || user.id}`,
         noindex: false, // ユーザーページはインデックスする
       }),
     };
@@ -76,11 +76,12 @@ function RouteComponent() {
   const isOwner = user.id === sessionUserId;
   const { data: totalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id, isOwner));
 
-  const frameImages = data.images ? data.images.map((image) => toFrameImageProps(image)) : [];
+  const userSlug = user.customUrl || user.id;
+  const frameImages = data.images ? data.images.map((image) => toFrameImageProps(image, "thumbnail", userSlug)) : [];
 
   return (
     <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-      {data.tags && <TagLinks className="col-start-2" tags={data.tags} userId={user.id} />}
+      {data.tags && <TagLinks className="col-start-2" tags={data.tags} userSlug={userSlug} />}
 
       {isOwner && (
         <div className="col-start-2">
@@ -108,6 +109,7 @@ function RouteComponent() {
               type: "user",
               userId: user.id,
             }}
+            userSlug={userSlug}
           />
         </ClientOnly>
       )}

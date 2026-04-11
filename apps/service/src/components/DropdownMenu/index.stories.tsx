@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import IconDots from "@/assets/icons/dots.svg";
-import IconFlag from "@/assets/icons/flag.svg";
-import IconSettings from "@/assets/icons/settings.svg";
-import IconTrash from "@/assets/icons/trash.svg";
+import IconDots from "@/assets/icons/dots.svg?react";
+import IconFlag from "@/assets/icons/flag.svg?react";
+import IconSettings from "@/assets/icons/settings.svg?react";
+import IconTrash from "@/assets/icons/trash.svg?react";
 import IconButton from "@/components/IconButton";
 import DropdownMenu from ".";
 

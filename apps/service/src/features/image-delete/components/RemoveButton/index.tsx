@@ -6,12 +6,11 @@ import Button from "@/components/Button";
 import { deleteImageFn } from "../../server-fn/delete-image";
 
 type Props = {
-  userId: string;
   imageId: string;
   className?: string;
 };
 
-export default function RemoveButton({ userId, imageId, className }: Props) {
+export default function RemoveButton({ imageId, className }: Props) {
   const navigate = useNavigate();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -27,7 +26,6 @@ export default function RemoveButton({ userId, imageId, className }: Props) {
     try {
       const result = await deleteImageFn({
         data: {
-          userId,
           imageId,
         },
       });

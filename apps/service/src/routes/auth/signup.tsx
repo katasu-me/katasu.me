@@ -11,8 +11,8 @@ const signupPageBeforeLoadFn = createServerFn().handler(async () => {
   // 新規登録済ならマイページへリダイレクト
   if (session.user.name) {
     throw redirect({
-      to: "/user/$userId",
-      params: { userId: session.user.id },
+      to: "/user/$userSlug",
+      params: { userSlug: session.user.id },
       search: {
         view: "timeline",
         page: 1,

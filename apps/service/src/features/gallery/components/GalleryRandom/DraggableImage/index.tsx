@@ -70,7 +70,7 @@ export default function DraggableImage({
         x: 0,
         y: 500,
         opacity: 0,
-        scale: 0.85,
+        scale: 1.5,
         filter: "blur(16px)",
       }}
       animate={
@@ -127,9 +127,9 @@ export default function DraggableImage({
             "pc:mt-4 pc:pb-0 pc:text-sm pc:underline-offset-4",
             "hover:text-warm-black hover:decoration-warm-black",
           ])}
-          to="/user/$userId/image/$imageId"
+          to="/user/$userSlug/image/$imageId"
           params={{
-            userId: linkParams.userId,
+            userSlug: linkParams.userSlug,
             imageId: linkParams.imageId,
           }}
         >

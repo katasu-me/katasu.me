@@ -45,6 +45,17 @@ export const signupAction = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<SignUpResult> => {
     const { session } = await requireAuth();
 
+    const { success: rateLimitSuccess } = await env.ACTIONS_RATE_LIMITER.limit({
+      key: `signup:${session.user.id}`,
+    });
+
+    if (!rateLimitSuccess) {
+      return {
+        success: false,
+        error: ERROR_MESSAGE.RATE_LIMIT_EXCEEDED,
+      };
+    }
+
     // アバター画像がある場合
     if (data.avatar instanceof File && data.avatar.size > 0) {
       try {
@@ -93,8 +104,8 @@ export const signupAction = createServerFn({ method: "POST" })
 
     // 成功時はユーザーページへリダイレクト
     throw redirect({
-      to: "/user/$userId",
-      params: { userId: session.user.id },
+      to: "/user/$userSlug",
+      params: { userSlug: session.user.id },
       search: {
         view: "timeline",
         page: 1,

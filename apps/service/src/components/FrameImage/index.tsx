@@ -4,7 +4,7 @@ import { type ComponentProps, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import IconAlertTriangleFilled from "@/assets/icons/alert-triangle-filled.svg?react";
 import IconExclamationCircle from "@/assets/icons/exclamation-circle.svg?react";
-import IconLoader2 from "@/assets/icons/loader-2.svg?react";
+import LoaderIcon from "@/components/Icon/LucideAnimated/LoaderIcon";
 import { decodeThumbHash, getThumbHashLuminance } from "@/libs/thumbhash";
 import StatusOverlay from "./StatusOverlay";
 
@@ -12,7 +12,7 @@ type FrameImageProps = {
   width: number;
   height: number;
   linkParams?: {
-    userId: string;
+    userSlug: string;
     imageId: string;
   };
   disableHoverEffect?: boolean;
@@ -62,10 +62,7 @@ export default function FrameImage({
     if (isProcessing) {
       return (
         <div className="pointer-events-none absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center gap-1 p-4">
-          <IconLoader2 className={twMerge("size-6 animate-spin", isDark ? "text-warm-white" : "text-warm-black-50")} />
-          <span className={twMerge("text-center font-bold text-xs", isDark ? "text-warm-white" : "text-warm-black-50")}>
-            ちょっとまってね
-          </span>
+          <LoaderIcon className={twMerge("size-6", isDark ? "text-warm-white" : "text-warm-black")} size={24} />
         </div>
       );
     }
@@ -97,9 +94,9 @@ export default function FrameImage({
       {linkParams && (
         <Link
           className="focus:outline-none"
-          to="/user/$userId/image/$imageId"
+          to="/user/$userSlug/image/$imageId"
           params={{
-            userId: linkParams.userId,
+            userSlug: linkParams.userSlug,
             imageId: linkParams.imageId,
           }}
         >

@@ -18,18 +18,20 @@ export default function Drawer({ title, children, triggerChildren, titleClassnam
       <VaulDrawer.Portal>
         <VaulDrawer.Overlay className="fixed inset-0 z-floating bg-black/40" />
 
-        <VaulDrawer.Content className="fixed right-0 bottom-0 left-0 z-floating m-2 pc:m-4 h-fit overflow-hidden rounded-xl bg-warm-white p-8 pc:px-4 pt-4 outline-none">
-          <VaulDrawer.Handle />
+        <VaulDrawer.Content className="fixed right-0 bottom-0 z-floating max-h-[calc(100dvh-1rem)] pc:max-h-[calc(100dvh-2rem)] w-full p-2 pc:p-4">
+          <div className="flex flex-col rounded-xl bg-warm-white p-8 pc:px-4 pt-4 outline-none">
+            <VaulDrawer.Handle className="shrink-0" />
 
-          <div className={twMerge("mx-auto mt-6 max-w-md", innerClassname)}>
-            <VaulDrawer.Title className={twMerge("mb-6 text-warm-black text-xl", titleClassname)}>
-              {title}
-            </VaulDrawer.Title>
+            <div className={twMerge("mx-auto mt-6 pc:w-md w-full", innerClassname)}>
+              <VaulDrawer.Title className={twMerge("mb-6 text-warm-black text-xl", titleClassname)}>
+                {title}
+              </VaulDrawer.Title>
 
-            {children({
-              Description: VaulDrawer.Description,
-              Close: VaulDrawer.Close,
-            })}
+              {children({
+                Description: VaulDrawer.Description,
+                Close: VaulDrawer.Close,
+              })}
+            </div>
           </div>
         </VaulDrawer.Content>
       </VaulDrawer.Portal>

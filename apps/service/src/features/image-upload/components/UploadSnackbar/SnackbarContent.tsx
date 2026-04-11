@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import IconCheck from "@/assets/icons/circle-check.svg?react";
-import IconLoader from "@/assets/icons/loader-2.svg?react";
+import LoaderIcon from "@/components/Icon/LucideAnimated/LoaderIcon";
 import { DEFAULT_TRANSITION } from "@/constants/animation";
 import type { UploadStatus } from "../../contexts/UploadContext";
 
@@ -38,7 +38,7 @@ export default function SnackbarContent({ status }: Props) {
         >
           {status === "uploading" && (
             <>
-              <IconLoader className="h-5 w-5 animate-spin" />
+              <LoaderIcon className="h-5 w-5" size={20} />
               <span className="text-sm tracking-wider">投稿しています…</span>
             </>
           )}

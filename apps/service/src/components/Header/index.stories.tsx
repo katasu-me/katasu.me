@@ -5,6 +5,7 @@ import Header from ".";
 const mockUser: PublicUserData = {
   id: "user123",
   name: "テストユーザー",
+  customUrl: null,
   hasAvatar: false,
   plan: {
     maxPhotos: 1000,
@@ -18,6 +19,7 @@ const mockUser: PublicUserData = {
 const mockUserWithAvatar: PublicUserData = {
   id: "user456",
   name: "アバター付きユーザー",
+  customUrl: "avatar-user",
   hasAvatar: true,
   plan: {
     maxPhotos: 1000,

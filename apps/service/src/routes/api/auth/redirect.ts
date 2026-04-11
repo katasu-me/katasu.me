@@ -16,9 +16,9 @@ export const Route = createFileRoute("/api/auth/redirect")({
 
         // ユーザーページへリダイレクト
         throw redirect({
-          to: "/user/$userId",
+          to: "/user/$userSlug",
           params: {
-            userId: session.user.id,
+            userSlug: session.user.id,
           },
           search: {
             view: "timeline",

@@ -8,8 +8,6 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ClosedBetaRouteImport } from './routes/closed-beta'
@@ -18,24 +16,17 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReportLayoutRouteImport } from './routes/report/_layout'
 import { Route as AuthSignupRouteImport } from './routes/auth/signup'
 import { Route as AuthErrorRouteImport } from './routes/auth/error'
-import { Route as UserLayoutUserIdRouteImport } from './routes/user/_layout.$userId'
+import { Route as UserLayoutUserSlugRouteImport } from './routes/user/_layout.$userSlug'
 import { Route as ReportLayoutUserRouteImport } from './routes/report/_layout/user'
 import { Route as ReportLayoutImageRouteImport } from './routes/report/_layout/image'
 import { Route as ApiR2SplatRouteImport } from './routes/api/r2/$'
 import { Route as ApiAuthRedirectRouteImport } from './routes/api/auth/redirect'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as UserLayoutUserIdIndexRouteImport } from './routes/user/_layout.$userId/index'
-import { Route as UserLayoutUserIdTagIndexRouteImport } from './routes/user/_layout.$userId/tag/index'
-import { Route as UserLayoutUserIdTagTagIdRouteImport } from './routes/user/_layout.$userId/tag/$tagId'
-import { Route as UserLayoutUserIdImageImageIdRouteImport } from './routes/user/_layout.$userId/image.$imageId'
+import { Route as UserLayoutUserSlugIndexRouteImport } from './routes/user/_layout.$userSlug/index'
+import { Route as UserLayoutUserSlugTagIndexRouteImport } from './routes/user/_layout.$userSlug/tag/index'
+import { Route as UserLayoutUserSlugTagTagIdRouteImport } from './routes/user/_layout.$userSlug/tag/$tagId'
+import { Route as UserLayoutUserSlugImageImageIdRouteImport } from './routes/user/_layout.$userSlug/image.$imageId'
 
-const ReportRouteImport = createFileRoute('/report')()
-
-const ReportRoute = ReportRouteImport.update({
-  id: '/report',
-  path: '/report',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -57,8 +48,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportLayoutRoute = ReportLayoutRouteImport.update({
-  id: '/_layout',
-  getParentRoute: () => ReportRoute,
+  id: '/report/_layout',
+  path: '/report',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: '/auth/signup',
@@ -70,9 +62,9 @@ const AuthErrorRoute = AuthErrorRouteImport.update({
   path: '/auth/error',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UserLayoutUserIdRoute = UserLayoutUserIdRouteImport.update({
-  id: '/user/_layout/$userId',
-  path: '/user/$userId',
+const UserLayoutUserSlugRoute = UserLayoutUserSlugRouteImport.update({
+  id: '/user/_layout/$userSlug',
+  path: '/user/$userSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportLayoutUserRoute = ReportLayoutUserRouteImport.update({
@@ -100,28 +92,28 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UserLayoutUserIdIndexRoute = UserLayoutUserIdIndexRouteImport.update({
+const UserLayoutUserSlugIndexRoute = UserLayoutUserSlugIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => UserLayoutUserIdRoute,
+  getParentRoute: () => UserLayoutUserSlugRoute,
 } as any)
-const UserLayoutUserIdTagIndexRoute =
-  UserLayoutUserIdTagIndexRouteImport.update({
+const UserLayoutUserSlugTagIndexRoute =
+  UserLayoutUserSlugTagIndexRouteImport.update({
     id: '/tag/',
     path: '/tag/',
-    getParentRoute: () => UserLayoutUserIdRoute,
+    getParentRoute: () => UserLayoutUserSlugRoute,
   } as any)
-const UserLayoutUserIdTagTagIdRoute =
-  UserLayoutUserIdTagTagIdRouteImport.update({
+const UserLayoutUserSlugTagTagIdRoute =
+  UserLayoutUserSlugTagTagIdRouteImport.update({
     id: '/tag/$tagId',
     path: '/tag/$tagId',
-    getParentRoute: () => UserLayoutUserIdRoute,
+    getParentRoute: () => UserLayoutUserSlugRoute,
   } as any)
-const UserLayoutUserIdImageImageIdRoute =
-  UserLayoutUserIdImageImageIdRouteImport.update({
+const UserLayoutUserSlugImageImageIdRoute =
+  UserLayoutUserSlugImageImageIdRouteImport.update({
     id: '/image/$imageId',
     path: '/image/$imageId',
-    getParentRoute: () => UserLayoutUserIdRoute,
+    getParentRoute: () => UserLayoutUserSlugRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -137,11 +129,11 @@ export interface FileRoutesByFullPath {
   '/api/r2/$': typeof ApiR2SplatRoute
   '/report/image': typeof ReportLayoutImageRoute
   '/report/user': typeof ReportLayoutUserRoute
-  '/user/$userId': typeof UserLayoutUserIdRouteWithChildren
-  '/user/$userId/': typeof UserLayoutUserIdIndexRoute
-  '/user/$userId/image/$imageId': typeof UserLayoutUserIdImageImageIdRoute
-  '/user/$userId/tag/$tagId': typeof UserLayoutUserIdTagTagIdRoute
-  '/user/$userId/tag': typeof UserLayoutUserIdTagIndexRoute
+  '/user/$userSlug': typeof UserLayoutUserSlugRouteWithChildren
+  '/user/$userSlug/': typeof UserLayoutUserSlugIndexRoute
+  '/user/$userSlug/image/$imageId': typeof UserLayoutUserSlugImageImageIdRoute
+  '/user/$userSlug/tag/$tagId': typeof UserLayoutUserSlugTagTagIdRoute
+  '/user/$userSlug/tag/': typeof UserLayoutUserSlugTagIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -156,10 +148,10 @@ export interface FileRoutesByTo {
   '/api/r2/$': typeof ApiR2SplatRoute
   '/report/image': typeof ReportLayoutImageRoute
   '/report/user': typeof ReportLayoutUserRoute
-  '/user/$userId': typeof UserLayoutUserIdIndexRoute
-  '/user/$userId/image/$imageId': typeof UserLayoutUserIdImageImageIdRoute
-  '/user/$userId/tag/$tagId': typeof UserLayoutUserIdTagTagIdRoute
-  '/user/$userId/tag': typeof UserLayoutUserIdTagIndexRoute
+  '/user/$userSlug': typeof UserLayoutUserSlugIndexRoute
+  '/user/$userSlug/image/$imageId': typeof UserLayoutUserSlugImageImageIdRoute
+  '/user/$userSlug/tag/$tagId': typeof UserLayoutUserSlugTagTagIdRoute
+  '/user/$userSlug/tag': typeof UserLayoutUserSlugTagIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -169,18 +161,17 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/auth/error': typeof AuthErrorRoute
   '/auth/signup': typeof AuthSignupRoute
-  '/report': typeof ReportRouteWithChildren
   '/report/_layout': typeof ReportLayoutRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/auth/redirect': typeof ApiAuthRedirectRoute
   '/api/r2/$': typeof ApiR2SplatRoute
   '/report/_layout/image': typeof ReportLayoutImageRoute
   '/report/_layout/user': typeof ReportLayoutUserRoute
-  '/user/_layout/$userId': typeof UserLayoutUserIdRouteWithChildren
-  '/user/_layout/$userId/': typeof UserLayoutUserIdIndexRoute
-  '/user/_layout/$userId/image/$imageId': typeof UserLayoutUserIdImageImageIdRoute
-  '/user/_layout/$userId/tag/$tagId': typeof UserLayoutUserIdTagTagIdRoute
-  '/user/_layout/$userId/tag/': typeof UserLayoutUserIdTagIndexRoute
+  '/user/_layout/$userSlug': typeof UserLayoutUserSlugRouteWithChildren
+  '/user/_layout/$userSlug/': typeof UserLayoutUserSlugIndexRoute
+  '/user/_layout/$userSlug/image/$imageId': typeof UserLayoutUserSlugImageImageIdRoute
+  '/user/_layout/$userSlug/tag/$tagId': typeof UserLayoutUserSlugTagTagIdRoute
+  '/user/_layout/$userSlug/tag/': typeof UserLayoutUserSlugTagIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -197,11 +188,11 @@ export interface FileRouteTypes {
     | '/api/r2/$'
     | '/report/image'
     | '/report/user'
-    | '/user/$userId'
-    | '/user/$userId/'
-    | '/user/$userId/image/$imageId'
-    | '/user/$userId/tag/$tagId'
-    | '/user/$userId/tag'
+    | '/user/$userSlug'
+    | '/user/$userSlug/'
+    | '/user/$userSlug/image/$imageId'
+    | '/user/$userSlug/tag/$tagId'
+    | '/user/$userSlug/tag/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -216,10 +207,10 @@ export interface FileRouteTypes {
     | '/api/r2/$'
     | '/report/image'
     | '/report/user'
-    | '/user/$userId'
-    | '/user/$userId/image/$imageId'
-    | '/user/$userId/tag/$tagId'
-    | '/user/$userId/tag'
+    | '/user/$userSlug'
+    | '/user/$userSlug/image/$imageId'
+    | '/user/$userSlug/tag/$tagId'
+    | '/user/$userSlug/tag'
   id:
     | '__root__'
     | '/'
@@ -228,18 +219,17 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/error'
     | '/auth/signup'
-    | '/report'
     | '/report/_layout'
     | '/api/auth/$'
     | '/api/auth/redirect'
     | '/api/r2/$'
     | '/report/_layout/image'
     | '/report/_layout/user'
-    | '/user/_layout/$userId'
-    | '/user/_layout/$userId/'
-    | '/user/_layout/$userId/image/$imageId'
-    | '/user/_layout/$userId/tag/$tagId'
-    | '/user/_layout/$userId/tag/'
+    | '/user/_layout/$userSlug'
+    | '/user/_layout/$userSlug/'
+    | '/user/_layout/$userSlug/image/$imageId'
+    | '/user/_layout/$userSlug/tag/$tagId'
+    | '/user/_layout/$userSlug/tag/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -249,22 +239,15 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   AuthErrorRoute: typeof AuthErrorRoute
   AuthSignupRoute: typeof AuthSignupRoute
-  ReportRoute: typeof ReportRouteWithChildren
+  ReportLayoutRoute: typeof ReportLayoutRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAuthRedirectRoute: typeof ApiAuthRedirectRoute
   ApiR2SplatRoute: typeof ApiR2SplatRoute
-  UserLayoutUserIdRoute: typeof UserLayoutUserIdRouteWithChildren
+  UserLayoutUserSlugRoute: typeof UserLayoutUserSlugRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/report': {
-      id: '/report'
-      path: '/report'
-      fullPath: '/report'
-      preLoaderRoute: typeof ReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -298,7 +281,7 @@ declare module '@tanstack/react-router' {
       path: '/report'
       fullPath: '/report'
       preLoaderRoute: typeof ReportLayoutRouteImport
-      parentRoute: typeof ReportRoute
+      parentRoute: typeof rootRouteImport
     }
     '/auth/signup': {
       id: '/auth/signup'
@@ -314,11 +297,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthErrorRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user/_layout/$userId': {
-      id: '/user/_layout/$userId'
-      path: '/user/$userId'
-      fullPath: '/user/$userId'
-      preLoaderRoute: typeof UserLayoutUserIdRouteImport
+    '/user/_layout/$userSlug': {
+      id: '/user/_layout/$userSlug'
+      path: '/user/$userSlug'
+      fullPath: '/user/$userSlug'
+      preLoaderRoute: typeof UserLayoutUserSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/report/_layout/user': {
@@ -356,33 +339,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user/_layout/$userId/': {
-      id: '/user/_layout/$userId/'
+    '/user/_layout/$userSlug/': {
+      id: '/user/_layout/$userSlug/'
       path: '/'
-      fullPath: '/user/$userId/'
-      preLoaderRoute: typeof UserLayoutUserIdIndexRouteImport
-      parentRoute: typeof UserLayoutUserIdRoute
+      fullPath: '/user/$userSlug/'
+      preLoaderRoute: typeof UserLayoutUserSlugIndexRouteImport
+      parentRoute: typeof UserLayoutUserSlugRoute
     }
-    '/user/_layout/$userId/tag/': {
-      id: '/user/_layout/$userId/tag/'
+    '/user/_layout/$userSlug/tag/': {
+      id: '/user/_layout/$userSlug/tag/'
       path: '/tag'
-      fullPath: '/user/$userId/tag'
-      preLoaderRoute: typeof UserLayoutUserIdTagIndexRouteImport
-      parentRoute: typeof UserLayoutUserIdRoute
+      fullPath: '/user/$userSlug/tag/'
+      preLoaderRoute: typeof UserLayoutUserSlugTagIndexRouteImport
+      parentRoute: typeof UserLayoutUserSlugRoute
     }
-    '/user/_layout/$userId/tag/$tagId': {
-      id: '/user/_layout/$userId/tag/$tagId'
+    '/user/_layout/$userSlug/tag/$tagId': {
+      id: '/user/_layout/$userSlug/tag/$tagId'
       path: '/tag/$tagId'
-      fullPath: '/user/$userId/tag/$tagId'
-      preLoaderRoute: typeof UserLayoutUserIdTagTagIdRouteImport
-      parentRoute: typeof UserLayoutUserIdRoute
+      fullPath: '/user/$userSlug/tag/$tagId'
+      preLoaderRoute: typeof UserLayoutUserSlugTagTagIdRouteImport
+      parentRoute: typeof UserLayoutUserSlugRoute
     }
-    '/user/_layout/$userId/image/$imageId': {
-      id: '/user/_layout/$userId/image/$imageId'
+    '/user/_layout/$userSlug/image/$imageId': {
+      id: '/user/_layout/$userSlug/image/$imageId'
       path: '/image/$imageId'
-      fullPath: '/user/$userId/image/$imageId'
-      preLoaderRoute: typeof UserLayoutUserIdImageImageIdRouteImport
-      parentRoute: typeof UserLayoutUserIdRoute
+      fullPath: '/user/$userSlug/image/$imageId'
+      preLoaderRoute: typeof UserLayoutUserSlugImageImageIdRouteImport
+      parentRoute: typeof UserLayoutUserSlugRoute
     }
   }
 }
@@ -401,33 +384,22 @@ const ReportLayoutRouteWithChildren = ReportLayoutRoute._addFileChildren(
   ReportLayoutRouteChildren,
 )
 
-interface ReportRouteChildren {
-  ReportLayoutRoute: typeof ReportLayoutRouteWithChildren
+interface UserLayoutUserSlugRouteChildren {
+  UserLayoutUserSlugIndexRoute: typeof UserLayoutUserSlugIndexRoute
+  UserLayoutUserSlugImageImageIdRoute: typeof UserLayoutUserSlugImageImageIdRoute
+  UserLayoutUserSlugTagTagIdRoute: typeof UserLayoutUserSlugTagTagIdRoute
+  UserLayoutUserSlugTagIndexRoute: typeof UserLayoutUserSlugTagIndexRoute
 }
 
-const ReportRouteChildren: ReportRouteChildren = {
-  ReportLayoutRoute: ReportLayoutRouteWithChildren,
+const UserLayoutUserSlugRouteChildren: UserLayoutUserSlugRouteChildren = {
+  UserLayoutUserSlugIndexRoute: UserLayoutUserSlugIndexRoute,
+  UserLayoutUserSlugImageImageIdRoute: UserLayoutUserSlugImageImageIdRoute,
+  UserLayoutUserSlugTagTagIdRoute: UserLayoutUserSlugTagTagIdRoute,
+  UserLayoutUserSlugTagIndexRoute: UserLayoutUserSlugTagIndexRoute,
 }
 
-const ReportRouteWithChildren =
-  ReportRoute._addFileChildren(ReportRouteChildren)
-
-interface UserLayoutUserIdRouteChildren {
-  UserLayoutUserIdIndexRoute: typeof UserLayoutUserIdIndexRoute
-  UserLayoutUserIdImageImageIdRoute: typeof UserLayoutUserIdImageImageIdRoute
-  UserLayoutUserIdTagTagIdRoute: typeof UserLayoutUserIdTagTagIdRoute
-  UserLayoutUserIdTagIndexRoute: typeof UserLayoutUserIdTagIndexRoute
-}
-
-const UserLayoutUserIdRouteChildren: UserLayoutUserIdRouteChildren = {
-  UserLayoutUserIdIndexRoute: UserLayoutUserIdIndexRoute,
-  UserLayoutUserIdImageImageIdRoute: UserLayoutUserIdImageImageIdRoute,
-  UserLayoutUserIdTagTagIdRoute: UserLayoutUserIdTagTagIdRoute,
-  UserLayoutUserIdTagIndexRoute: UserLayoutUserIdTagIndexRoute,
-}
-
-const UserLayoutUserIdRouteWithChildren =
-  UserLayoutUserIdRoute._addFileChildren(UserLayoutUserIdRouteChildren)
+const UserLayoutUserSlugRouteWithChildren =
+  UserLayoutUserSlugRoute._addFileChildren(UserLayoutUserSlugRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -436,11 +408,11 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   AuthErrorRoute: AuthErrorRoute,
   AuthSignupRoute: AuthSignupRoute,
-  ReportRoute: ReportRouteWithChildren,
+  ReportLayoutRoute: ReportLayoutRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAuthRedirectRoute: ApiAuthRedirectRoute,
   ApiR2SplatRoute: ApiR2SplatRoute,
-  UserLayoutUserIdRoute: UserLayoutUserIdRouteWithChildren,
+  UserLayoutUserSlugRoute: UserLayoutUserSlugRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

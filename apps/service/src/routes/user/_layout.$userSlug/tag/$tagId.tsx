@@ -19,7 +19,7 @@ const searchParamsSchema = object({
   page: fallback(number(), 1),
 });
 
-export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
+export const Route = createFileRoute("/user/_layout/$userSlug/tag/$tagId")({
   component: RouteComponent,
   errorComponent: ({ error }) => {
     return <Message message={error.message || GALLERY_ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
@@ -29,14 +29,14 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
   loader: async ({ params, deps, context }) => {
     const tagPageOptions = tagPageQueryOptions({
       view: deps.view,
-      userId: params.userId,
+      userId: params.userSlug,
       tagId: params.tagId,
       page: deps.page,
     });
 
     const [loaderData] = await Promise.all([
       context.queryClient.ensureQueryData(tagPageOptions),
-      context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userId)),
+      context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userSlug)),
     ]);
 
     return {
@@ -58,7 +58,7 @@ export const Route = createFileRoute("/user/_layout/$userId/tag/$tagId")({
         pageTitle: `#${tag.name} - ${user.name}`,
         imageUrl: getUserAvatarUrl(user.id),
         twitterCard: "summary",
-        path: `/user/${user.id}/tag/${tag.id}`,
+        path: `/user/${user.customUrl || user.id}/tag/${tag.id}`,
         noindex: true,
       }),
     };
@@ -82,7 +82,8 @@ function RouteComponent() {
 
   const { tag, images, tagTotalImageCount } = data;
   const isOwner = user.id === sessionUserId;
-  const frameImages = images ? images.map((image) => toFrameImageProps(image)) : [];
+  const userSlug = user.customUrl || user.id;
+  const frameImages = images ? images.map((image) => toFrameImageProps(image, "thumbnail", userSlug)) : [];
 
   return (
     <>
@@ -116,6 +117,7 @@ function RouteComponent() {
                 type: "tag",
                 tagId: tag.id,
               }}
+              userSlug={userSlug}
             />
           </ClientOnly>
         )}

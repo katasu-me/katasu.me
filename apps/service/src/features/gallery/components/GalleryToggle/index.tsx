@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { twJoin, twMerge } from "tailwind-merge";
-import ShuffleIcon from "@/assets/icons/arrows-shuffle.svg?react";
-import MasonryIcon from "@/assets/icons/masonry.svg?react";
+import IconArrowsShuffle from "@/assets/icons/arrows-shuffle.svg?react";
+import IconLayout from "@/assets/icons/layout.svg?react";
 import type { GalleryView } from "../../schemas/view";
 
 type Props = {
@@ -36,7 +36,7 @@ export default function GalleryToggle({ value, onRandomClick, className }: Props
           view: "timeline",
         }}
       >
-        <MasonryIcon className="h-4 w-4" />
+        <IconLayout className="h-4 w-4" />
         <span>一覧</span>
       </Link>
 
@@ -48,7 +48,7 @@ export default function GalleryToggle({ value, onRandomClick, className }: Props
           )}
           onClick={onRandomClick}
         >
-          <ShuffleIcon className="h-4 w-4" />
+          <IconArrowsShuffle className="h-4 w-4" />
           <span>シャッフル</span>
         </button>
       ) : (
@@ -61,7 +61,7 @@ export default function GalleryToggle({ value, onRandomClick, className }: Props
             view: "random",
           }}
         >
-          <ShuffleIcon className="h-4 w-4" />
+          <IconArrowsShuffle className="h-4 w-4" />
           <span>シャッフル</span>
         </Link>
       )}

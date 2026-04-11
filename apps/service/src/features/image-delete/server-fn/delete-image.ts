@@ -8,7 +8,6 @@ import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
 import { deleteImageFromR2 } from "@/libs/r2";
 
 const DeleteImageInputSchema = object({
-  userId: string(),
   imageId: string(),
 });
 
@@ -25,13 +24,14 @@ type DeleteImageResult =
 export const deleteImageFn = createServerFn({ method: "POST" })
   .inputValidator(DeleteImageInputSchema)
   .handler(async ({ data }): Promise<DeleteImageResult> => {
-    const { userId, imageId } = data;
+    const { imageId } = data;
 
     try {
       const { session } = await requireAuth();
+      const userId = session.user.id;
 
       const { success: rateLimitSuccess } = await env.ACTIONS_RATE_LIMITER.limit({
-        key: `delete:${session.user.id}`,
+        key: `delete:${userId}`,
       });
 
       if (!rateLimitSuccess) {
@@ -42,7 +42,7 @@ export const deleteImageFn = createServerFn({ method: "POST" })
       }
 
       // DBから画像を削除
-      const deleteResult = await deleteImage(env.DB, imageId, session.user.id);
+      const deleteResult = await deleteImage(env.DB, imageId, userId);
 
       if (!deleteResult.success) {
         console.error("[delete] DBから画像を削除できませんでした:", deleteResult.error);
