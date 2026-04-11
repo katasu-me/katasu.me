@@ -7,7 +7,7 @@
     "drizzle-kit": "^0.31.6"
   },
   "dependencies": {
-    "drizzle-orm": "^0.45.0",
+    "drizzle-orm": "^0.45.2",
     "nanoid": "^5.1.6"
   }
 }
