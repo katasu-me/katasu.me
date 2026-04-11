@@ -78,7 +78,7 @@ function RouteComponent() {
           <p className="mt-2 text-sm text-warm-black-50">
             <BudouX>{errorMessage}</BudouX>
           </p>
-          {canEdit && <RemoveButton className="mx-auto mt-6" userId={user.id} imageId={image.id} />}
+          {canEdit && <RemoveButton className="mx-auto mt-6" imageId={image.id} />}
         </div>
       );
     }
@@ -135,7 +135,7 @@ function RouteComponent() {
           <div className="mt-7 flex flex-col items-center justify-center gap-6">
             <div className="flex items-center gap-3">
               <EditButton imageId={image.id} title={image.title} tags={image.tags.map((tag) => tag.name)} />
-              <RemoveButton userId={user.id} imageId={image.id} />
+              <RemoveButton imageId={image.id} />
             </div>
           </div>
         )}
