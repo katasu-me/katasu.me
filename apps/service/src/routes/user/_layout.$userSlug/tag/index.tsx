@@ -7,10 +7,10 @@ import { getUserAvatarUrl } from "@/libs/r2";
 
 export const Route = createFileRoute("/user/_layout/$userSlug/tag/")({
   component: RouteComponent,
-  loader: async ({ params }) => {
+  loader: async ({ context }) => {
     return tagListPageLoaderFn({
       data: {
-        userId: params.userSlug,
+        userId: context.user.id,
       },
     });
   },
