@@ -7,6 +7,7 @@ import ExternalLink from "@/components/ExternalLink";
 import { DOCS_INFORMATION, DOCS_LICENSE, DOCS_PRIVACY_POLICY, DOCS_TERMS_OF_SERVICE } from "@/constants/site";
 import { signOut } from "@/features/auth/libs/auth-client";
 import DevelopedBy from "./DevelopedBy";
+import StartBanner from "./StartBanner";
 
 type Props =
   | {
@@ -32,33 +33,31 @@ export default function Footer({ className, ...props }: Props) {
     <footer className={twMerge("flex flex-col items-center border-warm-black-25 border-t py-32", className)}>
       {props.mode === "developed-by" && <DevelopedBy />}
 
-      {props.mode === "logged-in-user" && props.sessionUserId && (
-        <div className="flex flex-col items-center gap-6">
-          <Button asChild>
-            <Link
-              className="flex w-48 items-center justify-center gap-2"
-              to="/user/$userSlug"
-              params={{
-                userSlug: props.sessionUserId,
-              }}
-              search={{
-                view: "timeline",
-                page: 1,
-              }}
+      {props.mode === "logged-in-user" &&
+        (props.sessionUserId ? (
+          <div className="flex flex-col items-center gap-6">
+            <Button asChild>
+              <Link
+                className="flex w-48 items-center justify-center gap-2"
+                to="/user/$userSlug"
+                params={{ userSlug: props.sessionUserId }}
+                search={{ view: "timeline", page: 1 }}
+              >
+                <IconPlant className="size-5" />
+                マイページへ
+              </Link>
+            </Button>
+            <button
+              className="interactive-scale cursor-pointer text-sm text-warm-black-50 transition-all duration-400 ease-magnetic hover:brightness-90"
+              type="button"
+              onClick={handleSignOut}
             >
-              <IconPlant className="size-5" />
-              マイページへ
-            </Link>
-          </Button>
-          <button
-            className="interactive-scale cursor-pointer text-sm text-warm-black-50 transition-all duration-400 ease-magnetic hover:brightness-90"
-            type="button"
-            onClick={handleSignOut}
-          >
-            ログアウト
-          </button>
-        </div>
-      )}
+              ログアウト
+            </button>
+          </div>
+        ) : (
+          <StartBanner />
+        ))}
 
       {showDivider && (
         <div className="my-16 flex gap-1">
