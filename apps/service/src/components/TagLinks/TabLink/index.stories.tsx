@@ -9,7 +9,7 @@ const meta = {
   },
   tags: ["autodocs"],
   args: {
-    userId: "test",
+    userSlug: "test",
   },
 } satisfies Meta<typeof TagLink>;
 

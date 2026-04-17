@@ -27,7 +27,7 @@ const sampleImages: ComponentProps<typeof FrameImage>[] = [
     width: 300,
     height: 300,
     linkParams: {
-      userId: "test",
+      userSlug: "test",
       imageId: "3",
     },
     title: "正方形",

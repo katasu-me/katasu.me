@@ -4,15 +4,15 @@ import { useDevice } from "@/hooks/useDevice";
 
 type Props = {
   title: string | null;
-  userId: string;
+  userSlug: string;
   imageId: string;
 };
 
-export default function ShareButton({ title: rawTitle, userId, imageId }: Props) {
+export default function ShareButton({ title: rawTitle, userSlug, imageId }: Props) {
   const { isDesktop } = useDevice();
 
   const handleShare = async () => {
-    const url = new URL(`/user/${userId}/image/${imageId}`, window.location.origin).toString();
+    const url = new URL(`/user/${userSlug}/image/${imageId}`, window.location.origin).toString();
     const title = rawTitle?.trim();
     const text = title ? `${title}\n${url}` : url;
 

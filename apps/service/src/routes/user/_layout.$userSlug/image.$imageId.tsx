@@ -64,6 +64,7 @@ function RouteComponent() {
   const { data } = useSuspenseQuery(imagePageQueryOptions({ imageId }));
 
   const { image } = data;
+  const userSlug = user.customUrl || user.id;
   const canEdit = sessionUserId === user.id;
   const isViolation = image.status === "moderation_violation";
   const isError = image.status === "error";
@@ -96,14 +97,8 @@ function RouteComponent() {
                 key={tag.name}
                 className="text-sm text-warm-black hover:underline"
                 to="/user/$userSlug/tag/$tagId"
-                params={{
-                  userSlug: user.customUrl || user.id,
-                  tagId: tag.id,
-                }}
-                search={{
-                  view: "timeline",
-                  page: 1,
-                }}
+                params={{ userSlug, tagId: tag.id }}
+                search={{ view: "timeline", page: 1 }}
               >
                 #{tag.name}
               </Link>
@@ -128,7 +123,7 @@ function RouteComponent() {
             </IconButton>
           )}
 
-          <ShareButton title={image.title} userId={user.id} imageId={image.id} />
+          <ShareButton title={image.title} userSlug={userSlug} imageId={image.id} />
         </div>
 
         {canEdit && (
