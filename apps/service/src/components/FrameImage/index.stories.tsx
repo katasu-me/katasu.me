@@ -59,7 +59,7 @@ export const WithLink: Story = {
   args: {
     alt: "リンク付きの画像",
     linkParams: {
-      userId: "test",
+      userSlug: "test",
       imageId: "1",
     },
     width: 300,
