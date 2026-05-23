@@ -18,6 +18,10 @@ runs:
         install: true
         cache: true
 
+    - name: Install safe-chain
+      shell: bash
+      run: curl -fsSL https://github.com/AikidoSec/safe-chain/releases/latest/download/install-safe-chain.sh | sh -s -- --ci
+
     - name: Install dependencies
       shell: bash
       run: pnpm install
