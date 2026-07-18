@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, type PropsWithChildren, useContext, useEffect, useRef, useState } from "react";
 import { useSession } from "@/features/auth/libs/auth-client";
 import { TAG_PAGE_QUERY_KEY } from "@/features/gallery/server-fn/tag-page";
 import { USER_IMAGE_COUNT_QUERY_KEY } from "@/features/gallery/server-fn/user-image-count";
@@ -29,7 +29,6 @@ type Counter = {
 };
 
 type OpenDrawerOptions = {
-  defaultFile?: File;
   defaultTags?: string[];
   counter: Counter;
 };
@@ -136,7 +135,7 @@ export function UploadProvider({ children }: PropsWithChildren) {
    * 判定がマーカーに書かれるのを待ちながら複数回確認し、違反を検出したら表示する。
    * 確認中に別ファイルへ差し替えられた場合は結果を無視するため、呼び出し側でエントリ同一性を検証する
    */
-  const checkTempModeration = useCallback((entry: PreparedEntry, tempImageId: string) => {
+  const checkTempModeration = (entry: PreparedEntry, tempImageId: string) => {
     (async () => {
       try {
         for (let i = 0; i < MODERATION_MAX_CHECKS; i++) {
@@ -162,14 +161,14 @@ export function UploadProvider({ children }: PropsWithChildren) {
         console.error("[upload] Failed to check temp moderation:", error);
       }
     })();
-  }, []);
+  };
 
   /**
    * 不要になった先行アップロードの一時画像を削除する
    *
    * 削除はベストエフォート（失敗してもR2のライフサイクルルールが回収する）
    */
-  const discardPrepared = useCallback(() => {
+  const discardPrepared = () => {
     const entry = preparedRef.current;
 
     if (!entry) {
@@ -189,65 +188,62 @@ export function UploadProvider({ children }: PropsWithChildren) {
         }
       })
       .catch(() => {});
-  }, []);
+  };
 
   /**
    * ファイル選択時の先行処理（リサイズ・ThumbHash計算・一時バケットへのアップロード）
    *
    * 投稿ボタンが押される前に転送を済ませることで、投稿時の待ち時間を短縮する。
-   * 同じファイルに対しては既存の処理結果を返す（DnD用useEffectの再実行やエラー復元時の二重転送防止）
+   * 同じファイルに対しては既存の処理結果を返す（エラー復元時の二重転送防止）
    */
-  const prepareFile = useCallback(
-    (file: File): Promise<PreparedUpload> => {
-      const fileKey = getFileKey(file);
-      const current = preparedRef.current;
+  const prepareFile = (file: File): Promise<PreparedUpload> => {
+    const fileKey = getFileKey(file);
+    const current = preparedRef.current;
 
-      if (current?.fileKeys.includes(fileKey)) {
-        return current.promise;
+    if (current?.fileKeys.includes(fileKey)) {
+      return current.promise;
+    }
+
+    // 別ファイルへの差し替えなので、古い一時画像は破棄する
+    discardPrepared();
+
+    const promise = (async (): Promise<PreparedUpload> => {
+      let processed: ProcessedImage | null = null;
+
+      try {
+        const normalized = await normalizeFile(file);
+        processed = await processImageFile(normalized);
+      } catch (error) {
+        // デコード不能なファイルでもプレビュー以外のフォーム操作は継続させ、投稿時にエラー表示する
+        console.error("[upload] Failed to process image:", error);
+        return { processed: null, tempImageId: null };
       }
 
-      // 別ファイルへの差し替えなので、古い一時画像は破棄する
-      discardPrepared();
+      // 失敗してもここでは通知しない（投稿時にリトライし、それも失敗したらエラー表示する）
+      const { tempImageId } = await requestTempUpload(processed.file);
 
-      const promise = (async (): Promise<PreparedUpload> => {
-        let processed: ProcessedImage | null = null;
+      return { processed, tempImageId };
+    })();
 
-        try {
-          const normalized = await normalizeFile(file);
-          processed = await processImageFile(normalized);
-        } catch (error) {
-          // デコード不能なファイルでもプレビュー以外のフォーム操作は継続させ、投稿時にエラー表示する
-          console.error("[upload] Failed to process image:", error);
-          return { processed: null, tempImageId: null };
+    const entry: PreparedEntry = { fileKeys: [fileKey], promise };
+    preparedRef.current = entry;
+
+    // エラー復元時はフォームに処理済みファイルが渡るため、そのキーでも同一視できるようにする
+    promise
+      .then((prepared) => {
+        if (prepared.processed) {
+          entry.fileKeys.push(getFileKey(prepared.processed.file));
         }
 
-        // 失敗してもここでは通知しない（投稿時にリトライし、それも失敗したらエラー表示する）
-        const { tempImageId } = await requestTempUpload(processed.file);
+        // 先行アップロード成功時のみ、フォーム表示中のモデレーション確認を開始する
+        if (prepared.tempImageId) {
+          checkTempModeration(entry, prepared.tempImageId);
+        }
+      })
+      .catch(() => {});
 
-        return { processed, tempImageId };
-      })();
-
-      const entry: PreparedEntry = { fileKeys: [fileKey], promise };
-      preparedRef.current = entry;
-
-      // エラー復元時はフォームに処理済みファイルが渡るため、そのキーでも同一視できるようにする
-      promise
-        .then((prepared) => {
-          if (prepared.processed) {
-            entry.fileKeys.push(getFileKey(prepared.processed.file));
-          }
-
-          // 先行アップロード成功時のみ、フォーム表示中のモデレーション確認を開始する
-          if (prepared.tempImageId) {
-            checkTempModeration(entry, prepared.tempImageId);
-          }
-        })
-        .catch(() => {});
-
-      return promise;
-    },
-    [discardPrepared, checkTempModeration],
-  );
+    return promise;
+  };
 
   const reset = () => {
     setState(initialState);
@@ -258,7 +254,7 @@ export function UploadProvider({ children }: PropsWithChildren) {
 
   const openDrawer = (options: OpenDrawerOptions) => {
     setFormData({
-      file: options.defaultFile ?? new File([], ""),
+      file: new File([], ""),
       tags: options.defaultTags ?? [],
     });
     setCounter(options.counter);

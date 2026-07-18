@@ -1,6 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { motion } from "motion/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import FormMessage from "@/components/FormMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
@@ -15,14 +15,12 @@ import {
   type UploadImageFormData,
   uploadImageClientSchema,
 } from "@/features/image-upload/schemas/upload";
-import { normalizeFile } from "@/libs/work-around";
 import { UPLOAD_ERROR_MESSAGE } from "../../constants/error";
 import { useUpload } from "../../contexts/UploadContext";
 import ImagePlaceholder from "./ImagePlaceholder";
 
 type Props = {
   onPendingChange: (pending: boolean) => void;
-  defaultImageFile?: File;
   defaultTags?: string[];
   defaultTitle?: string;
 };
@@ -33,11 +31,10 @@ export type PreviewImage = {
   height: number;
 };
 
-export default function UploadForm({ onPendingChange, defaultImageFile, defaultTags = [], defaultTitle }: Props) {
+export default function UploadForm({ onPendingChange, defaultTags = [], defaultTitle }: Props) {
   const { state, upload, prepareFile, tempModerationFlagged } = useUpload();
   const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const isDnDFileSet = useRef(false);
   const previewUrlRef = useRef<string | null>(null);
   const prepareRequestIdRef = useRef(0);
 
@@ -69,55 +66,42 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
   });
 
   /**
-   * ファイル選択・DnDの両方から呼ばれる
+   * ファイル選択時に先行処理（リサイズ・ThumbHash計算・一時アップロード）を開始する
    *
-   * フォーム入力中に転送を済ませて投稿時の待ち時間を短縮するため、
-   * この時点で先行処理（リサイズ・ThumbHash計算・一時アップロード）を開始する
+   * フォーム入力中に転送を済ませて投稿時の待ち時間を短縮する
    */
-  const applyFile = useCallback(
-    async (file: File) => {
-      // 先行処理の完了を待たずにバリデーションを効かせる（処理完了後に処理済みファイルへ差し替える）
-      form.setFieldValue("file", file);
+  const applyFile = async (file: File) => {
+    // 先行処理の完了を待たずにバリデーションを効かせる（処理完了後に処理済みファイルへ差し替える）
+    form.setFieldValue("file", file);
 
-      // 処理中に別ファイルへ差し替えられた場合、古い結果でプレビューを上書きしないようにする
-      const requestId = ++prepareRequestIdRef.current;
-      const prepared = await prepareFile(file);
+    // 処理中に別ファイルへ差し替えられた場合、古い結果でプレビューを上書きしないようにする
+    const requestId = ++prepareRequestIdRef.current;
+    const prepared = await prepareFile(file);
 
-      if (requestId !== prepareRequestIdRef.current) {
-        return;
-      }
-
-      // デコードできないファイルはプレビューせず、投稿時のエラー表示に任せる
-      if (!prepared.processed) {
-        return;
-      }
-
-      if (previewUrlRef.current) {
-        URL.revokeObjectURL(previewUrlRef.current);
-      }
-
-      const src = URL.createObjectURL(prepared.processed.file);
-      previewUrlRef.current = src;
-
-      setPreviewImage({
-        src,
-        width: prepared.processed.width,
-        height: prepared.processed.height,
-      });
-
-      form.setFieldValue("file", prepared.processed.file);
-    },
-    [prepareFile, form.setFieldValue],
-  );
-
-  // DnDで渡されたファイルをセット
-  useEffect(() => {
-    if (!defaultImageFile) {
+    if (requestId !== prepareRequestIdRef.current) {
       return;
     }
 
-    applyFile(defaultImageFile);
-  }, [defaultImageFile, applyFile]);
+    // デコードできないファイルはプレビューせず、投稿時のエラー表示に任せる
+    if (!prepared.processed) {
+      return;
+    }
+
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+    }
+
+    const src = URL.createObjectURL(prepared.processed.file);
+    previewUrlRef.current = src;
+
+    setPreviewImage({
+      src,
+      width: prepared.processed.width,
+      height: prepared.processed.height,
+    });
+
+    form.setFieldValue("file", prepared.processed.file);
+  };
 
   // アンマウント時にプレビュー用のオブジェクトURLを解放する
   useEffect(() => {
@@ -130,15 +114,6 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
 
   const setFileInputRef = (input: HTMLInputElement | null) => {
     fileInputRef.current = input;
-
-    if (!isDnDFileSet.current && input && defaultImageFile) {
-      normalizeFile(defaultImageFile).then((file) => {
-        const dt = new DataTransfer();
-        dt.items.add(file);
-        input.files = dt.files;
-        isDnDFileSet.current = true;
-      });
-    }
   };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
