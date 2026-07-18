@@ -1,5 +1,5 @@
 name: Setup pnpm
-description: pnpmと依存関係をインストール
+description: flakeのdevShellからツールチェーンを読み込み、依存関係をインストール
 
 runs:
   using: composite
@@ -12,11 +12,17 @@ runs:
         restore-keys: |
           ${{ runner.os }}-turbo-
 
-    - name: Setup mise
-      uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+    - name: Install Nix
+      uses: cachix/install-nix-action@630ae543ea3a38a9a4166f03376c02c50f408342 # v31.11.0
+
+    - name: Cache Nix store
+      uses: nix-community/cache-nix-action@7df957e333c1e5da7721f60227dbba6d06080569 # v7
       with:
-        install: true
-        cache: true
+        primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.nix', 'flake.lock') }}
+        restore-prefixes-first-match: nix-${{ runner.os }}-
+
+    - name: Load flake devShell
+      uses: nicknovitski/nix-develop@9be7cfb4b10451d3390a75dc18ad0465bed4932a # v1.2.1
 
     - name: Install safe-chain
       shell: bash
@@ -24,4 +30,4 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      run: pnpm install
+      run: pnpm ci

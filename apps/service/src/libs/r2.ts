@@ -1,3 +1,6 @@
+import type { ImageVariants } from "@/features/image-upload/libs/image";
+import type { ModerationMarker } from "@/types/upload";
+
 type UploadAvatarImageOptions = {
   type: "avatar";
   imageBuffer: ArrayBuffer;
@@ -7,6 +10,18 @@ type UploadAvatarImageOptions = {
 type UploadTempImageOptions = {
   imageId: string;
   file: File;
+  /** 投稿確定時に所有権・寸法を検証するためのメタデータ */
+  metadata: {
+    userId: string;
+    width: number;
+    height: number;
+  };
+};
+
+export type TempImageMetadata = {
+  userId: string;
+  width: number;
+  height: number;
 };
 
 /**
@@ -154,8 +169,152 @@ export async function uploadTempImage(r2: R2Bucket, options: UploadTempImageOpti
       httpMetadata: {
         contentType: options.file.type,
       },
+      customMetadata: {
+        userId: options.metadata.userId,
+        width: String(options.metadata.width),
+        height: String(options.metadata.height),
+      },
     });
   } catch (error) {
     throw new Error(`一時ファイルのアップロードに失敗しました: ${error}`);
   }
+}
+
+/**
+ * 一時バケットの画像メタデータを取得し、所有権を検証する
+ *
+ * 他ユーザーのtempImageIdを指定した投稿・削除を防ぐため、customMetadataのuserIdを必ず照合する
+ *
+ * @param r2 一時バケットのR2インスタンス
+ * @param tempImageId 一時画像ID
+ * @param userId リクエストユーザーのID
+ * @returns 検証済みメタデータ（存在しない・所有者不一致・メタデータ破損の場合はnull）
+ */
+export async function headTempImage(
+  r2: R2Bucket,
+  tempImageId: string,
+  userId: string,
+): Promise<TempImageMetadata | null> {
+  const safeTempId = sanitizePathComponent(tempImageId);
+  const object = await r2.head(safeTempId);
+
+  if (!object?.customMetadata) {
+    return null;
+  }
+
+  const { userId: ownerId, width, height } = object.customMetadata;
+
+  if (ownerId !== userId) {
+    return null;
+  }
+
+  // customMetadataは文字列のみのため数値として再検証する
+  const parsedWidth = Number.parseInt(width ?? "", 10);
+  const parsedHeight = Number.parseInt(height ?? "", 10);
+
+  if (!Number.isFinite(parsedWidth) || !Number.isFinite(parsedHeight) || parsedWidth <= 0 || parsedHeight <= 0) {
+    return null;
+  }
+
+  return { userId: ownerId, width: parsedWidth, height: parsedHeight };
+}
+
+/**
+ * 一時バケットから画像を取得（サニタイズ済み）
+ * @param r2 一時バケットのR2インスタンス
+ * @param tempImageId 一時画像ID
+ * @returns R2オブジェクト（存在しない場合はnull）
+ */
+export async function getTempImage(r2: R2Bucket, tempImageId: string): Promise<R2ObjectBody | null> {
+  return r2.get(sanitizePathComponent(tempImageId));
+}
+
+/**
+ * 一時バケットの画像を削除（サニタイズ済み）
+ * @param r2 一時バケットのR2インスタンス
+ * @param tempImageId 一時画像ID
+ */
+export async function deleteTempImage(r2: R2Bucket, tempImageId: string): Promise<void> {
+  await r2.delete(sanitizePathComponent(tempImageId));
+}
+
+/**
+ * モデレーション結果マーカーのキーを生成
+ *
+ * 先行モデレーション（queueコンシューマ）と投稿時の判定で同じキーを参照する
+ * @param tempImageId 一時画像ID
+ * @returns マーカーのR2キー
+ */
+export function generateTempModerationKey(tempImageId: string): string {
+  return `moderation/${sanitizePathComponent(tempImageId)}`;
+}
+
+/**
+ * 先行モデレーションの結果マーカーを読み取る
+ * @param r2 一時バケットのR2インスタンス
+ * @param tempImageId 一時画像ID
+ * @returns マーカー（存在しない・JSONパース失敗時はnull）
+ */
+export async function getModerationMarker(r2: R2Bucket, tempImageId: string): Promise<ModerationMarker | null> {
+  const object = await r2.get(generateTempModerationKey(tempImageId));
+
+  if (!object) {
+    return null;
+  }
+
+  try {
+    return (await object.json()) as ModerationMarker;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * モデレーション結果マーカーを削除する（ベストエフォート）
+ * @param r2 一時バケットのR2インスタンス
+ * @param tempImageId 一時画像ID
+ */
+export async function deleteModerationMarker(r2: R2Bucket, tempImageId: string): Promise<void> {
+  await r2.delete(generateTempModerationKey(tempImageId));
+}
+
+/**
+ * モデレーション結果マーカーを書き込む
+ * @param r2 一時バケットのR2インスタンス
+ * @param tempImageId 一時画像ID
+ * @param marker モデレーション結果マーカー
+ */
+export async function putModerationMarker(r2: R2Bucket, tempImageId: string, marker: ModerationMarker): Promise<void> {
+  await r2.put(generateTempModerationKey(tempImageId), JSON.stringify(marker), {
+    httpMetadata: { contentType: "application/json" },
+  });
+}
+
+/**
+ * 投稿画像のバリアントを本番バケットにアップロード
+ * @param r2 本番バケットのR2インスタンス
+ * @param userId ユーザーID
+ * @param imageId 画像ID
+ * @param variants アップロードするバリアント
+ * @returns アップロードしたオブジェクトのキー
+ */
+export async function uploadImages(
+  r2: R2Bucket,
+  userId: string,
+  imageId: string,
+  variants: ImageVariants,
+): Promise<{ originalKey: string; thumbnailKey: string }> {
+  const originalKey = generateR2Key("image", userId, imageId, "original");
+  const thumbnailKey = generateR2Key("image", userId, imageId, "thumbnail");
+
+  await Promise.all([
+    r2.put(originalKey, variants.original, {
+      httpMetadata: { contentType: "image/webp" },
+    }),
+    r2.put(thumbnailKey, variants.thumbnail, {
+      httpMetadata: { contentType: "image/webp" },
+    }),
+  ]);
+
+  return { originalKey, thumbnailKey };
 }
