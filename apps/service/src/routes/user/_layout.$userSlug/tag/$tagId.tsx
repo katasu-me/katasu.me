@@ -7,6 +7,7 @@ import GalleryMasonry from "@/features/gallery/components/GalleryMasonry";
 import GalleryRandom from "@/features/gallery/components/GalleryRandom";
 import { GALLERY_ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
+import { processingRefetchInterval } from "@/features/gallery/libs/polling";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { tagPageQueryOptions } from "@/features/gallery/server-fn/tag-page";
 import { userImageCountQueryOptions } from "@/features/gallery/server-fn/user-image-count";
@@ -69,19 +70,20 @@ function RouteComponent() {
   const { user, sessionUserId } = Route.useLoaderData();
   const { view, page } = Route.useSearch();
   const { tagId } = Route.useParams();
+  const isOwner = user.id === sessionUserId;
 
-  const { data } = useSuspenseQuery(
-    tagPageQueryOptions({
+  const { data } = useSuspenseQuery({
+    ...tagPageQueryOptions({
       view,
       userId: user.id,
       tagId,
       page,
     }),
-  );
+    refetchInterval: processingRefetchInterval(isOwner),
+  });
   const { data: userTotalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
 
   const { tag, images, tagTotalImageCount } = data;
-  const isOwner = user.id === sessionUserId;
   const userSlug = user.customUrl || user.id;
   const frameImages = images ? images.map((image) => toFrameImageProps(image, "thumbnail", userSlug)) : [];
 
