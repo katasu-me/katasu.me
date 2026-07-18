@@ -16,7 +16,7 @@ const meta = {
         width: 400,
         height: 600,
         linkParams: {
-          userId: "test",
+          userSlug: "test",
           imageId: "1",
         },
       },
@@ -41,7 +41,7 @@ export const MultipleImages: Story = {
         width: 400,
         height: 600,
         linkParams: {
-          userId: "test",
+          userSlug: "test",
           imageId: "1",
         },
       },
@@ -52,7 +52,7 @@ export const MultipleImages: Story = {
         width: 600,
         height: 400,
         linkParams: {
-          userId: "test",
+          userSlug: "test",
           imageId: "2",
         },
       },
@@ -63,7 +63,7 @@ export const MultipleImages: Story = {
         width: 400,
         height: 600,
         linkParams: {
-          userId: "test",
+          userSlug: "test",
           imageId: "3",
         },
       },
@@ -81,7 +81,7 @@ export const HorizontalImage: Story = {
         width: 600,
         height: 400,
         linkParams: {
-          userId: "test",
+          userSlug: "test",
           imageId: "1",
         },
       },
