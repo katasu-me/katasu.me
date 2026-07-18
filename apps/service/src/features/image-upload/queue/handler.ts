@@ -1,6 +1,13 @@
 import { env } from "cloudflare:workers";
 import { checkImageStatus, updateImageStatus } from "@katasu.me/service-db";
-import { deleteModerationMarker, getModerationMarker, putModerationMarker, uploadImages } from "@/libs/r2";
+import {
+  deleteModerationMarker,
+  deleteTempImage,
+  getModerationMarker,
+  getTempImage,
+  putModerationMarker,
+  uploadImages,
+} from "@/libs/r2";
 import type { UploadJobMessage } from "@/types/upload";
 import { generateImageVariants } from "../libs/image";
 import { moderateImage } from "../libs/moderation";
@@ -25,7 +32,7 @@ async function handleModerate(message: Message<UploadJobMessage>): Promise<void>
   const { tempImageId, userId } = message.body;
 
   try {
-    const tempObject = await env.TEMP_R2_BUCKET.get(tempImageId);
+    const tempObject = await getTempImage(env.TEMP_R2_BUCKET, tempImageId);
 
     // 既に投稿で消費済み（temp削除済み）なら判定不要
     if (!tempObject) {
@@ -42,7 +49,7 @@ async function handleModerate(message: Message<UploadJobMessage>): Promise<void>
 
     // 違反コンテンツは保持しないため、本体を即削除する（マーカーは投稿時の判定に残す）
     if (flagged) {
-      await env.TEMP_R2_BUCKET.delete(tempImageId);
+      await deleteTempImage(env.TEMP_R2_BUCKET, tempImageId);
     }
 
     message.ack();
@@ -80,20 +87,32 @@ async function handlePublish(message: Message<UploadJobMessage>): Promise<void> 
     // 違反判定済みならtempに触れる前に終了する（moderate側がtemp本体を削除済みの場合があるため、temp取得より先に見る）
     if (marker?.flagged) {
       await updateImageStatus(env.DB, imageId, "moderation_violation");
-      await Promise.all([env.TEMP_R2_BUCKET.delete(imageId), deleteModerationMarker(env.TEMP_R2_BUCKET, imageId)]);
+      await Promise.all([
+        deleteTempImage(env.TEMP_R2_BUCKET, imageId),
+        deleteModerationMarker(env.TEMP_R2_BUCKET, imageId),
+      ]);
       message.ack();
       return;
     }
 
-    const tempObject = await env.TEMP_R2_BUCKET.get(imageId);
+    const tempObject = await getTempImage(env.TEMP_R2_BUCKET, imageId);
 
     if (!tempObject) {
-      // at-least-once配信の重複でpublished/error済みレコードを上書きしないよう、processing時のみerror更新する
+      // at-least-once配信で重複メッセージが届いた場合、published済みをerrorで上書きしないようstatusを確認する
       const statusResult = await checkImageStatus(env.DB, imageId, userId);
 
       if (statusResult.success && statusResult.data.status === "processing") {
         console.error(`[publish] Temp file not found: ${imageId}`);
-        await updateImageStatus(env.DB, imageId, "error");
+        try {
+          await updateImageStatus(env.DB, imageId, "error");
+        } catch (e) {
+          console.error(`[publish] Failed to update status to error: ${imageId}`, e);
+        }
+      } else if (!statusResult.success) {
+        // DB障害時はretryに委ねる（ack()せずリトライさせる）
+        console.error(`[publish] Failed to check image status: ${imageId}`);
+        message.retry();
+        return;
       }
 
       message.ack();
@@ -107,7 +126,10 @@ async function handlePublish(message: Message<UploadJobMessage>): Promise<void> 
 
     if (flagged) {
       await updateImageStatus(env.DB, imageId, "moderation_violation");
-      await Promise.all([env.TEMP_R2_BUCKET.delete(imageId), deleteModerationMarker(env.TEMP_R2_BUCKET, imageId)]);
+      await Promise.all([
+        deleteTempImage(env.TEMP_R2_BUCKET, imageId),
+        deleteModerationMarker(env.TEMP_R2_BUCKET, imageId),
+      ]);
       message.ack();
       return;
     }
@@ -117,7 +139,10 @@ async function handlePublish(message: Message<UploadJobMessage>): Promise<void> 
     // 部分失敗時のリトライが冪等になるよう、本番put→status更新→temp/マーカー削除の順で行う
     await uploadImages(env.IMAGES_R2_BUCKET, userId, imageId, variants);
     await updateImageStatus(env.DB, imageId, "published");
-    await Promise.all([env.TEMP_R2_BUCKET.delete(imageId), deleteModerationMarker(env.TEMP_R2_BUCKET, imageId)]);
+    await Promise.all([
+      deleteTempImage(env.TEMP_R2_BUCKET, imageId),
+      deleteModerationMarker(env.TEMP_R2_BUCKET, imageId),
+    ]);
 
     message.ack();
   } catch (error) {
@@ -125,7 +150,11 @@ async function handlePublish(message: Message<UploadJobMessage>): Promise<void> 
 
     if (message.attempts >= MAX_RETRY_ATTEMPTS) {
       console.error(`[publish] Max retries reached for image ${imageId}`);
-      await updateImageStatus(env.DB, imageId, "error");
+      try {
+        await updateImageStatus(env.DB, imageId, "error");
+      } catch (e) {
+        console.error(`[publish] Failed to update status to error: ${imageId}`, e);
+      }
       message.ack();
     } else {
       message.retry();

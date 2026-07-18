@@ -1,14 +1,20 @@
 import { env, waitUntil } from "cloudflare:workers";
-import { fetchUserImageStatus } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
 import * as v from "valibot";
 import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
-import { deleteModerationMarker, getModerationMarker, headTempImage, uploadTempImage } from "@/libs/r2";
+import {
+  deleteModerationMarker,
+  deleteTempImage,
+  getModerationMarker,
+  headTempImage,
+  uploadTempImage,
+} from "@/libs/r2";
 import type { UploadJobMessage } from "@/types/upload";
 import { UPLOAD_ERROR_MESSAGE } from "../constants/error";
 import { getImageDimensions } from "../libs/image";
+import { checkUploadLimit } from "../libs/upload-limit";
 import { deleteTempImageServerSchema, uploadTempImageServerSchema } from "../schemas/upload";
 
 type UploadTempResult =
@@ -60,19 +66,12 @@ export const uploadTempFn = createServerFn({ method: "POST" })
     }
 
     // 上限到達ユーザーによる一時バケットへの保存を防ぐ（投稿可否の最終判定はuploadFn側で行う）
-    const userImageStatusResult = await fetchUserImageStatus(env.DB, userId);
+    const limitResult = await checkUploadLimit(userId);
 
-    if (!userImageStatusResult.success || !userImageStatusResult.data) {
+    if (!limitResult.allowed) {
       return {
         success: false,
-        error: UPLOAD_ERROR_MESSAGE.USER_UNAUTHORIZED,
-      };
-    }
-
-    if (userImageStatusResult.data.uploadedPhotos >= userImageStatusResult.data.maxPhotos) {
-      return {
-        success: false,
-        error: UPLOAD_ERROR_MESSAGE.IMAGE_UPLOAD_LIMIT_EXCEEDED,
+        error: limitResult.error,
       };
     }
 
@@ -171,7 +170,7 @@ export const deleteTempFn = createServerFn({ method: "POST" })
 
     // 本体と一緒にモデレーションマーカーも回収する（残しても害はないがlifecycle前に掃除する）
     await Promise.all([
-      env.TEMP_R2_BUCKET.delete(data.tempImageId),
+      deleteTempImage(env.TEMP_R2_BUCKET, data.tempImageId),
       deleteModerationMarker(env.TEMP_R2_BUCKET, data.tempImageId),
     ]);
 

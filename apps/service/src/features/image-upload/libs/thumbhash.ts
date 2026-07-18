@@ -4,13 +4,15 @@ import { rgbaToThumbHash } from "thumbhash";
 const THUMBHASH_MAX_SIZE = 100;
 
 /**
- * 画像ファイルからThumbHashを計算
- * @param file 画像ファイル
+ * デコード済みのImageBitmapからThumbHashを計算
+ *
+ * リサイズ処理（process-image.ts）とデコード結果を共有するため、FileではなくImageBitmapを受け取る。
+ * 渡されたbitmapはclose()しない（呼び出し側で管理する）
+ *
+ * @param imageBitmap デコード済みの画像
  * @returns Base64エンコードされたThumbHash文字列
  */
-export async function calculateThumbHash(file: File): Promise<string> {
-  const imageBitmap = await createImageBitmap(file);
-
+export function calculateThumbHashFromBitmap(imageBitmap: ImageBitmap): string {
   // アスペクト比を維持しながら最大サイズに収める
   const scale = Math.min(1, THUMBHASH_MAX_SIZE / Math.max(imageBitmap.width, imageBitmap.height));
   const width = Math.round(imageBitmap.width * scale);
@@ -25,7 +27,6 @@ export async function calculateThumbHash(file: File): Promise<string> {
   }
 
   ctx.drawImage(imageBitmap, 0, 0, width, height);
-  imageBitmap.close();
 
   // RGBAデータを取得
   const imageData = ctx.getImageData(0, 0, width, height);

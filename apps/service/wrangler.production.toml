@@ -4,7 +4,7 @@
 # https://developers.cloudflare.com/workers/wrangler/configuration/
 
 name = "katasu-me"
-main = "@tanstack/react-start/server-entry"
+main = "src/server.ts"
 compatibility_date = "2025-09-02"
 compatibility_flags = ["nodejs_compat_v2", "global_fetch_strictly_public"]
 workers_dev = false
@@ -58,6 +58,11 @@ bucket_name = "katasu-me-prod-temp"
 [[queues.producers]]
 binding = "UPLOAD_QUEUE"
 queue = "katasu-me-upload-processing"
+
+[[queues.consumers]]
+queue = "katasu-me-upload-processing"
+max_batch_size = 1
+max_batch_timeout = 1
 
 # Environment Variables
 # https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

@@ -12,7 +12,6 @@ const config = defineConfig(({ mode, command }) => ({
   plugins: [
     cloudflare({
       viteEnvironment: { name: "ssr" },
-      auxiliaryWorkers: mode === "development" ? [{ configPath: "../upload-worker/wrangler.toml" }] : [],
     }),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
@@ -29,11 +28,17 @@ const config = defineConfig(({ mode, command }) => ({
           host: "local.katasu.me",
           port: 3000,
           https: {
-            key: fs.readFileSync(path.resolve(__dirname, "certificates/localhost-key.pem")),
-            cert: fs.readFileSync(path.resolve(__dirname, "certificates/localhost.pem")),
+            key: fs.readFileSync(path.resolve(__dirname, "certificates/local.katasu.me-key.pem")),
+            cert: fs.readFileSync(path.resolve(__dirname, "certificates/local.katasu.me.pem")),
           },
         }
       : undefined,
+  build: {
+    rollupOptions: {
+      // server.ts経由でqueue handlerがSSRビルドに含まれるため、Worker builtinを外部化する
+      external: ["cloudflare:workers"],
+    },
+  },
 }));
 
 export default config;

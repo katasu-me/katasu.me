@@ -1,6 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import FormMessage from "@/components/FormMessage";
 import FormSubmitButton from "@/components/FormSubmitButton";
@@ -16,6 +16,7 @@ import {
   uploadImageClientSchema,
 } from "@/features/image-upload/schemas/upload";
 import { normalizeFile } from "@/libs/work-around";
+import { UPLOAD_ERROR_MESSAGE } from "../../constants/error";
 import { useUpload } from "../../contexts/UploadContext";
 import ImagePlaceholder from "./ImagePlaceholder";
 
@@ -33,10 +34,12 @@ export type PreviewImage = {
 };
 
 export default function UploadForm({ onPendingChange, defaultImageFile, defaultTags = [], defaultTitle }: Props) {
-  const { state, upload } = useUpload();
+  const { state, upload, prepareFile, tempModerationFlagged } = useUpload();
   const [previewImage, setPreviewImage] = useState<PreviewImage | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const isDnDFileSet = useRef(false);
+  const previewUrlRef = useRef<string | null>(null);
+  const prepareRequestIdRef = useRef(0);
 
   const isUploading = state.status === "uploading";
   const formError = state.status === "error" ? state.error : "";
@@ -65,34 +68,65 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
     },
   });
 
+  /**
+   * ファイル選択・DnDの両方から呼ばれる
+   *
+   * フォーム入力中に転送を済ませて投稿時の待ち時間を短縮するため、
+   * この時点で先行処理（リサイズ・ThumbHash計算・一時アップロード）を開始する
+   */
+  const applyFile = useCallback(
+    async (file: File) => {
+      // 先行処理の完了を待たずにバリデーションを効かせる（処理完了後に処理済みファイルへ差し替える）
+      form.setFieldValue("file", file);
+
+      // 処理中に別ファイルへ差し替えられた場合、古い結果でプレビューを上書きしないようにする
+      const requestId = ++prepareRequestIdRef.current;
+      const prepared = await prepareFile(file);
+
+      if (requestId !== prepareRequestIdRef.current) {
+        return;
+      }
+
+      // デコードできないファイルはプレビューせず、投稿時のエラー表示に任せる
+      if (!prepared.processed) {
+        return;
+      }
+
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
+
+      const src = URL.createObjectURL(prepared.processed.file);
+      previewUrlRef.current = src;
+
+      setPreviewImage({
+        src,
+        width: prepared.processed.width,
+        height: prepared.processed.height,
+      });
+
+      form.setFieldValue("file", prepared.processed.file);
+    },
+    [prepareFile, form.setFieldValue],
+  );
+
   // DnDで渡されたファイルをセット
   useEffect(() => {
     if (!defaultImageFile) {
       return;
     }
 
-    normalizeFile(defaultImageFile).then((file) => {
-      const reader = new FileReader();
+    applyFile(defaultImageFile);
+  }, [defaultImageFile, applyFile]);
 
-      reader.onload = (e) => {
-        const img = new Image();
-        const imageSrc = e.target?.result as string;
-
-        img.onload = () => {
-          setPreviewImage({
-            src: imageSrc,
-            width: img.width,
-            height: img.height,
-          });
-        };
-
-        img.src = imageSrc;
-      };
-
-      reader.readAsDataURL(file);
-      form.setFieldValue("file", file);
-    });
-  }, [defaultImageFile, form.setFieldValue]);
+  // アンマウント時にプレビュー用のオブジェクトURLを解放する
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
+    };
+  }, []);
 
   const setFileInputRef = (input: HTMLInputElement | null) => {
     fileInputRef.current = input;
@@ -111,38 +145,17 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
     const originalFile = event.target.files?.[0] || null;
 
     if (!originalFile) {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+        previewUrlRef.current = null;
+      }
+
       setPreviewImage(null);
       form.setFieldValue("file", new File([], ""));
       return;
     }
 
-    const file = await normalizeFile(originalFile);
-
-    if (fileInputRef.current) {
-      const dt = new DataTransfer();
-      dt.items.add(file);
-      fileInputRef.current.files = dt.files;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      const img = new Image();
-      const imageSrc = e.target?.result as string;
-
-      img.onload = () => {
-        setPreviewImage({
-          src: imageSrc,
-          width: img.width,
-          height: img.height,
-        });
-      };
-
-      img.src = imageSrc;
-    };
-
-    reader.readAsDataURL(file);
-    form.setFieldValue("file", file);
+    applyFile(originalFile);
   };
 
   const handlePreviewClick = () => {
@@ -159,6 +172,10 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
       noValidate
     >
       {formError && <FormMessage type="error" className="mb-4" text={formError} />}
+
+      {tempModerationFlagged && !formError && (
+        <FormMessage type="error" className="mb-4" text={UPLOAD_ERROR_MESSAGE.IMAGE_MODERATION_FLAGGED} />
+      )}
 
       <input
         ref={setFileInputRef}
@@ -317,7 +334,7 @@ export default function UploadForm({ onPendingChange, defaultImageFile, defaultT
 
             <FormSubmitButton
               className="mt-6 w-full"
-              disabled={!canSubmit || isSubmitting || isUploading}
+              disabled={!canSubmit || isSubmitting || isUploading || tempModerationFlagged}
               isSubmitting={isSubmitting || isUploading}
               label="投稿"
               pendingLabel="投稿中…"

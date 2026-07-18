@@ -1,7 +1,5 @@
+import { IMAGE_MAX_SIZE } from "../constants/image";
 import { calculateThumbHashFromBitmap } from "./thumbhash";
-
-/** リサイズ後の最大辺長（queueコンシューマの最終出力上限と揃えることで、転送だけを減らし画質への影響を避ける） */
-export const MAX_PROCESSED_IMAGE_SIZE = 2048;
 
 /** 再エンコードをスキップするファイルサイズの閾値（小さいファイルは転送削減の効果が薄く、画質劣化だけが残るため） */
 export const REENCODE_FILE_SIZE_THRESHOLD = 1.5 * 1024 * 1024;
@@ -81,7 +79,7 @@ export async function processImageFile(file: File): Promise<ProcessedImage> {
 
   try {
     const thumbhash = calculateThumbHashFromBitmap(bitmap);
-    const { width, height, needsResize } = calcResizedDimensions(bitmap.width, bitmap.height, MAX_PROCESSED_IMAGE_SIZE);
+    const { width, height, needsResize } = calcResizedDimensions(bitmap.width, bitmap.height, IMAGE_MAX_SIZE);
 
     // 小さい画像は再エンコードによる画質劣化を避けてそのまま送る
     if (!needsResize && file.size <= REENCODE_FILE_SIZE_THRESHOLD) {
