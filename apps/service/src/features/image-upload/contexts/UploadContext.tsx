@@ -85,6 +85,35 @@ function delay(ms: number): Promise<void> {
 }
 
 /**
+ * モデレーション結果をポーリングで取得する
+ *
+ * 判定がマーカーに書き込まれるまで一定間隔で問い合わせ、確定した結果を返す。
+ * shouldContinueがfalseを返した場合はポーリングを中断してnullを返す
+ *
+ * @returns 確定した判定ステータス。中断・全試行pendingの場合はnull
+ */
+async function pollModerationStatus(
+  tempImageId: string,
+  shouldContinue: () => boolean,
+): Promise<"ok" | "flagged" | null> {
+  for (let i = 0; i < MODERATION_MAX_CHECKS; i++) {
+    await delay(MODERATION_CHECK_DELAY_MS);
+
+    if (!shouldContinue()) {
+      return null;
+    }
+
+    const result = await getTempModerationFn({ data: { tempImageId } });
+
+    if (result.status !== "pending") {
+      return result.status;
+    }
+  }
+
+  return null;
+}
+
+/**
  * 一時バケットへの先行アップロードを実行
  * @returns 成功時はtempImageId、失敗時はエラーメッセージ
  */
@@ -130,37 +159,21 @@ export function UploadProvider({ children }: PropsWithChildren) {
   }, [state.status]);
 
   /**
-   * 先行モデレーションの結果をポーリングで確認する
+   * 先行モデレーションの結果をポーリングで確認し、違反時にフラグを立てる
    *
-   * 判定がマーカーに書かれるのを待ちながら複数回確認し、違反を検出したら表示する。
-   * 確認中に別ファイルへ差し替えられた場合は結果を無視するため、呼び出し側でエントリ同一性を検証する
+   * ファイル差し替え時は preparedRef が別エントリに変わるため、ポーリングが自動中断される
    */
   const checkTempModeration = (entry: PreparedEntry, tempImageId: string) => {
-    (async () => {
-      try {
-        for (let i = 0; i < MODERATION_MAX_CHECKS; i++) {
-          await delay(MODERATION_CHECK_DELAY_MS);
-
-          if (preparedRef.current !== entry) {
-            return;
-          }
-
-          const result = await getTempModerationFn({ data: { tempImageId } });
-
-          if (result.status === "flagged" && preparedRef.current === entry) {
-            setTempModerationFlagged(true);
-            tempModerationFlaggedRef.current = true;
-            return;
-          }
-
-          if (result.status === "ok") {
-            return;
-          }
+    pollModerationStatus(tempImageId, () => preparedRef.current === entry)
+      .then((status) => {
+        if (status === "flagged" && preparedRef.current === entry) {
+          setTempModerationFlagged(true);
+          tempModerationFlaggedRef.current = true;
         }
-      } catch (error) {
+      })
+      .catch((error) => {
         console.error("[upload] Failed to check temp moderation:", error);
-      }
-    })();
+      });
   };
 
   /**
