@@ -59,3 +59,6 @@ yarn-error.log*
 
 # test
 **/__screenshots__
+
+# claude code
+.claude/settings.local.json
