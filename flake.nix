@@ -35,7 +35,9 @@
               pkgs.bun
 
               # 開発用証明書（certificates/）の生成に使用
+              # nssToolsは mkcert -install がブラウザ（NSS）にルートCAを登録するのに必要
               pkgs.mkcert
+              pkgs.nssTools
             ];
 
             shellHook = ''
