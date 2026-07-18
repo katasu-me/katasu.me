@@ -8,6 +8,7 @@ import GalleryMasonry from "@/features/gallery/components/GalleryMasonry";
 import GalleryRandom from "@/features/gallery/components/GalleryRandom";
 import { GALLERY_ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
+import { processingRefetchInterval } from "@/features/gallery/libs/polling";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { userImageCountQueryOptions } from "@/features/gallery/server-fn/user-image-count";
 import { userPageQueryOptions } from "@/features/gallery/server-fn/user-page";
@@ -65,15 +66,16 @@ export const Route = createFileRoute("/user/_layout/$userSlug/")({
 function RouteComponent() {
   const { user, sessionUserId } = Route.useLoaderData();
   const { view, page } = Route.useSearch();
+  const isOwner = user.id === sessionUserId;
 
-  const { data } = useSuspenseQuery(
-    userPageQueryOptions({
+  const { data } = useSuspenseQuery({
+    ...userPageQueryOptions({
       view,
       userId: user.id,
       page,
     }),
-  );
-  const isOwner = user.id === sessionUserId;
+    refetchInterval: processingRefetchInterval(isOwner),
+  });
   const { data: totalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id, isOwner));
 
   const userSlug = user.customUrl || user.id;
