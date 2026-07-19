@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useTransform } from "motion/react";
-import type { ComponentProps, RefObject } from "react";
+import { type ComponentProps, type RefObject, useEffect } from "react";
 import { twJoin } from "tailwind-merge";
 import type FrameImage from "@/components/FrameImage";
 import { DEFAULT_IMAGE_TITLE } from "@/features/gallery/constants/page";
@@ -15,6 +15,7 @@ type Props = {
   image: ComponentProps<typeof FrameImage>;
   initialPosition: Position;
   delay: number;
+  zIndexBase: number;
   containerRef: RefObject<HTMLDivElement | null>;
   maxZIndex: RefObject<number>;
   horizontalMaxWidth: number;
@@ -27,6 +28,7 @@ export default function DraggableImage({
   image: { src, alt, width, height, linkParams },
   initialPosition,
   delay,
+  zIndexBase,
   containerRef,
   maxZIndex,
   horizontalMaxWidth,
@@ -38,6 +40,11 @@ export default function DraggableImage({
   const y = useMotionValue(initialPosition.y);
   const zIndex = useMotionValue(2);
   const scale = useMotionValue(1);
+
+  // かき混ぜで重なり順が変わったら反映（ドラッグでの最前面化は維持）
+  useEffect(() => {
+    zIndex.set(zIndexBase);
+  }, [zIndexBase, zIndex]);
 
   const rotateY = useTransform(x, [initialPosition.x - 100, initialPosition.x + 100], [-10, 10]);
 
@@ -70,7 +77,7 @@ export default function DraggableImage({
         x: 0,
         y: 500,
         opacity: 0,
-        scale: 1.5,
+        scale: 1.8,
         filter: "blur(16px)",
       }}
       animate={
@@ -114,7 +121,8 @@ export default function DraggableImage({
         left: containerRef.current ? -containerRef.current.clientWidth * 0.5 : Number.NEGATIVE_INFINITY,
         right: containerRef.current ? containerRef.current.clientWidth * 0.5 : Number.POSITIVE_INFINITY,
       }}
-      onDragStart={updateZIndex}
+      // ドラッグ開始を待たず、クリック（ポインターダウン）時点で最前面に出す
+      onPointerDown={updateZIndex}
     >
       <div className="relative w-full overflow-hidden bg-warm-black-25" style={{ aspectRatio: `${width} / ${height}` }}>
         <img className="pointer-events-none absolute top-0 left-0 h-full w-full object-cover" src={src} alt={alt} />
