@@ -1,5 +1,6 @@
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useShakeDetection } from "../../hooks/useShakeDetection";
 import { toFrameImageProps } from "../../libs/convert";
 import {
   type FetchRandomImagesInput,
@@ -40,6 +41,11 @@ export default function GalleryRandom({ fetchOptions, userSlug }: Props) {
       document.removeEventListener("gesturechange", preventDefault);
     };
   }, []);
+
+  // シェイクでもボタン押下と同じ再シャッフルを発火する
+  // （参照が変わるとリスナーが張り直されるため、useCallbackで安定させる）
+  const handleShake = useCallback(() => setIsScattering(true), []);
+  useShakeDetection(handleShake);
 
   // 再シャッフル
   const handleScatterComplete = useCallback(async () => {

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useTransform } from "motion/react";
-import { type ComponentProps, type RefObject, useEffect, useState } from "react";
+import type { ComponentProps, RefObject } from "react";
 import { twJoin } from "tailwind-merge";
 import type FrameImage from "@/components/FrameImage";
 import { DEFAULT_IMAGE_TITLE } from "@/features/gallery/constants/page";
@@ -15,7 +15,6 @@ type Props = {
   image: ComponentProps<typeof FrameImage>;
   initialPosition: Position;
   delay: number;
-  zIndexBase: number;
   containerRef: RefObject<HTMLDivElement | null>;
   maxZIndex: RefObject<number>;
   horizontalMaxWidth: number;
@@ -28,7 +27,6 @@ export default function DraggableImage({
   image: { src, alt, width, height, linkParams },
   initialPosition,
   delay,
-  zIndexBase,
   containerRef,
   maxZIndex,
   horizontalMaxWidth,
@@ -40,14 +38,6 @@ export default function DraggableImage({
   const y = useMotionValue(initialPosition.y);
   const zIndex = useMotionValue(2);
   const scale = useMotionValue(1);
-
-  // 登場後のかき混ぜでは重い登場用スプリングとディレイを使い回さず、軽快なバネで追従させる
-  const [hasEntered, setHasEntered] = useState(false);
-
-  // かき混ぜで重なり順が変わったら反映（ドラッグでの最前面化は維持）
-  useEffect(() => {
-    zIndex.set(zIndexBase);
-  }, [zIndexBase, zIndex]);
 
   const rotateY = useTransform(x, [initialPosition.x - 100, initialPosition.x + 100], [-10, 10]);
 
@@ -104,27 +94,18 @@ export default function DraggableImage({
               duration: 0.3,
               ease: [0.4, 0, 0.6, 1],
             }
-          : hasEntered
-            ? {
-                type: "spring",
-                mass: 1,
-                stiffness: 400,
-                damping: 25,
-              }
-            : {
-                type: "spring",
-                delay,
-                mass: 5,
-                stiffness: 550,
-                damping: 100,
-              }
+          : {
+              type: "spring",
+              delay,
+              mass: 5,
+              stiffness: 550,
+              damping: 100,
+            }
       }
       onAnimationComplete={() => {
-        if (isScattering) {
-          onScatterComplete?.();
-          return;
+        if (isScattering && onScatterComplete) {
+          onScatterComplete();
         }
-        setHasEntered(true);
       }}
       drag
       dragConstraints={{
