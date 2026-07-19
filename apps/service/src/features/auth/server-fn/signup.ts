@@ -20,7 +20,7 @@ type SignUpResult =
     };
 
 export const signupAction = createServerFn({ method: "POST" })
-  .inputValidator((data: FormData) => {
+  .validator((data: FormData) => {
     const username = data.get("username");
     const avatar = data.get("avatar");
     const agreeToTerms = data.get("agreeToTerms");

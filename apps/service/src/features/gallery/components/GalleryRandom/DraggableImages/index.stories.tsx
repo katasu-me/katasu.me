@@ -1,6 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import DraggableImages from "./";
 
+const generateImages = (count: number) =>
+  Array.from({ length: count }, (_, i) => {
+    const isVertical = i % 3 !== 1;
+    return {
+      id: String(i + 1),
+      src: isVertical ? "https://placehold.jp/400x600.png" : "https://placehold.jp/600x400.png",
+      alt: `画像${i + 1}`,
+      width: isVertical ? 400 : 600,
+      height: isVertical ? 600 : 400,
+      linkParams: { userSlug: "test", imageId: String(i + 1) },
+    };
+  });
+
 const meta = {
   title: "UserPage/GalleryView/Random/DraggableImages",
   component: DraggableImages,
@@ -16,7 +29,7 @@ const meta = {
         width: 400,
         height: 600,
         linkParams: {
-          userId: "test",
+          userSlug: "test",
           imageId: "1",
         },
       },
@@ -41,7 +54,7 @@ export const MultipleImages: Story = {
         width: 400,
         height: 600,
         linkParams: {
-          userId: "test",
+          userSlug: "test",
           imageId: "1",
         },
       },
@@ -52,7 +65,7 @@ export const MultipleImages: Story = {
         width: 600,
         height: 400,
         linkParams: {
-          userId: "test",
+          userSlug: "test",
           imageId: "2",
         },
       },
@@ -63,7 +76,7 @@ export const MultipleImages: Story = {
         width: 400,
         height: 600,
         linkParams: {
-          userId: "test",
+          userSlug: "test",
           imageId: "3",
         },
       },
@@ -81,7 +94,7 @@ export const HorizontalImage: Story = {
         width: 600,
         height: 400,
         linkParams: {
-          userId: "test",
+          userSlug: "test",
           imageId: "1",
         },
       },
@@ -106,6 +119,12 @@ export const WithoutLink: Story = {
 export const Scattering: Story = {
   args: {
     isScattering: true,
+  },
+};
+
+export const ManyImages: Story = {
+  args: {
+    images: generateImages(15),
   },
 };
 

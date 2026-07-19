@@ -70,7 +70,7 @@ export default function DraggableImage({
         x: 0,
         y: 500,
         opacity: 0,
-        scale: 1.5,
+        scale: 1.8,
         filter: "blur(16px)",
       }}
       animate={
@@ -114,7 +114,8 @@ export default function DraggableImage({
         left: containerRef.current ? -containerRef.current.clientWidth * 0.5 : Number.NEGATIVE_INFINITY,
         right: containerRef.current ? containerRef.current.clientWidth * 0.5 : Number.POSITIVE_INFINITY,
       }}
-      onDragStart={updateZIndex}
+      // ドラッグ開始を待たず、クリック（ポインターダウン）時点で最前面に出す
+      onPointerDown={updateZIndex}
     >
       <div className="relative w-full overflow-hidden bg-warm-black-25" style={{ aspectRatio: `${width} / ${height}` }}>
         <img className="pointer-events-none absolute top-0 left-0 h-full w-full object-cover" src={src} alt={alt} />

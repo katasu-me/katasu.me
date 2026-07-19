@@ -1,16 +1,14 @@
 import { env, waitUntil } from "cloudflare:workers";
-import { fetchUserImageStatus, registerImage } from "@katasu.me/service-db";
+import { deleteImage, registerImage } from "@katasu.me/service-db";
 import { createServerFn } from "@tanstack/react-start";
-import { nanoid } from "nanoid";
-import * as v from "valibot";
 import { ERROR_MESSAGE } from "@/constants/error";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { CACHE_KEYS, invalidateCaches } from "@/libs/cache";
-import { uploadTempImage } from "@/libs/r2";
+import { getModerationMarker, headTempImage } from "@/libs/r2";
 import { getThumbHashHSL } from "@/libs/thumbhash";
 import type { UploadJobMessage } from "@/types/upload";
 import { UPLOAD_ERROR_MESSAGE } from "../constants/error";
-import { getImageDimensions } from "../libs/image";
+import { checkUploadLimit } from "../libs/upload-limit";
 import { uploadImageServerSchema } from "../schemas/upload";
 
 type UploadResult =
@@ -24,41 +22,7 @@ type UploadResult =
     };
 
 export const uploadFn = createServerFn({ method: "POST" })
-  .inputValidator((data) => {
-    if (!(data instanceof FormData)) {
-      throw new Error("FormData is required");
-    }
-
-    const file = data.get("file");
-    const title = data.get("title");
-    const tagsJson = data.get("tags");
-    const thumbhash = data.get("thumbhash");
-
-    let tags: string[] | undefined;
-    if (tagsJson) {
-      try {
-        tags = JSON.parse(tagsJson as string);
-      } catch {
-        throw new Error("タグの形式が不正です");
-      }
-    }
-
-    const payload = {
-      file,
-      title: title || undefined,
-      tags,
-      thumbhash,
-    };
-
-    const result = v.safeParse(uploadImageServerSchema, payload);
-
-    if (!result.success) {
-      const firstError = result.issues[0]?.message ?? ERROR_MESSAGE.VALIDATION_FAILED;
-      throw new Error(firstError);
-    }
-
-    return result.output;
-  })
+  .validator(uploadImageServerSchema)
   .handler(async ({ data }): Promise<UploadResult> => {
     const { session } = await requireAuth();
 
@@ -74,59 +38,37 @@ export const uploadFn = createServerFn({ method: "POST" })
     }
 
     const userId = session.user.id;
-    const userImageStatusResult = await fetchUserImageStatus(env.DB, userId);
+    const limitResult = await checkUploadLimit(userId);
 
-    if (!userImageStatusResult.success || !userImageStatusResult.data) {
+    if (!limitResult.allowed) {
       return {
         success: false,
-        error: UPLOAD_ERROR_MESSAGE.USER_UNAUTHORIZED,
+        error: limitResult.error,
       };
     }
 
-    if (userImageStatusResult.data.uploadedPhotos >= userImageStatusResult.data.maxPhotos) {
+    // headより先にマーカーを確認する。違反時はtemp本体が削除済みのため、head先行だと
+    // TEMP_IMAGE_NOT_FOUNDに化けてクライアントが無駄な再アップロードをしてしまう
+    const moderationMarker = await getModerationMarker(env.TEMP_R2_BUCKET, data.tempImageId);
+
+    if (moderationMarker?.flagged && moderationMarker.userId === userId) {
       return {
         success: false,
-        error: UPLOAD_ERROR_MESSAGE.IMAGE_UPLOAD_LIMIT_EXCEEDED,
+        error: UPLOAD_ERROR_MESSAGE.IMAGE_MODERATION_FLAGGED,
       };
     }
 
-    if (!data.file) {
+    // 画像本体はuploadTempFnで先行アップロード済み。存在・所有権・寸法をメタデータで検証する
+    const tempImageMetadata = await headTempImage(env.TEMP_R2_BUCKET, data.tempImageId, userId);
+
+    if (!tempImageMetadata) {
       return {
         success: false,
-        error: UPLOAD_ERROR_MESSAGE.EMPTY_IMAGE,
+        error: UPLOAD_ERROR_MESSAGE.TEMP_IMAGE_NOT_FOUND,
       };
     }
 
-    // 画像のサイズを取得
-    let dimensions: { width: number; height: number };
-    try {
-      const arrayBuffer = await data.file.arrayBuffer();
-      dimensions = getImageDimensions(arrayBuffer);
-    } catch (error) {
-      console.error("[gallery] Failed to get image dimensions:", error);
-
-      return {
-        success: false,
-        error: UPLOAD_ERROR_MESSAGE.IMAGE_CONVERSION_FAILED,
-      };
-    }
-
-    const imageId = nanoid();
-
-    // 一時バケットに画像をアップロード
-    try {
-      await uploadTempImage(env.TEMP_R2_BUCKET, {
-        imageId,
-        file: data.file,
-      });
-    } catch (error) {
-      console.error("[gallery] Failed to upload temp image:", error);
-
-      return {
-        success: false,
-        error: UPLOAD_ERROR_MESSAGE.IMAGE_UPLOAD_FAILED,
-      };
-    }
+    const imageId = data.tempImageId;
 
     // ThumbHashから平均色のHSL値を計算
     const avgColor = data.thumbhash ? getThumbHashHSL(data.thumbhash) : null;
@@ -134,7 +76,8 @@ export const uploadFn = createServerFn({ method: "POST" })
     // DBに画像を登録
     const registerResult = await registerImage(env.DB, userId, {
       id: imageId,
-      ...dimensions,
+      width: tempImageMetadata.width,
+      height: tempImageMetadata.height,
       title: data.title ?? null,
       thumbhash: data.thumbhash,
       avgColorH: avgColor?.h ?? null,
@@ -146,30 +89,43 @@ export const uploadFn = createServerFn({ method: "POST" })
     if (!registerResult.success) {
       console.error("[gallery] Image registration to DB failed:", registerResult.error);
 
-      // 一時ファイルを削除（失敗しても続行）
-      env.TEMP_R2_BUCKET.delete(imageId).catch(() => {});
-
+      // 一時ファイルは削除しない（再送信で再利用できる。放置されてもライフサイクルルールが回収する）
       return {
         success: false,
         error: UPLOAD_ERROR_MESSAGE.IMAGE_REGISTER_FAILED,
       };
     }
 
-    // アップロードジョブをQueueに投入
+    // Queue投入はレスポンス前に完了させる。失敗するとDBは'processing'のまま公開されないため、
+    // エラー時はDBステータスを'error'に戻してクライアントにエラーを返す
     const uploadJob: UploadJobMessage = {
+      type: "publish",
       imageId,
       userId,
     };
 
-    waitUntil(
-      Promise.all([
-        env.UPLOAD_QUEUE.send(uploadJob),
-        // タグ一覧のKVキャッシュを無効化
-        registerResult.data?.tags
-          ? invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)])
-          : Promise.resolve(),
-      ]),
-    );
+    try {
+      await env.UPLOAD_QUEUE.send(uploadJob);
+    } catch (error) {
+      console.error("[gallery] Failed to enqueue publish job:", error);
+      // DB行を削除して同じtempImageIdでの再送を可能にする
+      try {
+        await deleteImage(env.DB, imageId, userId);
+      } catch (deleteError) {
+        console.error("[gallery] Failed to rollback image registration:", deleteError);
+      }
+      return {
+        success: false,
+        error: UPLOAD_ERROR_MESSAGE.IMAGE_ENQUEUE_FAILED,
+      };
+    }
+
+    // タグ一覧のKVキャッシュ無効化は非クリティカルなためwaitUntilで行う
+    if (registerResult.data?.tags) {
+      waitUntil(
+        invalidateCaches(env.CACHE_KV, [CACHE_KEYS.userTagsByUsage(userId), CACHE_KEYS.userTagsByName(userId)]),
+      );
+    }
 
     return {
       success: true,

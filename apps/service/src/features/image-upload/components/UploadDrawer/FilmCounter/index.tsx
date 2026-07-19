@@ -23,7 +23,7 @@ export default function FilmCounter({ total, max }: Props) {
         )}
         <span>{count.toString().padStart(digit, "0")}</span>
         {typeof nextCount !== "undefined" && (
-          <span className="-translate-1/2 -bottom-5 absolute left-1/2">
+          <span className="-translate-1/2 absolute -bottom-5 left-1/2">
             {nextCount.toString().padStart(digit, "0")}
           </span>
         )}

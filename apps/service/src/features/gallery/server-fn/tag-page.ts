@@ -34,7 +34,7 @@ const TagPageLoaderInputSchema = object({
 });
 
 const tagPageLoaderFn = createServerFn({ method: "GET" })
-  .inputValidator(TagPageLoaderInputSchema)
+  .validator(TagPageLoaderInputSchema)
   .handler(async ({ data }) => {
     const { view, userId, tagId, page } = data;
 

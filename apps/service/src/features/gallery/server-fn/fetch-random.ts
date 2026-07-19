@@ -19,7 +19,7 @@ const FetchRandomImagesInputSchema = union([
 export type FetchRandomImagesInput = InferOutput<typeof FetchRandomImagesInputSchema>;
 
 export const fetchRandomImagesFn = createServerFn({ method: "GET" })
-  .inputValidator(FetchRandomImagesInputSchema)
+  .validator(FetchRandomImagesInputSchema)
   .handler(async ({ data }) => {
     // レートリミット
     const rateLimiterKey = data.type === "user" ? data.userId : data.tagId;

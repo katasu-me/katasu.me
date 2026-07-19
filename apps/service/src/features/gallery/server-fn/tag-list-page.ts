@@ -9,7 +9,7 @@ const TagListPageLoaderInputSchema = object({
 });
 
 export const tagListPageLoaderFn = createServerFn({ method: "GET" })
-  .inputValidator(TagListPageLoaderInputSchema)
+  .validator(TagListPageLoaderInputSchema)
   .handler(async ({ data }) => {
     const allTagsResult = await getCached(env.CACHE_KV, CACHE_KEYS.userTagsByName(data.userId), async () => {
       return fetchTagsByUserId(env.DB, data.userId, {

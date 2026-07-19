@@ -17,7 +17,7 @@ type Story = StoryObj<typeof UserIcon>;
 
 export const Default: Story = {
   args: {
-    userId: "user123",
+    userSlug: "user123",
     username: "ユーザー名",
   },
 };

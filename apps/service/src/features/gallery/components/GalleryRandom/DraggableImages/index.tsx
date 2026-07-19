@@ -43,31 +43,36 @@ export default function DraggableImages({ images, isScattering, onScatterComplet
   const horizontalMaxWidth = isDesktop ? 400 : 300;
   const verticalMaxWidth = isDesktop ? 250 : 200;
 
+  // motionのinitialはマウント時にしか反映されないため、位置計算が終わるまで写真をマウントしない
+  // （フォールバック値でマウントすると画面外ではなく中央から登場してしまう）
+  const isPositionsReady = positions.length === images.length;
+
   return (
     <motion.div
       ref={containerRef}
       className="relative col-span-full flex h-[80vh] w-full items-center justify-center overflow-x-clip"
     >
-      {images.map((image, i) => {
-        const initialPosition = positions[i] ?? { x: 0, y: 0, rotation: 0 };
-        const delay = i * 0.05;
-        const isLastImage = i === images.length - 1;
+      {isPositionsReady &&
+        images.map((image, i) => {
+          const initialPosition = positions[i] ?? { x: 0, y: 0, rotation: 0 };
+          const delay = i * 0.05;
+          const isLastImage = i === images.length - 1;
 
-        return (
-          <DraggableImage
-            key={image.id}
-            image={image}
-            initialPosition={initialPosition}
-            delay={delay}
-            containerRef={containerRef}
-            maxZIndex={maxZIndex}
-            horizontalMaxWidth={horizontalMaxWidth}
-            verticalMaxWidth={verticalMaxWidth}
-            isScattering={isScattering}
-            onScatterComplete={isLastImage ? onScatterComplete : undefined}
-          />
-        );
-      })}
+          return (
+            <DraggableImage
+              key={image.id}
+              image={image}
+              initialPosition={initialPosition}
+              delay={delay}
+              containerRef={containerRef}
+              maxZIndex={maxZIndex}
+              horizontalMaxWidth={horizontalMaxWidth}
+              verticalMaxWidth={verticalMaxWidth}
+              isScattering={isScattering}
+              onScatterComplete={isLastImage ? onScatterComplete : undefined}
+            />
+          );
+        })}
     </motion.div>
   );
 }

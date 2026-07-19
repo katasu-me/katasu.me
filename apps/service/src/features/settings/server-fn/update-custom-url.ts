@@ -21,7 +21,7 @@ type UpdateCustomUrlResult =
     };
 
 export const updateCustomUrlFn = createServerFn({ method: "POST" })
-  .inputValidator((data: { customUrl: string }) => {
+  .validator((data: { customUrl: string }) => {
     const result = v.safeParse(updateCustomUrlInputSchema, data);
 
     if (!result.success) {

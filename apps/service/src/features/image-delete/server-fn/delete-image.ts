@@ -22,7 +22,7 @@ type DeleteImageResult =
     };
 
 export const deleteImageFn = createServerFn({ method: "POST" })
-  .inputValidator(DeleteImageInputSchema)
+  .validator(DeleteImageInputSchema)
   .handler(async ({ data }): Promise<DeleteImageResult> => {
     const { imageId } = data;
 

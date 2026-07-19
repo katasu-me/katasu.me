@@ -4,6 +4,23 @@
 
 ## 開発環境
 
+### 事前準備
+
+```bash
+# direnv を使う場合（推奨）
+direnv allow
+
+# direnv を使わない場合
+nix develop
+```
+
+
+以降の手順は、すべて devShell 内で実行する前提です。
+
+> [!NOTE]
+> devShell は `SSL_CERT_FILE` も設定します。
+> NixOS ではプレビルドの workerd がシステムのCA証明書ストアを見つけられず、開発サーバーからの外部API通信（Google OAuthのトークン交換など）がTLSエラーになるためです。
+
 ### ローカル環境でのドメイン設定
 
 #### 1. hostsファイルの編集
@@ -18,24 +35,21 @@ sudo nano /etc/hosts
 
 #### 2. 証明書の生成
 
+mkcert は devShell に含まれているため、個別のインストールは不要です。
+
 ```bash
-# mkcertのインストール
-brew install mkcert  # macOS
-choco install mkcert # Windows
+# ルートCAを作成し、ブラウザの信頼ストアに登録
+mkcert -install
 
 # 証明書の生成
-mkcert -install
-mkcert local.katasu.me
+cd apps/service
+mkdir -p certificates
+mkcert -cert-file certificates/local.katasu.me.pem \
+       -key-file certificates/local.katasu.me-key.pem \
+       local.katasu.me
 ```
 
-#### 3. アクセス確認
-
-```bash
-# 開発サーバー起動後
-open http://local.katasu.me:3000
-```
-
-### 初期環境構築
+### 環境構築
 
 #### 1. Cloudflareへのログイン
 
@@ -51,6 +65,13 @@ cp wrangler.develop.toml wrangler.toml
 ```
 
 以降の手順で作成したリソースのIDを `wrangler.toml` 内のプレースホルダー（`<DEVELOPMENT_...>`）に設定します。
+
+コピー後、ローカルで画像アップロードのQueueコンシューマ（`src/server.ts` の `queue` エクスポート）を動作させるため、`main` を `src/server.ts` に変更します。
+
+```toml
+# wrangler.toml
+main = "src/server.ts"
+```
 
 #### 3. D1データベースの作成
 
@@ -73,11 +94,11 @@ pnpm wrangler kv namespace create CACHE_KV
 #### 5. R2バケットの作成
 
 ```bash
-# Next.js インクリメンタルキャッシュ用
-pnpm wrangler r2 bucket create katasu-me-dev-inc-cache
-
 # 画像保存用
 pnpm wrangler r2 bucket create katasu-me-dev-images
+
+# 一時アップロード用（先行アップロード・モデレーション判定に使用）
+pnpm wrangler r2 bucket create katasu-me-dev-temp
 ```
 
 #### 6. 環境変数の設定
@@ -86,13 +107,15 @@ pnpm wrangler r2 bucket create katasu-me-dev-images
 cp .env.example .env.local
 ```
 
-Google OAuthのAPIキーなど、必要な環境変数を `.env.local` に設定します。
+Google OAuthのAPIキー（`GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`）や画像モデレーション用の `OPENAI_API_KEY` など、必要な環境変数を `.env.local` に設定します。
 
-##### upload-worker用の環境変数
+##### ローカルでのモデレーションスキップ
+
+画像アップロード時のモデレーション判定（OpenAI Moderation API）をローカルでスキップするには、`.dev.vars` を作成します。
 
 ```bash
-cd apps/upload-worker
-cp .env.example .env.local
+# apps/service/.dev.vars
+SKIP_MODERATION = "true"
 ```
 
 #### 7. データベースマイグレーション
@@ -114,4 +137,3 @@ pnpm db:seed
 pnpm install
 pnpm run dev
 ```
-    

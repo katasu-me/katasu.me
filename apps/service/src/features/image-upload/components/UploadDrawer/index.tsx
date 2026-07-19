@@ -49,12 +49,7 @@ export default function UploadDrawer() {
         return (
           <>
             <Description hidden>新しい画像を投稿するフォーム</Description>
-            <UploadForm
-              defaultImageFile={formData?.file.size ? formData.file : undefined}
-              defaultTags={formData?.tags}
-              defaultTitle={formData?.title}
-              onPendingChange={setIsPending}
-            />
+            <UploadForm defaultTags={formData?.tags} defaultTitle={formData?.title} onPendingChange={setIsPending} />
           </>
         );
       }}

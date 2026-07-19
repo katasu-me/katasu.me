@@ -26,7 +26,7 @@ type EditImageResult =
  * 画像情報を編集する
  */
 export const editImageFn = createServerFn({ method: "POST" })
-  .inputValidator(EditImageInputSchema)
+  .validator(EditImageInputSchema)
   .handler(async ({ data }): Promise<EditImageResult> => {
     try {
       const { session } = await requireAuth();
