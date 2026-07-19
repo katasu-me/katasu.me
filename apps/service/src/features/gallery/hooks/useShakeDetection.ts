@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDevice } from "@/hooks/useDevice";
 
 // シェイク判定の閾値
-const SHAKE_THRESHOLD = 50;
+const SHAKE_THRESHOLD = 80;
 const SHAKE_COOLDOWN = 1000;
 const SHAKE_ACCUMULATE_WINDOW = 500;
 const MOTION_NOISE_FLOOR = 1.5;
