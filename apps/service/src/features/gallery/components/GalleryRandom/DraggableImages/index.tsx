@@ -49,8 +49,8 @@ export default function DraggableImages({ images, isScattering, onScatterComplet
     }
   }, [images]);
 
-  // 揺れの強さに応じて写真の位置・回転・重なり順を混ぜ直す
-  const stir = useCallback((intensity: number) => {
+  // 揺れの強さ・向きに応じて写真の位置・回転・重なり順を混ぜ直す
+  const stir = useCallback((intensity: number, direction: { x: number; y: number }) => {
     const container = containerRef.current;
     if (!container) {
       return;
@@ -58,15 +58,24 @@ export default function DraggableImages({ images, isScattering, onScatterComplet
 
     const maxX = (container.clientWidth - RANDOM_POSITION_MARGIN * 2) / 2;
     const maxY = (container.clientHeight - RANDOM_POSITION_MARGIN * 2) / 2;
-    const offsetX = maxX * intensity * 0.6;
-    const offsetY = maxY * intensity * 0.6;
+    // 揺れが強いほど遠くへ、揺れの向きへ投げ出す
+    const throwX = maxX * intensity;
+    const throwY = maxY * intensity;
 
     setPositions((prev) =>
-      prev.map((pos) => ({
-        x: clamp(pos.x + (Math.random() - 0.5) * 2 * offsetX, -maxX, maxX),
-        y: clamp(pos.y + (Math.random() - 0.5) * 2 * offsetY, -maxY, maxY),
-        rotation: clamp(pos.rotation + (Math.random() - 0.5) * intensity * 20, -45, 45),
-      })),
+      prev.map((pos) => {
+        // 全写真が同じ向きに揃うと不自然なので、飛距離と角度を写真ごとに散らす
+        const spread = 0.5 + Math.random();
+        const jitter = (Math.random() - 0.5) * (Math.PI / 3);
+        const dirX = direction.x * Math.cos(jitter) - direction.y * Math.sin(jitter);
+        const dirY = direction.x * Math.sin(jitter) + direction.y * Math.cos(jitter);
+
+        return {
+          x: clamp(pos.x + dirX * throwX * spread, -maxX, maxX),
+          y: clamp(pos.y + dirY * throwY * spread, -maxY, maxY),
+          rotation: clamp(pos.rotation + (Math.random() - 0.5) * intensity * 60, -45, 45),
+        };
+      }),
     );
 
     setZOrders((prev) => {
@@ -97,6 +106,9 @@ export default function DraggableImages({ images, isScattering, onScatterComplet
     let initialized = false;
     let accumulated = 0;
     let lastStirTime = 0;
+    let peakDelta = 0;
+    let peakDirX = 0;
+    let peakDirY = 0;
 
     const handleMotion = (event: DeviceMotionEvent) => {
       const acceleration = event.accelerationIncludingGravity;
@@ -117,7 +129,9 @@ export default function DraggableImages({ images, isScattering, onScatterComplet
         return;
       }
 
-      const totalDelta = Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
+      const deltaX = x - lastX;
+      const deltaY = y - lastY;
+      const totalDelta = Math.abs(deltaX) + Math.abs(deltaY) + Math.abs(z - lastZ);
       lastX = x;
       lastY = y;
       lastZ = z;
@@ -125,14 +139,31 @@ export default function DraggableImages({ images, isScattering, onScatterComplet
       // 手ブレ程度の微小な揺れは積算しない
       if (totalDelta > MOTION_NOISE_FLOOR) {
         accumulated += totalDelta;
+
+        // 振りは往復して符号付き積算だと打ち消し合うため、区間内で最も強い一撃の向きを採用する
+        if (totalDelta > peakDelta) {
+          peakDelta = totalDelta;
+          // 慣性で写真は端末の移動と逆向きに置いていかれる（画面座標はyが下向き正）
+          peakDirX = -deltaX;
+          peakDirY = deltaY;
+        }
       }
 
       const now = Date.now();
       if (now - lastStirTime > STIR_INTERVAL && accumulated > STIR_MIN_DELTA) {
         const intensity = Math.min(accumulated, STIR_MAX_DELTA) / STIR_MAX_DELTA;
+        const length = Math.hypot(peakDirX, peakDirY);
+        // z軸方向のみの揺れなどで向きが取れなかった場合はランダム方向に散らす
+        const angle = Math.random() * Math.PI * 2;
+        const direction =
+          length > 0 ? { x: peakDirX / length, y: peakDirY / length } : { x: Math.cos(angle), y: Math.sin(angle) };
+
         lastStirTime = now;
         accumulated = 0;
-        stir(intensity);
+        peakDelta = 0;
+        peakDirX = 0;
+        peakDirY = 0;
+        stir(intensity, direction);
       }
     };
 

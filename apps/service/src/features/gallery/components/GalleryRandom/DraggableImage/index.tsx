@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useTransform } from "motion/react";
-import { type ComponentProps, type RefObject, useEffect } from "react";
+import { type ComponentProps, type RefObject, useEffect, useState } from "react";
 import { twJoin } from "tailwind-merge";
 import type FrameImage from "@/components/FrameImage";
 import { DEFAULT_IMAGE_TITLE } from "@/features/gallery/constants/page";
@@ -40,6 +40,9 @@ export default function DraggableImage({
   const y = useMotionValue(initialPosition.y);
   const zIndex = useMotionValue(2);
   const scale = useMotionValue(1);
+
+  // 登場後のかき混ぜでは重い登場用スプリングとディレイを使い回さず、軽快なバネで追従させる
+  const [hasEntered, setHasEntered] = useState(false);
 
   // かき混ぜで重なり順が変わったら反映（ドラッグでの最前面化は維持）
   useEffect(() => {
@@ -101,18 +104,27 @@ export default function DraggableImage({
               duration: 0.3,
               ease: [0.4, 0, 0.6, 1],
             }
-          : {
-              type: "spring",
-              delay,
-              mass: 5,
-              stiffness: 550,
-              damping: 100,
-            }
+          : hasEntered
+            ? {
+                type: "spring",
+                mass: 1,
+                stiffness: 400,
+                damping: 25,
+              }
+            : {
+                type: "spring",
+                delay,
+                mass: 5,
+                stiffness: 550,
+                damping: 100,
+              }
       }
       onAnimationComplete={() => {
-        if (isScattering && onScatterComplete) {
-          onScatterComplete();
+        if (isScattering) {
+          onScatterComplete?.();
+          return;
         }
+        setHasEntered(true);
       }}
       drag
       dragConstraints={{
