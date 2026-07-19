@@ -20,9 +20,9 @@
         in
         {
           # Node/pnpm などのツールチェーンは mise で管理しているため、ここでは扱わない。
-          # workerd（プレビルドバイナリ）が NixOS 上で CA ストアを見つけられず、
-          # dev 時の外部への fetch が TLS 検証エラーになるのを防ぐため、
-          # SSL_CERT_FILE を設定する。
+          # NixOS では標準パスに CA バンドルが無いため、プレビルドバイナリの TLS が壊れる。
+          # - SSL_CERT_FILE: workerd 単体実行時やその他のバイナリ用
+          # - NODE_EXTRA_CA_CERTS: miniflare が workerd の trustedCertificates に注入する用
           # cacert の setup hook 経由だと nix develop が SSL_CERT_FILE を
           # 除外してしまうので、shellHook で明示的に export する。
           default = pkgs.mkShell {
@@ -43,6 +43,7 @@
             shellHook = ''
               export SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt
               export NIX_SSL_CERT_FILE=$SSL_CERT_FILE
+              export NODE_EXTRA_CA_CERTS=$SSL_CERT_FILE
             '';
           };
         }
