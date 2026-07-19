@@ -19,7 +19,7 @@ type UpdateUserSettingsResult =
     };
 
 export const updateUserSettingsFn = createServerFn({ method: "POST" })
-  .inputValidator((data: FormData) => {
+  .validator((data: FormData) => {
     const username = data.get("username");
     const avatar = data.get("avatar");
     const removeAvatar = data.get("removeAvatar");

@@ -34,7 +34,7 @@ type UploadTempResult =
  * 投稿されずに放置されたオブジェクトはR2のライフサイクルルールで自動削除される
  */
 export const uploadTempFn = createServerFn({ method: "POST" })
-  .inputValidator((data) => {
+  .validator((data) => {
     if (!(data instanceof FormData)) {
       throw new Error("FormData is required");
     }
@@ -135,7 +135,7 @@ type GetTempModerationResult = {
  * 他ユーザーのtempImageIdで違反情報を漏らさないよう、マーカーのuserIdを照合する
  */
 export const getTempModerationFn = createServerFn({ method: "POST" })
-  .inputValidator(deleteTempImageServerSchema)
+  .validator(deleteTempImageServerSchema)
   .handler(async ({ data }): Promise<GetTempModerationResult> => {
     const { session } = await requireAuth();
     const userId = session.user.id;
@@ -156,7 +156,7 @@ export const getTempModerationFn = createServerFn({ method: "POST" })
  * 呼び出し漏れや失敗はライフサイクルルールが回収するため、ベストエフォートでよい
  */
 export const deleteTempFn = createServerFn({ method: "POST" })
-  .inputValidator(deleteTempImageServerSchema)
+  .validator(deleteTempImageServerSchema)
   .handler(async ({ data }): Promise<{ success: boolean }> => {
     const { session } = await requireAuth();
     const userId = session.user.id;

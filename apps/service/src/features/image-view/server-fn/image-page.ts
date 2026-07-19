@@ -10,7 +10,7 @@ const ImagePageLoaderInputSchema = object({
 });
 
 const imagePageLoaderFn = createServerFn({ method: "GET" })
-  .inputValidator(ImagePageLoaderInputSchema)
+  .validator(ImagePageLoaderInputSchema)
   .handler(async ({ data }) => {
     const image = await fetchImageById(env.DB, data.imageId);
 

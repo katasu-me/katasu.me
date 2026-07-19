@@ -22,7 +22,7 @@ type UploadResult =
     };
 
 export const uploadFn = createServerFn({ method: "POST" })
-  .inputValidator(uploadImageServerSchema)
+  .validator(uploadImageServerSchema)
   .handler(async ({ data }): Promise<UploadResult> => {
     const { session } = await requireAuth();
 

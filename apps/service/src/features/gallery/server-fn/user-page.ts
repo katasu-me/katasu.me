@@ -27,7 +27,7 @@ const UserPageLoaderInputSchema = object({
 });
 
 const userPageLoaderFn = createServerFn({ method: "GET" })
-  .inputValidator(UserPageLoaderInputSchema)
+  .validator(UserPageLoaderInputSchema)
   .handler(async ({ data }) => {
     const { view, userId, page } = data;
 

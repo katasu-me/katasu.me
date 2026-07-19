@@ -10,7 +10,7 @@ const UserImageCountInputSchema = object({
 });
 
 const userImageCountFn = createServerFn({ method: "GET" })
-  .inputValidator(UserImageCountInputSchema)
+  .validator(UserImageCountInputSchema)
   .handler(async ({ data }) => {
     const result = await fetchTotalImageCountByUserId(env.DB, data.userId, {
       includeAllStatuses: data.includeAllStatuses,

@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import { getUserSession } from "@/features/auth/libs/auth";
 
 const userPageBeforeLoadFn = createServerFn()
-  .inputValidator((data: { userSlug: string; pathname: string }) => data)
+  .validator((data: { userSlug: string; pathname: string }) => data)
   .handler(async ({ data }) => {
     const [userResult, { session }] = await Promise.all([
       fetchPublicUserDataByUserSlug(env.DB, data.userSlug),
