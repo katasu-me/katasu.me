@@ -1,11 +1,18 @@
 import type { ComponentProps } from "react";
-import { twMerge } from "tailwind-merge";
+import { css, cx } from "styled-system/css";
 
 export default function ExternalLink({ className, children, ...props }: ComponentProps<"a">) {
   return (
     <a
       {...props}
-      className={twMerge("tracking-wide transition-all duration-400 ease-magnetic hover:underline", className)}
+      className={cx(
+        css({
+          letterSpacing: "wide",
+          transition: "all 400ms token(easings.magnetic)",
+          _hover: { textDecoration: "underline" },
+        }),
+        className,
+      )}
       target="_blank"
       rel="noopener"
     >

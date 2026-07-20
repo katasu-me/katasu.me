@@ -1,6 +1,6 @@
 import type { MotionProps, TargetAndTransition, Transition } from "motion/react";
 import { motion } from "motion/react";
-import { twMerge } from "tailwind-merge";
+import { css, cx } from "styled-system/css";
 import ImageDemo1 from "../../assets/demo_1.webp?url";
 import ImageDemo2 from "../../assets/demo_2.webp?url";
 import ImageDemo3 from "../../assets/demo_3.webp?url";
@@ -87,7 +87,7 @@ type Props = {
 
 export default function DemoImages({ className }: Props) {
   return (
-    <div className={twMerge("relative h-[160px] w-64", className)}>
+    <div className={cx(css({ position: "relative", h: "160px", w: "64" }), className)}>
       {DemoImageData.slice()
         .reverse()
         .map((image) => {
@@ -96,7 +96,15 @@ export default function DemoImages({ className }: Props) {
               key={image.src}
               src={image.src}
               alt={image.alt}
-              className="absolute top-0 left-0 w-64 border-4 border-white shadow-[0_0_8px_rgba(0,0,0,0.1)]"
+              className={css({
+                position: "absolute",
+                top: "0",
+                left: "0",
+                w: "64",
+                borderWidth: "4px",
+                borderColor: "white",
+                shadow: "0 0 8px rgba(0,0,0,0.1)",
+              })}
               initial={image.animation.initial}
               whileInView={image.animation.whileInView}
               viewport={{ once: true }}

@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { css } from "styled-system/css";
 import Message from "@/components/Message";
 import TagLink from "@/components/TagLinks/TabLink";
 import { tagListPageLoaderFn } from "@/features/gallery/server-fn/tag-list-page";
@@ -36,10 +37,22 @@ function RouteComponent() {
 
   return (
     <>
-      <h1 className="col-start-2 text-4xl">すべてのタグ</h1>
+      <h1 className={css({ gridColumnStart: "2", fontSize: "4xl", lineHeight: "10" })}>すべてのタグ</h1>
 
       {allTags.length > 0 ? (
-        <div className="col-start-2 mx-auto flex min-h-48 w-full flex-wrap content-start items-start gap-2">
+        <div
+          className={css({
+            gridColumnStart: "2",
+            mx: "auto",
+            display: "flex",
+            minH: "48",
+            w: "full",
+            flexWrap: "wrap",
+            alignContent: "flex-start",
+            alignItems: "flex-start",
+            gap: "2",
+          })}
+        >
           {allTags.map((tag) => (
             <TagLink key={tag.id} id={tag.id} name={tag.name} userSlug={userSlug} />
           ))}

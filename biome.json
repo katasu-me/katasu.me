@@ -1,7 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.3.4/schema.json",
   "files": {
-    "includes": ["**", "!**/.wrangler", "!**/node_modules", "!**/routeTree.gen.ts"]
+    "includes": ["**", "!**/.wrangler", "!**/node_modules", "!**/routeTree.gen.ts", "!**/styled-system"]
   },
   "vcs": {
     "enabled": true,
@@ -19,13 +19,6 @@
     "enabled": true,
     "rules": {
       "recommended": true,
-      "nursery": {
-        "useSortedClasses": {
-          "level": "warn",
-          "fix": "safe",
-          "options": {}
-        }
-      },
       "correctness": {
         "noUnusedVariables": {
           "level": "error",
@@ -61,9 +54,6 @@
     }
   },
   "css": {
-    "parser": {
-      "tailwindDirectives": true
-    },
     "formatter": {
       "enabled": true,
       "indentStyle": "space",

@@ -14,15 +14,6 @@ export default meta;
 
 type Story = StoryObj<typeof Footer>;
 
-export const LoggedInUser: Story = {
-  args: {
-    mode: "logged-in-user",
-    sessionUserId: "user",
-  },
-};
-
 export const WithDevelopedBy: Story = {
-  args: {
-    mode: "developed-by",
-  },
+  args: {},
 };

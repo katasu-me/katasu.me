@@ -40,7 +40,7 @@ katasu.me は「インターネットのかたすみにある、ぽつんと画�
 - **デプロイ環境**: Cloudflare Workers（wrangler）
 - **データベース**: Cloudflare D1 + Drizzle ORM v0.44.x
 - **認証**: Better Auth
-- **スタイリング**: Tailwind CSS v4（@tailwindcss/vite）
+- **スタイリング**: Panda CSS（@pandacss/dev）
 - **UIライブラリ**: Radix UI、Motion（アニメーション）
 - **日本語処理**: BudouX（自然な改行位置計算）
 - **バリデーション**: Valibot
@@ -111,16 +111,17 @@ src/
 - **TypeScript**: Strict mode有効（v5.7.x）
 - **パスエイリアス**: `@/*` → `./src/*`
 
-### className
+### スタイリング
 
-- 条件分岐などで付け外しを行なう場合は `twMerge()` を使用します
-- 基本的に全てのコンポーネントはclassNameをPropsで受け取り、コンポーネントのスタイルを使用側から上書きできる作りとします
+- コンポーネントのスタイルは `styled-system/css` の `css()` / `cva()` で記述します
+- 条件分岐などでクラスを付け外しする場合は `cx()` を使用します
+- 使用側からスタイルを上書きする必要がある場合は `cssProps` を受け取り、呼び出し側は `css.raw()` を渡します
 
 ### アニメーション
 
-- 再生速度は `duration-400` で統一します
-- イージングは `ease-magnetic` を指定します
-- ホバー時に要素の明るさを変える場合、`hover:brightness-90` とします。必ず暗くなるようにし、opacityを下げたりして明るくすることは許可しません
+- 再生速度は `400ms` で統一します
+- イージングは `token(easings.magnetic)` を指定します
+- ホバー時に要素の明るさを変える場合、`filter: brightness(0.9)` とします。必ず暗くなるようにし、opacityを下げたりして明るくすることは許可しません
 - 色、明るさなどが変化する場合は適切な transition を設定します
 
 ### 開発時の注意点

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { css } from "styled-system/css";
 import MessagePage from ".";
 
 const meta = {
@@ -42,7 +43,7 @@ export const WithLongMessage: Story = {
   args: {
     title: "アカウントが作成されました",
     children: (
-      <div className="max-w-md space-y-2">
+      <div className={css({ maxW: "md", "& > * + *": { mt: "2" } })}>
         <p>アカウントの作成が完了しました。</p>
         <p>ご登録いただいたメールアドレスに確認メールを送信しました。</p>
         <p>メールに記載されているリンクをクリックして、アカウントを有効化してください。</p>

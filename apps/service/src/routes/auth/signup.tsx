@@ -1,7 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { css } from "styled-system/css";
+import ComingSoon from "@/components/ComingSoon";
 import { Loading } from "@/components/Loading";
-import SignUpForm from "@/features/auth/components/SignUpForm";
 import { requireAuth } from "@/features/auth/libs/auth";
 import { generateMetadata } from "@/libs/meta";
 
@@ -22,8 +23,8 @@ const signupPageBeforeLoadFn = createServerFn().handler(async () => {
 });
 
 export const Route = createFileRoute("/auth/signup")({
-  component: RouteComponent,
-  pendingComponent: () => <Loading className="col-start-2 h-screen" />,
+  component: ComingSoon,
+  pendingComponent: () => <Loading cssProps={css.raw({ gridColumnStart: "2", h: "screen" })} />,
   beforeLoad: async () => {
     return signupPageBeforeLoadFn();
   },
@@ -36,11 +37,3 @@ export const Route = createFileRoute("/auth/signup")({
     };
   },
 });
-
-function RouteComponent() {
-  return (
-    <div className="col-span-full grid min-h-[95vh] grid-cols-subgrid gap-y-12 py-16">
-      <SignUpForm className="col-start-2 flex items-center justify-center" />
-    </div>
-  );
-}

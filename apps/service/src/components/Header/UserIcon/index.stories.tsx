@@ -1,23 +1,18 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import UserIcon from "./";
+import UserIcon from ".";
 
 const meta = {
   title: "Components/Header/UserIcon",
   component: UserIcon,
-  parameters: {
-    layout: "padded",
-  },
   tags: ["autodocs"],
-  argTypes: {},
 } satisfies Meta<typeof UserIcon>;
 
 export default meta;
-
-type Story = StoryObj<typeof UserIcon>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    userSlug: "user123",
-    username: "ユーザー名",
+    userSlug: "katasu",
+    username: "かたす",
   },
 };

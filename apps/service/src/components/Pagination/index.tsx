@@ -1,6 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import type { ComponentProps, ReactNode } from "react";
-import { twMerge } from "tailwind-merge";
+import { css, cva, cx } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 import ChevronLeft from "@/assets/icons/chevron-left.svg?react";
 import ChevronRight from "@/assets/icons/chevron-right.svg?react";
 import IconButton from "@/components/IconButton";
@@ -8,13 +9,37 @@ import IconButton from "@/components/IconButton";
 type Props = {
   currentPage: number;
   totalPages: number;
-  className?: string;
-} & Omit<ComponentProps<"nav">, "children">;
+  cssProps?: SystemStyleObject;
+} & Omit<ComponentProps<"nav">, "children" | "className">;
 
-const baseButtonStyle =
-  "flex size-10 items-center justify-center rounded-md border border-warm-black transition-all duration-400 ease-magnetic";
-const activeButtonStyle = "bg-warm-black text-white";
-const inactiveButtonStyle = "bg-warm-white text-warm-black hover:brightness-90";
+const pageButtonStyles = cva({
+  base: {
+    display: "flex",
+    w: "10",
+    h: "10",
+    alignItems: "center",
+    justifyContent: "center",
+    rounded: "md",
+    borderWidth: "1px",
+    borderColor: "warm-black",
+    transition: "all 400ms token(easings.magnetic)",
+  },
+  variants: {
+    state: {
+      active: {
+        bg: "warm-black",
+        color: "white",
+      },
+      inactive: {
+        bg: "warm-white",
+        color: "warm-black",
+        _hover: {
+          filter: "brightness(0.9)",
+        },
+      },
+    },
+  },
+});
 
 type PageButtonProps = {
   page: number;
@@ -25,7 +50,7 @@ type PageButtonProps = {
 function PageButton({ page, isCurrent, pathname }: PageButtonProps) {
   if (isCurrent) {
     return (
-      <span aria-current="page" className={twMerge(baseButtonStyle, activeButtonStyle)}>
+      <span aria-current="page" className={pageButtonStyles({ state: "active" })}>
         {page}
       </span>
     );
@@ -39,7 +64,7 @@ function PageButton({ page, isCurrent, pathname }: PageButtonProps) {
         page,
       })}
       aria-label={`ページ${page}へ`}
-      className={twMerge(baseButtonStyle, inactiveButtonStyle)}
+      className={pageButtonStyles({ state: "inactive" })}
     >
       {page}
     </Link>
@@ -48,22 +73,20 @@ function PageButton({ page, isCurrent, pathname }: PageButtonProps) {
 
 function Ellipsis() {
   return (
-    <span className="px-2 text-warm-black" aria-hidden="true">
+    <span className={css({ px: "2", color: "warm-black" })} aria-hidden="true">
       ...
     </span>
   );
 }
 
-export default function Pagination({ currentPage, totalPages, className, ...props }: Props) {
+export default function Pagination({ currentPage, totalPages, cssProps, ...props }: Props) {
   const location = useLocation();
 
   const renderPageNumbers = (): ReactNode[] => {
     const items: ReactNode[] = [];
 
-    // 先頭
     items.push(<PageButton key={1} page={1} isCurrent={currentPage === 1} pathname={location.pathname} />);
 
-    // 省略
     if (currentPage > 3) {
       items.push(<Ellipsis key="ellipsis1" />);
     }
@@ -74,7 +97,6 @@ export default function Pagination({ currentPage, totalPages, className, ...prop
       );
     }
 
-    // 現在のページ
     if (currentPage !== 1 && currentPage !== totalPages) {
       items.push(<PageButton key={currentPage} page={currentPage} isCurrent={true} pathname={location.pathname} />);
     }
@@ -85,12 +107,10 @@ export default function Pagination({ currentPage, totalPages, className, ...prop
       );
     }
 
-    // 省略
     if (currentPage < totalPages - 2) {
       items.push(<Ellipsis key="ellipsis2" />);
     }
 
-    // 末尾
     if (totalPages !== 1) {
       items.push(
         <PageButton
@@ -110,7 +130,10 @@ export default function Pagination({ currentPage, totalPages, className, ...prop
   const isLastPage = currentPage === totalPages;
 
   return (
-    <nav className={twMerge("flex items-center justify-center gap-3", className)} {...props}>
+    <nav
+      className={css({ display: "flex", alignItems: "center", justifyContent: "center", gap: "3" }, cssProps)}
+      {...props}
+    >
       {!isFirstPage && (
         <IconButton asChild>
           <Link
@@ -121,12 +144,12 @@ export default function Pagination({ currentPage, totalPages, className, ...prop
             })}
             title="前のページへ"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className={css({ w: "5", h: "5" })} />
           </Link>
         </IconButton>
       )}
 
-      <div className="flex items-center gap-2">{pageNumbers}</div>
+      <div className={cx(css({ display: "flex", alignItems: "center", gap: "2" }))}>{pageNumbers}</div>
 
       {!isLastPage && (
         <IconButton asChild>
@@ -138,7 +161,7 @@ export default function Pagination({ currentPage, totalPages, className, ...prop
             })}
             title="次のページへ"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className={css({ w: "5", h: "5" })} />
           </Link>
         </IconButton>
       )}

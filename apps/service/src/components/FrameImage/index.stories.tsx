@@ -1,105 +1,35 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import FrameImage from "./index";
-
-const dummyImageDataUrl = "https://placehold.jp/300x400.png";
+import { css } from "styled-system/css";
+import FrameImage from ".";
 
 const meta = {
-  title: "UserPage/FrameImage",
+  title: "Components/FrameImage",
   component: FrameImage,
   parameters: {
     layout: "centered",
   },
-  args: {
-    src: dummyImageDataUrl,
-    alt: "サンプル画像",
-    width: 300,
-    height: 200,
-    className: "w-64",
-  },
+  tags: ["autodocs"],
 } satisfies Meta<typeof FrameImage>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-
-export const Square: Story = {
+export const Default: Story = {
   args: {
-    alt: "正方形の画像",
-    width: 250,
-    height: 250,
-  },
-};
-
-export const Portrait: Story = {
-  args: {
-    alt: "縦長の画像",
-    width: 200,
-    height: 300,
-  },
-};
-
-export const Small: Story = {
-  args: {
-    alt: "小さい画像",
-    width: 100,
-    height: 100,
-  },
-};
-
-export const Large: Story = {
-  args: {
-    alt: "大きい画像",
-    width: 500,
-    height: 300,
-  },
-};
-
-export const WithLink: Story = {
-  args: {
-    alt: "リンク付きの画像",
-    linkParams: {
-      userSlug: "test",
-      imageId: "1",
-    },
-    width: 300,
-    height: 200,
-  },
-};
-
-export const WithoutHoverEffect: Story = {
-  args: {
-    alt: "ホバーエフェクトなしの画像",
-    disableHoverEffect: true,
-    width: 300,
-    height: 200,
+    src: "https://placehold.co/640x480",
+    alt: "サンプル画像",
+    width: 640,
+    height: 480,
+    cssProps: css.raw({ w: "64" }),
   },
 };
 
 export const Processing: Story = {
   args: {
     alt: "処理中の画像",
+    width: 640,
+    height: 480,
     status: "processing",
-    thumbhash: "YJqGPQw7d3h4d4c4d3eHeAh4aIhwh3Zz",
-    width: 300,
-    height: 200,
-  },
-};
-
-export const ModerationViolation: Story = {
-  args: {
-    alt: "ガイドライン違反の画像",
-    status: "moderation_violation",
-    width: 300,
-    height: 200,
-  },
-};
-
-export const ProcessError: Story = {
-  args: {
-    alt: "投稿エラーの画像",
-    status: "error",
-    width: 300,
-    height: 200,
+    cssProps: css.raw({ w: "64" }),
   },
 };

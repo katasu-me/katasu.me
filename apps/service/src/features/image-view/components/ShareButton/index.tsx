@@ -1,3 +1,4 @@
+import { css } from "styled-system/css";
 import IconShare from "@/assets/icons/share.svg?react";
 import IconButton from "@/components/IconButton";
 import { useDevice } from "@/hooks/useDevice";
@@ -16,7 +17,6 @@ export default function ShareButton({ title: rawTitle, userSlug, imageId }: Prop
     const title = rawTitle?.trim();
     const text = title ? `${title}\n${url}` : url;
 
-    // デスクトップの場合、またはWebShare APIが利用できない場合はしぇあ.comを使用
     if (isDesktop || !navigator.share) {
       openShareSite(text);
       return;
@@ -25,7 +25,6 @@ export default function ShareButton({ title: rawTitle, userSlug, imageId }: Prop
     try {
       await navigator.share({ text });
     } catch (error) {
-      // ユーザーがキャンセルした場合は何もしない
       if (error instanceof Error && error.name !== "AbortError") {
         openShareSite(text);
       }
@@ -41,7 +40,7 @@ export default function ShareButton({ title: rawTitle, userSlug, imageId }: Prop
 
   return (
     <IconButton onClick={handleShare}>
-      <IconShare className="h-4 w-4" />
+      <IconShare className={css({ w: "4", h: "4" })} />
     </IconButton>
   );
 }

@@ -2,15 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import TagLink from ".";
 
 const meta = {
-  title: "Components/TagLinks/TagLink",
+  title: "Components/TagLinks/TabLink",
   component: TagLink,
-  parameters: {
-    layout: "centered",
-  },
   tags: ["autodocs"],
-  args: {
-    userSlug: "test",
-  },
 } satisfies Meta<typeof TagLink>;
 
 export default meta;
@@ -19,20 +13,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     id: "1",
-    name: "風景",
-  },
-};
-
-export const LongName: Story = {
-  args: {
-    id: "2",
-    name: "とても長いタグ名のサンプル",
-  },
-};
-
-export const ShortName: Story = {
-  args: {
-    id: "3",
-    name: "猫",
+    name: "日常",
+    userSlug: "katasu",
   },
 };

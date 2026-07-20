@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { fetchPublicUserDataByUserSlug } from "@katasu.me/service-db";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { css } from "styled-system/css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { getUserSession } from "@/features/auth/libs/auth";
@@ -64,13 +65,21 @@ export const Route = createFileRoute("/user/_layout/$userSlug")({
 });
 
 function UserLayoutComponent() {
-  const { user, sessionUserId } = Route.useLoaderData();
+  const { user } = Route.useLoaderData();
 
   return (
-    <div className="col-span-full grid grid-cols-subgrid gap-y-12 py-16">
-      <Header user={user} sessionUserId={sessionUserId} />
+    <div
+      className={css({
+        gridColumn: "1 / -1",
+        display: "grid",
+        gridTemplateColumns: "subgrid",
+        rowGap: "12",
+        py: "16",
+      })}
+    >
+      <Header user={user} />
       <Outlet />
-      <Footer className="col-start-2" mode="logged-in-user" sessionUserId={sessionUserId} />
+      <Footer cssProps={css.raw({ gridColumnStart: "2" })} />
     </div>
   );
 }

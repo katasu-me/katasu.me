@@ -1,18 +1,17 @@
 import { type ComponentProps, useEffect, useRef, useState } from "react";
-import { twMerge } from "tailwind-merge";
+import { css } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 import FrameImage from "@/components/FrameImage";
 import Message from "@/components/Message";
 import Pagination from "@/components/Pagination";
 import { GALLERY_PAGE_SIZE } from "../../constants/page";
-import GalleryToggle from "../GalleryToggle";
 
 const DEFAULT_COLUMNS = 2;
 
-/** 画面幅とカラム数のマッピング */
 const COLUMNS = new Map([
-  [640, 2], // sm
-  [768, 3], // md
-  [1024, 4], // lg
+  [640, 2],
+  [768, 3],
+  [1024, 4],
 ]);
 
 type Props = {
@@ -20,7 +19,7 @@ type Props = {
   totalImageCount: number;
   currentPage: number;
   itemsPerPage?: number;
-  className?: string;
+  cssProps?: SystemStyleObject;
 };
 
 function getImageColumns(paginatedImages: Props["images"], columns: number) {
@@ -41,7 +40,7 @@ export default function GalleryMasonry({
   totalImageCount,
   currentPage,
   itemsPerPage = GALLERY_PAGE_SIZE,
-  className,
+  cssProps,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [columns, setColumns] = useState(DEFAULT_COLUMNS);
@@ -50,7 +49,6 @@ export default function GalleryMasonry({
   const hasImages = totalImageCount > 0;
 
   useEffect(() => {
-    // 画像がない場合はリセット
     if (!hasImages) {
       setIsReady(false);
       return;
@@ -66,7 +64,6 @@ export default function GalleryMasonry({
         return;
       }
 
-      // カラム数をコンポーネントの幅に応じて設定
       const width = entry.contentRect.width;
 
       for (const [breakpoint, colCount] of COLUMNS.entries()) {
@@ -76,7 +73,6 @@ export default function GalleryMasonry({
         }
       }
 
-      // CLS軽減のため、初回のカラム数設定が完了したらフェードイン
       setIsReady(true);
     };
 
@@ -96,27 +92,31 @@ export default function GalleryMasonry({
   }
 
   return (
-    <>
-      <div className={twMerge("flex flex-col gap-6", className)}>
-        <div
-          ref={containerRef}
-          className={twMerge(
-            "flex w-full gap-2 pc:gap-3 transition-opacity duration-400 ease-magnetic",
-            isReady ? "opacity-100" : "opacity-0",
-          )}
-        >
-          {imageColumns.map((column, colIndex) => (
-            <div key={colIndex.toString()} className="flex flex-1 flex-col gap-2 pc:gap-3">
-              {column.map((image) => (
-                <FrameImage key={image.id} className="h-auto w-full" {...image} />
-              ))}
-            </div>
-          ))}
-        </div>
-        {totalPages > 1 && <Pagination className="mt-4" currentPage={currentPage} totalPages={totalPages} />}
+    <div className={css({ display: "flex", flexDirection: "column", gap: "6" }, cssProps)}>
+      <div
+        ref={containerRef}
+        className={css({
+          display: "flex",
+          w: "full",
+          gap: { base: "2", pc: "3" },
+          opacity: isReady ? "1" : "0",
+          transition: "opacity 400ms token(easings.magnetic)",
+        })}
+      >
+        {imageColumns.map((column, colIndex) => (
+          <div
+            key={colIndex.toString()}
+            className={css({ display: "flex", flex: "1", flexDirection: "column", gap: { base: "2", pc: "3" } })}
+          >
+            {column.map((image) => (
+              <FrameImage key={image.id} cssProps={css.raw({ w: "full", h: "auto" })} {...image} />
+            ))}
+          </div>
+        ))}
       </div>
-
-      <GalleryToggle className="-translate-x-1/2 fixed bottom-6 left-1/2 z-floating" value="timeline" />
-    </>
+      {totalPages > 1 && (
+        <Pagination cssProps={css.raw({ mt: "4" })} currentPage={currentPage} totalPages={totalPages} />
+      )}
+    </div>
   );
 }

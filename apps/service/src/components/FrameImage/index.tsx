@@ -1,7 +1,8 @@
 import type { ImageStatus } from "@katasu.me/service-db";
 import { Link } from "@tanstack/react-router";
 import { type ComponentProps, useMemo } from "react";
-import { twMerge } from "tailwind-merge";
+import { css, cx } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 import IconAlertTriangleFilled from "@/assets/icons/alert-triangle-filled.svg?react";
 import IconExclamationCircle from "@/assets/icons/exclamation-circle.svg?react";
 import LoaderIcon from "@/components/Icon/LucideAnimated/LoaderIcon";
@@ -18,10 +19,11 @@ type FrameImageProps = {
   disableHoverEffect?: boolean;
   status?: ImageStatus;
   thumbhash?: string | null;
-} & Omit<ComponentProps<"img">, "width" | "height">;
+  cssProps?: SystemStyleObject;
+} & Omit<ComponentProps<"img">, "width" | "height" | "className">;
 
 export default function FrameImage({
-  className,
+  cssProps,
   width,
   height,
   linkParams,
@@ -35,7 +37,6 @@ export default function FrameImage({
   const isProcessing = status === "processing";
   const isError = status === "error";
 
-  // ThumbHashからブラー画像と明るさを取得
   const { blurDataUrl, isDark } = useMemo(() => {
     if (!thumbhash) {
       return {
@@ -56,23 +57,45 @@ export default function FrameImage({
     const StatusIcon = isViolation ? IconAlertTriangleFilled : isError ? IconExclamationCircle : null;
 
     if (StatusIcon) {
-      return <StatusOverlay icon={<StatusIcon className="size-8 text-warm-black-50" />} />;
+      return <StatusOverlay icon={<StatusIcon className={css({ w: "8", h: "8", color: "warm-black-50" })} />} />;
     }
 
     if (isProcessing) {
       return (
-        <div className="pointer-events-none absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center gap-1 p-4">
-          <LoaderIcon className={twMerge("size-6", isDark ? "text-warm-white" : "text-warm-black")} size={24} />
+        <div
+          className={css({
+            pointerEvents: "none",
+            position: "absolute",
+            top: "0",
+            left: "0",
+            display: "flex",
+            w: "full",
+            h: "full",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "1",
+            p: "4",
+          })}
+        >
+          <LoaderIcon cssProps={css.raw({ w: "6", h: "6", color: isDark ? "warm-white" : "warm-black" })} size={24} />
         </div>
       );
     }
 
     return (
       <img
-        className={twMerge(
-          "pointer-events-none absolute top-0 left-0 h-full w-full object-cover transition-opacity duration-400 ease-magnetic",
-          !disableHoverEffect && "group-hover:brightness-90",
-        )}
+        className={css({
+          pointerEvents: "none",
+          position: "absolute",
+          top: "0",
+          left: "0",
+          w: "full",
+          h: "full",
+          objectFit: "cover",
+          transition: "opacity 400ms token(easings.magnetic)",
+          _groupHover: !disableHoverEffect ? { filter: "brightness(0.9)" } : undefined,
+        })}
         alt={alt}
         {...props}
       />
@@ -81,10 +104,23 @@ export default function FrameImage({
 
   return (
     <div
-      className={twMerge(
-        "group interactive-base relative overflow-hidden border-5 border-white bg-center bg-cover bg-warm-black-25 shadow-md",
+      className={cx(
+        "group",
+        "interactive-base",
         !disableHoverEffect && "interactive-scale-sm",
-        className,
+        css(
+          {
+            position: "relative",
+            overflow: "hidden",
+            borderWidth: "5px",
+            borderColor: "white",
+            bgColor: "warm-black-25",
+            bgPosition: "center",
+            bgSize: "cover",
+            shadow: "md",
+          },
+          cssProps,
+        ),
       )}
       style={{
         aspectRatio: `${width} / ${height}`,
@@ -93,15 +129,25 @@ export default function FrameImage({
     >
       {linkParams && (
         <Link
-          className="focus:outline-none"
-          to="/user/$userSlug/image/$imageId"
-          params={{
-            userSlug: linkParams.userSlug,
-            imageId: linkParams.imageId,
+          className={css({ _focus: { outline: "none" } })}
+          to="."
+          search={(prev) => ({
+            ...prev,
+            image: linkParams.imageId,
+          })}
+          mask={{
+            to: "/user/$userSlug/image/$imageId",
+            params: {
+              userSlug: linkParams.userSlug,
+              imageId: linkParams.imageId,
+            },
+            unmaskOnReload: true,
           }}
+          resetScroll={false}
+          aria-label={alt}
         >
-          <span className="sr-only">{alt}</span>
-          <span className="absolute inset-0 z-overlay" />
+          <span className={css({ srOnly: true })}>{alt}</span>
+          <span className={css({ position: "absolute", inset: "0", zIndex: "overlay" })} />
         </Link>
       )}
       {renderContent()}

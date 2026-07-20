@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 
-const DESKTOP_BREAKPOINT = 768; // md breakpoint
+const DESKTOP_BREAKPOINT = 768;
 
 type DeviceType = {
   isDesktop: boolean;
   isMobile: boolean;
 };
 
-/**
- * デバイスの種類を判定するフック
- * @returns デバイスの種類（isDesktop, isMobile）
- */
 export function useDevice(): DeviceType {
   const [isDesktop, setIsDesktop] = useState(() => {
     if (typeof window === "undefined") {

@@ -9,12 +9,6 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
-  argTypes: {
-    className: {
-      control: "text",
-      description: "Additional CSS class names",
-    },
-  },
 } satisfies Meta<typeof DemoImages>;
 
 export default meta;

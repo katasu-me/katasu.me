@@ -1,78 +1,66 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { twMerge } from "tailwind-merge";
-import IconPlant from "@/assets/icons/plant.svg?react";
+import { Link } from "@tanstack/react-router";
+import { css, cx } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 import LogoImage from "@/assets/logo.svg?react";
-import Button from "@/components/Button";
 import ExternalLink from "@/components/ExternalLink";
 import { DOCS_INFORMATION, DOCS_LICENSE, DOCS_PRIVACY_POLICY, DOCS_TERMS_OF_SERVICE } from "@/constants/site";
-import { signOut } from "@/features/auth/libs/auth-client";
 import DevelopedBy from "./DevelopedBy";
-import StartBanner from "./StartBanner";
 
-type Props =
-  | {
-      mode: "logged-in-user";
-      sessionUserId?: string;
-      className?: string;
-    }
-  | {
-      mode: "developed-by";
-      className?: string;
-    };
+type Props = {
+  className?: string;
+  cssProps?: SystemStyleObject;
+};
 
-export default function Footer({ className, ...props }: Props) {
-  const navigate = useNavigate();
-  const showDivider = props.mode === "logged-in-user" ? !!props.sessionUserId : true;
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate({ to: "/" });
-  };
-
+export default function Footer({ className, cssProps }: Props) {
   return (
-    <footer className={twMerge("flex flex-col items-center border-warm-black-25 border-t py-32", className)}>
-      {props.mode === "developed-by" && <DevelopedBy />}
-
-      {props.mode === "logged-in-user" &&
-        (props.sessionUserId ? (
-          <div className="flex flex-col items-center gap-6">
-            <Button asChild>
-              <Link
-                className="flex w-48 items-center justify-center gap-2"
-                to="/user/$userSlug"
-                params={{ userSlug: props.sessionUserId }}
-                search={{ view: "timeline", page: 1 }}
-              >
-                <IconPlant className="size-5" />
-                マイページへ
-              </Link>
-            </Button>
-            <button
-              className="interactive-scale cursor-pointer text-sm text-warm-black-50 transition-all duration-400 ease-magnetic hover:brightness-90"
-              type="button"
-              onClick={handleSignOut}
-            >
-              ログアウト
-            </button>
-          </div>
-        ) : (
-          <StartBanner />
-        ))}
-
-      {showDivider && (
-        <div className="my-16 flex gap-1">
-          {new Array(3).fill(null).map((_, index) => (
-            <span key={index.toString()} className="h-1 w-2 rounded-full bg-warm-black-25" />
-          ))}
-        </div>
+    <footer
+      className={cx(
+        css(
+          {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            borderTopWidth: "1px",
+            borderColor: "warm-black-25",
+            py: "32",
+          },
+          cssProps,
+        ),
+        className,
       )}
+    >
+      <DevelopedBy />
 
-      <div className="flex flex-col items-center justify-center gap-10">
+      <div className={css({ my: "16", display: "flex", gap: "1" })}>
+        {new Array(3).fill(null).map((_, index) => (
+          <span key={index.toString()} className={css({ h: "1", w: "2", rounded: "full", bg: "warm-black-25" })} />
+        ))}
+      </div>
+
+      <div
+        className={css({
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "10",
+        })}
+      >
         <Link className="interactive-scale-brightness" to="/">
-          <LogoImage className="h-16 w-16" />
+          <LogoImage className={css({ h: "16", w: "16" })} />
         </Link>
 
-        <nav className="flex flex-col items-center gap-2 text-sm text-warm-black">
+        <nav
+          className={css({
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2",
+            fontSize: "sm",
+            lineHeight: "5",
+            color: "warm-black",
+          })}
+        >
           <ExternalLink href={DOCS_INFORMATION}>お知らせなど</ExternalLink>
           <ExternalLink href={DOCS_TERMS_OF_SERVICE} target="_blank" rel="noopener">
             利用規約
@@ -86,7 +74,7 @@ export default function Footer({ className, ...props }: Props) {
         </nav>
       </div>
 
-      <p className="mt-10 text-xs">© katasu.me</p>
+      <p className={css({ mt: "10", fontSize: "xs", lineHeight: "4" })}>© katasu.me</p>
     </footer>
   );
 }

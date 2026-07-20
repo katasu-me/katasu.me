@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
+import { css } from "styled-system/css";
 import LogoImage from "@/assets/logo.svg?react";
 import Button from "@/components/Button";
 
@@ -10,13 +11,40 @@ type Props = PropsWithChildren<{
 
 export default function MessagePage({ title, children, showBackButton = false }: Props) {
   return (
-    <div className="col-start-2 flex min-h-screen flex-col items-center justify-center">
-      <section className="flex flex-col items-center justify-center text-center">
-        <LogoImage className="pc:w-48 w-32 opacity-70" />
-        <h1 className="mt-8 font-normal pc:text-3xl text-2xl text-warm-black">{title}</h1>
-        <div className="mt-4 text-warm-black">{children}</div>
+    <div
+      className={css({
+        gridColumnStart: "2",
+        display: "flex",
+        minH: "screen",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      })}
+    >
+      <section
+        className={css({
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+        })}
+      >
+        <LogoImage className={css({ w: { base: "32", pc: "48" }, opacity: 0.7 })} />
+        <h1
+          className={css({
+            mt: "8",
+            fontWeight: "normal",
+            fontSize: { base: "2xl", pc: "3xl" },
+            lineHeight: { base: "8", pc: "9" },
+            color: "warm-black",
+          })}
+        >
+          {title}
+        </h1>
+        <div className={css({ mt: "4", color: "warm-black" })}>{children}</div>
         {showBackButton && (
-          <Link to="/" className="mt-8">
+          <Link to="/" className={css({ mt: "8" })}>
             <Button>トップページに戻る</Button>
           </Link>
         )}

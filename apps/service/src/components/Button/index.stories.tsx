@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { css } from "styled-system/css";
 import Button from ".";
 
 const meta = {
@@ -67,18 +68,18 @@ export const CustomClass: Story = {
   args: {
     variant: "fill",
     children: "カスタムスタイル",
-    className: "px-16",
+    cssProps: css.raw({ px: "16" }),
   },
 };
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-4">
+    <div className={css({ display: "flex", flexDirection: "column", gap: "4" })}>
+      <div className={css({ display: "flex", gap: "4" })}>
         <Button variant="outline">Outline</Button>
         <Button variant="fill">Fill</Button>
       </div>
-      <div className="flex gap-4">
+      <div className={css({ display: "flex", gap: "4" })}>
         <Button variant="outline" disabled>
           Outline Disabled
         </Button>

@@ -1,5 +1,5 @@
 import { type PropsWithChildren, useState } from "react";
-import { twJoin } from "tailwind-merge";
+import { css, cx } from "styled-system/css";
 import IconBrandGoogle from "@/assets/icons/brand-google.svg?react";
 import BudouX from "@/components/BudouX";
 import Drawer from "@/components/Drawer";
@@ -20,20 +20,25 @@ export default function SignInDrawer({ children }: PropsWithChildren) {
     <Drawer
       title={greeting}
       triggerChildren={children}
-      titleClassname={twJoin(isLoading && "sr-only")}
+      titleClassname={cx(isLoading && css({ srOnly: true }))}
       dismissible={!isLoading}
     >
       {({ Description }) => (
         <>
-          <Description className={twJoin("mb-6 text-gray-700 text-sm", isLoading && "sr-only")}>
+          <Description
+            className={cx(
+              css({ mb: "6", color: "gray.700", fontSize: "sm", lineHeight: "5" }),
+              isLoading && css({ srOnly: true }),
+            )}
+          >
             <BudouX>katasu.me（かたすみ）はインターネットのかたすみに画像をおいておける、画像投稿サービスです。</BudouX>
           </Description>
 
           {isLoading ? (
-            <Loading className="mt-8 mb-2" title="ログインしています…" />
+            <Loading cssProps={css.raw({ mt: "8", mb: "2" })} title="ログインしています…" />
           ) : (
             <SignInButton provider="google" onLoading={handleLoading}>
-              <IconBrandGoogle className="h-5 w-5" />
+              <IconBrandGoogle className={css({ h: "5", w: "5" })} />
               Googleでつづける
             </SignInButton>
           )}

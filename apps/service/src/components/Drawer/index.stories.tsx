@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type React from "react";
 import { useState } from "react";
+import { css } from "styled-system/css";
 import Button from "../Button";
 import Drawer from "./index";
 
@@ -30,14 +31,14 @@ function DrawerDemo({ children, ...args }: DrawerDemoProps) {
       <Drawer {...args} open={open} onOpenChange={setOpen}>
         {({ Description, Close }) => (
           <>
-            <Description className="mb-4 text-warm-black/80">
+            <Description className={css({ mb: "4", color: "rgba(72, 48, 48, 0.8)" })}>
               これはDrawerコンポーネントのデモです。モーダルのようにコンテンツを表示できます。
             </Description>
             {children ? (
               children({ Description, Close })
             ) : (
-              <div className="space-y-4">
-                <div className="flex gap-2">
+              <div className={css({ "& > * + *": { mt: "4" } })}>
+                <div className={css({ display: "flex", gap: "2" })}>
                   <Close asChild>
                     <Button>閉じる</Button>
                   </Close>
@@ -70,7 +71,7 @@ export const WithCustomInnerClassName: Story = {
   render: (args) => <DrawerDemo {...args} />,
   args: {
     title: "カスタムスタイル",
-    innerClassname: "max-w-lg bg-warm-gray/10 p-6 rounded-lg",
+    innerCssProps: css.raw({ maxW: "lg", bg: "warm-black-10", p: "6", rounded: "lg" }),
   },
 };
 
@@ -78,11 +79,11 @@ export const LongContent: Story = {
   render: (args) => (
     <DrawerDemo {...args}>
       {({ Description, Close }) => (
-        <div className="space-y-4">
-          <Description className="text-warm-black/80">
+        <div className={css({ "& > * + *": { mt: "4" } })}>
+          <Description className={css({ color: "rgba(72, 48, 48, 0.8)" })}>
             これは長いコンテンツを持つDrawerのサンプルです。Drawerは内容に応じて適切にスクロールされます。
           </Description>
-          <div className="space-y-2">
+          <div className={css({ "& > * + *": { mt: "2" } })}>
             {[
               "アイテム 1",
               "アイテム 2",
@@ -95,7 +96,10 @@ export const LongContent: Story = {
               "アイテム 9",
               "アイテム 10",
             ].map((item) => (
-              <div key={item} className="rounded bg-warm-gray/10 p-2 text-sm">
+              <div
+                key={item}
+                className={css({ rounded: "sm", bg: "warm-black-10", p: "2", fontSize: "sm", lineHeight: "5" })}
+              >
                 {item}
               </div>
             ))}

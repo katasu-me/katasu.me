@@ -1,3 +1,4 @@
+import { css } from "styled-system/css";
 import BudouX from "@/components/BudouX";
 import MessagePage from "../MessagePage";
 
@@ -7,7 +8,7 @@ export default function NotFound() {
       <p>
         <BudouX>ページが見つかりませんでした。</BudouX>
       </p>
-      <p className="mt-2">
+      <p className={css({ mt: "2" })}>
         <BudouX>ページが移動されたか、削除されたのかもしれません。</BudouX>
       </p>
     </MessagePage>

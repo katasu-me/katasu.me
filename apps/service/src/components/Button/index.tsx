@@ -1,39 +1,81 @@
 import { Slot } from "@radix-ui/react-slot";
 import type { ComponentPropsWithoutRef } from "react";
-import { twMerge } from "tailwind-merge";
+import { css, cva, cx } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 
 type ButtonProps = {
   variant?: "fill" | "outline" | "danger";
   asChild?: boolean;
-} & ComponentPropsWithoutRef<"button">;
+  cssProps?: SystemStyleObject;
+} & Omit<ComponentPropsWithoutRef<"button">, "className">;
+
+const buttonStyles = cva({
+  base: {
+    rounded: "xl",
+    fontSize: "sm",
+    lineHeight: "5",
+    px: "8",
+    py: "3",
+    cursor: "pointer",
+    transition: "all 400ms token(easings.magnetic)",
+    _disabled: {
+      shadow: "none",
+    },
+  },
+  variants: {
+    variant: {
+      fill: {
+        bg: "warm-black",
+        color: "warm-white",
+        _hover: { filter: "brightness(0.9)", shadow: "lg" },
+        _active: { filter: "brightness(0.9)" },
+        _disabled: {
+          bg: "warm-black-50",
+          _hover: { filter: "brightness(1)" },
+        },
+      },
+      outline: {
+        borderWidth: "1px",
+        borderColor: "warm-black",
+        bg: "warm-white",
+        color: "warm-black",
+        _hover: { bg: "warm-black", color: "warm-white", shadow: "lg" },
+        _active: { bg: "warm-black", color: "warm-white" },
+        _disabled: {
+          borderColor: "warm-black-50",
+          bg: "warm-white",
+          color: "warm-black-50",
+          _hover: { bg: "warm-white", color: "warm-black-50" },
+        },
+      },
+      danger: {
+        bg: "warm-white",
+        borderWidth: "1px",
+        borderColor: "red.700",
+        color: "red.700",
+        _hover: { bg: "red.700", color: "white", shadow: "lg" },
+        _active: { filter: "brightness(0.9)" },
+        _disabled: {
+          bg: "red.300",
+          filter: "brightness(0.9)",
+          borderColor: "red.300",
+          color: "white",
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    variant: "outline",
+  },
+});
 
 /**
  * Button コンポーネント
  *
  * - asChild = true とすると子要素にボタンのスタイルを適用します。
  */
-export default function Button({ variant = "outline", asChild, className, children, ...props }: ButtonProps) {
-  const variantStyles = new Map<ButtonProps["variant"], string>([
-    [
-      "fill",
-      "bg-warm-black text-warm-white hover:brightness-90 hover:shadow-lg active:brightness-90 disabled:bg-warm-black-50 disabled:hover:brightness-100 disabled:shadow-none",
-    ],
-    [
-      "outline",
-      "border border-warm-black bg-warm-white text-warm-black hover:bg-warm-black hover:text-warm-white hover:shadow-lg active:bg-warm-black active:text-warm-white disabled:border-warm-black-50 disabled:bg-warm-white disabled:text-warm-black-50 disabled:hover:bg-warm-white disabled:hover:text-warm-black-50 disabled:shadow-none",
-    ],
-    [
-      "danger",
-      "bg-warm-white border border-red-700 text-red-700 hover:bg-red-700 hover:text-white hover:shadow-lg active:brightness-90 disabled:bg-red-300 disabled:brightness-90 disabled:border-red-300 disabled:text-white disabled:shadow-none",
-    ],
-  ]);
-
-  const buttonClassName = twMerge(
-    "rounded-xl text-sm px-8 py-3 cursor-pointer transition-all duration-400 ease-magnetic",
-    !props.disabled && "interactive-scale",
-    variantStyles.get(variant),
-    className,
-  );
+export default function Button({ variant = "outline", asChild, cssProps, children, ...props }: ButtonProps) {
+  const buttonClassName = cx(buttonStyles({ variant }), !props.disabled && "interactive-scale", css(cssProps));
 
   return asChild ? (
     <Slot className={buttonClassName}>{children}</Slot>

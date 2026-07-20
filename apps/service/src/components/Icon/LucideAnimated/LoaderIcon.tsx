@@ -1,11 +1,13 @@
 import type { Variants } from "motion/react";
 import { motion } from "motion/react";
 import type { ComponentProps } from "react";
-import { twMerge } from "tailwind-merge";
+import { css } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 
 type LoaderIconProps = {
   size?: number;
-} & ComponentProps<"div">;
+  cssProps?: SystemStyleObject;
+} & Omit<ComponentProps<"div">, "className">;
 
 const G_VARIANTS: Variants = {
   animate: {
@@ -18,9 +20,9 @@ const G_VARIANTS: Variants = {
   },
 };
 
-export default function LoaderIcon({ className, size = 28, ...props }: LoaderIconProps) {
+export default function LoaderIcon({ cssProps, size = 28, ...props }: LoaderIconProps) {
   return (
-    <div className={twMerge(className)} {...props}>
+    <div className={css(cssProps)} {...props}>
       <svg
         fill="none"
         height={size}

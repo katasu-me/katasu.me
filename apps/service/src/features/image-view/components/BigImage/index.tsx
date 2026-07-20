@@ -1,8 +1,9 @@
 import { motion } from "motion/react";
 import type { ComponentProps } from "react";
+import { css } from "styled-system/css";
 import FrameImage from "@/components/FrameImage";
 
-type Props = Omit<ComponentProps<typeof FrameImage>, "className" | "disableHoverEffect">;
+type Props = Omit<ComponentProps<typeof FrameImage>, "cssProps" | "disableHoverEffect">;
 
 export default function BigImage(props: Props) {
   return (
@@ -26,9 +27,9 @@ export default function BigImage(props: Props) {
     >
       <FrameImage
         {...props}
-        className="mx-auto h-auto pc:max-h-[70vh] pc:w-[unset] w-full"
+        cssProps={css.raw({ mx: "auto", w: "full", h: "auto", pc: { maxH: "70vh", w: "unset" } })}
         disableHoverEffect
-        linkParams={undefined} // リンクである必要がないので
+        linkParams={undefined}
       />
     </motion.div>
   );

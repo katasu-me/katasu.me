@@ -3,11 +3,9 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { PropsWithChildren } from "react";
+import { css } from "styled-system/css";
 import MessagePage from "@/components/MessagePage";
 import NotFoundPage from "@/components/NotFoundPage";
-import UploadDrawer from "@/features/image-upload/components/UploadDrawer";
-import UploadSnackbar from "@/features/image-upload/components/UploadSnackbar";
-import { UploadProvider } from "@/features/image-upload/contexts/UploadContext";
 import { generateMetadata } from "@/libs/meta";
 import appCss from "../styles.css?url";
 
@@ -61,7 +59,7 @@ function ErrorPage() {
   return (
     <MessagePage title="Error" showBackButton>
       <p>エラーが発生しました</p>
-      <p className="mt-2">ページを再読み込みしてみてください…</p>
+      <p className={css({ mt: "2" })}>ページを再読み込みしてみてください…</p>
     </MessagePage>
   );
 }
@@ -72,12 +70,15 @@ function RootDocument({ children }: PropsWithChildren) {
       <head>
         <HeadContent />
       </head>
-      <body className="grid grid-cols-(--grid-main-layout) bg-warm-white font-mix text-warm-black">
-        <UploadProvider>
-          <UploadSnackbar />
-          <UploadDrawer />
-          {children}
-        </UploadProvider>
+      <body
+        className={css({
+          display: "grid",
+          gridTemplateColumns: "var(--grid-main-layout)",
+          backgroundColor: "warm-white",
+          color: "warm-black",
+        })}
+      >
+        {children}
         {import.meta.env.DEV && (
           <TanStackDevtools
             config={{

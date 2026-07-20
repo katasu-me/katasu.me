@@ -41,9 +41,7 @@ export default function ParentComponent() {
 ```
 
 **実例:**
-- `GalleryRandom/DraggableImage/` - GalleryRandomの表示要素
-- `UploadDrawer/FilmCounter/` - ドロワーのタイトル部分
-- `UploadForm/ImagePlaceholder/` - フォームのプレビュー部分
+- `Footer/DevelopedBy/` - Footerの表示要素
 
 ---
 
@@ -78,8 +76,7 @@ export default function TriggerButton() {
 ```
 
 **実例:**
-- `ImageDropArea/` + `UploadDrawer/` - ドロップエリア（トリガー）とアップロードドロワー（コンテンツ）
-- `EditButton/` + `EditDrawer/` - 編集ボタン（トリガー）と編集ドロワー（コンテンツ）
+- `SignInDrawer/` + `SignInButton/` - ログイン導線（トリガー）とログイン操作
 
 **ネーミング規則:**
 - トリガー: `〜Button`, `〜Area`, `〜Link` など（UIとして見える部分）
@@ -128,72 +125,56 @@ _components/           # 共通の親ディレクトリ
 
 ### ✅ 良い例
 
-#### 例1: gallery feature
+#### 例1: top feature
 ```
-features/gallery/
+features/top/
+  ├── assets/
   ├── components/
-  │   ├── GalleryMasonry/      # メイソンリー表示
-  │   ├── GalleryRandom/       # ランダム表示
-  │   │   ├── index.tsx
-  │   │   ├── DraggableImage/  # ルールA: GalleryRandomの表示要素
-  │   │   └── DraggableImages/ # ルールA: GalleryRandomの表示要素
-  │   └── GalleryToggle/       # 表示切り替えトグル
-  ├── constants/
+  │   └── DemoImages/          # トップページ専用表示
+```
+
+**理由:**
+- `DemoImages`はトップページ専用の表示要素
+
+#### 例2: auth feature
+```
+features/auth/
+  ├── components/
+  │   ├── StartButton/        # ルールB: トリガー
+  │   ├── SignInDrawer/       # ルールB: コンテンツ
+  │   └── SignInButton/       # ルールA: ドロワーのUI部分
   ├── libs/
   ├── schemas/
   └── server-fn/
 ```
 
 **理由:**
-- `DraggableImage`と`DraggableImages`は`GalleryRandom`の表示要素として直接レンダリング
-
-#### 例2: image-upload feature
-```
-features/image-upload/
-  ├── components/
-  │   ├── ImageDropArea/      # ルールB: トリガー
-  │   ├── UploadDrawer/       # ルールB: コンテンツ
-  │   │   ├── index.tsx
-  │   │   └── FilmCounter/    # ルールA: ドロワーのUI部分
-  │   ├── UploadForm/
-  │   │   ├── index.tsx
-  │   │   └── ImagePlaceholder/  # ルールA: フォームのUI部分
-  │   └── UploadSnackbar/     # アップロード通知
-  ├── constants/
-  ├── contexts/
-  ├── libs/
-  ├── schemas/
-  └── server-fn/
-```
-
-**理由:**
-- `ImageDropArea`（ドロップエリア）と`UploadDrawer`は独立したUIなので兄弟配置
-- `FilmCounter`は`UploadDrawer`のUI構造の一部
-- `ImagePlaceholder`は`UploadForm`のUI構造の一部
+- `StartButton`と`SignInDrawer`は独立したUIなので兄弟配置
+- `SignInButton`は`SignInDrawer`のUI構造の一部
 
 ### ❌ 悪い例
 
 ```
-features/image-edit/
+features/auth/
   ├── components/
-  │   ├── EditDrawer/        # ← EditButtonから使われるが、離れた場所にある
+  │   ├── SignInDrawer/      # ← StartButtonから使われるが、離れた場所にある
   │   └── SomeWrapper/
-  │       └── EditButton/    # ← EditDrawerを開くボタン
+  │       └── StartButton/   # ← SignInDrawerを開くボタン
 ```
 
 **問題点:**
-- `EditButton`を見ても、`EditDrawer`が兄弟にあるとは分からない
-- `EditButton`の中に`EditDrawer`があると誤解する可能性
+- `StartButton`を見ても、`SignInDrawer`が兄弟にあるとは分からない
+- `StartButton`の中に`SignInDrawer`があると誤解する可能性
 
 ### ✅ 良い例
 
 ```
-features/image-edit/
+features/auth/
   ├── components/
-  │   ├── EditButton/        # ルールB: トリガー
-  │   ├── EditDrawer/        # ルールB: コンテンツ
+  │   ├── StartButton/       # ルールB: トリガー
+  │   ├── SignInDrawer/      # ルールB: コンテンツ
   │   │   └── index.tsx
-  │   └── EditForm/          # ルールA: ドロワーのUI部分
+  │   └── SignInButton/      # ルールA: ドロワーのUI部分
   │       └── index.tsx
   ├── schemas/
   └── server-fn/
@@ -203,13 +184,14 @@ features/image-edit/
 - `EditButton`と`EditDrawer`が兄弟なので関係性が明確
 - トリガーとコンテンツの関係が一目で分かる
 
-#### 例3: image-view feature
+#### 例3: common components
 ```
-features/image-view/
-  ├── components/
-  │   ├── BigImage/          # 画像の拡大表示
-  │   └── ShareButton/       # 共有ボタン
-  └── server-fn/
+components/
+  ├── Button/
+  ├── Drawer/
+  ├── Footer/
+  ├── Loading/
+  └── MessagePage/
 ```
 
 ## features ディレクトリの構成

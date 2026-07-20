@@ -1,12 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Message from "./index";
+import Message from ".";
 
 const meta = {
   title: "Components/Message",
   component: Message,
-  parameters: {
-    layout: "centered",
-  },
   tags: ["autodocs"],
 } satisfies Meta<typeof Message>;
 
@@ -15,6 +12,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    message: "まだなにもありません",
+    message: "からっぽです",
+  },
+};
+
+export const ErrorMessage: Story = {
+  args: {
+    message: "エラーが発生しました",
+    icon: "error",
   },
 };

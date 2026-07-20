@@ -1,23 +1,24 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ClientOnly, createFileRoute } from "@tanstack/react-router";
-import { fallback, number, object, parse } from "valibot";
-import { Loading } from "@/components/Loading";
+import { createFileRoute, useCanGoBack, useRouter } from "@tanstack/react-router";
+import { css } from "styled-system/css";
+import { fallback, number, object, optional, parse, string } from "valibot";
 import Message from "@/components/Message";
 import GalleryMasonry from "@/features/gallery/components/GalleryMasonry";
-import GalleryRandom from "@/features/gallery/components/GalleryRandom";
 import { GALLERY_ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import { toFrameImageProps } from "@/features/gallery/libs/convert";
 import { processingRefetchInterval } from "@/features/gallery/libs/polling";
 import { GalleryViewSchema } from "@/features/gallery/schemas/view";
 import { tagPageQueryOptions } from "@/features/gallery/server-fn/tag-page";
 import { userImageCountQueryOptions } from "@/features/gallery/server-fn/user-image-count";
-import ImageDropArea from "@/features/image-upload/components/ImageDropArea";
+import ImageViewDrawer from "@/features/image-view/components/ImageViewDrawer";
+import { imagePageQueryOptions } from "@/features/image-view/server-fn/image-page";
 import { generateMetadata } from "@/libs/meta";
 import { getUserAvatarUrl } from "@/libs/r2";
 
 const searchParamsSchema = object({
   view: fallback(GalleryViewSchema, "timeline"),
   page: fallback(number(), 1),
+  image: optional(string()),
 });
 
 export const Route = createFileRoute("/user/_layout/$userSlug/tag/$tagId")({
@@ -26,19 +27,26 @@ export const Route = createFileRoute("/user/_layout/$userSlug/tag/$tagId")({
     return <Message message={error.message || GALLERY_ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
   },
   validateSearch: (search) => parse(searchParamsSchema, search),
-  loaderDeps: ({ search: { view, page } }) => ({ view, page }),
+  loaderDeps: ({ search: { view, page, image } }) => ({ view, page, image }),
   loader: async ({ params, deps, context }) => {
+    const isOwner = context.user.id === context.sessionUserId;
     const tagPageOptions = tagPageQueryOptions({
-      view: deps.view,
-      userId: params.userSlug,
+      // TODO: 2Dパンビュー実装時に view=random を置き換える
+      view: "timeline",
+      userId: context.user.id,
       tagId: params.tagId,
       page: deps.page,
     });
 
-    const [loaderData] = await Promise.all([
-      context.queryClient.ensureQueryData(tagPageOptions),
-      context.queryClient.ensureQueryData(userImageCountQueryOptions(params.userSlug)),
-    ]);
+    const promises: Promise<unknown>[] = [
+      context.queryClient.ensureQueryData(userImageCountQueryOptions(context.user.id, isOwner)),
+    ];
+
+    if (deps.image) {
+      promises.push(context.queryClient.ensureQueryData(imagePageQueryOptions({ imageId: deps.image })));
+    }
+
+    const [loaderData] = await Promise.all([context.queryClient.ensureQueryData(tagPageOptions), ...promises]);
 
     return {
       ...loaderData,
@@ -68,60 +76,56 @@ export const Route = createFileRoute("/user/_layout/$userSlug/tag/$tagId")({
 
 function RouteComponent() {
   const { user, sessionUserId } = Route.useLoaderData();
-  const { view, page } = Route.useSearch();
+  const { page, image: openedImageId } = Route.useSearch();
   const { tagId } = Route.useParams();
+  const navigate = Route.useNavigate();
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
   const isOwner = user.id === sessionUserId;
 
   const { data } = useSuspenseQuery({
     ...tagPageQueryOptions({
-      view,
+      // TODO: 2Dパンビュー実装時に view=random を置き換える
+      view: "timeline",
       userId: user.id,
       tagId,
       page,
     }),
     refetchInterval: processingRefetchInterval(isOwner),
   });
-  const { data: userTotalImageCount } = useSuspenseQuery(userImageCountQueryOptions(user.id));
 
   const { tag, images, tagTotalImageCount } = data;
   const userSlug = user.customUrl || user.id;
   const frameImages = images ? images.map((image) => toFrameImageProps(image, "thumbnail", userSlug)) : [];
 
+  const handleCloseImage = () => {
+    if (canGoBack) {
+      router.history.back();
+      return;
+    }
+
+    navigate({ search: (prev) => ({ ...prev, image: undefined }), replace: true });
+  };
+
   return (
     <>
-      <h1 className="col-start-2 text-4xl">{`#${tag.name}`}</h1>
+      <h1 className={css({ gridColumnStart: "2", fontSize: "4xl", lineHeight: "10" })}>{`#${tag.name}`}</h1>
 
-      <div className="col-span-full grid grid-cols-subgrid gap-y-8">
-        {isOwner && (
-          <div className="col-start-2">
-            <ImageDropArea
-              title="あたらしい画像を投稿する"
-              counter={{
-                total: userTotalImageCount,
-                max: user.plan.maxPhotos,
-              }}
-              defaultTags={[tag.name]}
-            />
-          </div>
-        )}
+      <div className={css({ gridColumn: "1 / -1", display: "grid", gridTemplateColumns: "subgrid", rowGap: "8" })}>
+        <GalleryMasonry
+          images={frameImages}
+          cssProps={css.raw({ gridColumnStart: "2" })}
+          totalImageCount={tagTotalImageCount ?? 0}
+          currentPage={page}
+        />
 
-        {view === "timeline" ? (
-          <GalleryMasonry
-            images={frameImages}
-            className="col-start-2"
-            totalImageCount={tagTotalImageCount ?? 0}
-            currentPage={page}
+        {openedImageId && (
+          <ImageViewDrawer
+            imageId={openedImageId}
+            userSlug={userSlug}
+            sessionUserId={sessionUserId}
+            onClose={handleCloseImage}
           />
-        ) : (
-          <ClientOnly fallback={<Loading className="col-start-2 h-[50vh]" />}>
-            <GalleryRandom
-              fetchOptions={{
-                type: "tag",
-                tagId: tag.id,
-              }}
-              userSlug={userSlug}
-            />
-          </ClientOnly>
         )}
       </div>
     </>
