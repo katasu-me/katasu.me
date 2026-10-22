@@ -9,32 +9,27 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as ClosedBetaRouteImport } from './routes/closed-beta'
-import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ReportLayoutRouteImport } from './routes/report/_layout'
-import { Route as AuthSignupRouteImport } from './routes/auth/signup'
+import { Route as R404RouteImport } from './routes/404'
+import { Route as ClosedBetaRouteImport } from './routes/closed-beta'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as AuthErrorRouteImport } from './routes/auth/error'
-import { Route as UserLayoutUserSlugRouteImport } from './routes/user/_layout.$userSlug'
-import { Route as ReportLayoutUserRouteImport } from './routes/report/_layout/user'
-import { Route as ReportLayoutImageRouteImport } from './routes/report/_layout/image'
-import { Route as ApiR2SplatRouteImport } from './routes/api/r2/$'
-import { Route as ApiAuthRedirectRouteImport } from './routes/api/auth/redirect'
+import { Route as AuthSignupRouteImport } from './routes/auth/signup'
+import { Route as ReportLayoutRouteImport } from './routes/report/_layout'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAuthRedirectRouteImport } from './routes/api/auth/redirect'
+import { Route as ApiR2SplatRouteImport } from './routes/api/r2/$'
+import { Route as ReportLayoutImageRouteImport } from './routes/report/_layout/image'
+import { Route as ReportLayoutUserRouteImport } from './routes/report/_layout/user'
+import { Route as UserLayoutUserSlugRouteImport } from './routes/user/_layout.$userSlug'
 import { Route as UserLayoutUserSlugIndexRouteImport } from './routes/user/_layout.$userSlug/index'
+import { Route as UserLayoutUserSlugImageImageIdRouteImport } from './routes/user/_layout.$userSlug/image.$imageId'
 import { Route as UserLayoutUserSlugTagIndexRouteImport } from './routes/user/_layout.$userSlug/tag/index'
 import { Route as UserLayoutUserSlugTagTagIdRouteImport } from './routes/user/_layout.$userSlug/tag/$tagId'
-import { Route as UserLayoutUserSlugImageImageIdRouteImport } from './routes/user/_layout.$userSlug/image.$imageId'
 
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClosedBetaRoute = ClosedBetaRouteImport.update({
-  id: '/closed-beta',
-  path: '/closed-beta',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const R404Route = R404RouteImport.update({
@@ -42,19 +37,14 @@ const R404Route = R404RouteImport.update({
   path: '/404',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ClosedBetaRoute = ClosedBetaRouteImport.update({
+  id: '/closed-beta',
+  path: '/closed-beta',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReportLayoutRoute = ReportLayoutRouteImport.update({
-  id: '/report/_layout',
-  path: '/report',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthSignupRoute = AuthSignupRouteImport.update({
-  id: '/auth/signup',
-  path: '/auth/signup',
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthErrorRoute = AuthErrorRouteImport.update({
@@ -62,29 +52,14 @@ const AuthErrorRoute = AuthErrorRouteImport.update({
   path: '/auth/error',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UserLayoutUserSlugRoute = UserLayoutUserSlugRouteImport.update({
-  id: '/user/_layout/$userSlug',
-  path: '/user/$userSlug',
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/auth/signup',
+  path: '/auth/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReportLayoutUserRoute = ReportLayoutUserRouteImport.update({
-  id: '/user',
-  path: '/user',
-  getParentRoute: () => ReportLayoutRoute,
-} as any)
-const ReportLayoutImageRoute = ReportLayoutImageRouteImport.update({
-  id: '/image',
-  path: '/image',
-  getParentRoute: () => ReportLayoutRoute,
-} as any)
-const ApiR2SplatRoute = ApiR2SplatRouteImport.update({
-  id: '/api/r2/$',
-  path: '/api/r2/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthRedirectRoute = ApiAuthRedirectRouteImport.update({
-  id: '/api/auth/redirect',
-  path: '/api/auth/redirect',
+const ReportLayoutRoute = ReportLayoutRouteImport.update({
+  id: '/report/_layout',
+  path: '/report',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -92,11 +67,42 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthRedirectRoute = ApiAuthRedirectRouteImport.update({
+  id: '/api/auth/redirect',
+  path: '/api/auth/redirect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiR2SplatRoute = ApiR2SplatRouteImport.update({
+  id: '/api/r2/$',
+  path: '/api/r2/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportLayoutImageRoute = ReportLayoutImageRouteImport.update({
+  id: '/image',
+  path: '/image',
+  getParentRoute: () => ReportLayoutRoute,
+} as any)
+const ReportLayoutUserRoute = ReportLayoutUserRouteImport.update({
+  id: '/user',
+  path: '/user',
+  getParentRoute: () => ReportLayoutRoute,
+} as any)
+const UserLayoutUserSlugRoute = UserLayoutUserSlugRouteImport.update({
+  id: '/user/_layout/$userSlug',
+  path: '/user/$userSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UserLayoutUserSlugIndexRoute = UserLayoutUserSlugIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => UserLayoutUserSlugRoute,
 } as any)
+const UserLayoutUserSlugImageImageIdRoute =
+  UserLayoutUserSlugImageImageIdRouteImport.update({
+    id: '/image/$imageId',
+    path: '/image/$imageId',
+    getParentRoute: () => UserLayoutUserSlugRoute,
+  } as any)
 const UserLayoutUserSlugTagIndexRoute =
   UserLayoutUserSlugTagIndexRouteImport.update({
     id: '/tag/',
@@ -107,12 +113,6 @@ const UserLayoutUserSlugTagTagIdRoute =
   UserLayoutUserSlugTagTagIdRouteImport.update({
     id: '/tag/$tagId',
     path: '/tag/$tagId',
-    getParentRoute: () => UserLayoutUserSlugRoute,
-  } as any)
-const UserLayoutUserSlugImageImageIdRoute =
-  UserLayoutUserSlugImageImageIdRouteImport.update({
-    id: '/image/$imageId',
-    path: '/image/$imageId',
     getParentRoute: () => UserLayoutUserSlugRoute,
   } as any)
 
@@ -248,18 +248,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/closed-beta': {
-      id: '/closed-beta'
-      path: '/closed-beta'
-      fullPath: '/closed-beta'
-      preLoaderRoute: typeof ClosedBetaRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/404': {
@@ -269,25 +262,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof R404RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/closed-beta': {
+      id: '/closed-beta'
+      path: '/closed-beta'
+      fullPath: '/closed-beta'
+      preLoaderRoute: typeof ClosedBetaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/report/_layout': {
-      id: '/report/_layout'
-      path: '/report'
-      fullPath: '/report'
-      preLoaderRoute: typeof ReportLayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/signup': {
-      id: '/auth/signup'
-      path: '/auth/signup'
-      fullPath: '/auth/signup'
-      preLoaderRoute: typeof AuthSignupRouteImport
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/error': {
@@ -297,39 +283,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthErrorRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user/_layout/$userSlug': {
-      id: '/user/_layout/$userSlug'
-      path: '/user/$userSlug'
-      fullPath: '/user/$userSlug'
-      preLoaderRoute: typeof UserLayoutUserSlugRouteImport
+    '/auth/signup': {
+      id: '/auth/signup'
+      path: '/auth/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/report/_layout/user': {
-      id: '/report/_layout/user'
-      path: '/user'
-      fullPath: '/report/user'
-      preLoaderRoute: typeof ReportLayoutUserRouteImport
-      parentRoute: typeof ReportLayoutRoute
-    }
-    '/report/_layout/image': {
-      id: '/report/_layout/image'
-      path: '/image'
-      fullPath: '/report/image'
-      preLoaderRoute: typeof ReportLayoutImageRouteImport
-      parentRoute: typeof ReportLayoutRoute
-    }
-    '/api/r2/$': {
-      id: '/api/r2/$'
-      path: '/api/r2/$'
-      fullPath: '/api/r2/$'
-      preLoaderRoute: typeof ApiR2SplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/redirect': {
-      id: '/api/auth/redirect'
-      path: '/api/auth/redirect'
-      fullPath: '/api/auth/redirect'
-      preLoaderRoute: typeof ApiAuthRedirectRouteImport
+    '/report/_layout': {
+      id: '/report/_layout'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -339,11 +304,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/redirect': {
+      id: '/api/auth/redirect'
+      path: '/api/auth/redirect'
+      fullPath: '/api/auth/redirect'
+      preLoaderRoute: typeof ApiAuthRedirectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/r2/$': {
+      id: '/api/r2/$'
+      path: '/api/r2/$'
+      fullPath: '/api/r2/$'
+      preLoaderRoute: typeof ApiR2SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report/_layout/image': {
+      id: '/report/_layout/image'
+      path: '/image'
+      fullPath: '/report/image'
+      preLoaderRoute: typeof ReportLayoutImageRouteImport
+      parentRoute: typeof ReportLayoutRoute
+    }
+    '/report/_layout/user': {
+      id: '/report/_layout/user'
+      path: '/user'
+      fullPath: '/report/user'
+      preLoaderRoute: typeof ReportLayoutUserRouteImport
+      parentRoute: typeof ReportLayoutRoute
+    }
+    '/user/_layout/$userSlug': {
+      id: '/user/_layout/$userSlug'
+      path: '/user/$userSlug'
+      fullPath: '/user/$userSlug'
+      preLoaderRoute: typeof UserLayoutUserSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/user/_layout/$userSlug/': {
       id: '/user/_layout/$userSlug/'
       path: '/'
       fullPath: '/user/$userSlug/'
       preLoaderRoute: typeof UserLayoutUserSlugIndexRouteImport
+      parentRoute: typeof UserLayoutUserSlugRoute
+    }
+    '/user/_layout/$userSlug/image/$imageId': {
+      id: '/user/_layout/$userSlug/image/$imageId'
+      path: '/image/$imageId'
+      fullPath: '/user/$userSlug/image/$imageId'
+      preLoaderRoute: typeof UserLayoutUserSlugImageImageIdRouteImport
       parentRoute: typeof UserLayoutUserSlugRoute
     }
     '/user/_layout/$userSlug/tag/': {
@@ -358,13 +365,6 @@ declare module '@tanstack/react-router' {
       path: '/tag/$tagId'
       fullPath: '/user/$userSlug/tag/$tagId'
       preLoaderRoute: typeof UserLayoutUserSlugTagTagIdRouteImport
-      parentRoute: typeof UserLayoutUserSlugRoute
-    }
-    '/user/_layout/$userSlug/image/$imageId': {
-      id: '/user/_layout/$userSlug/image/$imageId'
-      path: '/image/$imageId'
-      fullPath: '/user/$userSlug/image/$imageId'
-      preLoaderRoute: typeof UserLayoutUserSlugImageImageIdRouteImport
       parentRoute: typeof UserLayoutUserSlugRoute
     }
   }

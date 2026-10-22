@@ -24,7 +24,8 @@ const searchParamsSchema = object({
 export const Route = createFileRoute("/user/_layout/$userSlug/tag/$tagId")({
   component: RouteComponent,
   errorComponent: ({ error }) => {
-    return <Message message={error.message || GALLERY_ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
+    const message = error instanceof Error ? error.message : undefined;
+    return <Message message={message || GALLERY_ERROR_MESSAGE.IMAGE_FETCH_FAILED} icon="error" />;
   },
   validateSearch: (search) => parse(searchParamsSchema, search),
   loaderDeps: ({ search: { view, page, image } }) => ({ view, page, image }),

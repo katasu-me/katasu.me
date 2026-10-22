@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { css } from "styled-system/css";
 import Message from "@/components/Message";
+import { GALLERY_ERROR_MESSAGE } from "@/features/gallery/constants/error";
 import ImageDetail from "@/features/image-view/components/ImageDetail";
 import { imagePageQueryOptions } from "@/features/image-view/server-fn/image-page";
 import { generateMetadata } from "@/libs/meta";
@@ -10,7 +11,12 @@ import { getImageUrl } from "@/libs/r2";
 export const Route = createFileRoute("/user/_layout/$userSlug/image/$imageId")({
   component: RouteComponent,
   errorComponent: ({ error }) => {
-    return <Message message={error.message} icon="error" />;
+    return (
+      <Message
+        message={error instanceof Error ? error.message : GALLERY_ERROR_MESSAGE.IMAGE_FETCH_FAILED}
+        icon="error"
+      />
+    );
   },
   loader: async ({ params, context }) => {
     const loaderData = await context.queryClient.ensureQueryData(
