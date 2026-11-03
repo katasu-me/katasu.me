@@ -18,6 +18,10 @@ overrides:
   # @pandacss/core が postcss@8.5.14 / browserslist@4.28.1 に固定しているため
   postcss: ^8.5.18
   browserslist: ^4.28.7
+  # @pandacss/core などが postcss-selector-parser@7.1.1 に固定しているため
+  postcss-selector-parser: ^7.1.6
+  # miniflare が undici@7.29.1 に固定しているため（7.30.1 を使う miniflare は minimumReleaseAge を満たしていない）
+  undici: ^7.30.1
   # miniflare が sharp@0.35.4 に固定しているため
   sharp: ^0.35.5
   # solid-js@1.9.11 は seroval@~1.5 に固定されているうえ、@tanstack/devtools-ui@0.7 が使う `use` を export していないため
