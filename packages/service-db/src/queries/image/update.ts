@@ -54,9 +54,7 @@ export async function updateImage(
 
     const [_deleteResult, insertTagResults] = await db.batch([
       // 既存のタグとの関連を全て削除
-      db
-        .delete(imageTag)
-        .where(eq(imageTag.imageId, imageId)),
+      db.delete(imageTag).where(eq(imageTag.imageId, imageId)),
       // タグを登録
       db
         .insert(tag)

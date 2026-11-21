@@ -1,7 +1,14 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
   "files": {
-    "includes": ["**", "!**/.wrangler", "!**/node_modules", "!**/routeTree.gen.ts", "!**/styled-system"]
+    "includes": [
+      "**",
+      "!**/.wrangler",
+      "!**/node_modules",
+      "!**/routeTree.gen.ts",
+      "!**/worker-configuration.d.ts",
+      "!**/styled-system"
+    ]
   },
   "vcs": {
     "enabled": true,
@@ -18,7 +25,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noUnusedVariables": {
           "level": "error",
