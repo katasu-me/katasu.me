@@ -26,3 +26,5 @@ overrides:
   sharp: ^0.35.5
   # solid-js@1.9.11 は seroval@~1.5 に固定されているうえ、@tanstack/devtools-ui@0.7 が使う `use` を export していないため
   solid-js: ^1.9.17
+  # drizzle-kit@0.31 が依存する @esbuild-kit/core-utils（非推奨）が esbuild@~0.18.20 に固定しているため
+  "@esbuild-kit/core-utils>esbuild": ^0.25.12

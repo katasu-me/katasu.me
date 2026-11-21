@@ -13,9 +13,9 @@
     "test": "turbo test"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.10",
+    "@biomejs/biome": "2.6.6",
     "@typescript/native-preview": "7.0.0-dev.20260405.1",
-    "lefthook": "^2.0.3",
-    "turbo": "^2.6.0"
+    "lefthook": "^2.2.2",
+    "turbo": "^2.11.10"
   }
 }
